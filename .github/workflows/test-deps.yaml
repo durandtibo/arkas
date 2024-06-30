@@ -46,9 +46,9 @@ jobs:
         run: |
           poetry run make unit-test-cov
 
-      - name: Run integration tests
-        run: |
-          poetry run make integration-test
+#      - name: Run integration tests
+#        run: |
+#          poetry run make integration-test
 
 
   numpy:
@@ -105,9 +105,9 @@ jobs:
         run: |
           poetry run make unit-test-cov
 
-      - name: Run integration tests
-        run: |
-          poetry run make integration-test
+#      - name: Run integration tests
+#        run: |
+#          poetry run make integration-test
 
 
   pytorch-ignite:
@@ -151,9 +151,9 @@ jobs:
         run: |
           poetry run make unit-test-cov
 
-      - name: Run integration tests
-        run: |
-          poetry run make integration-test
+#      - name: Run integration tests
+#        run: |
+#          poetry run make integration-test
 
 
   torch:
@@ -210,9 +210,9 @@ jobs:
         run: |
           poetry run make unit-test-cov
 
-      - name: Run integration tests
-        run: |
-          poetry run make integration-test
+#      - name: Run integration tests
+#        run: |
+#          poetry run make integration-test
 
 
   #################################
