@@ -1914,9 +1914,9 @@ doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linke
 test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
-all = ["numpy", "numpy"]
+all = []
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "d1bdd7a76618e32d597c221dd9e807b7557b6ad59d9fc6186c4cb3ce5aad439d"
+content-hash = "67869f0053217d20cacc6e98ecc58ffd15dd7d8881d3d4590be4477abf80a5e5"
