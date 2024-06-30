@@ -33,6 +33,7 @@ packages = [
 # Core dependencies
 coola = ">=0.6,<1.0"
 python = ">=3.9,<3.13"
+pytorch-ignite = ">=0.4.13,<1.0"
 torch = [
     { version = ">=1.12,<2.3", markers = "sys_platform == 'darwin' and platform_machine != 'arm64'" },
     { version = ">=1.12,<3.0" }
@@ -44,14 +45,9 @@ numpy = [
     { version = ">=1.22,<2.0", optional = true, markers="sys_platform == 'darwin' and platform_machine != 'arm64'" },
     { version = ">=1.22,<3.0", optional = true }
 ]
-objectory = { version = ">=0.1,<1.0", optional = true }
-pytorch-ignite = [
-    { version = ">=0.4.12,<1.0", python = "^3.11", optional = true },
-    { version = ">=0.4.11,<1.0", optional = true }
-]
 
 [tool.poetry.extras]
-all = ["numpy", "objectory", "pytorch-ignite"]
+all = ["numpy"]
 
 [tool.poetry.group.docs]
 optional = true
