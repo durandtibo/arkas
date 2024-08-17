@@ -11,16 +11,24 @@ class BaseResult(ABC):
     r"""Define the base class to manage results."""
 
     @abstractmethod
-    def get_metrics(self) -> dict:
+    def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict:
         r"""Return the metrics associated to the result.
+
+        Args:
+            prefix: The key prefix in the returned dictionary.
+            suffix: The key suffix in the returned dictionary.
 
         Returns:
             The metrics.
         """
 
     @abstractmethod
-    def get_plots(self) -> dict:
+    def generate_plots(self, prefix: str = "", suffix: str = "") -> dict:
         r"""Return the plots associated to the result.
+
+        Args:
+            prefix: The key prefix in the returned dictionary.
+            suffix: The key suffix in the returned dictionary.
 
         Returns:
             The plots.
