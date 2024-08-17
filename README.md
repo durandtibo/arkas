@@ -59,5 +59,3 @@
     </a>
     <br/>
 </p>
-
-PyTorch tools for distributed computing
