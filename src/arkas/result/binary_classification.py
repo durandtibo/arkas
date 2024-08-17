@@ -9,11 +9,13 @@ from typing import TYPE_CHECKING
 import numpy as np
 from sklearn import metrics
 
+from arkas.result.base import BaseResult
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-class BinaryClassificationResult:  # (BaseResult):
+class BinaryClassificationResult(BaseResult):
     r"""Implement the default binary classification result.
 
     Args:
@@ -112,6 +114,11 @@ class BinaryClassificationResult:  # (BaseResult):
                 metrics.roc_auc_score(y_true=self._y_true, y_score=self._y_score)
             ),
         }
+
+    def generate_plots(
+        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+    ) -> dict[str, float]:
+        return {}
 
     def _check_inputs(self) -> None:
         if self._y_true.shape != self._y_pred.shape:

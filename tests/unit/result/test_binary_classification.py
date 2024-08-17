@@ -165,6 +165,30 @@ def test_binary_classification_result_compute_metrics_beta() -> None:
     )
 
 
+def test_binary_classification_result_compute_metrics_prefix_suffix() -> None:
+    result = BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]),
+        y_pred=np.array([1, 0, 0, 1, 1]),
+        y_score=np.array([2, -1, 0, 3, 1]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_count_suffix": 5,
+            "prefix_count_correct_suffix": 5,
+            "prefix_count_incorrect_suffix": 0,
+            "prefix_accuracy_suffix": 1.0,
+            "prefix_balanced_accuracy_suffix": 1.0,
+            "prefix_precision_suffix": 1.0,
+            "prefix_recall_suffix": 1.0,
+            "prefix_jaccard_suffix": 1.0,
+            "prefix_f1_suffix": 1.0,
+            "prefix_average_precision_suffix": 1.0,
+            "prefix_roc_auc_suffix": 1.0,
+        },
+    )
+
+
 def test_binary_classification_result_compute_base_metrics() -> None:
     result = BinaryClassificationResult(
         y_true=np.array([1, 0, 0, 1, 1]),
@@ -222,3 +246,19 @@ def test_binary_classification_result_compute_rank_metrics() -> None:
     assert objects_are_equal(
         result.compute_rank_metrics(), {"average_precision": 1.0, "roc_auc": 1.0}
     )
+
+
+def test_binary_classification_result_generate_plots() -> None:
+    result = BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]),
+        y_pred=np.array([1, 0, 0, 1, 1]),
+        y_score=np.array([2, -1, 0, 3, 1]),
+    )
+    assert objects_are_equal(result.generate_plots(), {})
+
+
+def test_binary_classification_result_generate_plots_empty() -> None:
+    result = BinaryClassificationResult(
+        y_true=np.array([]), y_pred=np.array([]), y_score=np.array([])
+    )
+    assert objects_are_equal(result.generate_plots(), {})
