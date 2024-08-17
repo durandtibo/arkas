@@ -32,7 +32,7 @@ def tags2id(tags: Sequence[str]) -> str:
 
     ```pycon
 
-    >>> from arkas.result.utils import tags2id
+    >>> from arkas.section.utils import tags2id
     >>> out = tags2id(["super", "meow"])
     >>> out
     super-meow
@@ -55,7 +55,7 @@ def tags2title(tags: Sequence[str]) -> str:
 
     ```pycon
 
-    >>> from arkas.result.utils import tags2title
+    >>> from arkas.section.utils import tags2title
     >>> out = tags2title(["super", "meow"])
     >>> out
     meow | super
@@ -78,7 +78,7 @@ def valid_h_tag(index: int) -> int:
 
     ```pycon
 
-    >>> from arkas.result.utils import valid_h_tag
+    >>> from arkas.section.utils import valid_h_tag
     >>> out = valid_h_tag(4)
     >>> out
     4
@@ -106,7 +106,7 @@ def render_html_toc(
 
     ```pycon
 
-    >>> from arkas.result.utils import render_html_toc
+    >>> from arkas.section.utils import render_html_toc
     >>> out = render_html_toc(number="2.0", tags=["super", "meow"])
     >>> out
     <li><a href="#super-meow">2.0 meow</a></li>
