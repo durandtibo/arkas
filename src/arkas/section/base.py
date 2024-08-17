@@ -15,7 +15,7 @@ class BaseSection(ABC):
     r"""Define the base class to manage sections."""
 
     @abstractmethod
-    def render_html_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
+    def generate_html_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
         r"""Return the HTML body associated to the section.
 
         Args:
@@ -28,7 +28,7 @@ class BaseSection(ABC):
         """
 
     @abstractmethod
-    def render_html_toc(
+    def generate_html_toc(
         self, number: str = "", tags: Sequence[str] = (), depth: int = 0, max_depth: int = 1
     ) -> str:
         r"""Return the HTML table of content (TOC) associated to the
