@@ -115,7 +115,9 @@ class BinaryClassificationResult(BaseResult):
             ),
         }
 
-    def generate_plots(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+    def generate_plots(
+        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+    ) -> dict[str, float]:
         return {}
 
     def _check_inputs(self) -> None:
