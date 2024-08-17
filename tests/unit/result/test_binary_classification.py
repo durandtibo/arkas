@@ -68,6 +68,24 @@ def test_binary_classification_result_y_score_incorrect_shape() -> None:
         )
 
 
+def test_binary_classification_result_repr() -> None:
+    assert repr(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+        )
+    ).startswith("BinaryClassificationResult(")
+
+
+def test_binary_classification_result_str() -> None:
+    assert str(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+        )
+    ).startswith("BinaryClassificationResult(")
+
+
 def test_binary_classification_result_compute_metrics_correct() -> None:
     result = BinaryClassificationResult(
         y_true=np.array([1, 0, 0, 1, 1]),
@@ -80,6 +98,14 @@ def test_binary_classification_result_compute_metrics_correct() -> None:
             "count": 5,
             "count_correct": 5,
             "count_incorrect": 0,
+            "false_negative_rate": 0.0,
+            "false_negative": 0,
+            "false_positive_rate": 0.0,
+            "false_positive": 0,
+            "true_negative_rate": 1.0,
+            "true_negative": 2,
+            "true_positive_rate": 1.0,
+            "true_positive": 3,
             "accuracy": 1.0,
             "balanced_accuracy": 1.0,
             "precision": 1.0,
@@ -104,6 +130,14 @@ def test_binary_classification_result_compute_metrics_incorrect() -> None:
             "count": 4,
             "count_correct": 0,
             "count_incorrect": 4,
+            "false_negative_rate": 1.0,
+            "false_negative": 2,
+            "false_positive_rate": 1.0,
+            "false_positive": 2,
+            "true_negative_rate": 0.0,
+            "true_negative": 0,
+            "true_positive_rate": 0.0,
+            "true_positive": 0,
             "accuracy": 0.0,
             "balanced_accuracy": 0.0,
             "precision": 0.0,
@@ -128,6 +162,14 @@ def test_binary_classification_result_compute_metrics_without_y_score() -> None:
             "count": 5,
             "count_correct": 5,
             "count_incorrect": 0,
+            "false_negative_rate": 0.0,
+            "false_negative": 0,
+            "false_positive_rate": 0.0,
+            "false_positive": 0,
+            "true_negative_rate": 1.0,
+            "true_negative": 2,
+            "true_positive_rate": 1.0,
+            "true_positive": 3,
             "accuracy": 1.0,
             "balanced_accuracy": 1.0,
             "precision": 1.0,
@@ -151,6 +193,14 @@ def test_binary_classification_result_compute_metrics_beta() -> None:
             "count": 5,
             "count_correct": 5,
             "count_incorrect": 0,
+            "false_negative_rate": 0.0,
+            "false_negative": 0,
+            "false_positive_rate": 0.0,
+            "false_positive": 0,
+            "true_negative_rate": 1.0,
+            "true_negative": 2,
+            "true_positive_rate": 1.0,
+            "true_positive": 3,
             "accuracy": 1.0,
             "balanced_accuracy": 1.0,
             "precision": 1.0,
@@ -177,6 +227,14 @@ def test_binary_classification_result_compute_metrics_prefix_suffix() -> None:
             "prefix_count_suffix": 5,
             "prefix_count_correct_suffix": 5,
             "prefix_count_incorrect_suffix": 0,
+            "prefix_false_negative_rate_suffix": 0.0,
+            "prefix_false_negative_suffix": 0,
+            "prefix_false_positive_rate_suffix": 0.0,
+            "prefix_false_positive_suffix": 0,
+            "prefix_true_negative_rate_suffix": 1.0,
+            "prefix_true_negative_suffix": 2,
+            "prefix_true_positive_rate_suffix": 1.0,
+            "prefix_true_positive_suffix": 3,
             "prefix_accuracy_suffix": 1.0,
             "prefix_balanced_accuracy_suffix": 1.0,
             "prefix_precision_suffix": 1.0,
@@ -214,7 +272,21 @@ def test_binary_classification_result_compute_confmat_metrics() -> None:
         y_score=np.array([2, -1, 0, 3, 1]),
     )
     assert objects_are_equal(
-        result.compute_confmat_metrics(), {"count": 5, "count_correct": 5, "count_incorrect": 0}
+        result.compute_confmat_metrics(),
+        {
+            "count": 5,
+            "count_correct": 5,
+            "count_incorrect": 0,
+            "false_negative_rate": 0.0,
+            "false_negative": 0,
+            "false_positive_rate": 0.0,
+            "false_positive": 0,
+            "true_negative_rate": 1.0,
+            "true_negative": 2,
+            "true_positive_rate": 1.0,
+            "true_positive": 3,
+        },
+        show_difference=True,
     )
 
 
