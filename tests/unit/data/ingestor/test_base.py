@@ -8,7 +8,7 @@ import polars as pl
 from grizz.ingestor import Ingestor
 from objectory import OBJECT_TARGET
 
-from arkas.ingestor import DataFrameIngestor, is_ingestor_config, setup_ingestor
+from arkas.data.ingestor import DataFrameIngestor, is_ingestor_config, setup_ingestor
 
 if TYPE_CHECKING:
     import pytest
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 def test_is_ingestor_config_true() -> None:
-    assert is_ingestor_config({OBJECT_TARGET: "arkas.ingestor.DataFrameIngestor"})
+    assert is_ingestor_config({OBJECT_TARGET: "arkas.data.ingestor.DataFrameIngestor"})
 
 
 def test_is_ingestor_config_false() -> None:
@@ -40,7 +40,7 @@ def test_setup_ingestor_dict() -> None:
     assert isinstance(
         setup_ingestor(
             {
-                OBJECT_TARGET: "arkas.ingestor.DataFrameIngestor",
+                OBJECT_TARGET: "arkas.data.ingestor.DataFrameIngestor",
                 "ingestor": {OBJECT_TARGET: "grizz.ingestor.Ingestor", "frame": pl.DataFrame()},
             }
         ),

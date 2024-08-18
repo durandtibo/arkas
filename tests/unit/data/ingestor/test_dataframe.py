@@ -5,7 +5,7 @@ import pytest
 from coola import objects_are_equal
 from grizz.ingestor import BaseIngestor, Ingestor
 
-from arkas.ingestor import DataFrameIngestor
+from arkas.data.ingestor import DataFrameIngestor
 
 
 @pytest.fixture
