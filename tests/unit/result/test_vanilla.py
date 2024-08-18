@@ -45,19 +45,19 @@ def test_result_compute_metrics_prefix_suffix() -> None:
     )
 
 
-def test_result_generate_plots(figure: plt.Figure) -> None:
+def test_result_generate_figures(figure: plt.Figure) -> None:
     assert objects_are_equal(
-        Result(figures={"accuracy": figure}).generate_plots(),
+        Result(figures={"accuracy": figure}).generate_figures(),
         {"accuracy": figure},
     )
 
 
-def test_result_generate_plots_empty() -> None:
-    assert objects_are_equal(Result().generate_plots(), {})
+def test_result_generate_figures_empty() -> None:
+    assert objects_are_equal(Result().generate_figures(), {})
 
 
-def test_result_generate_plots_prefix_suffix(figure: plt.Figure) -> None:
+def test_result_generate_figures_prefix_suffix(figure: plt.Figure) -> None:
     assert objects_are_equal(
-        Result(figures={"accuracy": figure}).generate_plots(prefix="prefix_", suffix="_suffix"),
+        Result(figures={"accuracy": figure}).generate_figures(prefix="prefix_", suffix="_suffix"),
         {"prefix_accuracy_suffix": figure},
     )

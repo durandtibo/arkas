@@ -39,5 +39,5 @@ class Result(BaseResult):
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict:
         return {f"{prefix}{key}{suffix}": value for key, value in self._metrics.items()}
 
-    def generate_plots(self, prefix: str = "", suffix: str = "") -> dict:
+    def generate_figures(self, prefix: str = "", suffix: str = "") -> dict:
         return {f"{prefix}{key}{suffix}": value for key, value in self._figures.items()}
