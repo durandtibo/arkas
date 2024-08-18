@@ -32,8 +32,8 @@ def test_is_ingestor_config_false() -> None:
 
 
 def test_setup_ingestor_object() -> None:
-    generator = DataFrameIngestor(Ingestor(pl.DataFrame()))
-    assert setup_ingestor(generator) is generator
+    ingestor = DataFrameIngestor(Ingestor(pl.DataFrame()))
+    assert setup_ingestor(ingestor) is ingestor
 
 
 def test_setup_ingestor_dict() -> None:
