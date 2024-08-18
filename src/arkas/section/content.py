@@ -40,8 +40,7 @@ class ContentSection(BaseSection):
     >>> section = ContentSection(content="meow")
     >>> section
     ContentSection()
-    >>> section.get_statistics()
-    {}
+    >>> section.generate_html_body()
 
     ```
     """
