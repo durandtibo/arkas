@@ -14,7 +14,7 @@ from objectory.utils import is_object_config
 if TYPE_CHECKING:
     import polars as pl
 
-    from arkas.section import BaseSection
+    from arkas.result import BaseResult
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
     ```
     """
 
-    def analyze(self, frame: pl.DataFrame) -> BaseSection:
+    def analyze(self, frame: pl.DataFrame) -> BaseResult:
         r"""Analyze the data in a DataFrame.
 
         Args:
