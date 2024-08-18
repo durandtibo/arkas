@@ -4,8 +4,9 @@ from __future__ import annotations
 
 __all__ = ["AccuracyResult"]
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+from coola import objects_are_equal
 from sklearn import metrics
 
 from arkas.result.base import BaseResult
@@ -21,7 +22,7 @@ class AccuracyResult(BaseResult):
         y_true: The ground truth target labels. This input must
             be an array of shape ``(n_samples,)`` where the values
             are in ``{0, ..., n_classes-1}``.
-        y_pred: The predicted binary labels. This input must be an
+        y_pred: The predicted labels. This input must be an
             array of shape ``(n_samples,)`` where the values are
             in ``{0, ..., n_classes-1}``.
 
@@ -62,6 +63,13 @@ class AccuracyResult(BaseResult):
     @property
     def y_pred(self) -> np.ndarray:
         return self._y_pred
+
+    def equal(self, other: Any) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(self.y_true, other.y_true) and objects_are_equal(
+            self.y_pred, other.y_pred
+        )
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return {
