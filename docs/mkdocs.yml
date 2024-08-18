@@ -25,7 +25,10 @@ nav:
   - Home: index.md
   - get_started.md
   - Reference:
+      - arkas.data: refs/data.md
+      - arkas.evaluator: refs/evaluator.md
       - arkas.result: refs/result.md
+      - arkas.section: refs/section.md
       - arkas.utils: refs/utils.md
   - GitHub: https://github.com/durandtibo/arkas
 
