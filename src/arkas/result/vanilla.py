@@ -4,6 +4,9 @@ from __future__ import annotations
 
 __all__ = ["Result"]
 
+from typing import Any
+
+from coola import objects_are_equal
 
 from arkas.result.base import BaseResult
 
@@ -35,6 +38,13 @@ class Result(BaseResult):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(metrics={len(self._metrics):,}, figures={len(self._figures):,})"
+
+    def equal(self, other: Any) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(self._metrics, other._metrics) and objects_are_equal(
+            self._figures, other._figures
+        )
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict:
         return {f"{prefix}{key}{suffix}": value for key, value in self._metrics.items()}

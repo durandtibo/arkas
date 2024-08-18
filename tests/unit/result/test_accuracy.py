@@ -42,6 +42,30 @@ def test_accuracy_result_str() -> None:
     ).startswith("AccuracyResult(")
 
 
+def test_accuracy_result_equal_true() -> None:
+    assert AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])).equal(
+        AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
+    )
+
+
+def test_accuracy_result_equal_false_different_y_true() -> None:
+    assert not AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(AccuracyResult(y_true=np.array([1, 0, 0, 1, 0]), y_pred=np.array([1, 0, 0, 1, 1])))
+
+
+def test_accuracy_result_equal_false_different_y_pred() -> None:
+    assert not AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])))
+
+
+def test_accuracy_result_equal_false_different_type() -> None:
+    assert not AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(42)
+
+
 def test_accuracy_result_compute_metrics_correct() -> None:
     result = AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
     assert objects_are_equal(result.compute_metrics(), {"count": 5, "accuracy": 1.0})

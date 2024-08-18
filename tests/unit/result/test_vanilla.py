@@ -25,6 +25,28 @@ def test_result_str() -> None:
     assert str(Result()) == "Result(metrics=0, figures=0)"
 
 
+def test_result_equal_true(figure: plt.Figure) -> None:
+    assert Result(metrics={"accuracy": 1.0, "count": 42}, figures={"accuracy": figure}).equal(
+        Result(metrics={"accuracy": 1.0, "count": 42}, figures={"accuracy": figure})
+    )
+
+
+def test_result_equal_false_different_metrics(figure: plt.Figure) -> None:
+    assert not Result(metrics={"accuracy": 1.0, "count": 42}, figures={"accuracy": figure}).equal(
+        Result(metrics={"accuracy": 1.0}, figures={"accuracy": figure})
+    )
+
+
+def test_result_equal_false_different_figures(figure: plt.Figure) -> None:
+    assert not Result(metrics={"accuracy": 1.0, "count": 42}, figures={"accuracy": figure}).equal(
+        Result(metrics={"accuracy": 1.0, "count": 42}, figures={"mean": figure})
+    )
+
+
+def test_result_equal_false_different_type() -> None:
+    assert not Result().equal(42)
+
+
 def test_result_compute_metrics() -> None:
     assert objects_are_equal(
         Result(metrics={"accuracy": 1.0, "count": 42}).compute_metrics(),
