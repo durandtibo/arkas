@@ -26,7 +26,15 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
 
     ```pycon
 
-    >>> import polars as pl
+    >>> import numpy as np
+    >>> from arkas.evaluator import AccuracyEvaluator
+    >>> data = {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
+    >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
+    >>> evaluator
+    AccuracyEvaluator(y_true=target, y_pred=pred)
+    >>> result = evaluator.evaluate(data)
+    >>> result
+    AccuracyResult(y_true=(5,), y_pred=(5,))
 
     ```
     """
@@ -45,42 +53,39 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
 
         ```pycon
 
-        >>> import polars as pl
+        >>> import numpy as np
+        >>> from arkas.evaluator import AccuracyEvaluator
+        >>> data = {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
+        >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
+        >>> result = evaluator.evaluate(data)
+        >>> result
+        AccuracyResult(y_true=(5,), y_pred=(5,))
 
         ```
         """
 
 
-class BaseLazyEvaluator(ABC, metaclass=AbstractFactory):
+class BaseLazyEvaluator(BaseEvaluator):
     r"""Define the base class to evaluate a DataFrame.
 
     Example usage:
 
     ```pycon
 
-    >>> import polars as pl
+    >>> import numpy as np
+    >>> from arkas.evaluator import AccuracyEvaluator
+    >>> data = {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
+    >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
+    >>> evaluator
+    AccuracyEvaluator(y_true=target, y_pred=pred)
+    >>> result = evaluator.evaluate(data)
+    >>> result
+    AccuracyResult(y_true=(5,), y_pred=(5,))
 
     ```
     """
 
     def evaluate(self, data: dict, lazy: bool = True) -> BaseResult:
-        r"""Evaluate the results.
-
-        Args:
-            data: The data to evaluate.
-            lazy: If ``False``, it forces the computation of the results, otherwise it tries to
-
-        Returns:
-            The generated results.
-
-        Example usage:
-
-        ```pycon
-
-        >>> import polars as pl
-
-        ```
-        """
         out = self._evaluate(data)
         if lazy:
             return out
@@ -95,14 +100,6 @@ class BaseLazyEvaluator(ABC, metaclass=AbstractFactory):
 
         Returns:
             The generated results.
-
-        Example usage:
-
-        ```pycon
-
-        >>> import polars as pl
-
-        ```
         """
 
 
@@ -127,7 +124,7 @@ def is_evaluator_config(config: dict) -> bool:
     ```pycon
 
     >>> from arkas.evaluator import is_evaluator_config
-    >>> is_evaluator_config({"_target_": "arkas.evaluator.NullValueEvaluator"})
+    >>> is_evaluator_config({"_target_": "arkas.evaluator.AccuracyEvaluator"})
     True
 
     ```
@@ -154,9 +151,15 @@ def setup_evaluator(
     ```pycon
 
     >>> from arkas.evaluator import setup_evaluator
-    >>> evaluator = setup_evaluator({"_target_": "arkas.evaluator.NullValueEvaluator"})
+    >>> evaluator = setup_evaluator(
+    ...     {
+    ...         "_target_": "arkas.evaluator.AccuracyEvaluator",
+    ...         "y_true": "target",
+    ...         "y_pred": "pred",
+    ...     }
+    ... )
     >>> evaluator
-    NullValueEvaluator(figsize=None)
+    AccuracyEvaluator(y_true=target, y_pred=pred)
 
     ```
     """
