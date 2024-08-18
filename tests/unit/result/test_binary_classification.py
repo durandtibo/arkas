@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from arkas.result.binary_classification import BinaryClassificationResult
+from arkas.result import BinaryClassificationResult
 
 ################################################
 #     Tests for BinaryClassificationResult     #
@@ -320,17 +320,17 @@ def test_binary_classification_result_compute_rank_metrics() -> None:
     )
 
 
-def test_binary_classification_result_generate_plots() -> None:
+def test_binary_classification_result_generate_figures() -> None:
     result = BinaryClassificationResult(
         y_true=np.array([1, 0, 0, 1, 1]),
         y_pred=np.array([1, 0, 0, 1, 1]),
         y_score=np.array([2, -1, 0, 3, 1]),
     )
-    assert objects_are_equal(result.generate_plots(), {})
+    assert objects_are_equal(result.generate_figures(), {})
 
 
-def test_binary_classification_result_generate_plots_empty() -> None:
+def test_binary_classification_result_generate_figures_empty() -> None:
     result = BinaryClassificationResult(
         y_true=np.array([]), y_pred=np.array([]), y_score=np.array([])
     )
-    assert objects_are_equal(result.generate_plots(), {})
+    assert objects_are_equal(result.generate_figures(), {})
