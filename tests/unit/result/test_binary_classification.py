@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from arkas.result.binary_classification import BinaryClassificationResult
+from arkas.result import BinaryClassificationResult
 
 ################################################
 #     Tests for BinaryClassificationResult     #
