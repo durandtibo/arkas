@@ -5,6 +5,7 @@ from __future__ import annotations
 __all__ = ["BaseResult"]
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class BaseResult(ABC):
@@ -49,6 +50,39 @@ class BaseResult(ABC):
         ... )
         >>> result.compute_metrics()
         {'accuracy': 1.0, 'count': 5}
+
+        ```
+        """
+
+    @abstractmethod
+    def equal(self, other: Any) -> bool:
+        r"""Indicate if two results are equal or not.
+
+        Args:
+            other: The other result to compare.
+
+        Returns:
+            ``True`` if the two results are equal, otherwise ``False``.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.result import AccuracyResult
+        >>> res1 = AccuracyResult(
+        ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+        ... )
+        >>> res2 = AccuracyResult(
+        ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+        ... )
+        >>> res3 = AccuracyResult(
+        ...     y_true=np.array([1, 0, 0, 0, 0]), y_pred=np.array([1, 0, 0, 1, 1])
+        ... )
+        >>> res1.equal(res2)
+        True
+        >>> res1.equal(res3)
+        False
 
         ```
         """

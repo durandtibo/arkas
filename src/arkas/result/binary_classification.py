@@ -4,9 +4,10 @@ from __future__ import annotations
 
 __all__ = ["BinaryClassificationResult"]
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
+from coola import objects_are_equal
 from coola.utils import repr_indent, repr_mapping
 from sklearn import metrics
 
@@ -118,6 +119,16 @@ class BinaryClassificationResult(BaseResult):
             | self.compute_confmat_metrics(prefix=prefix, suffix=suffix)
             | self.compute_fbeta_metrics(prefix=prefix, suffix=suffix)
             | self.compute_rank_metrics(prefix=prefix, suffix=suffix)
+        )
+
+    def equal(self, other: Any) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return (
+            objects_are_equal(self.y_true, other.y_true)
+            and objects_are_equal(self.y_pred, other.y_pred)
+            and objects_are_equal(self.y_score, other.y_score)
+            and objects_are_equal(self._f1_betas, other._f1_betas)
         )
 
     def compute_base_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
