@@ -86,6 +86,82 @@ def test_binary_classification_result_str() -> None:
     ).startswith("BinaryClassificationResult(")
 
 
+def test_binary_classification_result_equal_true() -> None:
+    assert BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+        )
+    )
+
+
+def test_binary_classification_result_equal_true_betas() -> None:
+    assert BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]),
+        y_pred=np.array([1, 0, 0, 1, 1]),
+        y_score=np.array([2, -1, 0, 3, 1]),
+        f1_betas=[1, 2],
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+            f1_betas=[1, 2],
+        )
+    )
+
+
+def test_binary_classification_result_equal_false_different_y_true() -> None:
+    assert not BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 0]), y_pred=np.array([1, 0, 0, 1, 1])
+        )
+    )
+
+
+def test_binary_classification_result_equal_false_different_y_pred() -> None:
+    assert not BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])
+        )
+    )
+
+
+def test_binary_classification_result_equal_false_different_y_score() -> None:
+    assert not BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]),
+        y_pred=np.array([1, 0, 0, 1, 1]),
+        y_score=np.array([2, -1, 0, 3, 1]),
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([1, 2, 3, 4, 5]),
+        )
+    )
+
+
+def test_binary_classification_result_equal_false_betas() -> None:
+    assert not BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), f1_betas=[1, 2]
+        )
+    )
+
+
+def test_binary_classification_result_equal_false_different_type() -> None:
+    assert not BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(42)
+
+
 def test_binary_classification_result_compute_metrics_correct() -> None:
     result = BinaryClassificationResult(
         y_true=np.array([1, 0, 0, 1, 1]),

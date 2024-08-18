@@ -43,11 +43,7 @@ class AccuracyResult(BaseResult):
     ```
     """
 
-    def __init__(
-        self,
-        y_true: np.ndarray,
-        y_pred: np.ndarray,
-    ) -> None:
+    def __init__(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
         self._y_true = y_true.ravel()
         self._y_pred = y_pred.ravel()
 
@@ -64,13 +60,6 @@ class AccuracyResult(BaseResult):
     def y_pred(self) -> np.ndarray:
         return self._y_pred
 
-    def equal(self, other: Any) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return objects_are_equal(self.y_true, other.y_true) and objects_are_equal(
-            self.y_pred, other.y_pred
-        )
-
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return {
             f"{prefix}accuracy{suffix}": float(
@@ -78,6 +67,13 @@ class AccuracyResult(BaseResult):
             ),
             f"{prefix}count{suffix}": self._y_true.size,
         }
+
+    def equal(self, other: Any) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(self.y_true, other.y_true) and objects_are_equal(
+            self.y_pred, other.y_pred
+        )
 
     def generate_figures(
         self, prefix: str = "", suffix: str = ""  # noqa: ARG002
