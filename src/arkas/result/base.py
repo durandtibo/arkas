@@ -23,13 +23,13 @@ class BaseResult(ABC):
         """
 
     @abstractmethod
-    def generate_plots(self, prefix: str = "", suffix: str = "") -> dict:
-        r"""Return the plots associated to the result.
+    def generate_figures(self, prefix: str = "", suffix: str = "") -> dict:
+        r"""Return the figures associated to the result.
 
         Args:
             prefix: The key prefix in the returned dictionary.
             suffix: The key suffix in the returned dictionary.
 
         Returns:
-            The plots.
+            The figures.
         """
