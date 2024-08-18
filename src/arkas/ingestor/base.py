@@ -88,10 +88,20 @@ def setup_ingestor(
 
     ```pycon
 
+    >>> import polars as pl
     >>> from arkas.ingestor import setup_ingestor
-    >>> ingestor = setup_ingestor({"_target_": "arkas.ingestor.DataFrameIngestor"})
+    >>> from grizz.ingestor import Ingestor
+    >>> ingestor = setup_ingestor(
+    ...     {
+    ...         "_target_": "arkas.ingestor.DataFrameIngestor",
+    ...         "ingestor": Ingestor(pl.DataFrame()),
+    ...     }
+    ... )
     >>> ingestor
-    DataFrameIngestor()
+    DataFrameIngestor(
+      (ingestor): Ingestor(shape=(0, 0))
+      (out_key): frame
+    )
 
     ```
     """
