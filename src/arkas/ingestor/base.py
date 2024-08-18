@@ -21,6 +21,35 @@ class BaseIngestor(ABC, metaclass=AbstractFactory):
     ```pycon
 
     >>> import polars as pl
+    >>> from grizz.ingestor import Ingestor
+    >>> from arkas.ingestor import DataFrameIngestor
+    >>> frame = pl.DataFrame(
+    ...     {
+    ...         "col1": [1, 2, 3, 4, 5],
+    ...         "col2": ["1", "2", "3", "4", "5"],
+    ...         "col3": ["a", "b", "c", "d", "e"],
+    ...     }
+    ... )
+    >>> ingestor = DataFrameIngestor(ingestor=Ingestor(frame))
+    >>> ingestor
+    DataFrameIngestor(
+      (ingestor): Ingestor(shape=(5, 3))
+      (out_key): frame
+    )
+    >>> data = ingestor.ingest()
+    >>> data
+    {'frame': shape: (5, 3)
+    ┌──────┬──────┬──────┐
+    │ col1 ┆ col2 ┆ col3 │
+    │ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ str  ┆ str  │
+    ╞══════╪══════╪══════╡
+    │ 1    ┆ 1    ┆ a    │
+    │ 2    ┆ 2    ┆ b    │
+    │ 3    ┆ 3    ┆ c    │
+    │ 4    ┆ 4    ┆ d    │
+    │ 5    ┆ 5    ┆ e    │
+    └──────┴──────┴──────┘}
 
     ```
     """
@@ -36,6 +65,30 @@ class BaseIngestor(ABC, metaclass=AbstractFactory):
         ```pycon
 
         >>> import polars as pl
+        >>> from grizz.ingestor import Ingestor
+        >>> from arkas.ingestor import DataFrameIngestor
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "col1": [1, 2, 3, 4, 5],
+        ...         "col2": ["1", "2", "3", "4", "5"],
+        ...         "col3": ["a", "b", "c", "d", "e"],
+        ...     }
+        ... )
+        >>> ingestor = DataFrameIngestor(ingestor=Ingestor(frame))
+        >>> data = ingestor.ingest()
+        >>> data
+        {'frame': shape: (5, 3)
+        ┌──────┬──────┬──────┐
+        │ col1 ┆ col2 ┆ col3 │
+        │ ---  ┆ ---  ┆ ---  │
+        │ i64  ┆ str  ┆ str  │
+        ╞══════╪══════╪══════╡
+        │ 1    ┆ 1    ┆ a    │
+        │ 2    ┆ 2    ┆ b    │
+        │ 3    ┆ 3    ┆ c    │
+        │ 4    ┆ 4    ┆ d    │
+        │ 5    ┆ 5    ┆ e    │
+        └──────┴──────┴──────┘}
 
         ```
         """
