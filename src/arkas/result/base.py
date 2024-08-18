@@ -8,7 +8,24 @@ from abc import ABC, abstractmethod
 
 
 class BaseResult(ABC):
-    r"""Define the base class to manage results."""
+    r"""Define the base class to manage results.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.result import AccuracyResult
+    >>> result = AccuracyResult(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ... )
+    >>> result
+    AccuracyResult(y_true=(5,), y_pred=(5,))
+    >>> result.compute_metrics()
+    {'accuracy': 1.0, 'count': 5}
+
+    ```
+    """
 
     @abstractmethod
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict:
@@ -20,6 +37,20 @@ class BaseResult(ABC):
 
         Returns:
             The metrics.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.result import AccuracyResult
+        >>> result = AccuracyResult(
+        ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+        ... )
+        >>> result.compute_metrics()
+        {'accuracy': 1.0, 'count': 5}
+
+        ```
         """
 
     @abstractmethod
@@ -32,4 +63,18 @@ class BaseResult(ABC):
 
         Returns:
             The figures.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.result import AccuracyResult
+        >>> result = AccuracyResult(
+        ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+        ... )
+        >>> result.generate_figures()
+        {}
+
+        ```
         """
