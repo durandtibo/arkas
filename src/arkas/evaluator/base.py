@@ -12,77 +12,37 @@ from objectory import AbstractFactory
 from objectory.utils import is_object_config
 
 if TYPE_CHECKING:
-    import polars as pl
-
     from arkas.result import BaseResult
 
 logger = logging.getLogger(__name__)
 
 
 class BaseEvaluator(ABC, metaclass=AbstractFactory):
-    r"""Define the base class to analyze a DataFrame.
+    r"""Define the base class to evaluate a DataFrame.
 
     Example usage:
 
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.evaluator import NullValueEvaluator
-    >>> evaluator = NullValueEvaluator()
-    >>> evaluator
-    NullValueEvaluator(figsize=None)
-    >>> frame = pl.DataFrame(
-    ...     {
-    ...         "float": [1.2, 4.2, None, 2.2],
-    ...         "int": [None, 1, 0, 1],
-    ...         "str": ["A", "B", None, None],
-    ...     },
-    ...     schema={"float": pl.Float64, "int": pl.Int64, "str": pl.String},
-    ... )
-    >>> section = evaluator.analyze(frame)
-    >>> section
-    NullValueSection(
-      (columns): ('float', 'int', 'str')
-      (null_count): array([1, 1, 2])
-      (total_count): array([4, 4, 4])
-      (figsize): None
-    )
 
     ```
     """
 
-    def analyze(self, frame: pl.DataFrame) -> BaseResult:
-        r"""Analyze the data in a DataFrame.
+    def evaluate(self, data: dict) -> BaseResult:
+        r"""Evaluate the results.
 
         Args:
-            frame: The DataFrame with the data to analyze.
+            data: The data to evaluate.
 
         Returns:
-            The section report.
+            The generated results.
 
         Example usage:
 
         ```pycon
 
         >>> import polars as pl
-        >>> from arkas.evaluator import NullValueEvaluator
-        >>> evaluator = NullValueEvaluator()
-        >>> frame = pl.DataFrame(
-        ...     {
-        ...         "float": [1.2, 4.2, None, 2.2],
-        ...         "int": [None, 1, 0, 1],
-        ...         "str": ["A", "B", None, None],
-        ...     },
-        ...     schema={"float": pl.Float64, "int": pl.Int64, "str": pl.String},
-        ... )
-        >>> section = evaluator.analyze(frame)
-        >>> section
-        NullValueSection(
-          (columns): ('float', 'int', 'str')
-          (null_count): array([1, 1, 2])
-          (total_count): array([4, 4, 4])
-          (figsize): None
-        )
 
         ```
         """
