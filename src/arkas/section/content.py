@@ -6,7 +6,7 @@ from __future__ import annotations
 __all__ = ["ContentSection", "create_section_template"]
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from jinja2 import Template
 
@@ -50,6 +50,11 @@ class ContentSection(BaseSection):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"
+
+    def equal(self, other: Any) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return self._content == other._content
 
     def generate_html_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
         logger.info("Generating the section with the custom content...")
