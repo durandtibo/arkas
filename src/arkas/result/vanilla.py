@@ -39,15 +39,15 @@ class Result(BaseResult):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(metrics={len(self._metrics):,}, figures={len(self._figures):,})"
 
+    def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict:
+        return {f"{prefix}{key}{suffix}": value for key, value in self._metrics.items()}
+
     def equal(self, other: Any) -> bool:
         if not isinstance(other, self.__class__):
             return False
         return objects_are_equal(self._metrics, other._metrics) and objects_are_equal(
             self._figures, other._figures
         )
-
-    def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict:
-        return {f"{prefix}{key}{suffix}": value for key, value in self._metrics.items()}
 
     def generate_figures(self, prefix: str = "", suffix: str = "") -> dict:
         return {f"{prefix}{key}{suffix}": value for key, value in self._figures.items()}
