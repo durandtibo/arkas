@@ -2,14 +2,16 @@ r"""Contain the base class to implement an evaluator."""
 
 from __future__ import annotations
 
-__all__ = ["BaseEvaluator", "setup_evaluator", "is_evaluator_config"]
+__all__ = ["BaseEvaluator", "BaseLazyEvaluator", "setup_evaluator", "is_evaluator_config"]
 
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from objectory import AbstractFactory
 from objectory.utils import is_object_config
+
+from arkas.result import Result
 
 if TYPE_CHECKING:
     from arkas.result import BaseResult
@@ -29,7 +31,63 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
     ```
     """
 
-    def evaluate(self, data: dict) -> BaseResult:
+    def evaluate(self, data: dict, lazy: bool = True) -> BaseResult:
+        r"""Evaluate the results.
+
+        Args:
+            data: The data to evaluate.
+            lazy: If ``False``, it forces the computation of the results, otherwise it tries to
+
+        Returns:
+            The generated results.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import polars as pl
+
+        ```
+        """
+
+
+class BaseLazyEvaluator(ABC, metaclass=AbstractFactory):
+    r"""Define the base class to evaluate a DataFrame.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import polars as pl
+
+    ```
+    """
+
+    def evaluate(self, data: dict, lazy: bool = True) -> BaseResult:
+        r"""Evaluate the results.
+
+        Args:
+            data: The data to evaluate.
+            lazy: If ``False``, it forces the computation of the results, otherwise it tries to
+
+        Returns:
+            The generated results.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import polars as pl
+
+        ```
+        """
+        out = self._evaluate(data)
+        if lazy:
+            return out
+        return Result(metrics=out.compute_metrics(), figures=out.generate_figures())
+
+    @abstractmethod
+    def _evaluate(self, data: dict) -> BaseResult:
         r"""Evaluate the results.
 
         Args:
