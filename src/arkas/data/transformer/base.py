@@ -21,6 +21,38 @@ class BaseTransformer(ABC, metaclass=AbstractFactory):
     ```pycon
 
     >>> import polars as pl
+    >>> from grizz.transformer import Cast
+    >>> from arkas.data.transformer import DataFrameTransformer
+    >>> frame = pl.DataFrame(
+    ...     {
+    ...         "col1": [1, 2, 3, 4, 5],
+    ...         "col2": ["1", "2", "3", "4", "5"],
+    ...         "col3": ["a", "b", "c", "d", "e"],
+    ...     }
+    ... )
+    >>> transformer = DataFrameTransformer(
+    ...     transformer=Cast(columns=["col2"], dtype=pl.Int64), in_key="frame", out_key="frame"
+    ... )
+    >>> transformer
+    DataFrameTransformer(
+      (transformer): CastTransformer(columns=('col2',), dtype=Int64, ignore_missing=False)
+      (in_key): frame
+      (out_key): frame
+    )
+    >>> data = transformer.transform({"frame": frame})
+    >>> data
+    {'frame': shape: (5, 3)
+    ┌──────┬──────┬──────┐
+    │ col1 ┆ col2 ┆ col3 │
+    │ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ str  │
+    ╞══════╪══════╪══════╡
+    │ 1    ┆ 1    ┆ a    │
+    │ 2    ┆ 2    ┆ b    │
+    │ 3    ┆ 3    ┆ c    │
+    │ 4    ┆ 4    ┆ d    │
+    │ 5    ┆ 5    ┆ e    │
+    └──────┴──────┴──────┘}
 
     ```
     """
@@ -36,9 +68,37 @@ class BaseTransformer(ABC, metaclass=AbstractFactory):
 
         Example usage:
 
+        Example usage:
+
         ```pycon
 
         >>> import polars as pl
+        >>> from grizz.transformer import Cast
+        >>> from arkas.data.transformer import DataFrameTransformer
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "col1": [1, 2, 3, 4, 5],
+        ...         "col2": ["1", "2", "3", "4", "5"],
+        ...         "col3": ["a", "b", "c", "d", "e"],
+        ...     }
+        ... )
+        >>> transformer = DataFrameTransformer(
+        ...     transformer=Cast(columns=["col2"], dtype=pl.Int64), in_key="frame", out_key="frame"
+        ... )
+        >>> data = transformer.transform({"frame": frame})
+        >>> data
+        {'frame': shape: (5, 3)
+        ┌──────┬──────┬──────┐
+        │ col1 ┆ col2 ┆ col3 │
+        │ ---  ┆ ---  ┆ ---  │
+        │ i64  ┆ i64  ┆ str  │
+        ╞══════╪══════╪══════╡
+        │ 1    ┆ 1    ┆ a    │
+        │ 2    ┆ 2    ┆ b    │
+        │ 3    ┆ 3    ┆ c    │
+        │ 4    ┆ 4    ┆ d    │
+        │ 5    ┆ 5    ┆ e    │
+        └──────┴──────┴──────┘}
 
         ```
         """
@@ -64,13 +124,8 @@ def is_transformer_config(config: dict) -> bool:
 
     ```pycon
 
-    >>> import polars as pl
-    >>> from grizz.transformer import is_transformer_config
-    >>> is_transformer_config(
-    ...     {
-    ...         "_target_": "grizz.transformer.Cast",
-    ...     }
-    ... )
+    >>> from arkas.data.transformer import is_transformer_config
+    >>> is_transformer_config({"_target_": "arkas.data.transformer.DataFrameTransformer"})
     True
 
     ```
@@ -97,16 +152,25 @@ def setup_transformer(
     ```pycon
 
     >>> import polars as pl
-    >>> from grizz.transformer import setup_transformer
+    >>> from arkas.data.transformer import setup_transformer
     >>> transformer = setup_transformer(
     ...     {
-    ...         "_target_": "grizz.transformer.Cast",
-    ...         "columns": ("col1", "col3"),
-    ...         "dtype": pl.Int32,
+    ...         "_target_": "arkas.data.transformer.DataFrameTransformer",
+    ...         "transformer": {
+    ...             "_target_": "grizz.transformer.Cast",
+    ...             "columns": ("col1", "col3"),
+    ...             "dtype": pl.Int32,
+    ...         },
+    ...         "in_key": "frame",
+    ...         "out_key": "frame",
     ...     }
     ... )
     >>> transformer
-    CastTransformer(columns=('col1', 'col3'), dtype=Int32, ignore_missing=False)
+    DataFrameTransformer(
+      (transformer): CastTransformer(columns=('col1', 'col3'), dtype=Int32, ignore_missing=False)
+      (in_key): frame
+      (out_key): frame
+    )
 
     ```
     """
