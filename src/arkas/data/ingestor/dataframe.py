@@ -8,7 +8,7 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from grizz.ingestor import BaseIngestor as BaseDataFrameIngestor
 from grizz.ingestor import setup_ingestor
 
-from arkas.ingestor.base import BaseIngestor
+from arkas.data.ingestor.base import BaseIngestor
 
 
 class DataFrameIngestor(BaseIngestor):
@@ -24,7 +24,7 @@ class DataFrameIngestor(BaseIngestor):
 
     >>> import polars as pl
     >>> from grizz.ingestor import Ingestor
-    >>> from arkas.ingestor import DataFrameIngestor
+    >>> from arkas.data.ingestor import DataFrameIngestor
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1, 2, 3, 4, 5],

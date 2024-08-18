@@ -22,7 +22,7 @@ class BaseIngestor(ABC, metaclass=AbstractFactory):
 
     >>> import polars as pl
     >>> from grizz.ingestor import Ingestor
-    >>> from arkas.ingestor import DataFrameIngestor
+    >>> from arkas.data.ingestor import DataFrameIngestor
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1, 2, 3, 4, 5],
@@ -66,7 +66,7 @@ class BaseIngestor(ABC, metaclass=AbstractFactory):
 
         >>> import polars as pl
         >>> from grizz.ingestor import Ingestor
-        >>> from arkas.ingestor import DataFrameIngestor
+        >>> from arkas.data.ingestor import DataFrameIngestor
         >>> frame = pl.DataFrame(
         ...     {
         ...         "col1": [1, 2, 3, 4, 5],
@@ -114,8 +114,8 @@ def is_ingestor_config(config: dict) -> bool:
 
     ```pycon
 
-    >>> from arkas.ingestor import is_ingestor_config
-    >>> is_ingestor_config({"_target_": "arkas.ingestor.DataFrameIngestor"})
+    >>> from arkas.data.ingestor import is_ingestor_config
+    >>> is_ingestor_config({"_target_": "arkas.data.ingestor.DataFrameIngestor"})
     True
 
     ```
@@ -142,11 +142,11 @@ def setup_ingestor(
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.ingestor import setup_ingestor
+    >>> from arkas.data.ingestor import setup_ingestor
     >>> from grizz.ingestor import Ingestor
     >>> ingestor = setup_ingestor(
     ...     {
-    ...         "_target_": "arkas.ingestor.DataFrameIngestor",
+    ...         "_target_": "arkas.data.ingestor.DataFrameIngestor",
     ...         "ingestor": Ingestor(pl.DataFrame()),
     ...     }
     ... )
