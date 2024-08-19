@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 from objectory import AbstractFactory
 from objectory.utils import is_object_config
 
-from arkas.result import Result
+from arkas.result import EmptyResult, Result
 
 if TYPE_CHECKING:
     from arkas.result import BaseResult
@@ -87,7 +87,7 @@ class BaseLazyEvaluator(BaseEvaluator):
 
     def evaluate(self, data: dict, lazy: bool = True) -> BaseResult:
         out = self._evaluate(data)
-        if lazy:
+        if lazy or isinstance(out, EmptyResult):
             return out
         return Result(metrics=out.compute_metrics(), figures=out.generate_figures())
 
