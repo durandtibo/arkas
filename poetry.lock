@@ -2159,4 +2159,4 @@ all = ["colorlog", "hya", "markdown", "tqdm"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "a5004b079f065286806a9cd416bf0777e336d052046384b66512949873b65ff2"
+content-hash = "acdbea235b76d92cb52df0f86c309ca8bcba9362a3c646104a30d71d7bdf01b2"
