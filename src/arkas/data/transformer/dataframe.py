@@ -12,7 +12,7 @@ from arkas.data.transformer import BaseTransformer
 
 
 class DataFrameTransformer(BaseTransformer):
-    r"""Implement a data transformer to transformer a DataFrame.
+    r"""Implement a data transformer to transform a DataFrame.
 
     Args:
         transformer: The DataFrame transformer or its configuration.
