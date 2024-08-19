@@ -4,7 +4,7 @@ import numpy as np
 import polars as pl
 
 from arkas.evaluator import AccuracyDataFrameEvaluator, AccuracyEvaluator
-from arkas.result import AccuracyResult, Result
+from arkas.result import AccuracyResult, EmptyResult, Result
 
 #######################################
 #     Tests for AccuracyEvaluator     #
@@ -34,6 +34,24 @@ def test_accuracy_evaluator_evaluate_lazy_false() -> None:
             {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}, lazy=False
         )
         .equal(Result(metrics={"accuracy": 1.0, "count": 5}))
+    )
+
+
+def test_accuracy_evaluator_evaluate_missing_keys() -> None:
+    assert (
+        AccuracyEvaluator(y_true="target", y_pred="prediction")
+        .evaluate({"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([1, 2, 3, 2, 1])})
+        .equal(EmptyResult())
+    )
+
+
+def test_accuracy_evaluator_evaluate_lazy_false_missing_keys() -> None:
+    assert (
+        AccuracyEvaluator(y_true="target", y_pred="prediction")
+        .evaluate(
+            {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([1, 2, 3, 2, 1])}, lazy=False
+        )
+        .equal(EmptyResult())
     )
 
 
