@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pytest
 from coola import objects_are_equal
 
-from arkas.result import Result
+from arkas.result import EmptyResult, Result
 
 
 @pytest.fixture
@@ -83,3 +83,24 @@ def test_result_generate_figures_prefix_suffix(figure: plt.Figure) -> None:
         Result(figures={"accuracy": figure}).generate_figures(prefix="prefix_", suffix="_suffix"),
         {"prefix_accuracy_suffix": figure},
     )
+
+
+#################################
+#     Tests for EmptyResult     #
+#################################
+
+
+def test_empty_result_repr() -> None:
+    assert repr(EmptyResult()) == "EmptyResult()"
+
+
+def test_empty_result_str() -> None:
+    assert str(EmptyResult()) == "EmptyResult()"
+
+
+def test_empty_result_compute_metrics() -> None:
+    assert objects_are_equal(EmptyResult().compute_metrics(), {})
+
+
+def test_empty_result_generate_figures() -> None:
+    assert objects_are_equal(EmptyResult().generate_figures(), {})

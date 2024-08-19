@@ -2,7 +2,7 @@ r"""Implement the simple result."""
 
 from __future__ import annotations
 
-__all__ = ["Result"]
+__all__ = ["EmptyResult", "Result"]
 
 from typing import Any
 
@@ -51,3 +51,17 @@ class Result(BaseResult):
 
     def generate_figures(self, prefix: str = "", suffix: str = "") -> dict:
         return {f"{prefix}{key}{suffix}": value for key, value in self._figures.items()}
+
+
+class EmptyResult(Result):
+    r"""Implement an empty result.
+
+    This result is designed to be used when it is possible to evaluate a
+    result.
+    """
+
+    def __init__(self) -> None:
+        super().__init__(metrics={}, figures={})
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__qualname__}()"
