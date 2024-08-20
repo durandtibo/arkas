@@ -14,6 +14,8 @@ from objectory.utils import is_object_config
 from arkas.result import EmptyResult, Result
 
 if TYPE_CHECKING:
+    import polars as pl
+
     from arkas.result import BaseResult
 
 logger = logging.getLogger(__name__)
@@ -39,7 +41,7 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
     ```
     """
 
-    def evaluate(self, data: dict, lazy: bool = True) -> BaseResult:
+    def evaluate(self, data: dict | pl.DataFrame, lazy: bool = True) -> BaseResult:
         r"""Evaluate the results.
 
         Args:
@@ -85,14 +87,14 @@ class BaseLazyEvaluator(BaseEvaluator):
     ```
     """
 
-    def evaluate(self, data: dict, lazy: bool = True) -> BaseResult:
+    def evaluate(self, data: dict | pl.DataFrame, lazy: bool = True) -> BaseResult:
         out = self._evaluate(data)
         if lazy or isinstance(out, EmptyResult):
             return out
         return Result(metrics=out.compute_metrics(), figures=out.generate_figures())
 
     @abstractmethod
-    def _evaluate(self, data: dict) -> BaseResult:
+    def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
         r"""Evaluate the results.
 
         Args:

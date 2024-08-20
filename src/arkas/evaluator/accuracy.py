@@ -2,16 +2,19 @@ r"""Contain an accuracy evaluator."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracyEvaluator", "AccuracyDataFrameEvaluator"]
+__all__ = ["AccuracyEvaluator"]
 
 import logging
 from typing import TYPE_CHECKING
 
 from arkas.evaluator.base import BaseLazyEvaluator
 from arkas.result import AccuracyResult, EmptyResult
+from arkas.utils.array import to_array
 from arkas.utils.mapping import find_missing_keys
 
 if TYPE_CHECKING:
+    import polars as pl
+
     from arkas.result import BaseResult
 
 logger = logging.getLogger(__name__)
@@ -21,8 +24,9 @@ class AccuracyEvaluator(BaseLazyEvaluator):
     r"""Implement the accuracy evaluator.
 
     Args:
-        y_true: The key of the ground truth target labels.
-        y_pred: The key of the predicted labels.
+        y_true: The key or column name of the ground truth target
+            labels.
+        y_pred: The key or column name of the predicted labels.
 
     Example usage:
 
@@ -37,6 +41,10 @@ class AccuracyEvaluator(BaseLazyEvaluator):
     >>> result = evaluator.evaluate(data)
     >>> result
     AccuracyResult(y_true=(5,), y_pred=(5,))
+    >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+    >>> result = evaluator.evaluate(frame)
+    >>> result
+    AccuracyResult(y_true=(6,), y_pred=(6,))
 
     ```
     """
@@ -48,7 +56,7 @@ class AccuracyEvaluator(BaseLazyEvaluator):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(y_true={self._y_true}, y_pred={self._y_pred})"
 
-    def _evaluate(self, data: dict) -> BaseResult:
+    def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
         logger.info(f"Evaluating the accuracy | y_true={self._y_true} | y_pred={self._y_pred}")
         if missing_keys := find_missing_keys(data, keys=[self._y_pred, self._y_true]):
             logger.warning(
@@ -56,7 +64,9 @@ class AccuracyEvaluator(BaseLazyEvaluator):
                 f"{sorted(missing_keys)}"
             )
             return EmptyResult()
-        return AccuracyResult(y_true=data[self._y_true], y_pred=data[self._y_pred])
+        return AccuracyResult(
+            y_true=to_array(data[self._y_true]), y_pred=to_array(data[self._y_pred])
+        )
 
 
 class AccuracyDataFrameEvaluator(BaseLazyEvaluator):
