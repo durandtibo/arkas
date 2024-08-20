@@ -23,7 +23,7 @@ class BaseResult(ABC):
     >>> result
     AccuracyResult(y_true=(5,), y_pred=(5,))
     >>> result.compute_metrics()
-    {'accuracy': 1.0, 'count': 5}
+    {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
 
     ```
     """
@@ -49,7 +49,7 @@ class BaseResult(ABC):
         ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
         ... )
         >>> result.compute_metrics()
-        {'accuracy': 1.0, 'count': 5}
+        {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
 
         ```
         """
