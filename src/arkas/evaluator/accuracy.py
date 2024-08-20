@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from arkas.evaluator.base import BaseLazyEvaluator
 from arkas.result import AccuracyResult, EmptyResult
 from arkas.utils.array import to_array
-from arkas.utils.mapping import find_missing_keys
+from arkas.utils.data import find_keys, find_missing_keys
 
 if TYPE_CHECKING:
     import polars as pl
@@ -33,6 +33,7 @@ class AccuracyEvaluator(BaseLazyEvaluator):
     ```pycon
 
     >>> import numpy as np
+    >>> import polars as pl
     >>> from arkas.evaluator import AccuracyEvaluator
     >>> data = {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
     >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
@@ -58,7 +59,9 @@ class AccuracyEvaluator(BaseLazyEvaluator):
 
     def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
         logger.info(f"Evaluating the accuracy | y_true={self._y_true} | y_pred={self._y_pred}")
-        if missing_keys := find_missing_keys(data, keys=[self._y_pred, self._y_true]):
+        if missing_keys := find_missing_keys(
+            keys=find_keys(data), queries=[self._y_pred, self._y_true]
+        ):
             logger.warning(
                 "Skipping the accuracy evaluation because some keys are missing: "
                 f"{sorted(missing_keys)}"
