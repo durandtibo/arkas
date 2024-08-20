@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from coola import objects_are_equal
+from coola import objects_are_allclose, objects_are_equal
 
 from arkas.result import AccuracyResult
 
@@ -108,6 +108,22 @@ def test_accuracy_result_compute_metrics_prefix_suffix() -> None:
             "prefix_count_incorrect_suffix": 0,
             "prefix_error_suffix": 0.0,
         },
+    )
+
+
+def test_accuracy_result_compute_metrics_binary() -> None:
+    result = AccuracyResult(y_true=np.array([1, 0, 0, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
+    assert objects_are_allclose(
+        result.compute_metrics(),
+        {"accuracy": 0.8, "count": 5, "count_correct": 4, "count_incorrect": 1, "error": 0.2},
+    )
+
+
+def test_accuracy_result_compute_metrics_multiclass() -> None:
+    result = AccuracyResult(y_true=np.array([0, 1, 2, 3, 4]), y_pred=np.array([0, 1, 1, 3, 3]))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"accuracy": 0.6, "count": 5, "count_correct": 3, "count_incorrect": 2, "error": 0.4},
     )
 
 
