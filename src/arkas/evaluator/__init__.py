@@ -8,9 +8,11 @@ __all__ = [
     "BaseLazyEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
+    "AveragePrecisionEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
+from arkas.evaluator.ap import AveragePrecisionEvaluator
 from arkas.evaluator.base import (
     BaseEvaluator,
     BaseLazyEvaluator,
