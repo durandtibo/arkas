@@ -68,18 +68,32 @@ def test_accuracy_result_equal_false_different_type() -> None:
 
 def test_accuracy_result_compute_metrics_correct() -> None:
     result = AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
-    assert objects_are_equal(result.compute_metrics(), {"count": 5, "accuracy": 1.0})
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
+    )
 
 
 def test_accuracy_result_compute_metrics_incorrect() -> None:
     result = AccuracyResult(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([0, 1, 1, 0]))
-    assert objects_are_equal(result.compute_metrics(), {"count": 4, "accuracy": 0.0})
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"accuracy": 0.0, "count": 4, "count_correct": 0, "count_incorrect": 4, "error": 1.0},
+    )
 
 
 def test_accuracy_result_compute_metrics_empty() -> None:
     result = AccuracyResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(
-        result.compute_metrics(), {"count": 0, "accuracy": float("nan")}, equal_nan=True
+        result.compute_metrics(),
+        {
+            "accuracy": float("nan"),
+            "count": 0,
+            "count_correct": 0,
+            "count_incorrect": 0,
+            "error": float("nan"),
+        },
+        equal_nan=True,
     )
 
 
@@ -87,7 +101,13 @@ def test_accuracy_result_compute_metrics_prefix_suffix() -> None:
     result = AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
     assert objects_are_equal(
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
-        {"prefix_count_suffix": 5, "prefix_accuracy_suffix": 1.0},
+        {
+            "prefix_accuracy_suffix": 1.0,
+            "prefix_count_suffix": 5,
+            "prefix_count_correct_suffix": 5,
+            "prefix_count_incorrect_suffix": 0,
+            "prefix_error_suffix": 0.0,
+        },
     )
 
 

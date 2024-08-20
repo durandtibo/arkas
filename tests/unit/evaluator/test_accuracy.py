@@ -33,7 +33,17 @@ def test_accuracy_evaluator_evaluate_lazy_false() -> None:
         .evaluate(
             {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}, lazy=False
         )
-        .equal(Result(metrics={"accuracy": 1.0, "count": 5}))
+        .equal(
+            Result(
+                metrics={
+                    "accuracy": 1.0,
+                    "count": 5,
+                    "count_correct": 5,
+                    "count_incorrect": 0,
+                    "error": 0.0,
+                }
+            )
+        )
     )
 
 
@@ -87,5 +97,15 @@ def test_accuracy_dataframe_evaluator_evaluate_lazy_false() -> None:
             {"frame": pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [3, 2, 0, 1, 0]})},
             lazy=False,
         )
-        .equal(Result(metrics={"accuracy": 1.0, "count": 5}))
+        .equal(
+            Result(
+                metrics={
+                    "accuracy": 1.0,
+                    "count": 5,
+                    "count_correct": 5,
+                    "count_incorrect": 0,
+                    "error": 0.0,
+                }
+            )
+        )
     )

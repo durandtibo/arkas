@@ -38,7 +38,7 @@ class AccuracyResult(BaseResult):
     >>> result
     AccuracyResult(y_true=(5,), y_pred=(5,))
     >>> result.compute_metrics()
-    {'accuracy': 1.0, 'count': 5}
+    {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
 
     ```
     """
@@ -61,11 +61,17 @@ class AccuracyResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+        count = self._y_true.size
+        count_correct = int(
+            metrics.accuracy_score(y_true=self._y_true, y_pred=self._y_pred, normalize=False)
+        )
+        accuracy = float(count_correct / count) if count > 0 else float("nan")
         return {
-            f"{prefix}accuracy{suffix}": float(
-                metrics.accuracy_score(y_true=self._y_true, y_pred=self._y_pred)
-            ),
-            f"{prefix}count{suffix}": self._y_true.size,
+            f"{prefix}accuracy{suffix}": accuracy,
+            f"{prefix}count_correct{suffix}": count_correct,
+            f"{prefix}count_incorrect{suffix}": count - count_correct,
+            f"{prefix}count{suffix}": count,
+            f"{prefix}error{suffix}": 1.0 - accuracy,
         }
 
     def equal(self, other: Any) -> bool:
