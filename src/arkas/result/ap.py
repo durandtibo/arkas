@@ -193,12 +193,12 @@ class AveragePrecisionResult(BaseResult):
             f"{prefix}weighted_average_precision{suffix}": weighted_ap,
         }
 
-    def equal(self, other: Any) -> bool:
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(self.y_true, other.y_true) and objects_are_equal(
-            self.y_score, other.y_score
-        )
+        return objects_are_equal(
+            self.y_true, other.y_true, equal_nan=equal_nan
+        ) and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
 
     def generate_figures(
         self, prefix: str = "", suffix: str = ""  # noqa: ARG002
