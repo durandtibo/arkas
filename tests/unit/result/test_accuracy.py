@@ -18,10 +18,28 @@ def test_accuracy_result_y_true() -> None:
     )
 
 
+def test_accuracy_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        AccuracyResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[1, 0, 1], [0, 1, 0]])
+        ).y_true,
+        np.array([1, 0, 0, 1, 1, 1]),
+    )
+
+
 def test_accuracy_result_y_pred() -> None:
     assert objects_are_equal(
         AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])).y_pred,
         np.array([1, 0, 1, 0, 1]),
+    )
+
+
+def test_accuracy_result_y_pred_2d() -> None:
+    assert objects_are_equal(
+        AccuracyResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[1, 0, 1], [0, 1, 0]])
+        ).y_pred,
+        np.array([1, 0, 1, 0, 1, 0]),
     )
 
 
@@ -151,12 +169,30 @@ def test_balanced_accuracy_result_y_true() -> None:
     )
 
 
+def test_balanced_accuracy_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        BalancedAccuracyResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[1, 0, 1], [0, 1, 0]])
+        ).y_true,
+        np.array([1, 0, 0, 1, 1, 1]),
+    )
+
+
 def test_balanced_accuracy_result_y_pred() -> None:
     assert objects_are_equal(
         BalancedAccuracyResult(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
         ).y_pred,
         np.array([1, 0, 1, 0, 1]),
+    )
+
+
+def test_balanced_accuracy_result_y_pred_2d() -> None:
+    assert objects_are_equal(
+        BalancedAccuracyResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[1, 0, 1], [0, 1, 0]])
+        ).y_pred,
+        np.array([1, 0, 1, 0, 1, 0]),
     )
 
 
