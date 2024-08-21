@@ -68,8 +68,6 @@ class BaseTransformer(ABC, metaclass=AbstractFactory):
 
         Example usage:
 
-        Example usage:
-
         ```pycon
 
         >>> import polars as pl
