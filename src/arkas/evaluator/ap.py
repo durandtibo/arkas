@@ -70,6 +70,5 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator):
             )
             return EmptyResult()
         return AveragePrecisionResult(
-            y_true=to_array(data[self._y_true]).ravel(),
-            y_score=to_array(data[self._y_score]).ravel(),
+            y_true=to_array(data[self._y_true]), y_score=to_array(data[self._y_score])
         )
