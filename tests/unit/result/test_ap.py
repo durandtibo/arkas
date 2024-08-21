@@ -47,12 +47,17 @@ def test_average_precision_result_y_score_2d() -> None:
     )
 
 
-def test_average_precision_result_y_score_incorrect_ndim() -> None:
+def test_average_precision_result_y_true_incorrect_ndim() -> None:
     with pytest.raises(ValueError, match="'y_true' must be a 1d or 2d array"):
-        AveragePrecisionResult(y_true=np.ones((2, 3, 4)), y_score=np.ones((2, 3, 4)))
+        AveragePrecisionResult(y_true=np.ones((2, 3, 4)), y_score=np.ones((2, 3)))
 
 
-def test_average_precision_result_y_score_incorrect_shape() -> None:
+def test_average_precision_result_y_score_incorrect_ndim() -> None:
+    with pytest.raises(ValueError, match="'y_score' must be a 1d or 2d array"):
+        AveragePrecisionResult(y_true=np.ones((2, 3)), y_score=np.ones((2, 3, 4)))
+
+
+def test_average_precision_result_incorrect_shape() -> None:
     with pytest.raises(ValueError, match="'y_true' and 'y_score' have different shapes"):
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 1, 0])
@@ -133,6 +138,99 @@ def test_average_precision_result_compute_metrics_binary_prefix_suffix() -> None
     assert objects_are_equal(
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {"prefix_count_suffix": 5, "prefix_average_precision_suffix": 1.0},
+    )
+
+
+def test_average_precision_result_compute_metrics_multiclass_correct() -> None:
+    result = AveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "weighted_average_precision": 1.0,
+        },
+    )
+
+
+def test_average_precision_result_compute_metrics_multiclass_incorrect() -> None:
+    result = AveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.3, 0.5],
+                [0.4, 0.4, 0.2],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([0.8333333333333333, 0.75, 0.75]),
+            "count": 6,
+            "macro_average_precision": 0.7777777777777777,
+            "micro_average_precision": 0.75,
+            "weighted_average_precision": 0.7777777777777777,
+        },
+    )
+
+
+def test_average_precision_result_compute_metrics_multiclass_empty() -> None:
+    result = AveragePrecisionResult(y_true=np.ones((0,)), y_score=np.ones((0, 3)))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([float("nan"), float("nan"), float("nan")]),
+            "count": 0,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_average_precision_result_compute_metrics_multiclass_prefix_suffix() -> None:
+    result = AveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_average_precision_suffix": np.array([1.0, 1.0, 1.0]),
+            "prefix_count_suffix": 6,
+            "prefix_macro_average_precision_suffix": 1.0,
+            "prefix_micro_average_precision_suffix": 1.0,
+            "prefix_weighted_average_precision_suffix": 1.0,
+        },
     )
 
 

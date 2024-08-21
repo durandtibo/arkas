@@ -16,15 +16,28 @@ from arkas.result.base import BaseResult
 class AveragePrecisionResult(BaseResult):
     r"""Implement the average precision result.
 
+    This result can be used in 3 different settings:
+
+    - binary: ``y_true`` must be an array of shape ``(n_samples,)``
+        with ``0`` and ``1`` values, and ``y_score`` must be an array
+        of shape ``(n_samples,)``.
+    - multiclass: ``y_true`` must be an array of shape ``(n_samples,)``
+        with values in ``{0, ..., n_classes-1}``, and ``y_score`` must
+        be an array of shape ``(n_samples, n_classes)``.
+    - multilabel: ``y_true`` must be an array of shape
+        ``(n_samples, n_classes)`` with ``0`` and ``1`` values, and
+        ``y_score`` must be an array of shape
+        ``(n_samples, n_classes)``.
+
     Args:
         y_true: The ground truth target labels. This input must
             be an array of shape ``(n_samples,)`` or
-            `(n_samples, n_classes)`` where the values
-            are ``0`` or ``1``.
+            ``(n_samples, n_classes)``.
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
-            or non-thresholded measure of decisions. This array must
-            have the same shape as ``y_true``.
+            or non-thresholded measure of decisions. This input must
+            be an array of shape ``(n_samples,)`` or
+            ``(n_samples, n_classes)``.
 
     Example usage:
 
@@ -53,6 +66,28 @@ class AveragePrecisionResult(BaseResult):
      'macro_average_precision': 0.825...,
      'micro_average_precision': 0.588...,
      'weighted_average_precision': 0.804...}
+    >>> # multiclass
+    >>> result = AveragePrecisionResult(
+    ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
+    ...     y_score=np.array(
+    ...         [
+    ...             [0.7, 0.2, 0.1],
+    ...             [0.4, 0.3, 0.3],
+    ...             [0.1, 0.8, 0.1],
+    ...             [0.2, 0.3, 0.5],
+    ...             [0.4, 0.4, 0.2],
+    ...             [0.1, 0.2, 0.7],
+    ...         ]
+    ...     ),
+    ... )
+    >>> result
+    AveragePrecisionResult(y_true=(6,), y_score=(6, 3))
+    >>> result.compute_metrics()
+    {'average_precision': array([0.833..., 0.75 , 0.75 ]),
+     'count': 6,
+     'macro_average_precision': 0.777...,
+     'micro_average_precision': 0.75,
+     'weighted_average_precision': 0.777...}
 
 
     ```
@@ -76,8 +111,10 @@ class AveragePrecisionResult(BaseResult):
         return self._y_score
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        if self._y_true.ndim == 1:
+        if self._y_true.ndim == 1 and self._y_score.ndim == 1:
             return self._compute_binary_metrics(prefix=prefix, suffix=suffix)
+        if self._y_true.ndim == 1:
+            return self._compute_multiclass_metrics(prefix=prefix, suffix=suffix)
         return self._compute_multilabel_metrics(prefix=prefix, suffix=suffix)
 
     def _compute_binary_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
@@ -88,6 +125,39 @@ class AveragePrecisionResult(BaseResult):
         return {
             f"{prefix}average_precision{suffix}": ap,
             f"{prefix}count{suffix}": self._y_true.size,
+        }
+
+    def _compute_multiclass_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+        n_samples, n_classes = self._y_score.shape
+        ap = np.full((n_classes,), fill_value=float("nan"))
+        macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
+        if n_samples > 0:
+            ap = np.asarray(
+                metrics.average_precision_score(
+                    y_true=self._y_true, y_score=self._y_score, average=None
+                )
+            ).reshape([n_classes])
+            macro_ap = float(
+                metrics.average_precision_score(
+                    y_true=self._y_true, y_score=self._y_score, average="macro"
+                )
+            )
+            micro_ap = float(
+                metrics.average_precision_score(
+                    y_true=self._y_true, y_score=self._y_score, average="micro"
+                )
+            )
+            weighted_ap = float(
+                metrics.average_precision_score(
+                    y_true=self._y_true, y_score=self._y_score, average="weighted"
+                )
+            )
+        return {
+            f"{prefix}average_precision{suffix}": ap,
+            f"{prefix}count{suffix}": n_samples,
+            f"{prefix}macro_average_precision{suffix}": macro_ap,
+            f"{prefix}micro_average_precision{suffix}": micro_ap,
+            f"{prefix}weighted_average_precision{suffix}": weighted_ap,
         }
 
     def _compute_multilabel_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
@@ -142,7 +212,13 @@ class AveragePrecisionResult(BaseResult):
                 f"{self._y_true.shape}"
             )
             raise ValueError(msg)
-        if self._y_true.shape != self._y_score.shape:
+        if self._y_score.ndim > 2:
+            msg = (
+                f"'y_score' must be a 1d or 2d array but received an array of shape: "
+                f"{self._y_score.shape}"
+            )
+            raise ValueError(msg)
+        if self._y_true.ndim == self._y_score.ndim and self._y_true.shape != self._y_score.shape:
             msg = (
                 f"'y_true' and 'y_score' have different shapes: {self._y_true.shape} vs "
                 f"{self._y_score.shape}"
