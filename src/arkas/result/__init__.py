@@ -9,9 +9,10 @@ __all__ = [
     "BinaryClassificationResult",
     "Result",
     "EmptyResult",
+    "BalancedAccuracyResult",
 ]
 
-from arkas.result.accuracy import AccuracyResult
+from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
 from arkas.result.ap import AveragePrecisionResult
 from arkas.result.base import BaseResult
 from arkas.result.binary_classification import BinaryClassificationResult
