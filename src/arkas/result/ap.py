@@ -32,6 +32,7 @@ class AveragePrecisionResult(BaseResult):
 
     >>> import numpy as np
     >>> from arkas.result import AveragePrecisionResult
+    >>> # binary
     >>> result = AveragePrecisionResult(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ... )
@@ -39,6 +40,20 @@ class AveragePrecisionResult(BaseResult):
     AveragePrecisionResult(y_true=(5,), y_score=(5,))
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
+    >>> # multilabel
+    >>> result = AveragePrecisionResult(
+    ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+    ... )
+    >>> result
+    AveragePrecisionResult(y_true=(5, 3), y_score=(5, 3))
+    >>> result.compute_metrics()
+    {'average_precision': array([1. , 1. , 0.477...]),
+     'count': 5,
+     'macro_average_precision': 0.825...,
+     'micro_average_precision': 0.588...,
+     'weighted_average_precision': 0.804...}
+
 
     ```
     """
