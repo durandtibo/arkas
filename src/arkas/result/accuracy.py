@@ -74,12 +74,12 @@ class AccuracyResult(BaseResult):
             f"{prefix}error{suffix}": 1.0 - accuracy,
         }
 
-    def equal(self, other: Any) -> bool:
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(self.y_true, other.y_true) and objects_are_equal(
-            self.y_pred, other.y_pred
-        )
+        return objects_are_equal(
+            self.y_true, other.y_true, equal_nan=equal_nan
+        ) and objects_are_equal(self.y_pred, other.y_pred, equal_nan=equal_nan)
 
     def generate_figures(
         self, prefix: str = "", suffix: str = ""  # noqa: ARG002
@@ -149,12 +149,12 @@ class BalancedAccuracyResult(BaseResult):
             )
         return {f"{prefix}balanced_accuracy{suffix}": accuracy, f"{prefix}count{suffix}": count}
 
-    def equal(self, other: Any) -> bool:
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(self.y_true, other.y_true) and objects_are_equal(
-            self.y_pred, other.y_pred
-        )
+        return objects_are_equal(
+            self.y_true, other.y_true, equal_nan=equal_nan
+        ) and objects_are_equal(self.y_pred, other.y_pred, equal_nan=equal_nan)
 
     def generate_figures(
         self, prefix: str = "", suffix: str = ""  # noqa: ARG002

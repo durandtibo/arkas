@@ -47,6 +47,23 @@ def test_result_equal_false_different_type() -> None:
     assert not Result().equal(42)
 
 
+def test_result_equal_nan_true() -> None:
+    assert Result(
+        metrics={"accuracy": float("nan"), "count": 42}, figures={"accuracy": float("nan")}
+    ).equal(
+        Result(metrics={"accuracy": float("nan"), "count": 42}, figures={"accuracy": float("nan")}),
+        equal_nan=True,
+    )
+
+
+def test_result_equal_nan_false() -> None:
+    assert not Result(
+        metrics={"accuracy": float("nan"), "count": 42}, figures={"accuracy": float("nan")}
+    ).equal(
+        Result(metrics={"accuracy": float("nan"), "count": 42}, figures={"accuracy": float("nan")})
+    )
+
+
 def test_result_compute_metrics() -> None:
     assert objects_are_equal(
         Result(metrics={"accuracy": 1.0, "count": 42}).compute_metrics(),

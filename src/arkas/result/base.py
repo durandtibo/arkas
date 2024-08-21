@@ -55,11 +55,13 @@ class BaseResult(ABC):
         """
 
     @abstractmethod
-    def equal(self, other: Any) -> bool:
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
         r"""Indicate if two results are equal or not.
 
         Args:
             other: The other result to compare.
+            equal_nan: Whether to compare NaN's as equal. If ``True``,
+                NaN's in both objects will be considered equal.
 
         Returns:
             ``True`` if the two results are equal, otherwise ``False``.
