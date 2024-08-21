@@ -118,7 +118,7 @@ class BalancedAccuracyResult(BaseResult):
     >>> result
     BalancedAccuracyResult(y_true=(5,), y_pred=(5,))
     >>> result.compute_metrics()
-    {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
+    {'balanced_accuracy': 1.0, 'count': 5}
 
     ```
     """
