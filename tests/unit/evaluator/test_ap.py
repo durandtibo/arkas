@@ -73,3 +73,69 @@ def test_average_precision_evaluator_evaluate_dataframe() -> None:
             )
         )
     )
+
+
+def test_average_precision_evaluator_evaluate_binary() -> None:
+    assert (
+        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        .evaluate({"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])})
+        .equal(
+            AveragePrecisionResult(
+                y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+            )
+        )
+    )
+
+
+def test_average_precision_evaluator_evaluate_multiclass() -> None:
+    assert (
+        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        .evaluate(
+            {
+                "pred": np.array(
+                    [
+                        [0.7, 0.2, 0.1],
+                        [0.4, 0.3, 0.3],
+                        [0.1, 0.8, 0.1],
+                        [0.2, 0.5, 0.3],
+                        [0.3, 0.2, 0.5],
+                        [0.1, 0.2, 0.7],
+                    ]
+                ),
+                "target": np.array([0, 0, 1, 1, 2, 2]),
+            }
+        )
+        .equal(
+            AveragePrecisionResult(
+                y_true=np.array([0, 0, 1, 1, 2, 2]),
+                y_score=np.array(
+                    [
+                        [0.7, 0.2, 0.1],
+                        [0.4, 0.3, 0.3],
+                        [0.1, 0.8, 0.1],
+                        [0.2, 0.5, 0.3],
+                        [0.3, 0.2, 0.5],
+                        [0.1, 0.2, 0.7],
+                    ]
+                ),
+            )
+        )
+    )
+
+
+def test_average_precision_evaluator_evaluate_multilabel() -> None:
+    assert (
+        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        .evaluate(
+            {
+                "pred": np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+                "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            }
+        )
+        .equal(
+            AveragePrecisionResult(
+                y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+                y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+            )
+        )
+    )
