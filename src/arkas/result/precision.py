@@ -23,7 +23,7 @@ class PrecisionResult(BaseResult):
         of shape ``(n_samples,)``.
     - multiclass: ``y_true`` must be an array of shape ``(n_samples,)``
         with values in ``{0, ..., n_classes-1}``, and ``y_pred`` must
-        be an array of shape ``(n_samples, n_classes)``.
+        be an array of shape ``(n_samples,)``.
     - multilabel: ``y_true`` must be an array of shape
         ``(n_samples, n_classes)`` with ``0`` and ``1`` values, and
         ``y_pred`` must be an array of shape
@@ -43,7 +43,7 @@ class PrecisionResult(BaseResult):
     >>> from arkas.result import PrecisionResult
     >>> # binary
     >>> result = PrecisionResult(
-    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([2, -1, 0, 3, 1])
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
     PrecisionResult(y_true=(5,), y_pred=(5,))
@@ -52,38 +52,29 @@ class PrecisionResult(BaseResult):
     >>> # multilabel
     >>> result = PrecisionResult(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-    ...     y_pred=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+    ...     y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
     ... )
     >>> result
     PrecisionResult(y_true=(5, 3), y_pred=(5, 3))
     >>> result.compute_metrics()
-    {'precision': array([1. , 1. , 0.477...]),
+    {'precision': array([1., 1., 0.]),
      'count': 5,
-     'macro_precision': 0.825...,
-     'micro_precision': 0.588...,
-     'weighted_precision': 0.804...}
+     'macro_precision': 0.666...,
+     'micro_precision': 0.714...,
+     'weighted_precision': 0.625}
     >>> # multiclass
     >>> result = PrecisionResult(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
-    ...     y_pred=np.array(
-    ...         [
-    ...             [0.7, 0.2, 0.1],
-    ...             [0.4, 0.3, 0.3],
-    ...             [0.1, 0.8, 0.1],
-    ...             [0.2, 0.3, 0.5],
-    ...             [0.4, 0.4, 0.2],
-    ...             [0.1, 0.2, 0.7],
-    ...         ]
-    ...     ),
+    ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ... )
     >>> result
-    PrecisionResult(y_true=(6,), y_pred=(6, 3))
+    PrecisionResult(y_true=(6,), y_pred=(6,))
     >>> result.compute_metrics()
-    {'precision': array([0.833..., 0.75 , 0.75 ]),
+    {'precision': array([1., 1., 1.]),
      'count': 6,
-     'macro_precision': 0.777...,
-     'micro_precision': 0.75,
-     'weighted_precision': 0.777...}
+     'macro_precision': 1.0,
+     'micro_precision': 1.0,
+     'weighted_precision': 1.0}
 
 
     ```
@@ -93,7 +84,7 @@ class PrecisionResult(BaseResult):
         self._y_true = y_true
         self._y_pred = y_pred
 
-        self._y_true_unique = set(np.unique(y_true))
+        self._y_true_unique = set(np.unique(self._y_true).tolist())
 
         self._check_inputs()
 
