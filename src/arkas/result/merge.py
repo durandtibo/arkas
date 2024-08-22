@@ -60,10 +60,10 @@ class MergedResult(BaseResult):
             out |= result.compute_metrics(prefix=prefix, suffix=suffix)
         return out
 
-    def equal(self, other: Any) -> bool:
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(self._results, other._results)
+        return objects_are_equal(self._results, other._results, equal_nan=equal_nan)
 
     def generate_figures(self, prefix: str = "", suffix: str = "") -> dict:
         out = {}
