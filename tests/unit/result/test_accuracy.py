@@ -84,6 +84,27 @@ def test_accuracy_result_equal_false_different_type() -> None:
     ).equal(42)
 
 
+def test_accuracy_result_equal_nan_true() -> None:
+    assert AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]), y_pred=np.array([1, 0, 0, float("nan"), 1])
+    ).equal(
+        AccuracyResult(
+            y_true=np.array([1, 0, 0, 1, float("nan")]), y_pred=np.array([1, 0, 0, float("nan"), 1])
+        ),
+        equal_nan=True,
+    )
+
+
+def test_accuracy_result_equal_nan_false() -> None:
+    assert not AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]), y_pred=np.array([1, 0, 0, float("nan"), 1])
+    ).equal(
+        AccuracyResult(
+            y_true=np.array([1, 0, 0, 1, float("nan")]), y_pred=np.array([1, 0, 0, float("nan"), 1])
+        )
+    )
+
+
 def test_accuracy_result_compute_metrics_correct() -> None:
     result = AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
     assert objects_are_equal(
@@ -243,6 +264,27 @@ def test_balanced_accuracy_result_equal_false_different_type() -> None:
     assert not BalancedAccuracyResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ).equal(42)
+
+
+def test_balanced_accuracy_result_equal_nan_true() -> None:
+    assert BalancedAccuracyResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]), y_pred=np.array([1, 0, 0, float("nan"), 1])
+    ).equal(
+        BalancedAccuracyResult(
+            y_true=np.array([1, 0, 0, 1, float("nan")]), y_pred=np.array([1, 0, 0, float("nan"), 1])
+        ),
+        equal_nan=True,
+    )
+
+
+def test_balanced_accuracy_result_equal_nan_false() -> None:
+    assert not BalancedAccuracyResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]), y_pred=np.array([1, 0, 0, float("nan"), 1])
+    ).equal(
+        BalancedAccuracyResult(
+            y_true=np.array([1, 0, 0, 1, float("nan")]), y_pred=np.array([1, 0, 0, float("nan"), 1])
+        )
+    )
 
 
 def test_balanced_accuracy_result_compute_metrics_correct() -> None:

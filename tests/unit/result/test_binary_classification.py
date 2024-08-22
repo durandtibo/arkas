@@ -162,6 +162,35 @@ def test_binary_classification_result_equal_false_different_type() -> None:
     ).equal(42)
 
 
+def test_binary_classification_result_equal_nan_true() -> None:
+    assert BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, float("nan"), 1]),
+        y_score=np.array([2, -1, float("nan"), 3, 1]),
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, float("nan"), 1]),
+            y_score=np.array([2, -1, float("nan"), 3, 1]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_binary_classification_result_equal_nan_false() -> None:
+    assert not BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, float("nan"), 1]),
+        y_score=np.array([2, -1, float("nan"), 3, 1]),
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, float("nan"), 1]),
+            y_score=np.array([2, -1, float("nan"), 3, 1]),
+        )
+    )
+
+
 def test_binary_classification_result_compute_metrics_correct() -> None:
     result = BinaryClassificationResult(
         y_true=np.array([1, 0, 0, 1, 1]),

@@ -106,6 +106,18 @@ def test_average_precision_result_equal_false_different_type() -> None:
     ).equal(42)
 
 
+def test_average_precision_result_equal_nan_true() -> None:
+    assert AveragePrecisionResult(
+        y_true=np.array([1, 0, 0, float("nan"), 1]), y_score=np.array([2, -1, 0, 3, float("nan")])
+    ).equal(
+        AveragePrecisionResult(
+            y_true=np.array([1, 0, 0, float("nan"), 1]),
+            y_score=np.array([2, -1, 0, 3, float("nan")]),
+        ),
+        equal_nan=True,
+    )
+
+
 def test_average_precision_result_compute_metrics_binary_correct() -> None:
     result = AveragePrecisionResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
