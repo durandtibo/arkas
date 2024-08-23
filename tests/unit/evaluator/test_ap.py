@@ -12,24 +12,26 @@ from arkas.result import AveragePrecisionResult, EmptyResult, Result
 
 
 def test_average_precision_evaluator_repr() -> None:
-    assert repr(AveragePrecisionEvaluator(y_true="target", y_score="pred")).startswith(
-        "AveragePrecisionEvaluator("
-    )
+    assert repr(
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="binary")
+    ).startswith("AveragePrecisionEvaluator(")
 
 
 def test_average_precision_evaluator_str() -> None:
-    assert str(AveragePrecisionEvaluator(y_true="target", y_score="pred")).startswith(
-        "AveragePrecisionEvaluator("
-    )
+    assert str(
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="binary")
+    ).startswith("AveragePrecisionEvaluator(")
 
 
 def test_average_precision_evaluator_evaluate() -> None:
     assert (
-        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="binary")
         .evaluate({"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])})
         .equal(
             AveragePrecisionResult(
-                y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_score=np.array([2, -1, 0, 3, 1]),
+                label_type="binary",
             )
         )
     )
@@ -37,7 +39,7 @@ def test_average_precision_evaluator_evaluate() -> None:
 
 def test_average_precision_evaluator_evaluate_lazy_false() -> None:
     assert (
-        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="binary")
         .evaluate(
             {"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])}, lazy=False
         )
@@ -47,7 +49,7 @@ def test_average_precision_evaluator_evaluate_lazy_false() -> None:
 
 def test_average_precision_evaluator_evaluate_missing_keys() -> None:
     assert (
-        AveragePrecisionEvaluator(y_true="target", y_score="prediction")
+        AveragePrecisionEvaluator(y_true="target", y_score="prediction", label_type="binary")
         .evaluate({"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])})
         .equal(EmptyResult())
     )
@@ -55,7 +57,7 @@ def test_average_precision_evaluator_evaluate_missing_keys() -> None:
 
 def test_average_precision_evaluator_evaluate_lazy_false_missing_keys() -> None:
     assert (
-        AveragePrecisionEvaluator(y_true="target", y_score="prediction")
+        AveragePrecisionEvaluator(y_true="target", y_score="prediction", label_type="binary")
         .evaluate(
             {"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])}, lazy=False
         )
@@ -65,11 +67,13 @@ def test_average_precision_evaluator_evaluate_lazy_false_missing_keys() -> None:
 
 def test_average_precision_evaluator_evaluate_dataframe() -> None:
     assert (
-        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="binary")
         .evaluate(pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]}))
         .equal(
             AveragePrecisionResult(
-                y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_score=np.array([2, -1, 0, 3, 1]),
+                label_type="binary",
             )
         )
     )
@@ -77,11 +81,13 @@ def test_average_precision_evaluator_evaluate_dataframe() -> None:
 
 def test_average_precision_evaluator_evaluate_binary() -> None:
     assert (
-        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="binary")
         .evaluate({"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])})
         .equal(
             AveragePrecisionResult(
-                y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_score=np.array([2, -1, 0, 3, 1]),
+                label_type="binary",
             )
         )
     )
@@ -89,7 +95,7 @@ def test_average_precision_evaluator_evaluate_binary() -> None:
 
 def test_average_precision_evaluator_evaluate_multiclass() -> None:
     assert (
-        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="multiclass")
         .evaluate(
             {
                 "pred": np.array(
@@ -118,6 +124,7 @@ def test_average_precision_evaluator_evaluate_multiclass() -> None:
                         [0.1, 0.2, 0.7],
                     ]
                 ),
+                label_type="multiclass",
             )
         )
     )
@@ -125,7 +132,7 @@ def test_average_precision_evaluator_evaluate_multiclass() -> None:
 
 def test_average_precision_evaluator_evaluate_multilabel() -> None:
     assert (
-        AveragePrecisionEvaluator(y_true="target", y_score="pred")
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="multilabel")
         .evaluate(
             {
                 "pred": np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
@@ -136,6 +143,7 @@ def test_average_precision_evaluator_evaluate_multilabel() -> None:
             AveragePrecisionResult(
                 y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
                 y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+                label_type="multilabel",
             )
         )
     )
