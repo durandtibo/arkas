@@ -2,7 +2,7 @@ r"""Contain the base class to implement an evaluator."""
 
 from __future__ import annotations
 
-__all__ = ["BaseEvaluator", "BaseLazyEvaluator", "setup_evaluator", "is_evaluator_config"]
+__all__ = ["BaseEvaluator", "BaseLazyEvaluator", "is_evaluator_config", "setup_evaluator"]
 
 import logging
 from abc import ABC, abstractmethod

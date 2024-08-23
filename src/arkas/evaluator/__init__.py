@@ -4,11 +4,11 @@ from __future__ import annotations
 
 __all__ = [
     "AccuracyEvaluator",
+    "AveragePrecisionEvaluator",
     "BaseEvaluator",
     "BaseLazyEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
-    "AveragePrecisionEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
