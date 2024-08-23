@@ -18,9 +18,9 @@ class AveragePrecisionResult(BaseResult):
 
     This result can be used in 3 different settings:
 
-    - binary: ``y_true`` must be an array of shape ``(n_samples,)``
+    - binary: ``y_true`` must be an array of shape ``(*)``
         with ``0`` and ``1`` values, and ``y_score`` must be an array
-        of shape ``(n_samples,)``.
+        of shape ``(*)``.
     - multiclass: ``y_true`` must be an array of shape ``(n_samples,)``
         with values in ``{0, ..., n_classes-1}``, and ``y_score`` must
         be an array of shape ``(n_samples, n_classes)``.
@@ -38,6 +38,10 @@ class AveragePrecisionResult(BaseResult):
             or non-thresholded measure of decisions. This input must
             be an array of shape ``(n_samples,)`` or
             ``(n_samples, n_classes)``.
+        label_type: The type of labels used to evaluate the metrics.
+            The valid values are: ``'binary'``, ``'multiclass'``,
+            and ``'multilabel'``. If ``'binary'`` or ``'multilabel'``,
+            ``y_true`` values  must be ``0`` and ``1``.
 
     Example usage:
 
@@ -93,23 +97,15 @@ class AveragePrecisionResult(BaseResult):
      'micro_average_precision': 0.75,
      'weighted_average_precision': 0.777...}
 
-
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray, label_type: str = "") -> None:
+    def __init__(self, y_true: np.ndarray, y_score: np.ndarray, label_type: str) -> None:
         self._y_true = y_true
         self._y_score = y_score.astype(np.float64)
         self._label_type = label_type
 
         self._check_inputs()
-
-        # if self._label_type not in {"binary", "multiclass", "multilabel"}:
-        #     msg = (
-        #         f"Incorrect label type: {label_type}. The supported label types are: "
-        #         f"'binary', 'multiclass', 'multilabel'"
-        #     )
-        #     raise ValueError(msg)
 
     def __repr__(self) -> str:
         return (
@@ -211,9 +207,11 @@ class AveragePrecisionResult(BaseResult):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(
-            self.y_true, other.y_true, equal_nan=equal_nan
-        ) and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
+        return (
+            objects_are_equal(self.y_true, other.y_true, equal_nan=equal_nan)
+            and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
+            and self._label_type == other._label_type
+        )
 
     def generate_figures(
         self, prefix: str = "", suffix: str = ""  # noqa: ARG002
@@ -221,13 +219,13 @@ class AveragePrecisionResult(BaseResult):
         return {}
 
     def _check_inputs(self) -> None:
-        if self._y_true.ndim > 2:
+        if self._y_true.ndim not in {1, 2}:
             msg = (
                 f"'y_true' must be a 1d or 2d array but received an array of shape: "
                 f"{self._y_true.shape}"
             )
             raise ValueError(msg)
-        if self._y_score.ndim > 2:
+        if self._y_score.ndim not in {1, 2}:
             msg = (
                 f"'y_score' must be a 1d or 2d array but received an array of shape: "
                 f"{self._y_score.shape}"
@@ -237,6 +235,12 @@ class AveragePrecisionResult(BaseResult):
             msg = (
                 f"'y_true' and 'y_score' have different shapes: {self._y_true.shape} vs "
                 f"{self._y_score.shape}"
+            )
+            raise ValueError(msg)
+        if self._label_type not in {"binary", "multiclass", "multilabel"}:
+            msg = (
+                f"Incorrect label type: '{self._label_type}'. The supported label types are: "
+                f"'binary', 'multiclass', 'multilabel'"
             )
             raise ValueError(msg)
 

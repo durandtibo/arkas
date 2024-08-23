@@ -27,6 +27,9 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator):
         y_true: The key or column name of the ground truth target
             labels.
         y_score: The key or column name of the predicted labels.
+        label_type: The type of labels used to evaluate the metrics.
+            The valid values are: ``'binary'``, ``'multiclass'``,
+            and ``'multilabel'``.
 
     Example usage:
 
@@ -36,30 +39,37 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator):
     >>> import polars as pl
     >>> from arkas.evaluator import AveragePrecisionEvaluator
     >>> data = {"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])}
-    >>> evaluator = AveragePrecisionEvaluator(y_true="target", y_score="pred")
+    >>> evaluator = AveragePrecisionEvaluator(
+    ...     y_true="target", y_score="pred", label_type="binary"
+    ... )
     >>> evaluator
-    AveragePrecisionEvaluator(y_true=target, y_score=pred)
+    AveragePrecisionEvaluator(y_true=target, y_score=pred, label_type=binary)
     >>> result = evaluator.evaluate(data)
     >>> result
-    AveragePrecisionResult(y_true=(5,), y_score=(5,))
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary)
     >>> frame = pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(frame)
     >>> result
-    AveragePrecisionResult(y_true=(5,), y_score=(5,))
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary)
 
     ```
     """
 
-    def __init__(self, y_true: str, y_score: str) -> None:
+    def __init__(self, y_true: str, y_score: str, label_type: str) -> None:
         self._y_true = y_true
         self._y_score = y_score
+        self._label_type = label_type
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score})"
+        return (
+            f"{self.__class__.__qualname__}(y_true={self._y_true}, "
+            f"y_score={self._y_score}, label_type={self._label_type})"
+        )
 
     def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
         logger.info(
-            f"Evaluating the average precision | y_true={self._y_true} | y_score={self._y_score}"
+            f"Evaluating the average precision | label_type={self._label_type} | "
+            f"y_true={self._y_true} | y_score={self._y_score}"
         )
         if missing_keys := find_missing_keys(
             keys=find_keys(data), queries=[self._y_score, self._y_true]
@@ -70,5 +80,7 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator):
             )
             return EmptyResult()
         return AveragePrecisionResult(
-            y_true=to_array(data[self._y_true]), y_score=to_array(data[self._y_score])
+            y_true=to_array(data[self._y_true]),
+            y_score=to_array(data[self._y_score]),
+            label_type=self._label_type,
         )
