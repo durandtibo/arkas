@@ -1,8 +1,8 @@
-r"""Implement the precision result."""
+r"""Implement the recall result."""
 
 from __future__ import annotations
 
-__all__ = ["PrecisionResult"]
+__all__ = ["RecallResult"]
 
 from typing import Any
 
@@ -13,8 +13,8 @@ from sklearn import metrics
 from arkas.result.base import BaseResult
 
 
-class PrecisionResult(BaseResult):
-    r"""Implement the precision result.
+class RecallResult(BaseResult):
+    r"""Implement the recall result.
 
     This result can be used in 3 different settings:
 
@@ -42,41 +42,41 @@ class PrecisionResult(BaseResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import PrecisionResult
+    >>> from arkas.result import RecallResult
     >>> # binary
-    >>> result = PrecisionResult(
+    >>> result = RecallResult(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    PrecisionResult(y_true=(5,), y_pred=(5,))
+    RecallResult(y_true=(5,), y_pred=(5,))
     >>> result.compute_metrics()
-    {'precision': 1.0, 'count': 5}
+    {'recall': 1.0, 'count': 5}
     >>> # multilabel
-    >>> result = PrecisionResult(
+    >>> result = RecallResult(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
     ... )
     >>> result
-    PrecisionResult(y_true=(5, 3), y_pred=(5, 3))
+    RecallResult(y_true=(5, 3), y_pred=(5, 3))
     >>> result.compute_metrics()
-    {'precision': array([1., 1., 0.]),
+    {'recall': array([1., 1., 0.]),
      'count': 5,
-     'macro_precision': 0.666...,
-     'micro_precision': 0.714...,
-     'weighted_precision': 0.625}
+     'macro_recall': 0.666...,
+     'micro_recall': 0.625,
+     'weighted_recall': 0.625}
     >>> # multiclass
-    >>> result = PrecisionResult(
+    >>> result = RecallResult(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ... )
     >>> result
-    PrecisionResult(y_true=(6,), y_pred=(6,))
+    RecallResult(y_true=(6,), y_pred=(6,))
     >>> result.compute_metrics()
-    {'precision': array([1., 1., 1.]),
+    {'recall': array([1., 1., 1.]),
      'count': 6,
-     'macro_precision': 1.0,
-     'micro_precision': 1.0,
-     'weighted_precision': 1.0}
+     'macro_recall': 1.0,
+     'micro_recall': 1.0,
+     'weighted_recall': 1.0}
 
     ```
     """
@@ -112,10 +112,10 @@ class PrecisionResult(BaseResult):
         ap = float("nan")
         if count > 0:
             ap = float(
-                metrics.precision_score(y_true=self._y_true, y_pred=self._y_pred, average="binary")
+                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred, average="binary")
             )
         return {
-            f"{prefix}precision{suffix}": ap,
+            f"{prefix}recall{suffix}": ap,
             f"{prefix}count{suffix}": self._y_true.size,
         }
 
@@ -126,25 +126,23 @@ class PrecisionResult(BaseResult):
         macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
         if n_samples > 0:
             ap = np.asarray(
-                metrics.precision_score(y_true=self._y_true, y_pred=self._y_pred, average=None)
+                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred, average=None)
             ).reshape([n_classes])
             macro_ap = float(
-                metrics.precision_score(y_true=self._y_true, y_pred=self._y_pred, average="macro")
+                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred, average="macro")
             )
             micro_ap = float(
-                metrics.precision_score(y_true=self._y_true, y_pred=self._y_pred, average="micro")
+                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred, average="micro")
             )
             weighted_ap = float(
-                metrics.precision_score(
-                    y_true=self._y_true, y_pred=self._y_pred, average="weighted"
-                )
+                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred, average="weighted")
             )
         return {
-            f"{prefix}precision{suffix}": ap,
+            f"{prefix}recall{suffix}": ap,
             f"{prefix}count{suffix}": n_samples,
-            f"{prefix}macro_precision{suffix}": macro_ap,
-            f"{prefix}micro_precision{suffix}": micro_ap,
-            f"{prefix}weighted_precision{suffix}": weighted_ap,
+            f"{prefix}macro_recall{suffix}": macro_ap,
+            f"{prefix}micro_recall{suffix}": micro_ap,
+            f"{prefix}weighted_recall{suffix}": weighted_ap,
         }
 
     def _compute_multilabel_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
@@ -153,29 +151,27 @@ class PrecisionResult(BaseResult):
         macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
         if n_samples > 0:
             ap = np.asarray(
-                metrics.precision_score(
+                metrics.recall_score(
                     y_true=self._y_true,
                     y_pred=self._y_pred,
                     average="binary" if n_classes == 1 else None,
                 )
             ).reshape([n_classes])
             macro_ap = float(
-                metrics.precision_score(y_true=self._y_true, y_pred=self._y_pred, average="macro")
+                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred, average="macro")
             )
             micro_ap = float(
-                metrics.precision_score(y_true=self._y_true, y_pred=self._y_pred, average="micro")
+                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred, average="micro")
             )
             weighted_ap = float(
-                metrics.precision_score(
-                    y_true=self._y_true, y_pred=self._y_pred, average="weighted"
-                )
+                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred, average="weighted")
             )
         return {
-            f"{prefix}precision{suffix}": ap,
+            f"{prefix}recall{suffix}": ap,
             f"{prefix}count{suffix}": n_samples,
-            f"{prefix}macro_precision{suffix}": macro_ap,
-            f"{prefix}micro_precision{suffix}": micro_ap,
-            f"{prefix}weighted_precision{suffix}": weighted_ap,
+            f"{prefix}macro_recall{suffix}": macro_ap,
+            f"{prefix}micro_recall{suffix}": micro_ap,
+            f"{prefix}weighted_recall{suffix}": weighted_ap,
         }
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
