@@ -5,7 +5,7 @@ import pytest
 from coola import objects_are_allclose, objects_are_equal
 
 from arkas.result import AveragePrecisionResult
-from arkas.result.ap import average_precision_metrics
+from arkas.result.ap import average_precision_metrics, find_label_type
 
 ############################################
 #     Tests for AveragePrecisionResult     #
@@ -681,3 +681,25 @@ def test_average_precision_metrics_label_type_incorrect() -> None:
             ),
             label_type="incorrect",
         )
+
+
+#####################################
+#     Tests for find_label_type     #
+#####################################
+
+
+def test_find_label_type_binary() -> None:
+    assert find_label_type(y_true=np.ones(5), y_score=np.ones(5)) == "binary"
+
+
+def test_find_label_type_multiclass() -> None:
+    assert find_label_type(y_true=np.ones(5), y_score=np.ones((5, 3))) == "multiclass"
+
+
+def test_find_label_type_multilabel() -> None:
+    assert find_label_type(y_true=np.ones((5, 3)), y_score=np.ones((5, 3))) == "multilabel"
+
+
+def test_find_label_type_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Could not find the label type"):
+        find_label_type(y_true=np.ones(5), y_score=np.ones((5, 2, 3)))

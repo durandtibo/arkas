@@ -2,7 +2,7 @@ r"""Implement the average precision result."""
 
 from __future__ import annotations
 
-__all__ = ["AveragePrecisionResult", "average_precision_metrics"]
+__all__ = ["AveragePrecisionResult", "average_precision_metrics", "find_label_type"]
 
 from typing import Any
 
@@ -419,3 +419,49 @@ def _multi_average_precision_metrics(
         f"{prefix}micro_average_precision{suffix}": micro_ap,
         f"{prefix}weighted_average_precision{suffix}": weighted_ap,
     }
+
+
+def find_label_type(y_true: np.ndarray, y_score: np.ndarray) -> str:
+    r"""Try to find the label type automatically based on the arrays'
+    shape.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples,)`` or
+            ``(n_samples, n_classes)``.
+        y_score: The target scores, can either be probability
+            estimates of the positive class, confidence values,
+            or non-thresholded measure of decisions. This input must
+            be an array of shape ``(n_samples,)`` or
+            ``(n_samples, n_classes)``.
+
+    Returns:
+        The label type.
+
+    Raises:
+        RuntimeError: if the label type cannot be found automatically.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.result.ap import find_label_type
+    >>> # binary
+    >>> label_type = find_label_type(
+    ...     y_true=np.array([1, 0, 0, 1, 1]),
+    ...     y_score=np.array([2, -1, 0, 3, 1]),
+    ... )
+    >>> label_type
+    'binary'
+
+    ```
+    """
+    if y_true.ndim == 1 and y_score.ndim == 2:
+        return "multiclass"
+    if y_true.ndim == 2 and y_score.ndim == 2:
+        return "multilabel"
+    if y_true.ndim == 1 and y_score.ndim == 1:
+        return "binary"
+    msg = "Could not find the label type"
+    raise RuntimeError(msg)
