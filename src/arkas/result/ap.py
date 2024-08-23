@@ -40,8 +40,9 @@ class AveragePrecisionResult(BaseResult):
             ``(n_samples, n_classes)``.
         label_type: The type of labels used to evaluate the metrics.
             The valid values are: ``'binary'``, ``'multiclass'``,
-            and ``'multilabel'``. If ``'binary'`` or ``'multilabel'``,
-            ``y_true`` values  must be ``0`` and ``1``.
+            ``'auto'``, and ``'multilabel'``. If ``'binary'`` or
+            ``'multilabel'``, ``y_true`` values  must be ``0`` and
+            ``1``.
 
     Example usage:
 
@@ -96,14 +97,25 @@ class AveragePrecisionResult(BaseResult):
      'macro_average_precision': 0.777...,
      'micro_average_precision': 0.75,
      'weighted_average_precision': 0.777...}
+    >>> # auto
+    >>> result = AveragePrecisionResult(
+    ...     y_true=np.array([1, 0, 0, 1, 1]),
+    ...     y_score=np.array([2, -1, 0, 3, 1]),
+    ... )
+    >>> result
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary)
+    >>> result.compute_metrics()
+    {'average_precision': 1.0, 'count': 5}
 
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray, label_type: str) -> None:
+    def __init__(self, y_true: np.ndarray, y_score: np.ndarray, label_type: str = "auto") -> None:
         self._y_true = y_true
         self._y_score = y_score.astype(np.float64)
-        self._label_type = label_type
+        self._label_type = (
+            find_label_type(y_true=y_true, y_score=y_score) if label_type == "auto" else label_type
+        )
 
         self._check_inputs()
 
@@ -114,6 +126,10 @@ class AveragePrecisionResult(BaseResult):
         )
 
     @property
+    def label_type(self) -> str:
+        return self._label_type
+
+    @property
     def y_true(self) -> np.ndarray:
         return self._y_true
 
@@ -122,87 +138,13 @@ class AveragePrecisionResult(BaseResult):
         return self._y_score
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        if self._y_true.ndim == 1 and self._y_score.ndim == 1:
-            return self._compute_binary_metrics(prefix=prefix, suffix=suffix)
-        if self._y_true.ndim == 1:
-            return self._compute_multiclass_metrics(prefix=prefix, suffix=suffix)
-        return self._compute_multilabel_metrics(prefix=prefix, suffix=suffix)
-
-    def _compute_binary_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        count = self._y_true.size
-        ap = float("nan")
-        if count > 0:
-            ap = float(metrics.average_precision_score(y_true=self._y_true, y_score=self._y_score))
-        return {
-            f"{prefix}average_precision{suffix}": ap,
-            f"{prefix}count{suffix}": self._y_true.size,
-        }
-
-    def _compute_multiclass_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        n_samples, n_classes = self._y_score.shape
-        ap = np.full((n_classes,), fill_value=float("nan"))
-        macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
-        if n_samples > 0:
-            ap = np.asarray(
-                metrics.average_precision_score(
-                    y_true=self._y_true, y_score=self._y_score, average=None
-                )
-            ).reshape([n_classes])
-            macro_ap = float(
-                metrics.average_precision_score(
-                    y_true=self._y_true, y_score=self._y_score, average="macro"
-                )
-            )
-            micro_ap = float(
-                metrics.average_precision_score(
-                    y_true=self._y_true, y_score=self._y_score, average="micro"
-                )
-            )
-            weighted_ap = float(
-                metrics.average_precision_score(
-                    y_true=self._y_true, y_score=self._y_score, average="weighted"
-                )
-            )
-        return {
-            f"{prefix}average_precision{suffix}": ap,
-            f"{prefix}count{suffix}": n_samples,
-            f"{prefix}macro_average_precision{suffix}": macro_ap,
-            f"{prefix}micro_average_precision{suffix}": micro_ap,
-            f"{prefix}weighted_average_precision{suffix}": weighted_ap,
-        }
-
-    def _compute_multilabel_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        n_samples, n_classes = self._y_true.shape
-        ap = np.full((n_classes,), fill_value=float("nan"))
-        macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
-        if n_samples > 0:
-            ap = np.asarray(
-                metrics.average_precision_score(
-                    y_true=self._y_true, y_score=self._y_score, average=None
-                )
-            ).reshape([n_classes])
-            macro_ap = float(
-                metrics.average_precision_score(
-                    y_true=self._y_true, y_score=self._y_score, average="macro"
-                )
-            )
-            micro_ap = float(
-                metrics.average_precision_score(
-                    y_true=self._y_true, y_score=self._y_score, average="micro"
-                )
-            )
-            weighted_ap = float(
-                metrics.average_precision_score(
-                    y_true=self._y_true, y_score=self._y_score, average="weighted"
-                )
-            )
-        return {
-            f"{prefix}average_precision{suffix}": ap,
-            f"{prefix}count{suffix}": n_samples,
-            f"{prefix}macro_average_precision{suffix}": macro_ap,
-            f"{prefix}micro_average_precision{suffix}": micro_ap,
-            f"{prefix}weighted_average_precision{suffix}": weighted_ap,
-        }
+        return average_precision_metrics(
+            y_true=self._y_true,
+            y_score=self._y_score,
+            label_type=self._label_type,
+            prefix=prefix,
+            suffix=suffix,
+        )
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
@@ -210,7 +152,7 @@ class AveragePrecisionResult(BaseResult):
         return (
             objects_are_equal(self.y_true, other.y_true, equal_nan=equal_nan)
             and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
-            and self._label_type == other._label_type
+            and self.label_type == other.label_type
         )
 
     def generate_figures(
