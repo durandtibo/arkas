@@ -339,7 +339,8 @@ def _multi_average_precision_metrics(
     """
     n_samples = y_true.shape[0]
     macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
-    ap = np.full((y_true.shape[1] if y_true.ndim == 2 else 1,), fill_value=float("nan"))
+    n_classes = y_score.shape[1] if y_score.ndim == 2 else 0 if n_samples == 0 else 1
+    ap = np.full((n_classes,), fill_value=float("nan"))
     if n_samples > 0:
         macro_ap = float(
             metrics.average_precision_score(y_true=y_true, y_score=y_score, average="macro")
