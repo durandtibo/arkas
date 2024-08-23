@@ -191,8 +191,8 @@ class AveragePrecisionResult(BaseResult):
 def average_precision_metrics(
     y_true: np.ndarray,
     y_score: np.ndarray,
-    label_type: str,
     *,
+    label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
 ) -> dict[str, float]:
@@ -223,6 +223,12 @@ def average_precision_metrics(
 
     >>> import numpy as np
     >>> from arkas.result.ap import average_precision_metrics
+    >>> # auto
+    >>> metrics = average_precision_metrics(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ... )
+    >>> metrics
+    {'average_precision': 1.0, 'count': 5}
     >>> # binary
     >>> metrics = average_precision_metrics(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
@@ -267,6 +273,8 @@ def average_precision_metrics(
 
     ```
     """
+    if label_type == "auto":
+        label_type = find_label_type(y_true=y_true, y_score=y_score)
     if label_type == "binary":
         return _binary_average_precision_metrics(
             y_true=y_true.ravel(), y_score=y_score.ravel(), prefix=prefix, suffix=suffix

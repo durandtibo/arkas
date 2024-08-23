@@ -395,6 +395,16 @@ def test_average_precision_result_generate_figures_empty() -> None:
 ###############################################
 
 
+def test_average_precision_metrics() -> None:
+    assert objects_are_equal(
+        average_precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+        ),
+        {"count": 5, "average_precision": 1.0},
+    )
+
+
 def test_average_precision_metrics_binary_correct() -> None:
     assert objects_are_equal(
         average_precision_metrics(
