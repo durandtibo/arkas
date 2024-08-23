@@ -56,7 +56,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="binary",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(5,), y_score=(5,))
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary)
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
     >>> # multilabel
@@ -66,7 +66,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="multilabel",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(5, 3), y_score=(5, 3))
+    AveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), label_type=multilabel)
     >>> result.compute_metrics()
     {'average_precision': array([1. , 1. , 0.477...]),
      'count': 5,
@@ -89,7 +89,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="multiclass",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(6,), y_score=(6, 3))
+    AveragePrecisionResult(y_true=(6,), y_score=(6, 3), label_type=multiclass)
     >>> result.compute_metrics()
     {'average_precision': array([0.833..., 0.75 , 0.75 ]),
      'count': 6,
@@ -306,6 +306,25 @@ def multilabel_average_precision_metrics(
 
     Returns:
         The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.result.ap import multilabel_average_precision_metrics
+    >>> metrics = multilabel_average_precision_metrics(
+    ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+    ... )
+    >>> metrics
+    {'average_precision': array([1. , 1. , 0.477...]),
+     'count': 5,
+     'macro_average_precision': 0.825...,
+     'micro_average_precision': 0.588...,
+     'weighted_average_precision': 0.804...}
+
+    ```
     """
     n_samples = y_true.shape[0]
     macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
