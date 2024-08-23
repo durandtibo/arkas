@@ -40,9 +40,10 @@ class AveragePrecisionResult(BaseResult):
             ``(n_samples, n_classes)``.
         label_type: The type of labels used to evaluate the metrics.
             The valid values are: ``'binary'``, ``'multiclass'``,
-            ``'auto'``, and ``'multilabel'``. If ``'binary'`` or
+            ``'multilabel'``, and ``'auto'``. If ``'binary'`` or
             ``'multilabel'``, ``y_true`` values  must be ``0`` and
-            ``1``.
+            ``1``. If ``'auto'``, it tries to automatically find the
+            label type from the arrays' shape.
 
     Example usage:
 

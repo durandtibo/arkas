@@ -29,7 +29,9 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator):
         y_score: The key or column name of the predicted labels.
         label_type: The type of labels used to evaluate the metrics.
             The valid values are: ``'binary'``, ``'multiclass'``,
-            and ``'multilabel'``.
+            ``'multilabel'``, and ``'auto'``. If ``'auto'``, it tries
+            to automatically find the label type from the arrays'
+            shape.
 
     Example usage:
 
@@ -39,11 +41,9 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator):
     >>> import polars as pl
     >>> from arkas.evaluator import AveragePrecisionEvaluator
     >>> data = {"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])}
-    >>> evaluator = AveragePrecisionEvaluator(
-    ...     y_true="target", y_score="pred", label_type="binary"
-    ... )
+    >>> evaluator = AveragePrecisionEvaluator(y_true="target", y_score="pred")
     >>> evaluator
-    AveragePrecisionEvaluator(y_true=target, y_score=pred, label_type=binary)
+    AveragePrecisionEvaluator(y_true=target, y_score=pred, label_type=auto)
     >>> result = evaluator.evaluate(data)
     >>> result
     AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary)
@@ -55,10 +55,17 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator):
     ```
     """
 
-    def __init__(self, y_true: str, y_score: str, label_type: str) -> None:
+    def __init__(self, y_true: str, y_score: str, label_type: str = "auto") -> None:
         self._y_true = y_true
         self._y_score = y_score
         self._label_type = label_type
+
+        if self._label_type not in {"auto", "binary", "multiclass", "multilabel"}:
+            msg = (
+                f"Incorrect label type: '{self._label_type}'. The supported label types are: "
+                f"'auto', 'binary', 'multiclass', 'multilabel'"
+            )
+            raise ValueError(msg)
 
     def __repr__(self) -> str:
         return (
