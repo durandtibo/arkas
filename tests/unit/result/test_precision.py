@@ -161,7 +161,6 @@ def test_precision_result_compute_metrics_multiclass_incorrect() -> None:
             "micro_precision": 0.6666666666666666,
             "weighted_precision": 0.5,
         },
-        show_difference=True,
     )
 
 
@@ -177,7 +176,6 @@ def test_precision_result_compute_metrics_multiclass_empty() -> None:
             "weighted_precision": float("nan"),
         },
         equal_nan=True,
-        show_difference=True,
     )
 
 
