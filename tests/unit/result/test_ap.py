@@ -329,6 +329,73 @@ def test_average_precision_result_generate_figures_empty() -> None:
 ###############################################
 
 
+def test_average_precision_metrics_binary_correct() -> None:
+    assert objects_are_equal(
+        average_precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+            label_type="binary",
+        ),
+        {"count": 5, "average_precision": 1.0},
+    )
+
+
+def test_average_precision_metrics_binary_correct_2d() -> None:
+    assert objects_are_equal(
+        average_precision_metrics(
+            y_true=np.array([[1, 0, 0], [1, 1, 0]]),
+            y_score=np.array([[2, -1, 0], [3, 1, -2]]),
+            label_type="binary",
+        ),
+        {"count": 6, "average_precision": 1.0},
+    )
+
+
+def test_average_precision_metrics_binary_incorrect() -> None:
+    assert objects_are_equal(
+        average_precision_metrics(
+            y_true=np.array([1, 0, 0, 1]),
+            y_score=np.array([-1, 1, 0, -2]),
+            label_type="binary",
+        ),
+        {"count": 4, "average_precision": 0.41666666666666663},
+    )
+
+
+def test_average_precision_metrics_binary_empty() -> None:
+    assert objects_are_equal(
+        average_precision_metrics(
+            y_true=np.array([]),
+            y_score=np.array([]),
+            label_type="binary",
+        ),
+        {"count": 0, "average_precision": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_average_precision_metrics_binary_prefix_suffix() -> None:
+    assert objects_are_equal(
+        average_precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+            label_type="binary",
+            prefix="prefix_",
+            suffix="_suffix",
+        ),
+        {"prefix_count_suffix": 5, "prefix_average_precision_suffix": 1.0},
+    )
+
+
+def test_average_precision_metrics_binary_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different shapes:"):
+        average_precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1, 6]),
+            label_type="binary",
+        )
+
+
 def test_average_precision_metrics_multiclass_correct() -> None:
     assert objects_are_equal(
         average_precision_metrics(
