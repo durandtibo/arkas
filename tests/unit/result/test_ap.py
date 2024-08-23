@@ -17,7 +17,6 @@ def test_average_precision_result_y_true() -> None:
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
-            label_type="binary",
         ).y_true,
         np.array([1, 0, 0, 1, 1]),
     )
@@ -28,7 +27,6 @@ def test_average_precision_result_y_true_2d() -> None:
         AveragePrecisionResult(
             y_true=np.array([[1, 0, 0], [1, 1, 1]]),
             y_score=np.array([[2, -1, 0], [3, 1, 2]]),
-            label_type="binary",
         ).y_true,
         np.array([[1, 0, 0], [1, 1, 1]]),
     )
@@ -39,7 +37,6 @@ def test_average_precision_result_y_score() -> None:
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
-            label_type="binary",
         ).y_score,
         np.array([2.0, -1.0, 0.0, 3.0, 1.0]),
     )
@@ -50,9 +47,18 @@ def test_average_precision_result_y_score_2d() -> None:
         AveragePrecisionResult(
             y_true=np.array([[1, 0, 0], [1, 1, 1]]),
             y_score=np.array([[2, -1, 0], [3, 1, 2]]),
-            label_type="binary",
         ).y_score,
         np.array([[2.0, -1.0, 0.0], [3.0, 1.0, 2.0]]),
+    )
+
+
+def test_average_precision_result_label_type() -> None:
+    assert (
+        AveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+        ).label_type
+        == "binary"
     )
 
 
@@ -75,7 +81,6 @@ def test_average_precision_result_incorrect_shape() -> None:
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([1, 0, 0, 1, 1, 0]),
-            label_type="binary",
         )
 
 
@@ -93,7 +98,6 @@ def test_average_precision_result_repr() -> None:
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
-            label_type="binary",
         )
     ).startswith("AveragePrecisionResult(")
 
@@ -103,48 +107,43 @@ def test_average_precision_result_str() -> None:
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
-            label_type="binary",
         )
     ).startswith("AveragePrecisionResult(")
 
 
 def test_average_precision_result_equal_true() -> None:
     assert AveragePrecisionResult(
-        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]), label_type="binary"
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ).equal(
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
-            label_type="binary",
         )
     )
 
 
 def test_average_precision_result_equal_false_different_y_true() -> None:
     assert not AveragePrecisionResult(
-        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]), label_type="binary"
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ).equal(
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 0]),
             y_score=np.array([2, -1, 0, 3, 1]),
-            label_type="binary",
         )
     )
 
 
 def test_average_precision_result_equal_false_different_y_score() -> None:
     assert not AveragePrecisionResult(
-        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]), label_type="binary"
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ).equal(
-        AveragePrecisionResult(
-            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 0]), label_type="binary"
-        )
+        AveragePrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 0]))
     )
 
 
 def test_average_precision_result_equal_false_different_label_type() -> None:
     assert not AveragePrecisionResult(
-        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]), label_type="binary"
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ).equal(
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -156,7 +155,7 @@ def test_average_precision_result_equal_false_different_label_type() -> None:
 
 def test_average_precision_result_equal_false_different_type() -> None:
     assert not AveragePrecisionResult(
-        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]), label_type="binary"
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ).equal(42)
 
 
@@ -164,12 +163,10 @@ def test_average_precision_result_equal_nan_true() -> None:
     assert AveragePrecisionResult(
         y_true=np.array([1, 0, 0, float("nan"), 1]),
         y_score=np.array([2, -1, 0, 3, float("nan")]),
-        label_type="binary",
     ).equal(
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, float("nan"), 1]),
             y_score=np.array([2, -1, 0, 3, float("nan")]),
-            label_type="binary",
         ),
         equal_nan=True,
     )
@@ -273,7 +270,7 @@ def test_average_precision_result_compute_metrics_multiclass_empty() -> None:
     assert objects_are_equal(
         result.compute_metrics(),
         {
-            "average_precision": np.array([float("nan"), float("nan"), float("nan")]),
+            "average_precision": np.array([float("nan")]),
             "count": 0,
             "macro_average_precision": float("nan"),
             "micro_average_precision": float("nan"),
