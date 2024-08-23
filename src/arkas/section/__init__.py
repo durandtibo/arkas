@@ -2,7 +2,7 @@ r"""Contain sections."""
 
 from __future__ import annotations
 
-__all__ = ["BaseSection", "ContentSection", "AccuracySection"]
+__all__ = ["AccuracySection", "BaseSection", "ContentSection"]
 
 from arkas.section.accuracy import AccuracySection
 from arkas.section.base import BaseSection

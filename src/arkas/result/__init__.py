@@ -11,8 +11,8 @@ __all__ = [
     "EmptyResult",
     "MergedResult",
     "PrecisionResult",
-    "Result",
     "RecallResult",
+    "Result",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
