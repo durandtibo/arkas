@@ -2,7 +2,11 @@ r"""Implement the average precision result."""
 
 from __future__ import annotations
 
-__all__ = ["AveragePrecisionResult"]
+__all__ = [
+    "AveragePrecisionResult",
+    "average_precision_metrics",
+    "multilabel_average_precision_metrics",
+]
 
 from typing import Any
 
@@ -47,7 +51,9 @@ class AveragePrecisionResult(BaseResult):
     >>> from arkas.result import AveragePrecisionResult
     >>> # binary
     >>> result = AveragePrecisionResult(
-    ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ...     y_true=np.array([1, 0, 0, 1, 1]),
+    ...     y_score=np.array([2, -1, 0, 3, 1]),
+    ...     label_type="binary",
     ... )
     >>> result
     AveragePrecisionResult(y_true=(5,), y_score=(5,))
@@ -57,6 +63,7 @@ class AveragePrecisionResult(BaseResult):
     >>> result = AveragePrecisionResult(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+    ...     label_type="multilabel",
     ... )
     >>> result
     AveragePrecisionResult(y_true=(5, 3), y_score=(5, 3))
@@ -79,6 +86,7 @@ class AveragePrecisionResult(BaseResult):
     ...             [0.1, 0.2, 0.7],
     ...         ]
     ...     ),
+    ...     label_type="multiclass",
     ... )
     >>> result
     AveragePrecisionResult(y_true=(6,), y_score=(6, 3))
@@ -93,14 +101,25 @@ class AveragePrecisionResult(BaseResult):
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(self, y_true: np.ndarray, y_score: np.ndarray, label_type: str = "") -> None:
         self._y_true = y_true
         self._y_score = y_score.astype(np.float64)
+        self._label_type = label_type
 
         self._check_inputs()
 
+        # if self._label_type not in {"binary", "multiclass", "multilabel"}:
+        #     msg = (
+        #         f"Incorrect label type: {label_type}. The supported label types are: "
+        #         f"'binary', 'multiclass', 'multilabel'"
+        #     )
+        #     raise ValueError(msg)
+
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, y_score={self._y_score.shape})"
+        return (
+            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
+            f"y_score={self._y_score.shape}, label_type={self._label_type})"
+        )
 
     @property
     def y_true(self) -> np.ndarray:
@@ -224,3 +243,91 @@ class AveragePrecisionResult(BaseResult):
                 f"{self._y_score.shape}"
             )
             raise ValueError(msg)
+
+
+def average_precision_metrics(
+    y_true: np.ndarray,
+    y_score: np.ndarray,
+    label_type: str,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float]:
+    r"""Return the average precision metrics.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples,)`` or
+            ``(n_samples, n_classes)``.
+        y_score: The target scores, can either be probability
+            estimates of the positive class, confidence values,
+            or non-thresholded measure of decisions. This input must
+            be an array of shape ``(n_samples,)`` or
+            ``(n_samples, n_classes)``.
+        label_type: The type of labels used to evaluate the metrics.
+            The valid values are: ``'binary'``, ``'multiclass'``,
+            and ``'multilabel'``. If ``'binary'`` or ``'multilabel'``,
+            ``y_true`` values  must be ``0`` and ``1``.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+    """
+    if label_type == "multilabel":
+        return multilabel_average_precision_metrics(
+            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
+        )
+    msg = (
+        f"Incorrect label type: {label_type}. The supported label types are: "
+        f"'binary', 'multiclass', 'multilabel'"
+    )
+    raise RuntimeError(msg)
+
+
+def multilabel_average_precision_metrics(
+    y_true: np.ndarray,
+    y_score: np.ndarray,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float]:
+    r"""Return the average precision metrics for multilabel labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        y_score: The target scores, can either be probability
+            estimates of the positive class, confidence values,
+            or non-thresholded measure of decisions. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+    """
+    n_samples = y_true.shape[0]
+    macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
+    ap = np.full((y_true.shape[1] if y_true.ndim == 2 else 1,), fill_value=float("nan"))
+    if n_samples > 0:
+        macro_ap = float(
+            metrics.average_precision_score(y_true=y_true, y_score=y_score, average="macro")
+        )
+        micro_ap = float(
+            metrics.average_precision_score(y_true=y_true, y_score=y_score, average="micro")
+        )
+        weighted_ap = float(
+            metrics.average_precision_score(y_true=y_true, y_score=y_score, average="weighted")
+        )
+        ap = np.asarray(
+            metrics.average_precision_score(y_true=y_true, y_score=y_score, average=None)
+        ).ravel()
+
+    return {
+        f"{prefix}average_precision{suffix}": ap,
+        f"{prefix}count{suffix}": n_samples,
+        f"{prefix}macro_average_precision{suffix}": macro_ap,
+        f"{prefix}micro_average_precision{suffix}": micro_ap,
+        f"{prefix}weighted_average_precision{suffix}": weighted_ap,
+    }
