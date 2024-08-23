@@ -2,11 +2,7 @@ r"""Implement the average precision result."""
 
 from __future__ import annotations
 
-__all__ = [
-    "AveragePrecisionResult",
-    "average_precision_metrics",
-    "multilabel_average_precision_metrics",
-]
+__all__ = ["AveragePrecisionResult", "average_precision_metrics"]
 
 from typing import Any
 
@@ -274,18 +270,18 @@ def average_precision_metrics(
     Returns:
         The computed metrics.
     """
-    if label_type == "multilabel":
-        return multilabel_average_precision_metrics(
+    if label_type in {"multiclass", "multilabel"}:
+        return _multi_average_precision_metrics(
             y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
         )
     msg = (
-        f"Incorrect label type: {label_type}. The supported label types are: "
+        f"Incorrect label type: '{label_type}'. The supported label types are: "
         f"'binary', 'multiclass', 'multilabel'"
     )
     raise RuntimeError(msg)
 
 
-def multilabel_average_precision_metrics(
+def _multi_average_precision_metrics(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
@@ -312,8 +308,8 @@ def multilabel_average_precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result.ap import multilabel_average_precision_metrics
-    >>> metrics = multilabel_average_precision_metrics(
+    >>> from arkas.result.ap import _multi_average_precision_metrics
+    >>> metrics = _multi_average_precision_metrics(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
     ... )
