@@ -335,6 +335,90 @@ def test_precision_metrics_binary_incorrect_shape() -> None:
         )
 
 
+def test_precision_metrics_multiclass_correct_1d() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2]),
+            label_type="multiclass",
+        ),
+        {
+            "precision": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
+        },
+    )
+
+
+def test_precision_metrics_multiclass_correct_2d() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]),
+            y_pred=np.array([[0, 0, 1], [1, 2, 2]]),
+            label_type="multiclass",
+        ),
+        {
+            "precision": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
+        },
+    )
+
+
+def test_precision_metrics_multiclass_incorrect() -> None:
+    assert objects_are_allclose(
+        precision_metrics(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 1, 1]),
+            label_type="multiclass",
+        ),
+        {
+            "precision": np.array([1.0, 0.5, 0.0]),
+            "count": 6,
+            "macro_precision": 0.5,
+            "micro_precision": 0.6666666666666666,
+            "weighted_precision": 0.5,
+        },
+    )
+
+
+def test_precision_metrics_multiclass_empty() -> None:
+    assert objects_are_allclose(
+        precision_metrics(y_true=np.array([]), y_pred=np.array([]), label_type="multiclass"),
+        {
+            "precision": np.array([]),
+            "count": 0,
+            "macro_precision": float("nan"),
+            "micro_precision": float("nan"),
+            "weighted_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_precision_metrics_multiclass_prefix_suffix() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2]),
+            label_type="multiclass",
+            prefix="prefix_",
+            suffix="_suffix",
+        ),
+        {
+            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
+            "prefix_count_suffix": 6,
+            "prefix_macro_precision_suffix": 1.0,
+            "prefix_micro_precision_suffix": 1.0,
+            "prefix_weighted_precision_suffix": 1.0,
+        },
+    )
+
+
 def test_precision_metrics_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect label type: 'incorrect'"):
         precision_metrics(
