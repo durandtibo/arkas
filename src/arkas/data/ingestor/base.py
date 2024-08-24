@@ -34,11 +34,10 @@ class BaseIngestor(ABC, metaclass=AbstractFactory):
     >>> ingestor
     DataFrameIngestor(
       (ingestor): Ingestor(shape=(5, 3))
-      (out_key): frame
     )
     >>> data = ingestor.ingest()
     >>> data
-    {'frame': shape: (5, 3)
+    shape: (5, 3)
     ┌──────┬──────┬──────┐
     │ col1 ┆ col2 ┆ col3 │
     │ ---  ┆ ---  ┆ ---  │
@@ -49,7 +48,7 @@ class BaseIngestor(ABC, metaclass=AbstractFactory):
     │ 3    ┆ 3    ┆ c    │
     │ 4    ┆ 4    ┆ d    │
     │ 5    ┆ 5    ┆ e    │
-    └──────┴──────┴──────┘}
+    └──────┴──────┴──────┘
 
     ```
     """
@@ -77,7 +76,7 @@ class BaseIngestor(ABC, metaclass=AbstractFactory):
         >>> ingestor = DataFrameIngestor(ingestor=Ingestor(frame))
         >>> data = ingestor.ingest()
         >>> data
-        {'frame': shape: (5, 3)
+        shape: (5, 3)
         ┌──────┬──────┬──────┐
         │ col1 ┆ col2 ┆ col3 │
         │ ---  ┆ ---  ┆ ---  │
@@ -88,7 +87,7 @@ class BaseIngestor(ABC, metaclass=AbstractFactory):
         │ 3    ┆ 3    ┆ c    │
         │ 4    ┆ 4    ┆ d    │
         │ 5    ┆ 5    ┆ e    │
-        └──────┴──────┴──────┘}
+        └──────┴──────┴──────┘
 
         ```
         """
@@ -153,7 +152,6 @@ def setup_ingestor(
     >>> ingestor
     DataFrameIngestor(
       (ingestor): Ingestor(shape=(0, 0))
-      (out_key): frame
     )
 
     ```
