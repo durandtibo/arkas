@@ -285,7 +285,7 @@ def average_precision_metrics(
         )
     msg = (
         f"Incorrect label type: '{label_type}'. The supported label types are: "
-        f"'binary', 'multiclass', 'multilabel'"
+        f"'binary', 'multiclass', 'multilabel', and 'auto'"
     )
     raise RuntimeError(msg)
 

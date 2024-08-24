@@ -2,7 +2,7 @@ r"""Implement the precision result."""
 
 from __future__ import annotations
 
-__all__ = ["PrecisionResult"]
+__all__ = ["PrecisionResult", "precision_metrics"]
 
 from typing import Any
 
@@ -209,3 +209,71 @@ class PrecisionResult(BaseResult):
                 f"{self._y_pred.shape}"
             )
             raise ValueError(msg)
+
+
+def precision_metrics(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    *,
+    label_type: str = "auto",
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float]:
+    r"""Return the precision metrics.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples,)`` or
+            ``(n_samples, n_classes)``.
+        y_pred: The predicted labels. This input must be an array of
+            shape ``(n_samples,)`` or ``(n_samples, n_classes)``.
+        label_type: The type of labels used to evaluate the metrics.
+            The valid values are: ``'binary'``, ``'multiclass'``,
+            and ``'multilabel'``. If ``'binary'`` or ``'multilabel'``,
+            ``y_true`` values  must be ``0`` and ``1``.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+    """
+    if label_type == "binary":
+        return _binary_precision_metrics(
+            y_true=y_true.ravel(), y_pred=y_pred.ravel(), prefix=prefix, suffix=suffix
+        )
+    msg = (
+        f"Incorrect label type: '{label_type}'. The supported label types are: "
+        f"'binary', 'multiclass', 'multilabel', and 'auto'"
+    )
+    raise RuntimeError(msg)
+
+
+def _binary_precision_metrics(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float]:
+    r"""Return the precision metrics for binary labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples,)``.
+        y_pred: The predicted labels. This input must
+            be an array of shape ``(n_samples,)``.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+    """
+    if y_true.shape != y_pred.shape:
+        msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
+        raise RuntimeError(msg)
+
+    count = y_true.size
+    precision = float("nan")
+    if count > 0:
+        precision = float(metrics.precision_score(y_true=y_true, y_pred=y_pred))
+    return {f"{prefix}precision{suffix}": precision, f"{prefix}count{suffix}": count}

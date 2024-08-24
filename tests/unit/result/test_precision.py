@@ -5,6 +5,7 @@ import pytest
 from coola import objects_are_allclose, objects_are_equal
 
 from arkas.result import PrecisionResult
+from arkas.result.precision import precision_metrics
 
 #####################################
 #     Tests for PrecisionResult     #
@@ -268,3 +269,76 @@ def test_precision_result_generate_figures() -> None:
 def test_precision_result_generate_figures_empty() -> None:
     result = PrecisionResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(result.generate_figures(), {})
+
+
+#######################################
+#     Tests for precision_metrics     #
+#######################################
+
+
+def test_precision_metrics_binary_correct_1d() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), label_type="binary"
+        ),
+        {"count": 5, "precision": 1.0},
+    )
+
+
+def test_precision_metrics_binary_correct_2d() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]),
+            y_pred=np.array([[1, 0, 0], [1, 1, 1]]),
+            label_type="binary",
+        ),
+        {"count": 6, "precision": 1.0},
+    )
+
+
+def test_precision_metrics_binary_incorrect() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([1, 0, 0, 1]), y_pred=np.array([1, 0, 1, 0]), label_type="binary"
+        ),
+        {"count": 4, "precision": 0.5},
+    )
+
+
+def test_precision_metrics_binary_empty() -> None:
+    assert objects_are_equal(
+        precision_metrics(y_true=np.array([]), y_pred=np.array([]), label_type="binary"),
+        {"count": 0, "precision": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_precision_metrics_binary_prefix_suffix() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            label_type="binary",
+            prefix="prefix_",
+            suffix="_suffix",
+        ),
+        {"prefix_count_suffix": 5, "prefix_precision_suffix": 1.0},
+    )
+
+
+def test_precision_metrics_binary_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes:"):
+        precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1, 0]),
+            label_type="binary",
+        )
+
+
+def test_precision_metrics_label_type_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect label type: 'incorrect'"):
+        precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            label_type="incorrect",
+        )
