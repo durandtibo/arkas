@@ -38,29 +38,11 @@ def test_dataframe_ingestor_ingest(ingestor: BaseIngestor) -> None:
     data = DataFrameIngestor(ingestor=ingestor).ingest()
     assert objects_are_equal(
         data,
-        {
-            "frame": pl.DataFrame(
-                {
-                    "col1": [1, 2, 3, 4, 5],
-                    "col2": ["1", "2", "3", "4", "5"],
-                    "col3": ["a", "b", "c", "d", "e"],
-                }
-            )
-        },
-    )
-
-
-def test_dataframe_ingestor_ingest_out_key(ingestor: BaseIngestor) -> None:
-    data = DataFrameIngestor(ingestor=ingestor, out_key="out").ingest()
-    assert objects_are_equal(
-        data,
-        {
-            "out": pl.DataFrame(
-                {
-                    "col1": [1, 2, 3, 4, 5],
-                    "col2": ["1", "2", "3", "4", "5"],
-                    "col3": ["a", "b", "c", "d", "e"],
-                }
-            )
-        },
+        pl.DataFrame(
+            {
+                "col1": [1, 2, 3, 4, 5],
+                "col2": ["1", "2", "3", "4", "5"],
+                "col3": ["a", "b", "c", "d", "e"],
+            }
+        ),
     )

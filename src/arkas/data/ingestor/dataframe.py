@@ -4,11 +4,16 @@ from __future__ import annotations
 
 __all__ = ["DataFrameIngestor"]
 
+from typing import TYPE_CHECKING
+
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from grizz.ingestor import BaseIngestor as BaseDataFrameIngestor
 from grizz.ingestor import setup_ingestor
 
 from arkas.data.ingestor.base import BaseIngestor
+
+if TYPE_CHECKING:
+    import polars as pl
 
 
 class DataFrameIngestor(BaseIngestor):
@@ -16,7 +21,6 @@ class DataFrameIngestor(BaseIngestor):
 
     Args:
         ingestor: The DataFrame ingestor or its configuration.
-        out_key: The key of the DataFrame in the output dictionary.
 
     Example usage:
 
@@ -36,11 +40,10 @@ class DataFrameIngestor(BaseIngestor):
     >>> ingestor
     DataFrameIngestor(
       (ingestor): Ingestor(shape=(5, 3))
-      (out_key): frame
     )
     >>> data = ingestor.ingest()
     >>> data
-    {'frame': shape: (5, 3)
+    shape: (5, 3)
     ┌──────┬──────┬──────┐
     │ col1 ┆ col2 ┆ col3 │
     │ ---  ┆ ---  ┆ ---  │
@@ -51,37 +54,21 @@ class DataFrameIngestor(BaseIngestor):
     │ 3    ┆ 3    ┆ c    │
     │ 4    ┆ 4    ┆ d    │
     │ 5    ┆ 5    ┆ e    │
-    └──────┴──────┴──────┘}
+    └──────┴──────┴──────┘
 
     ```
     """
 
-    def __init__(self, ingestor: BaseDataFrameIngestor | dict, out_key: str = "frame") -> None:
+    def __init__(self, ingestor: BaseDataFrameIngestor | dict) -> None:
         self._ingestor = setup_ingestor(ingestor)
-        self._out_key = out_key
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "ingestor": self._ingestor,
-                    "out_key": self._out_key,
-                }
-            )
-        )
+        args = repr_indent(repr_mapping({"ingestor": self._ingestor}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def __str__(self) -> str:
-        args = str_indent(
-            str_mapping(
-                {
-                    "ingestor": self._ingestor,
-                    "out_key": self._out_key,
-                }
-            )
-        )
+        args = str_indent(str_mapping({"ingestor": self._ingestor}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    def ingest(self) -> dict:
-        frame = self._ingestor.ingest()
-        return {self._out_key: frame}
+    def ingest(self) -> pl.DataFrame:
+        return self._ingestor.ingest()
