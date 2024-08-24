@@ -198,38 +198,32 @@ def precision_metrics(
     >>> import numpy as np
     >>> from arkas.result.precision import precision_metrics
     >>> # auto
-    >>> metrics = precision_metrics(
-    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
-    ... )
-    >>> metrics
+    >>> precision_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
     {'count': 5, 'precision': 1.0}
     >>> # binary
-    >>> metrics = precision_metrics(
+    >>> precision_metrics(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
     ...     y_pred=np.array([1, 0, 0, 1, 1]),
     ...     label_type="binary",
     ... )
-    >>> metrics
     {'count': 5, 'precision': 1.0}
     >>> # multiclass
-    >>> metrics = precision_metrics(
+    >>> precision_metrics(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ...     label_type="multiclass",
     ... )
-    >>> metrics
     {'count': 6,
      'macro_precision': 1.0,
      'micro_precision': 1.0,
      'precision': array([1., 1., 1.]),
      'weighted_precision': 1.0}
     >>> # multilabel
-    >>> metrics = precision_metrics(
+    >>> precision_metrics(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     label_type="multilabel",
     ... )
-    >>> metrics
     {'count': 5,
      'macro_precision': 1.0,
      'micro_precision': 1.0,
