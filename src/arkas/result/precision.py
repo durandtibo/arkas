@@ -236,6 +236,47 @@ def precision_metrics(
 
     Returns:
         The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.result.precision import precision_metrics
+    >>> # binary
+    >>> metrics = precision_metrics(
+    ...     y_true=np.array([1, 0, 0, 1, 1]),
+    ...     y_pred=np.array([1, 0, 0, 1, 1]),
+    ...     label_type="binary",
+    ... )
+    >>> metrics
+    {'count': 5, 'precision': 1.0}
+    >>> # multiclass
+    >>> metrics = precision_metrics(
+    ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
+    ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
+    ...     label_type="multiclass",
+    ... )
+    >>> metrics
+    {'count': 6,
+     'macro_precision': 1.0,
+     'micro_precision': 1.0,
+     'precision': array([1., 1., 1.]),
+     'weighted_precision': 1.0}
+    >>> # multilabel
+    >>> metrics = precision_metrics(
+    ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     label_type="multilabel",
+    ... )
+    >>> metrics
+    {'count': 5,
+     'macro_precision': 1.0,
+     'micro_precision': 1.0,
+     'precision': array([1., 1., 1.]),
+     'weighted_precision': 1.0}
+
+    ```
     """
     if label_type == "binary":
         return _binary_precision_metrics(
@@ -244,6 +285,10 @@ def precision_metrics(
     if label_type == "multiclass":
         return _multiclass_precision_metrics(
             y_true=y_true.ravel(), y_pred=y_pred.ravel(), prefix=prefix, suffix=suffix
+        )
+    if label_type == "multilabel":
+        return _multilabel_precision_metrics(
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix
         )
     msg = (
         f"Incorrect label type: '{label_type}'. The supported label types are: "
@@ -280,7 +325,7 @@ def _binary_precision_metrics(
     precision = float("nan")
     if count > 0:
         precision = float(metrics.precision_score(y_true=y_true, y_pred=y_pred))
-    return {f"{prefix}precision{suffix}": precision, f"{prefix}count{suffix}": count}
+    return {f"{prefix}count{suffix}": count, f"{prefix}precision{suffix}": precision}
 
 
 def _multiclass_precision_metrics(
@@ -321,9 +366,59 @@ def _multiclass_precision_metrics(
             metrics.precision_score(y_true=y_true, y_pred=y_pred, average=None)
         ).ravel()
     return {
-        f"{prefix}precision{suffix}": precision,
         f"{prefix}count{suffix}": n_samples,
         f"{prefix}macro_precision{suffix}": macro_precision,
         f"{prefix}micro_precision{suffix}": micro_precision,
+        f"{prefix}precision{suffix}": precision,
+        f"{prefix}weighted_precision{suffix}": weighted_precision,
+    }
+
+
+def _multilabel_precision_metrics(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float]:
+    r"""Return the precision metrics for multilabel labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        y_pred: The predicted labels. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+    """
+    n_samples = y_true.shape[0]
+    n_classes = y_pred.shape[1] if y_pred.ndim == 2 else 0 if n_samples == 0 else 1
+    precision = np.full((n_classes,), fill_value=float("nan"))
+    macro_precision, micro_precision, weighted_precision = [float("nan")] * 3
+    if n_samples > 0:
+        precision = np.array(
+            metrics.precision_score(
+                y_true=y_true,
+                y_pred=y_pred,
+                average="binary" if n_classes == 1 else None,
+            )
+        ).ravel()
+        macro_precision = float(
+            metrics.precision_score(y_true=y_true, y_pred=y_pred, average="macro")
+        )
+        micro_precision = float(
+            metrics.precision_score(y_true=y_true, y_pred=y_pred, average="micro")
+        )
+        weighted_precision = float(
+            metrics.precision_score(y_true=y_true, y_pred=y_pred, average="weighted")
+        )
+    return {
+        f"{prefix}count{suffix}": n_samples,
+        f"{prefix}macro_precision{suffix}": macro_precision,
+        f"{prefix}micro_precision{suffix}": micro_precision,
+        f"{prefix}precision{suffix}": precision,
         f"{prefix}weighted_precision{suffix}": weighted_precision,
     }
