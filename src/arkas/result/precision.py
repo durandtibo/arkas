@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __all__ = ["PrecisionResult", "precision_metrics", "find_label_type"]
 
+import math
 from typing import Any
 
 import numpy as np
@@ -421,6 +422,7 @@ def find_label_type(y_true: np.ndarray, y_pred: np.ndarray) -> str:
     ```
     """
     unique = set(np.unique(y_true).tolist())
+    unique = set(filter(lambda x: not math.isnan(x), unique))  # remove NaN
     if unique.issubset({0, 1}):
         if y_true.ndim == 2 and y_pred.ndim == 2:
             return "multilabel"

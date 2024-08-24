@@ -551,9 +551,69 @@ def test_find_label_type_binary() -> None:
     )
 
 
+def test_find_label_type_binary_nans() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
+        )
+        == "binary"
+    )
+
+
+def test_find_label_type_binary_y_true_nan() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, 1]),
+        )
+        == "binary"
+    )
+
+
+def test_find_label_type_binary_y_pred_nan() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([1, 0, 0, 1, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        )
+        == "binary"
+    )
+
+
 def test_find_label_type_multiclass() -> None:
     assert (
         find_label_type(y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2]))
+        == "multiclass"
+    )
+
+
+def test_find_label_type_multiclass_nans() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        )
+        == "multiclass"
+    )
+
+
+def test_find_label_type_multiclass_y_true_nan() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, 1]),
+        )
+        == "multiclass"
+    )
+
+
+def test_find_label_type_multiclass_y_pred_nan() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([0, 0, 1, 1, 2, 2, 1]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        )
         == "multiclass"
     )
 
@@ -563,6 +623,36 @@ def test_find_label_type_multilabel() -> None:
         find_label_type(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        )
+        == "multilabel"
+    )
+
+
+def test_find_label_type_multilabel_nans() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, float("nan")]]),
+        )
+        == "multilabel"
+    )
+
+
+def test_find_label_type_multilabel_y_true_nan() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 1]]),
+        )
+        == "multilabel"
+    )
+
+
+def test_find_label_type_multilabel_y_pred_nan() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, float("nan"), 1]]),
         )
         == "multilabel"
     )
