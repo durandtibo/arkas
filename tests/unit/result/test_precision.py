@@ -276,6 +276,13 @@ def test_precision_result_generate_figures_empty() -> None:
 #######################################
 
 
+def test_precision_metrics() -> None:
+    assert objects_are_equal(
+        precision_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
+        {"count": 5, "precision": 1.0},
+    )
+
+
 def test_precision_metrics_binary_correct_1d() -> None:
     assert objects_are_equal(
         precision_metrics(

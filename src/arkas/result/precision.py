@@ -243,6 +243,12 @@ def precision_metrics(
 
     >>> import numpy as np
     >>> from arkas.result.precision import precision_metrics
+    >>> # auto
+    >>> metrics = precision_metrics(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ... )
+    >>> metrics
+    {'count': 5, 'precision': 1.0}
     >>> # binary
     >>> metrics = precision_metrics(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
@@ -278,6 +284,8 @@ def precision_metrics(
 
     ```
     """
+    if label_type == "auto":
+        label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
         return _binary_precision_metrics(
             y_true=y_true.ravel(), y_pred=y_pred.ravel(), prefix=prefix, suffix=suffix
