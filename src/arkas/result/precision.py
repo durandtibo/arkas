@@ -390,12 +390,12 @@ def find_label_type(y_true: np.ndarray, y_pred: np.ndarray) -> str:
     r"""Try to find the label type automatically based on the arrays'
     shape and values.
 
+    Note:
+        NaN are used to indicate invalid/missing values.
+
     Args:
-        y_true: The ground truth target labels. This input must
-            be an array of shape ``(n_samples,)`` or
-            ``(n_samples, n_classes)``.
-        y_pred: The predicted labels. This input must be an array of
-            shape ``(n_samples,)`` or ``(n_samples, n_classes)``.
+        y_true: The ground truth target labels.
+        y_pred: The predicted labels.
 
     Returns:
         The label type.
@@ -421,8 +421,8 @@ def find_label_type(y_true: np.ndarray, y_pred: np.ndarray) -> str:
 
     ```
     """
-    unique = set(np.unique(y_true).tolist())
-    unique = set(filter(lambda x: not math.isnan(x), unique))  # remove NaN
+    # remove NaNs because they indicate missing values
+    unique = set(filter(lambda x: not math.isnan(x), np.unique(y_true).tolist()))
     if unique.issubset({0, 1}):
         if y_true.ndim == 2 and y_pred.ndim == 2:
             return "multilabel"
