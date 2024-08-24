@@ -325,6 +325,39 @@ def test_precision_metrics_binary_incorrect() -> None:
     )
 
 
+def test_precision_metrics_binary_nans() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
+            label_type="binary",
+        ),
+        {"count": 4, "precision": 1.0},
+    )
+
+
+def test_precision_metrics_binary_y_true_nan() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, 1]),
+            label_type="binary",
+        ),
+        {"count": 5, "precision": 1.0},
+    )
+
+
+def test_precision_metrics_binary_y_pred_nan() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([1, 0, 0, 1, 1, 0]),
+            y_pred=np.array([1, 0, 0, 1, float("nan"), 0]),
+            label_type="binary",
+        ),
+        {"count": 5, "precision": 1.0},
+    )
+
+
 def test_precision_metrics_binary_empty() -> None:
     assert objects_are_equal(
         precision_metrics(y_true=np.array([]), y_pred=np.array([]), label_type="binary"),
@@ -402,6 +435,57 @@ def test_precision_metrics_multiclass_incorrect() -> None:
             "macro_precision": 0.5,
             "micro_precision": 0.6666666666666666,
             "weighted_precision": 0.5,
+        },
+    )
+
+
+def test_precision_metrics_multiclass_nans() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
+            label_type="multiclass",
+        ),
+        {
+            "precision": np.array([1.0, 1.0, 1.0]),
+            "count": 5,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
+        },
+    )
+
+
+def test_precision_metrics_multiclass_y_true_nans() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
+            label_type="multiclass",
+        ),
+        {
+            "precision": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
+        },
+    )
+
+
+def test_precision_metrics_multiclass_y_pred_nans() -> None:
+    assert objects_are_equal(
+        precision_metrics(
+            y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
+            label_type="multiclass",
+        ),
+        {
+            "precision": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
         },
     )
 
@@ -488,6 +572,28 @@ def test_precision_metrics_multilabel_3_classes() -> None:
             "weighted_precision": 0.625,
         },
     )
+
+
+# def test_precision_metrics_multilabel_nans() -> None:
+#     assert objects_are_allclose(
+#         precision_metrics(
+#             y_true=np.array(
+#                 [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+#             ),
+#             y_pred=np.array(
+#                 [[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0], [0, 0, float("nan")]]
+#             ),
+#             label_type="multilabel",
+#         ),
+#         {
+#             "precision": np.array([1.0, 1.0, 0.0]),
+#             "count": 6,
+#             "macro_precision": 0.6666666666666666,
+#             "micro_precision": 0.7142857142857143,
+#             "weighted_precision": 0.625,
+#         },
+#         show_difference=True,
+#     )
 
 
 def test_precision_metrics_multilabel_empty() -> None:

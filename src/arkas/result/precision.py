@@ -283,8 +283,11 @@ def _binary_precision_metrics(
         msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
         raise RuntimeError(msg)
 
-    count = y_true.size
-    precision = float("nan")
+    # Ignore samples that have NaN values.
+    mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_pred)))
+    y_true, y_pred = y_true[mask], y_pred[mask]
+
+    count, precision = y_true.size, float("nan")
     if count > 0:
         precision = float(metrics.precision_score(y_true=y_true, y_pred=y_pred))
     return {f"{prefix}count{suffix}": count, f"{prefix}precision{suffix}": precision}
@@ -310,8 +313,12 @@ def _multiclass_precision_metrics(
     Returns:
         The computed metrics.
     """
+    # Ignore samples that have NaN values.
+    mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_pred)))
+    y_true, y_pred = y_true[mask], y_pred[mask]
+
     n_samples = y_true.shape[0]
-    macro_precision, micro_precision, weighted_precision = [float("nan")] * 3
+    macro_precision, micro_precision, weighted_precision = float("nan"), float("nan"), float("nan")
     n_classes = y_pred.shape[1] if y_pred.ndim == 2 else 0 if n_samples == 0 else 1
     precision = np.full((n_classes,), fill_value=float("nan"))
     if n_samples > 0:
