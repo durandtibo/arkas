@@ -2,7 +2,7 @@ r"""Implement the precision result."""
 
 from __future__ import annotations
 
-__all__ = ["PrecisionResult", "precision_metrics"]
+__all__ = ["PrecisionResult", "precision_metrics", "find_label_type"]
 
 from typing import Any
 
@@ -422,3 +422,46 @@ def _multilabel_precision_metrics(
         f"{prefix}precision{suffix}": precision,
         f"{prefix}weighted_precision{suffix}": weighted_precision,
     }
+
+
+def find_label_type(y_true: np.ndarray, y_pred: np.ndarray) -> str:
+    r"""Try to find the label type automatically based on the arrays'
+    shape and values.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples,)`` or
+            ``(n_samples, n_classes)``.
+        y_pred: The predicted labels. This input must be an array of
+            shape ``(n_samples,)`` or ``(n_samples, n_classes)``.
+
+    Returns:
+        The label type.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.result.precision import find_label_type
+    >>> # binary
+    >>> label_type = find_label_type(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ... )
+    >>> label_type
+    'binary'
+    >>> # multiclass
+    >>> label_type = find_label_type(
+    ...     y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    ... )
+    >>> label_type
+    'multiclass'
+
+    ```
+    """
+    unique = set(np.unique(y_true).tolist())
+    if unique.issubset({0, 1}):
+        if y_true.ndim == 2 and y_pred.ndim == 2:
+            return "multilabel"
+        return "binary"
+    return "multiclass"

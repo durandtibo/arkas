@@ -5,7 +5,7 @@ import pytest
 from coola import objects_are_allclose, objects_are_equal
 
 from arkas.result import PrecisionResult
-from arkas.result.precision import precision_metrics
+from arkas.result.precision import find_label_type, precision_metrics
 
 #####################################
 #     Tests for PrecisionResult     #
@@ -514,3 +514,35 @@ def test_precision_metrics_label_type_incorrect() -> None:
             y_pred=np.array([1, 0, 0, 1, 1]),
             label_type="incorrect",
         )
+
+
+#####################################
+#     Tests for find_label_type     #
+#####################################
+
+
+def test_find_label_type_binary() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+        )
+        == "binary"
+    )
+
+
+def test_find_label_type_multiclass() -> None:
+    assert (
+        find_label_type(y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2]))
+        == "multiclass"
+    )
+
+
+def test_find_label_type_multilabel() -> None:
+    assert (
+        find_label_type(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        )
+        == "multilabel"
+    )
