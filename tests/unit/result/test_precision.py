@@ -54,9 +54,22 @@ def test_precision_result_y_pred_incorrect_ndim() -> None:
         PrecisionResult(y_true=np.ones((2, 3)), y_pred=np.ones((2, 3, 4)))
 
 
-def test_precision_result_incorrect_shape() -> None:
-    with pytest.raises(ValueError, match="'y_true' and 'y_pred' have different shapes"):
-        PrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1, 0]))
+def test_precision_result_label_type() -> None:
+    assert (
+        PrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+        ).label_type
+        == "binary"
+    )
+
+
+def test_precision_result_incorrect_label_type() -> None:
+    with pytest.raises(ValueError, match="Incorrect label type: 'incorrect'"):
+        PrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            label_type="incorrect",
+        )
 
 
 def test_precision_result_repr() -> None:
@@ -166,9 +179,9 @@ def test_precision_result_compute_metrics_multiclass_incorrect() -> None:
 
 
 def test_precision_result_compute_metrics_multiclass_empty() -> None:
-    result = PrecisionResult(y_true=np.array([]), y_pred=np.ones([]))
+    result = PrecisionResult(y_true=np.array([]), y_pred=np.array([]), label_type="multiclass")
     assert objects_are_equal(
-        result._compute_multiclass_metrics(),
+        result.compute_metrics(),
         {
             "precision": np.array([]),
             "count": 0,
