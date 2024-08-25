@@ -2,13 +2,19 @@ r"""Implement the average precision result."""
 
 from __future__ import annotations
 
-__all__ = ["average_precision_metrics", "find_label_type"]
+__all__ = [
+    "average_precision_metrics",
+    "find_label_type",
+    "binary_average_precision_metrics",
+    "multiclass_average_precision_metrics",
+    "multilabel_average_precision_metrics",
+]
 
 
 import numpy as np
 from sklearn import metrics
 
-from arkas.metric.utils import multi_isnan
+from arkas.metric.utils import check_label_type, multi_isnan
 
 
 def average_precision_metrics(
@@ -96,28 +102,23 @@ def average_precision_metrics(
 
     ```
     """
+    check_label_type(label_type)
     if label_type == "auto":
         label_type = find_label_type(y_true=y_true, y_score=y_score)
     if label_type == "binary":
-        return _binary_average_precision_metrics(
-            y_true=y_true.ravel(), y_score=y_score.ravel(), prefix=prefix, suffix=suffix
-        )
-    if label_type == "multiclass":
-        return _multiclass_average_precision_metrics(
+        return binary_average_precision_metrics(
             y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
         )
     if label_type == "multilabel":
-        return _multi_average_precision_metrics(
+        return multilabel_average_precision_metrics(
             y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
         )
-    msg = (
-        f"Incorrect label type: '{label_type}'. The supported label types are: "
-        f"'binary', 'multiclass', 'multilabel', and 'auto'"
+    return multiclass_average_precision_metrics(
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
     )
-    raise RuntimeError(msg)
 
 
-def _binary_average_precision_metrics(
+def binary_average_precision_metrics(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
@@ -128,22 +129,36 @@ def _binary_average_precision_metrics(
 
     Args:
         y_true: The ground truth target labels. This input must
-            be an array of shape ``(n_samples,)``.
+            be an array of shape ``(n_samples, *)``.
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
-            be an array of shape ``(n_samples,)``.
+            be an array of shape ``(n_samples, *)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
 
     Returns:
         The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric import binary_average_precision_metrics
+    >>> metrics = binary_average_precision_metrics(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ... )
+    >>> metrics
+    {'average_precision': 1.0, 'count': 5}
+
+    ```
     """
     if y_true.shape != y_score.shape:
         msg = f"'y_true' and 'y_score' have different shapes: {y_true.shape} vs {y_score.shape}"
         raise RuntimeError(msg)
 
-    # Remove NaN values
+    y_true, y_score = y_true.ravel(), y_score.ravel()
     mask = np.logical_not(multi_isnan([y_true, y_score]))
     y_true, y_score = y_true[mask], y_score[mask]
 
@@ -154,7 +169,7 @@ def _binary_average_precision_metrics(
     return {f"{prefix}average_precision{suffix}": ap, f"{prefix}count{suffix}": count}
 
 
-def _multiclass_average_precision_metrics(
+def multiclass_average_precision_metrics(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
@@ -162,6 +177,64 @@ def _multiclass_average_precision_metrics(
     suffix: str = "",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics for multiclass labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples,)``.
+        y_score: The target scores, can either be probability
+            estimates of the positive class, confidence values,
+            or non-thresholded measure of decisions. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric import multiclass_average_precision_metrics
+    >>> metrics = multiclass_average_precision_metrics(
+    ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
+    ...     y_score=np.array(
+    ...         [
+    ...             [0.7, 0.2, 0.1],
+    ...             [0.4, 0.3, 0.3],
+    ...             [0.1, 0.8, 0.1],
+    ...             [0.2, 0.3, 0.5],
+    ...             [0.4, 0.4, 0.2],
+    ...             [0.1, 0.2, 0.7],
+    ...         ]
+    ...     ),
+    ... )
+    >>> metrics
+    {'average_precision': array([0.833..., 0.75 , 0.75 ]),
+     'count': 6,
+     'macro_average_precision': 0.777...,
+     'micro_average_precision': 0.75,
+     'weighted_average_precision': 0.777...}
+
+    ```
+    """
+    if y_true.shape[0] > 0:
+        # Remove NaN values
+        mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_score).any(axis=1)))
+        y_true, y_score = y_true[mask], y_score[mask]
+
+    return _average_precision_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
+
+
+def multilabel_average_precision_metrics(
+    y_true: np.ndarray,
+    y_score: np.ndarray,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float | np.ndarray]:
+    r"""Return the average precision metrics for multilabel labels.
 
     Args:
         y_true: The ground truth target labels. This input must
@@ -175,18 +248,30 @@ def _multiclass_average_precision_metrics(
 
     Returns:
         The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric import multilabel_average_precision_metrics
+    >>> metrics = multilabel_average_precision_metrics(
+    ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+    ... )
+    >>> metrics
+    {'average_precision': array([1. , 1. , 0.477...]),
+     'count': 5,
+     'macro_average_precision': 0.825...,
+     'micro_average_precision': 0.588...,
+     'weighted_average_precision': 0.804...}
+
+    ```
     """
-    if y_true.shape[0] > 0:
-        # Remove NaN values
-        mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_score).any(axis=1)))
-        y_true, y_score = y_true[mask], y_score[mask]
-
-    return _multi_average_precision_metrics(
-        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
-    )
+    return _average_precision_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
 
 
-def _multi_average_precision_metrics(
+def _average_precision_metrics(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
