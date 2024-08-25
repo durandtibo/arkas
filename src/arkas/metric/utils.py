@@ -2,7 +2,7 @@ r"""Contain utility functions to compute metrics."""
 
 from __future__ import annotations
 
-__all__ = ["multi_isnan"]
+__all__ = ["multi_isnan", "preprocess_true_pred"]
 
 
 from typing import TYPE_CHECKING
@@ -46,3 +46,31 @@ def multi_isnan(arrays: Sequence[np.ndarray]) -> np.ndarray:
     for arr in arrays[1:]:
         mask = np.logical_or(mask, np.isnan(arr))
     return mask
+
+
+def preprocess_true_pred(
+    y_true: np.ndarray, y_pred: np.ndarray, nan: str = "keep"
+) -> tuple[np.ndarray, np.ndarray]:
+    r"""Preprocess ``y_true`` and ``y_pred`` arrays.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_pred: The predicted labels.
+        nan: Indicate how to process the nan values.
+            If ``'keep'``, the nan values are kept.
+            If ``'remove'``, the nan values are removed.
+
+    Returns:
+        A tuple with the preprocessed ``y_true`` and ``y_pred``
+            arrays.
+
+    Raises:
+        RuntimeError: if an invalid value is passed to ``nan``.
+    """
+    if nan == "keep":
+        return y_true, y_pred
+    if nan == "remove":
+        mask = np.logical_not(multi_isnan([y_true, y_pred]))
+        return y_true[mask], y_pred[mask]
+    msg = f"Incorrect 'nan': {nan}. The valid values are 'keep' and 'remove'"
+    raise RuntimeError(msg)
