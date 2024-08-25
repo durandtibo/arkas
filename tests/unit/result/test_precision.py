@@ -101,6 +101,18 @@ def test_precision_result_equal_false_different_y_pred() -> None:
     ).equal(PrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])))
 
 
+def test_precision_result_equal_false_different_label_type() -> None:
+    assert not PrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(
+        PrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 0]),
+            label_type="multiclass",
+        )
+    )
+
+
 def test_precision_result_equal_false_different_type() -> None:
     assert not PrecisionResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
