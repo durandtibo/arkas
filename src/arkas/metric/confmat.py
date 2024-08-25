@@ -3,8 +3,8 @@ r"""Contain confusion matrix metrics."""
 from __future__ import annotations
 
 __all__ = [
-    "confusion_matrix_metrics",
     "binary_confusion_matrix_metrics",
+    "confusion_matrix_metrics",
     "multiclass_confusion_matrix_metrics",
     "multilabel_confusion_matrix_metrics",
 ]
