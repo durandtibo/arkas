@@ -22,6 +22,7 @@ __all__ = [
     "multiclass_recall_metrics",
     "multiclass_roc_auc_metrics",
     "multilabel_average_precision_metrics",
+    "multilabel_confusion_matrix_metrics",
     "multilabel_jaccard_metrics",
     "multilabel_precision_metrics",
     "multilabel_recall_metrics",
@@ -42,6 +43,7 @@ from arkas.metric.confmat import (
     binary_confusion_matrix_metrics,
     confusion_matrix_metrics,
     multiclass_confusion_matrix_metrics,
+    multilabel_confusion_matrix_metrics,
 )
 from arkas.metric.fbeta import fbeta_metrics
 from arkas.metric.jaccard import (

@@ -6,6 +6,7 @@ __all__ = [
     "confusion_matrix_metrics",
     "binary_confusion_matrix_metrics",
     "multiclass_confusion_matrix_metrics",
+    "multilabel_confusion_matrix_metrics",
 ]
 
 
@@ -69,6 +70,10 @@ def confusion_matrix_metrics(
         label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
         return binary_confusion_matrix_metrics(
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix
+        )
+    if label_type == "multilabel":
+        return multilabel_confusion_matrix_metrics(
             y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix
         )
     return multiclass_confusion_matrix_metrics(
@@ -180,3 +185,50 @@ def multiclass_confusion_matrix_metrics(
         f"{prefix}confusion_matrix{suffix}": metrics.confusion_matrix(y_true=y_true, y_pred=y_pred),
         f"{prefix}count{suffix}": y_true.size,
     }
+
+
+def multilabel_confusion_matrix_metrics(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float | np.ndarray]:
+    r"""Return the confusion matrix metrics for multilabel labels.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_pred: The predicted labels.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric import multilabel_confusion_matrix_metrics
+    >>> multilabel_confusion_matrix_metrics(
+    ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ... )
+    {'confusion_matrix': array([[[2, 0], [0, 3]],
+                                [[3, 0], [0, 2]],
+                                [[2, 0], [0, 3]]]),
+     'count': 5}
+
+    ```
+    """
+    count = y_true.shape[0]
+    if count > 0:
+        n_classes = y_true.shape[1] if y_true.ndim > 1 else 1
+        if n_classes > 1:
+            confmat = metrics.multilabel_confusion_matrix(y_true=y_true, y_pred=y_pred)
+        else:
+            confmat = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred).reshape(1, 2, 2)
+    else:
+        confmat = np.zeros((0, 0, 0), dtype=np.int64)
+    return {f"{prefix}confusion_matrix{suffix}": confmat, f"{prefix}count{suffix}": count}
