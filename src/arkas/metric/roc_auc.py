@@ -8,6 +8,7 @@ __all__ = [
     "multiclass_roc_auc_metrics",
     "multilabel_roc_auc_metrics",
     "roc_auc_metrics",
+    "preprocess_true_score_binary",
 ]
 
 from typing import Any
@@ -16,7 +17,7 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.ap import find_label_type
-from arkas.metric.utils import check_label_type, multi_isnan
+from arkas.metric.utils import check_label_type, preprocess_true_score_binary
 
 
 def roc_auc_metrics(
@@ -142,13 +143,7 @@ def binary_roc_auc_metrics(
     Returns:
         The computed metrics.
     """
-    if y_true.shape != y_score.shape:
-        msg = f"'y_true' and 'y_score' have different shapes: {y_true.shape} vs {y_score.shape}"
-        raise RuntimeError(msg)
-
-    # Remove NaN values
-    mask = np.logical_not(multi_isnan([y_true, y_score]))
-    y_true, y_score = y_true[mask], y_score[mask]
+    y_true, y_score = preprocess_true_score_binary(y_true=y_true, y_score=y_score, nan="remove")
 
     count = y_true.size
     roc_auc = float("nan")

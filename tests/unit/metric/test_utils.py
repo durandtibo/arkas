@@ -9,6 +9,7 @@ from arkas.metric.utils import (
     check_nan_true_pred,
     multi_isnan,
     preprocess_true_pred,
+    preprocess_true_score_binary,
 )
 
 #################################
@@ -154,3 +155,78 @@ def test_check_label_type_valid(label_type: str) -> None:
 def test_check_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
         check_label_type("incorrect")
+
+
+##################################################
+#     Tests for preprocess_true_score_binary     #
+##################################################
+
+
+def test_preprocess_true_score_binary_no_nan() -> None:
+    assert objects_are_equal(
+        preprocess_true_score_binary(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1])
+        ),
+        (np.array([1, 0, 0, 1, 1]), np.array([0, 1, 0, 1, 1])),
+    )
+
+
+def test_preprocess_true_score_binary_keep_nan() -> None:
+    assert objects_are_equal(
+        preprocess_true_score_binary(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_score=np.array([0, 1, 0, 1, float("nan"), 1]),
+        ),
+        (
+            np.array([1, 0, 0, 1, 1, float("nan")]),
+            np.array([0, 1, 0, 1, float("nan"), 1]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_true_score_binary_remove_nan() -> None:
+    assert objects_are_equal(
+        preprocess_true_score_binary(
+            y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
+            y_score=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
+            nan="remove",
+        ),
+        (np.array([1.0, 0.0, 0.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0])),
+    )
+
+
+def test_preprocess_true_score_binary_remove_y_true_nan() -> None:
+    assert objects_are_equal(
+        preprocess_true_score_binary(
+            y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
+            y_score=np.array([0.0, 1.0, 0.0, 1.0, 1.0, 1.0]),
+            nan="remove",
+        ),
+        (np.array([1.0, 0.0, 0.0, 1.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
+    )
+
+
+def test_preprocess_true_score_binary_remove_y_score_nan() -> None:
+    assert objects_are_equal(
+        preprocess_true_score_binary(
+            y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, 0.0]),
+            y_score=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
+            nan="remove",
+        ),
+        (np.array([1.0, 0.0, 0.0, 1.0, 0.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
+    )
+
+
+def test_preprocess_true_score_binary_nan_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
+        preprocess_true_score_binary(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1]), nan="incorrect"
+        )
+
+
+def test_preprocess_true_score_binary_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different shapes"):
+        preprocess_true_score_binary(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1, 0]), nan="keep"
+        )
