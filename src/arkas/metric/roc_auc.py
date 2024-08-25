@@ -80,11 +80,11 @@ def roc_auc_metrics(
     ...     label_type="multiclass",
     ... )
     >>> metrics
-    {'roc_auc': array([0.833..., 0.75 , 0.75 ]),
-     'count': 6,
-     'macro_roc_auc': 0.777...,
-     'micro_roc_auc': 0.75,
-     'weighted_roc_auc': 0.777...}
+    {'count': 6,
+     'macro_roc_auc': 0.833...,
+     'micro_roc_auc': 0.826...,
+     'roc_auc': array([0.9375, 0.8125, 0.75  ]),
+     'weighted_roc_auc': 0.833...}
     >>> # multilabel
     >>> metrics = roc_auc_metrics(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
@@ -92,11 +92,11 @@ def roc_auc_metrics(
     ...     label_type="multilabel",
     ... )
     >>> metrics
-    {'roc_auc': array([1. , 1. , 0.477...]),
-     'count': 5,
-     'macro_roc_auc': 0.825...,
-     'micro_roc_auc': 0.588...,
-     'weighted_roc_auc': 0.804...}
+    {'count': 5,
+     'macro_roc_auc': 0.666...,
+     'micro_roc_auc': 0.544...,
+     'roc_auc': array([1., 1., 0.]),
+     'weighted_roc_auc': 0.625}
 
     ```
     """
