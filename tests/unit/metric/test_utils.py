@@ -119,6 +119,13 @@ def test_preprocess_true_pred_nan_incorrect() -> None:
         )
 
 
+def test_preprocess_true_pred_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        preprocess_true_pred(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1, 0]), nan="keep"
+        )
+
+
 #########################################
 #     Tests for check_nan_true_pred     #
 #########################################

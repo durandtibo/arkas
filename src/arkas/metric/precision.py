@@ -130,10 +130,6 @@ def binary_precision_metrics(
 
     ```
     """
-    if y_true.shape != y_pred.shape:
-        msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
-        raise RuntimeError(msg)
-
     y_true, y_pred = preprocess_true_pred(
         y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
     )

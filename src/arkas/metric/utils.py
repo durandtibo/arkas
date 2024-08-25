@@ -66,6 +66,8 @@ def preprocess_true_pred(
 
     Raises:
         RuntimeError: if an invalid value is passed to ``nan``.
+        RuntimeError: ``'y_true'`` and ``'y_pred'`` have different
+            shapes.
 
     Example usage:
 
@@ -83,6 +85,11 @@ def preprocess_true_pred(
     ```
     """
     check_nan_true_pred(nan)
+
+    if y_true.shape != y_pred.shape:
+        msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
+        raise RuntimeError(msg)
+
     if nan == "keep":
         return y_true, y_pred
     mask = np.logical_not(multi_isnan([y_true, y_pred]))
