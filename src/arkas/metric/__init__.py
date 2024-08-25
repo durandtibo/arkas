@@ -10,6 +10,7 @@ __all__ = [
     "jaccard_metrics",
     "precision_metrics",
     "recall_metrics",
+    "roc_auc_metrics",
 ]
 
 from arkas.metric.accuracy import accuracy_metrics, balanced_accuracy_metrics
@@ -18,3 +19,4 @@ from arkas.metric.fbeta import fbeta_metrics
 from arkas.metric.jaccard import jaccard_metrics
 from arkas.metric.precision import precision_metrics
 from arkas.metric.recall import recall_metrics
+from arkas.metric.roc_auc import roc_auc_metrics
