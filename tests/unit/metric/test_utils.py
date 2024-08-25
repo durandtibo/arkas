@@ -4,7 +4,12 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from arkas.metric.utils import check_nan_true_pred, multi_isnan, preprocess_true_pred
+from arkas.metric.utils import (
+    check_label_type,
+    check_nan_true_pred,
+    multi_isnan,
+    preprocess_true_pred,
+)
 
 #################################
 #     Tests for multi_isnan     #
@@ -127,3 +132,18 @@ def test_check_nan_true_pred_valid() -> None:
 def test_check_nan_true_pred_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
         check_nan_true_pred(nan="incorrect")
+
+
+######################################
+#     Tests for check_label_type     #
+######################################
+
+
+@pytest.mark.parametrize("label_type", ["binary", "multiclass", "multilabel", "auto"])
+def test_check_label_type_valid(label_type: str) -> None:
+    check_label_type(label_type)
+
+
+def test_check_label_type_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+        check_label_type("incorrect")

@@ -2,7 +2,7 @@ r"""Contain utility functions to compute metrics."""
 
 from __future__ import annotations
 
-__all__ = ["check_nan_true_pred", "multi_isnan", "preprocess_true_pred"]
+__all__ = ["check_nan_true_pred", "multi_isnan", "preprocess_true_pred", "check_label_type"]
 
 
 from typing import TYPE_CHECKING
@@ -110,4 +110,32 @@ def check_nan_true_pred(nan: str) -> None:
     """
     if nan not in {"keep", "remove"}:
         msg = f"Incorrect 'nan': {nan}. The valid values are 'keep' and 'remove'"
+        raise RuntimeError(msg)
+
+
+def check_label_type(label_type: str) -> None:
+    r"""Check if the label type value is valid or not.
+
+    Args:
+        label_type: The type of labels.
+            The valid values are ``'binary'``, ``'multiclass'``,
+            ``'multilabel'``, and ``'auto'``.
+
+    Raises:
+        RuntimeError: if an invalid value is passed to ``label_type``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.metric.utils import check_label_type
+    >>> check_label_type(label_type="binary")
+
+    ```
+    """
+    if label_type not in {"binary", "multiclass", "multilabel", "auto"}:
+        msg = (
+            f"Incorrect 'label_type': {label_type}. The supported label types are: "
+            f"'binary', 'multiclass', 'multilabel', and 'auto'"
+        )
         raise RuntimeError(msg)
