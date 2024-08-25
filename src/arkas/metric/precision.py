@@ -2,14 +2,20 @@ r"""Implement the precision result."""
 
 from __future__ import annotations
 
-__all__ = ["find_label_type", "precision_metrics"]
+__all__ = [
+    "binary_precision_metrics",
+    "find_label_type",
+    "multiclass_precision_metrics",
+    "multilabel_precision_metrics",
+    "precision_metrics",
+]
 
 import math
 
 import numpy as np
 from sklearn import metrics
 
-from arkas.metric.utils import preprocess_true_pred
+from arkas.metric.utils import check_label_type, preprocess_true_pred
 
 
 def precision_metrics(
@@ -79,28 +85,19 @@ def precision_metrics(
 
     ```
     """
+    check_label_type(label_type)
     if label_type == "auto":
         label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
-        return _binary_precision_metrics(
-            y_true=y_true.ravel(), y_pred=y_pred.ravel(), prefix=prefix, suffix=suffix
-        )
-    if label_type == "multiclass":
-        return _multiclass_precision_metrics(
-            y_true=y_true.ravel(), y_pred=y_pred.ravel(), prefix=prefix, suffix=suffix
-        )
+        return binary_precision_metrics(y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix)
     if label_type == "multilabel":
-        return _multilabel_precision_metrics(
+        return multilabel_precision_metrics(
             y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix
         )
-    msg = (
-        f"Incorrect label type: '{label_type}'. The supported label types are: "
-        f"'binary', 'multiclass', 'multilabel', and 'auto'"
-    )
-    raise RuntimeError(msg)
+    return multiclass_precision_metrics(y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix)
 
 
-def _binary_precision_metrics(
+def binary_precision_metrics(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -119,12 +116,27 @@ def _binary_precision_metrics(
 
     Returns:
         The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric import binary_precision_metrics
+    >>> binary_precision_metrics(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ... )
+    {'count': 5, 'precision': 1.0}
+
+    ```
     """
     if y_true.shape != y_pred.shape:
         msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
         raise RuntimeError(msg)
 
-    y_true, y_pred = preprocess_true_pred(y_true=y_true, y_pred=y_pred, nan="remove")
+    y_true, y_pred = preprocess_true_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
+    )
 
     count, precision = y_true.size, float("nan")
     if count > 0:
@@ -132,7 +144,7 @@ def _binary_precision_metrics(
     return {f"{prefix}count{suffix}": count, f"{prefix}precision{suffix}": precision}
 
 
-def _multiclass_precision_metrics(
+def multiclass_precision_metrics(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -151,8 +163,27 @@ def _multiclass_precision_metrics(
 
     Returns:
         The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric import multiclass_precision_metrics
+    >>> multiclass_precision_metrics(
+    ...     y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    ... )
+    {'count': 6,
+     'macro_precision': 1.0,
+     'micro_precision': 1.0,
+     'precision': array([1., 1., 1.]),
+     'weighted_precision': 1.0}
+
+    ```
     """
-    y_true, y_pred = preprocess_true_pred(y_true=y_true, y_pred=y_pred, nan="remove")
+    y_true, y_pred = preprocess_true_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
+    )
 
     n_samples = y_true.shape[0]
     macro_precision, micro_precision, weighted_precision = float("nan"), float("nan"), float("nan")
@@ -186,7 +217,7 @@ def _multiclass_precision_metrics(
     }
 
 
-def _multilabel_precision_metrics(
+def multilabel_precision_metrics(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -205,6 +236,24 @@ def _multilabel_precision_metrics(
 
     Returns:
         The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric import multilabel_precision_metrics
+    >>> multilabel_precision_metrics(
+    ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ... )
+    {'count': 5,
+     'macro_precision': 1.0,
+     'micro_precision': 1.0,
+     'precision': array([1., 1., 1.]),
+     'weighted_precision': 1.0}
+
+    ```
     """
     n_samples = y_true.shape[0]
     n_classes = y_pred.shape[1] if y_pred.ndim == 2 else 0 if n_samples == 0 else 1
