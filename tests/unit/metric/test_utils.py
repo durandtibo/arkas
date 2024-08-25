@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from arkas.metric.utils import multi_isnan, preprocess_true_pred
+from arkas.metric.utils import check_nan_true_pred, multi_isnan, preprocess_true_pred
 
 #################################
 #     Tests for multi_isnan     #
@@ -90,3 +90,18 @@ def test_preprocess_true_pred_nan_incorrect() -> None:
         preprocess_true_pred(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1]), nan="incorrect"
         )
+
+
+#########################################
+#     Tests for check_nan_true_pred     #
+#########################################
+
+
+def test_check_nan_true_pred_valid() -> None:
+    check_nan_true_pred("keep")
+    check_nan_true_pred("remove")
+
+
+def test_check_nan_true_pred_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
+        check_nan_true_pred(nan="incorrect")

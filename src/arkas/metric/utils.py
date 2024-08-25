@@ -2,7 +2,7 @@ r"""Contain utility functions to compute metrics."""
 
 from __future__ import annotations
 
-__all__ = ["multi_isnan", "preprocess_true_pred"]
+__all__ = ["multi_isnan", "preprocess_true_pred", "check_nan_true_pred"]
 
 
 from typing import TYPE_CHECKING
@@ -82,10 +82,32 @@ def preprocess_true_pred(
 
     ```
     """
+    check_nan_true_pred(nan)
     if nan == "keep":
         return y_true, y_pred
-    if nan == "remove":
-        mask = np.logical_not(multi_isnan([y_true, y_pred]))
-        return y_true[mask], y_pred[mask]
-    msg = f"Incorrect 'nan': {nan}. The valid values are 'keep' and 'remove'"
-    raise RuntimeError(msg)
+    mask = np.logical_not(multi_isnan([y_true, y_pred]))
+    return y_true[mask], y_pred[mask]
+
+
+def check_nan_true_pred(nan: str) -> None:
+    r"""Check if the value is valid or not.
+
+    Args:
+        nan: Indicate how to process the nan values.
+            The valid values are ``'keep'`` and ``'remove'``.
+
+    Raises:
+        RuntimeError: if an invalid value is passed to ``nan``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.metric.utils import check_nan_true_pred
+    >>> check_nan_true_pred(nan="remove")
+
+    ```
+    """
+    if nan not in {"keep", "remove"}:
+        msg = f"Incorrect 'nan': {nan}. The valid values are 'keep' and 'remove'"
+        raise RuntimeError(msg)
