@@ -162,16 +162,22 @@ def _multiclass_precision_metrics(
     precision = np.full((n_classes,), fill_value=float("nan"))
     if n_samples > 0:
         macro_precision = float(
-            metrics.precision_score(y_true=y_true, y_pred=y_pred, average="macro")
+            metrics.precision_score(
+                y_true=y_true, y_pred=y_pred, average="macro", zero_division=0.0
+            )
         )
         micro_precision = float(
-            metrics.precision_score(y_true=y_true, y_pred=y_pred, average="micro")
+            metrics.precision_score(
+                y_true=y_true, y_pred=y_pred, average="micro", zero_division=0.0
+            )
         )
         weighted_precision = float(
-            metrics.precision_score(y_true=y_true, y_pred=y_pred, average="weighted")
+            metrics.precision_score(
+                y_true=y_true, y_pred=y_pred, average="weighted", zero_division=0.0
+            )
         )
         precision = np.asarray(
-            metrics.precision_score(y_true=y_true, y_pred=y_pred, average=None)
+            metrics.precision_score(y_true=y_true, y_pred=y_pred, average=None, zero_division=0.0)
         ).ravel()
     return {
         f"{prefix}count{suffix}": n_samples,
