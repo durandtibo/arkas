@@ -4,12 +4,13 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.metric import binary_precision_metrics, precision_metrics
-from arkas.metric.precision import (
-    find_label_type,
+from arkas.metric import (
+    binary_precision_metrics,
     multiclass_precision_metrics,
     multilabel_precision_metrics,
+    precision_metrics,
 )
+from arkas.metric.precision import find_label_type
 
 #######################################
 #     Tests for precision_metrics     #
