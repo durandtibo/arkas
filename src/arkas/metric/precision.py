@@ -9,6 +9,8 @@ import math
 import numpy as np
 from sklearn import metrics
 
+from arkas.metric.utils import preprocess_true_pred
+
 
 def precision_metrics(
     y_true: np.ndarray,
@@ -122,9 +124,7 @@ def _binary_precision_metrics(
         msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
         raise RuntimeError(msg)
 
-    # Ignore samples that have NaN values.
-    mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_pred)))
-    y_true, y_pred = y_true[mask], y_pred[mask]
+    y_true, y_pred = preprocess_true_pred(y_true=y_true, y_pred=y_pred, nan="remove")
 
     count, precision = y_true.size, float("nan")
     if count > 0:
@@ -152,9 +152,7 @@ def _multiclass_precision_metrics(
     Returns:
         The computed metrics.
     """
-    # Ignore samples that have NaN values.
-    mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_pred)))
-    y_true, y_pred = y_true[mask], y_pred[mask]
+    y_true, y_pred = preprocess_true_pred(y_true=y_true, y_pred=y_pred, nan="remove")
 
     n_samples = y_true.shape[0]
     macro_precision, micro_precision, weighted_precision = float("nan"), float("nan"), float("nan")

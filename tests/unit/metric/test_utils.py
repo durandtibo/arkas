@@ -77,11 +77,33 @@ def test_preprocess_true_pred_keep_nan() -> None:
 def test_preprocess_true_pred_remove_nan() -> None:
     assert objects_are_equal(
         preprocess_true_pred(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_pred=np.array([0, 1, 0, 1, float("nan"), 1]),
+            y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
+            y_pred=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
             nan="remove",
         ),
         (np.array([1.0, 0.0, 0.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0])),
+    )
+
+
+def test_preprocess_true_pred_remove_y_true_nan() -> None:
+    assert objects_are_equal(
+        preprocess_true_pred(
+            y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
+            y_pred=np.array([0.0, 1.0, 0.0, 1.0, 1.0, 1.0]),
+            nan="remove",
+        ),
+        (np.array([1.0, 0.0, 0.0, 1.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
+    )
+
+
+def test_preprocess_true_pred_remove_y_pred_nan() -> None:
+    assert objects_are_equal(
+        preprocess_true_pred(
+            y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, 0.0]),
+            y_pred=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
+            nan="remove",
+        ),
+        (np.array([1.0, 0.0, 0.0, 1.0, 0.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
 
 

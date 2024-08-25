@@ -5,10 +5,14 @@ from __future__ import annotations
 __all__ = ["accuracy_metrics", "balanced_accuracy_metrics"]
 
 
-import numpy as np
+from typing import TYPE_CHECKING
+
 from sklearn import metrics
 
-from arkas.metric.utils import multi_isnan
+from arkas.metric.utils import preprocess_true_pred
+
+if TYPE_CHECKING:
+    import numpy as np
 
 
 def accuracy_metrics(
@@ -40,11 +44,9 @@ def accuracy_metrics(
 
     ```
     """
-    y_true, y_pred = y_true.ravel(), y_pred.ravel()
-
-    # Ignore samples that have NaN values.
-    mask = np.logical_not(multi_isnan([y_true, y_pred]))
-    y_true, y_pred = y_true[mask], y_pred[mask]
+    y_true, y_pred = preprocess_true_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
+    )
 
     count = y_true.size
     count_correct = int(metrics.accuracy_score(y_true=y_true, y_pred=y_pred, normalize=False))
@@ -89,11 +91,9 @@ def balanced_accuracy_metrics(
 
     ```
     """
-    y_true, y_pred = y_true.ravel(), y_pred.ravel()
-
-    # Ignore samples that have NaN values.
-    mask = np.logical_not(multi_isnan([y_true, y_pred]))
-    y_true, y_pred = y_true[mask], y_pred[mask]
+    y_true, y_pred = preprocess_true_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
+    )
 
     count = y_true.size
     accuracy = float("nan")
