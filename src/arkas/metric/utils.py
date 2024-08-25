@@ -66,6 +66,21 @@ def preprocess_true_pred(
 
     Raises:
         RuntimeError: if an invalid value is passed to ``nan``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import preprocess_true_pred
+    >>> y_true = np.array([1, 0, 0, 1, 1, float("nan")])
+    >>> y_pred = np.array([0, 1, 0, 1, float("nan"), 1])
+    >>> preprocess_true_pred(y_true, y_pred)
+    (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
+    >>> preprocess_true_pred(y_true, y_pred, nan="remove")
+    (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
+
+    ```
     """
     if nan == "keep":
         return y_true, y_pred
