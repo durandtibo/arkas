@@ -2,7 +2,7 @@ r"""Contain utility functions to compute metrics."""
 
 from __future__ import annotations
 
-__all__ = ["check_nan_true_pred", "multi_isnan", "preprocess_true_pred", "check_label_type"]
+__all__ = ["check_label_type", "check_nan_true_pred", "multi_isnan", "preprocess_true_pred"]
 
 
 from typing import TYPE_CHECKING

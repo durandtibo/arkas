@@ -4,8 +4,8 @@ from __future__ import annotations
 
 __all__ = [
     "average_precision_metrics",
-    "find_label_type",
     "binary_average_precision_metrics",
+    "find_label_type",
     "multiclass_average_precision_metrics",
     "multilabel_average_precision_metrics",
 ]

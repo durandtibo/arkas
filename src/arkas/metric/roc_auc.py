@@ -4,10 +4,10 @@ Operating Characteristic Curve (ROC AUC) metrics."""
 from __future__ import annotations
 
 __all__ = [
-    "roc_auc_metrics",
     "binary_roc_auc_metrics",
-    "multilabel_roc_auc_metrics",
     "multiclass_roc_auc_metrics",
+    "multilabel_roc_auc_metrics",
+    "roc_auc_metrics",
 ]
 
 from typing import Any

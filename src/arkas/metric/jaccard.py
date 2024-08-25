@@ -4,9 +4,9 @@ from __future__ import annotations
 
 __all__ = [
     "binary_jaccard_metrics",
+    "jaccard_metrics",
     "multiclass_jaccard_metrics",
     "multilabel_jaccard_metrics",
-    "jaccard_metrics",
 ]
 
 

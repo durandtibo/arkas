@@ -164,7 +164,7 @@ def _multiclass_fbeta_metrics(
     prefix: str = "",
     suffix: str = "",
 ) -> dict[str, float | np.ndarray]:
-    r"""Return the fbeta metrics for multiclass labels.
+    r"""Return the F-beta metrics for multiclass labels.
 
     Args:
         y_true: The ground truth target labels. This input must
