@@ -10,6 +10,7 @@ import numpy as np
 from coola import objects_are_equal
 
 from arkas.metric.ap import average_precision_metrics, find_label_type
+from arkas.metric.utils import check_label_type
 from arkas.result.base import BaseResult
 
 
@@ -180,9 +181,4 @@ class AveragePrecisionResult(BaseResult):
                 f"{self._y_score.shape}"
             )
             raise ValueError(msg)
-        if self._label_type not in {"binary", "multiclass", "multilabel"}:
-            msg = (
-                f"Incorrect label type: '{self._label_type}'. The supported label types are: "
-                f"'binary', 'multiclass', 'multilabel'"
-            )
-            raise ValueError(msg)
+        check_label_type(self._label_type)
