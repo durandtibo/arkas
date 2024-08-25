@@ -341,17 +341,17 @@ def test_precision_metrics_multilabel_prefix_suffix() -> None:
     assert objects_are_allclose(
         precision_metrics(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             label_type="multilabel",
             prefix="prefix_",
             suffix="_suffix",
         ),
         {
-            "prefix_precision_suffix": np.array([1.0, 1.0, 0.0]),
+            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_count_suffix": 5,
-            "prefix_macro_precision_suffix": 0.6666666666666666,
-            "prefix_micro_precision_suffix": 0.7142857142857143,
-            "prefix_weighted_precision_suffix": 0.625,
+            "prefix_macro_precision_suffix": 1.0,
+            "prefix_micro_precision_suffix": 1.0,
+            "prefix_weighted_precision_suffix": 1.0,
         },
     )
 

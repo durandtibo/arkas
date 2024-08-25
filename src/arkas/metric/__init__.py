@@ -6,11 +6,13 @@ __all__ = [
     "accuracy_metrics",
     "average_precision_metrics",
     "balanced_accuracy_metrics",
+    "fbeta_metrics",
     "precision_metrics",
     "recall_metrics",
 ]
 
 from arkas.metric.accuracy import accuracy_metrics, balanced_accuracy_metrics
 from arkas.metric.ap import average_precision_metrics
+from arkas.metric.fbeta import fbeta_metrics
 from arkas.metric.precision import precision_metrics
 from arkas.metric.recall import recall_metrics
