@@ -14,7 +14,7 @@
     <a href="https://durandtibo.github.io/arkas/">
         <img alt="Documentation" src="https://github.com/durandtibo/arkas/workflows/Documentation%20(stable)/badge.svg">
     </a>
-    <a href="https://durandtibo.github.io/arkas/">
+    <a href="https://durandtibo.github.io/arkas/dev/">
         <img alt="Documentation" src="https://github.com/durandtibo/arkas/workflows/Documentation%20(unstable)/badge.svg">
     </a>
     <br/>
