@@ -14,6 +14,9 @@ __all__ = [
     "confusion_matrix_metrics",
     "binary_confusion_matrix_metrics",
     "multiclass_confusion_matrix_metrics",
+    "binary_precision_metrics",
+    "multiclass_precision_metrics",
+    "multilabel_precision_metrics",
 ]
 
 from arkas.metric.accuracy import accuracy_metrics, balanced_accuracy_metrics
@@ -25,6 +28,11 @@ from arkas.metric.confmat import (
 )
 from arkas.metric.fbeta import fbeta_metrics
 from arkas.metric.jaccard import jaccard_metrics
-from arkas.metric.precision import precision_metrics
+from arkas.metric.precision import (
+    binary_precision_metrics,
+    multiclass_precision_metrics,
+    multilabel_precision_metrics,
+    precision_metrics,
+)
 from arkas.metric.recall import recall_metrics
 from arkas.metric.roc_auc import roc_auc_metrics
