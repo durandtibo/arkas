@@ -23,10 +23,18 @@ __all__ = [
     "binary_jaccard_metrics",
     "multiclass_jaccard_metrics",
     "multilabel_jaccard_metrics",
+    "binary_average_precision_metrics",
+    "multiclass_average_precision_metrics",
+    "multilabel_average_precision_metrics",
 ]
 
 from arkas.metric.accuracy import accuracy_metrics, balanced_accuracy_metrics
-from arkas.metric.ap import average_precision_metrics
+from arkas.metric.ap import (
+    average_precision_metrics,
+    binary_average_precision_metrics,
+    multiclass_average_precision_metrics,
+    multilabel_average_precision_metrics,
+)
 from arkas.metric.confmat import (
     binary_confusion_matrix_metrics,
     confusion_matrix_metrics,
