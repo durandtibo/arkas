@@ -32,6 +32,12 @@ jobs:
       - name: check arkas
         run: |
           poetry run python -c "import arkas"
+      - name: check arkas.evaluator
+        run: |
+          poetry run python -c "from arkas import evaluator"
+      - name: check arkas.metric
+        run: |
+          poetry run python -c "from arkas import metric"
       - name: check arkas.result
         run: |
           poetry run python -c "from arkas import result"
