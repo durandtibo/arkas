@@ -7,9 +7,8 @@ __all__ = ["AccuracyResult", "BalancedAccuracyResult"]
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
-from sklearn import metrics
 
-from arkas.metric.accuracy import accuracy_metrics
+from arkas.metric.accuracy import accuracy_metrics, balanced_accuracy_metrics
 from arkas.result.base import BaseResult
 
 if TYPE_CHECKING:
@@ -133,13 +132,9 @@ class BalancedAccuracyResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        count = self._y_true.size
-        accuracy = float("nan")
-        if count > 0:
-            accuracy = float(
-                metrics.balanced_accuracy_score(y_true=self._y_true, y_pred=self._y_pred)
-            )
-        return {f"{prefix}balanced_accuracy{suffix}": accuracy, f"{prefix}count{suffix}": count}
+        return balanced_accuracy_metrics(
+            y_true=self._y_true, y_pred=self._y_pred, prefix=prefix, suffix=suffix
+        )
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):

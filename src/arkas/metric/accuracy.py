@@ -2,7 +2,7 @@ r"""Implement accuracy metrics."""
 
 from __future__ import annotations
 
-__all__ = ["accuracy_metrics"]
+__all__ = ["accuracy_metrics", "balanced_accuracy_metrics"]
 
 
 import numpy as np
@@ -56,3 +56,47 @@ def accuracy_metrics(
         f"{prefix}count{suffix}": count,
         f"{prefix}error{suffix}": 1.0 - accuracy,
     }
+
+
+def balanced_accuracy_metrics(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float]:
+    r"""Return the accuracy metrics.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_pred: The predicted labels.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric import balanced_accuracy_metrics
+    >>> balanced_accuracy_metrics(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ... )
+    {'balanced_accuracy': 1.0, 'count': 5}
+
+    ```
+    """
+    y_true, y_pred = y_true.ravel(), y_pred.ravel()
+
+    # Ignore samples that have NaN values.
+    mask = np.logical_not(multi_isnan([y_true, y_pred]))
+    y_true, y_pred = y_true[mask], y_pred[mask]
+
+    count = y_true.size
+    accuracy = float("nan")
+    if count > 0:
+        accuracy = float(metrics.balanced_accuracy_score(y_true=y_true, y_pred=y_pred))
+    return {f"{prefix}balanced_accuracy{suffix}": accuracy, f"{prefix}count{suffix}": count}
