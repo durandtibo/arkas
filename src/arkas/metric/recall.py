@@ -19,7 +19,7 @@ def recall_metrics(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics.
 
     Args:
@@ -138,7 +138,7 @@ def _multiclass_recall_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics for multiclass labels.
 
     Args:
@@ -188,7 +188,7 @@ def _multilabel_recall_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics for multilabel labels.
 
     Args:

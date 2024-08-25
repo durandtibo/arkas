@@ -25,7 +25,7 @@ def fbeta_metrics(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-) -> dict:
+) -> dict[str, float | np.ndarray]:
     r"""Return the fbeta metrics.
 
     Args:
@@ -129,7 +129,7 @@ def _binary_fbeta_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict:
+) -> dict[str, float]:
     r"""Return the fbeta metrics for binary labels.
 
     Args:
@@ -163,7 +163,7 @@ def _multiclass_fbeta_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict:
+) -> dict[str, float | np.ndarray]:
     r"""Return the fbeta metrics for multiclass labels.
 
     Args:
@@ -221,7 +221,7 @@ def _multilabel_fbeta_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict:
+) -> dict[str, float | np.ndarray]:
     r"""Return the fbeta metrics for multilabel labels.
 
     Args:
@@ -275,7 +275,7 @@ def _eval_all(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict:
+) -> dict[str, float | np.ndarray]:
     r"""Evaluate the function for all the betas and merge the results in
     a single dictionary.
 

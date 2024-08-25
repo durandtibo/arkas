@@ -19,7 +19,7 @@ def jaccard_metrics(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the jaccard metrics.
 
     Args:
@@ -138,7 +138,7 @@ def _multiclass_jaccard_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the jaccard metrics for multiclass labels.
 
     Args:
@@ -188,7 +188,7 @@ def _multilabel_jaccard_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the jaccard metrics for multilabel labels.
 
     Args:

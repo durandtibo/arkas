@@ -18,7 +18,7 @@ def average_precision_metrics(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics.
 
     Args:
@@ -160,7 +160,7 @@ def _multiclass_average_precision_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics for multiclass labels.
 
     Args:
@@ -192,7 +192,7 @@ def _multi_average_precision_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics for multilabel or multiclass
     labels.
 
