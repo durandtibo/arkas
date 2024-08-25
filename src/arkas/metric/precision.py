@@ -2,7 +2,7 @@ r"""Implement the precision result."""
 
 from __future__ import annotations
 
-__all__ = ["precision_metrics", "find_label_type"]
+__all__ = ["find_label_type", "precision_metrics"]
 
 import math
 
