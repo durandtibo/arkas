@@ -39,11 +39,19 @@ def test_fbeta_metrics_binary_correct_2d() -> None:
 
 
 def test_fbeta_metrics_binary_incorrect() -> None:
-    assert objects_are_equal(
+    assert objects_are_allclose(
         fbeta_metrics(
-            y_true=np.array([1, 0, 0, 1]), y_pred=np.array([1, 0, 1, 0]), label_type="binary"
+            y_true=np.array([1, 0, 0, 1, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 0, 0]),
+            betas=[0.5, 1, 2],
+            label_type="binary",
         ),
-        {"count": 4, "f1": 0.5},
+        {
+            "count": 6,
+            "f0.5": 0.4166666666666667,
+            "f1": 0.3333333333333333,
+            "f2": 0.2777777777777778,
+        },
     )
 
 
@@ -161,14 +169,23 @@ def test_fbeta_metrics_multiclass_incorrect() -> None:
         fbeta_metrics(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 1, 1]),
+            betas=[0.5, 1, 2],
             label_type="multiclass",
         ),
         {
-            "f1": np.array([1.0, 0.6666666666666666, 0.0]),
             "count": 6,
+            "f0.5": np.array([1.0, 0.5555555555555556, 0.0]),
+            "macro_f0.5": 0.5185185185185185,
+            "micro_f0.5": 0.6666666666666666,
+            "weighted_f0.5": 0.5185185185185185,
+            "f1": np.array([1.0, 0.6666666666666666, 0.0]),
             "macro_f1": 0.5555555555555555,
             "micro_f1": 0.6666666666666666,
             "weighted_f1": 0.5555555555555555,
+            "f2": np.array([1.0, 0.8333333333333334, 0.0]),
+            "macro_f2": 0.6111111111111112,
+            "micro_f2": 0.6666666666666666,
+            "weighted_f2": 0.6111111111111112,
         },
     )
 

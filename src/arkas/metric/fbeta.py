@@ -68,9 +68,9 @@ def fbeta_metrics(
     ...     label_type="multiclass",
     ... )
     {'count': 6,
+     'f1': array([1., 1., 1.]),
      'macro_f1': 1.0,
      'micro_f1': 1.0,
-     'f1': array([1., 1., 1.]),
      'weighted_f1': 1.0}
     >>> # multilabel
     >>> fbeta_metrics(
@@ -79,9 +79,9 @@ def fbeta_metrics(
     ...     label_type="multilabel",
     ... )
     {'count': 5,
+     'f1': array([1., 1., 1.]),
      'macro_f1': 1.0,
      'micro_f1': 1.0,
-     'f1': array([1., 1., 1.]),
      'weighted_f1': 1.0}
 
     ```
@@ -207,9 +207,9 @@ def _multiclass_fbeta_metrics(
         ).ravel()
     return {
         f"{prefix}count{suffix}": n_samples,
+        f"{prefix}f{beta}{suffix}": fbeta,
         f"{prefix}macro_f{beta}{suffix}": macro_fbeta,
         f"{prefix}micro_f{beta}{suffix}": micro_fbeta,
-        f"{prefix}f{beta}{suffix}": fbeta,
         f"{prefix}weighted_f{beta}{suffix}": weighted_fbeta,
     }
 
@@ -260,9 +260,9 @@ def _multilabel_fbeta_metrics(
         )
     return {
         f"{prefix}count{suffix}": n_samples,
+        f"{prefix}f{beta}{suffix}": fbeta,
         f"{prefix}macro_f{beta}{suffix}": macro_fbeta,
         f"{prefix}micro_f{beta}{suffix}": micro_fbeta,
-        f"{prefix}f{beta}{suffix}": fbeta,
         f"{prefix}weighted_f{beta}{suffix}": weighted_fbeta,
     }
 
