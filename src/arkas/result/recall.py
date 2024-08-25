@@ -10,6 +10,7 @@ from coola import objects_are_equal
 
 from arkas.metric import recall_metrics
 from arkas.metric.precision import find_label_type
+from arkas.metric.utils import check_label_type
 from arkas.result.base import BaseResult
 
 if TYPE_CHECKING:
@@ -159,9 +160,4 @@ class RecallResult(BaseResult):
                 f"{self._y_pred.shape}"
             )
             raise ValueError(msg)
-        if self._label_type not in {"binary", "multiclass", "multilabel"}:
-            msg = (
-                f"Incorrect label type: '{self._label_type}'. The supported label types are: "
-                f"'binary', 'multiclass', 'multilabel'"
-            )
-            raise ValueError(msg)
+        check_label_type(self._label_type)
