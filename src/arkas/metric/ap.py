@@ -8,6 +8,8 @@ __all__ = ["average_precision_metrics", "find_label_type"]
 import numpy as np
 from sklearn import metrics
 
+from arkas.metric.utils import multi_isnan
+
 
 def average_precision_metrics(
     y_true: np.ndarray,
@@ -100,7 +102,11 @@ def average_precision_metrics(
         return _binary_average_precision_metrics(
             y_true=y_true.ravel(), y_score=y_score.ravel(), prefix=prefix, suffix=suffix
         )
-    if label_type in {"multiclass", "multilabel"}:
+    if label_type == "multiclass":
+        return _multiclass_average_precision_metrics(
+            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
+        )
+    if label_type == "multilabel":
         return _multi_average_precision_metrics(
             y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
         )
@@ -137,11 +143,47 @@ def _binary_average_precision_metrics(
         msg = f"'y_true' and 'y_score' have different shapes: {y_true.shape} vs {y_score.shape}"
         raise RuntimeError(msg)
 
+    # Remove NaN values
+    mask = np.logical_not(multi_isnan([y_true, y_score]))
+    y_true, y_score = y_true[mask], y_score[mask]
+
     count = y_true.size
     ap = float("nan")
     if count > 0:
         ap = float(metrics.average_precision_score(y_true=y_true, y_score=y_score))
     return {f"{prefix}average_precision{suffix}": ap, f"{prefix}count{suffix}": count}
+
+
+def _multiclass_average_precision_metrics(
+    y_true: np.ndarray,
+    y_score: np.ndarray,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float]:
+    r"""Return the average precision metrics for multiclass labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        y_score: The target scores, can either be probability
+            estimates of the positive class, confidence values,
+            or non-thresholded measure of decisions. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+    """
+    if y_true.shape[0] > 0:
+        # Remove NaN values
+        mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_score).any(axis=1)))
+        y_true, y_score = y_true[mask], y_score[mask]
+
+    return _multi_average_precision_metrics(
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
+    )
 
 
 def _multi_average_precision_metrics(
