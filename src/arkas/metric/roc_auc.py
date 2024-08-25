@@ -3,7 +3,12 @@ Operating Characteristic Curve (ROC AUC) metrics."""
 
 from __future__ import annotations
 
-__all__ = ["roc_auc_metrics"]
+__all__ = [
+    "roc_auc_metrics",
+    "binary_roc_auc_metrics",
+    "multilabel_roc_auc_metrics",
+    "multiclass_roc_auc_metrics",
+]
 
 from typing import Any
 
@@ -11,7 +16,7 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.ap import find_label_type
-from arkas.metric.utils import multi_isnan
+from arkas.metric.utils import check_label_type, multi_isnan
 
 
 def roc_auc_metrics(
@@ -100,26 +105,21 @@ def roc_auc_metrics(
 
     ```
     """
+    check_label_type(label_type)
     if label_type == "auto":
         label_type = find_label_type(y_true=y_true, y_score=y_score)
     if label_type == "binary":
-        return _binary_roc_auc_metrics(
+        return binary_roc_auc_metrics(
             y_true=y_true.ravel(), y_score=y_score.ravel(), prefix=prefix, suffix=suffix
         )
-    if label_type == "multiclass":
-        return _multiclass_roc_auc_metrics(
+    if label_type == "multilabel":
+        return multilabel_roc_auc_metrics(
             y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
         )
-    if label_type == "multilabel":
-        return _multi_roc_auc_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
-    msg = (
-        f"Incorrect label type: '{label_type}'. The supported label types are: "
-        f"'binary', 'multiclass', 'multilabel', and 'auto'"
-    )
-    raise RuntimeError(msg)
+    return multiclass_roc_auc_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
 
 
-def _binary_roc_auc_metrics(
+def binary_roc_auc_metrics(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
@@ -157,7 +157,7 @@ def _binary_roc_auc_metrics(
     return {f"{prefix}count{suffix}": count, f"{prefix}roc_auc{suffix}": roc_auc}
 
 
-def _multiclass_roc_auc_metrics(
+def multiclass_roc_auc_metrics(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
@@ -169,7 +169,7 @@ def _multiclass_roc_auc_metrics(
 
     Args:
         y_true: The ground truth target labels. This input must
-            be an array of shape ``(n_samples, n_classes)``.
+            be an array of shape ``(n_samples,)``.
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
@@ -185,6 +185,34 @@ def _multiclass_roc_auc_metrics(
         mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_score).any(axis=1)))
         y_true, y_score = y_true[mask], y_score[mask]
 
+    return _multi_roc_auc_metrics(
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
+    )
+
+
+def multilabel_roc_auc_metrics(
+    y_true: np.ndarray,
+    y_score: np.ndarray,
+    *,
+    prefix: str = "",
+    suffix: str = "",
+) -> dict[str, float | np.ndarray]:
+    r"""Return the Area Under the Receiver Operating Characteristic Curve
+    (ROC AUC) metrics for multilabel labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        y_score: The target scores, can either be probability
+            estimates of the positive class, confidence values,
+            or non-thresholded measure of decisions. This input must
+            be an array of shape ``(n_samples, n_classes)``.
+        prefix: The key prefix in the returned dictionary.
+        suffix: The key suffix in the returned dictionary.
+
+    Returns:
+        The computed metrics.
+    """
     return _multi_roc_auc_metrics(
         y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
     )
