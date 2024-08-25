@@ -4,21 +4,26 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.metric import jaccard_metrics
+from arkas.metric import (
+    binary_jaccard_metrics,
+    jaccard_metrics,
+    multiclass_jaccard_metrics,
+    multilabel_jaccard_metrics,
+)
 
 #####################################
 #     Tests for jaccard_metrics     #
 #####################################
 
 
-def test_jaccard_metrics() -> None:
+def test_jaccard_metrics_auto_binary() -> None:
     assert objects_are_equal(
         jaccard_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
         {"count": 5, "jaccard": 1.0},
     )
 
 
-def test_jaccard_metrics_binary_correct_1d() -> None:
+def test_jaccard_metrics_binary() -> None:
     assert objects_are_equal(
         jaccard_metrics(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), label_type="binary"
@@ -27,92 +32,23 @@ def test_jaccard_metrics_binary_correct_1d() -> None:
     )
 
 
-def test_jaccard_metrics_binary_correct_2d() -> None:
+def test_jaccard_metrics_auto_multiclass() -> None:
     assert objects_are_equal(
         jaccard_metrics(
-            y_true=np.array([[1, 0, 0], [1, 1, 1]]),
-            y_pred=np.array([[1, 0, 0], [1, 1, 1]]),
-            label_type="binary",
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2]),
         ),
-        {"count": 6, "jaccard": 1.0},
+        {
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "weighted_jaccard": 1.0,
+        },
     )
 
 
-def test_jaccard_metrics_binary_incorrect() -> None:
-    assert objects_are_allclose(
-        jaccard_metrics(
-            y_true=np.array([1, 0, 0, 1, 1, 1]),
-            y_pred=np.array([1, 0, 1, 0, 1, 1]),
-            label_type="binary",
-        ),
-        {"count": 6, "jaccard": 0.6},
-    )
-
-
-def test_jaccard_metrics_binary_nans() -> None:
-    assert objects_are_equal(
-        jaccard_metrics(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
-            label_type="binary",
-        ),
-        {"count": 4, "jaccard": 1.0},
-    )
-
-
-def test_jaccard_metrics_binary_y_true_nan() -> None:
-    assert objects_are_equal(
-        jaccard_metrics(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_pred=np.array([1, 0, 0, 1, 1, 1]),
-            label_type="binary",
-        ),
-        {"count": 5, "jaccard": 1.0},
-    )
-
-
-def test_jaccard_metrics_binary_y_pred_nan() -> None:
-    assert objects_are_equal(
-        jaccard_metrics(
-            y_true=np.array([1, 0, 0, 1, 1, 0]),
-            y_pred=np.array([1, 0, 0, 1, float("nan"), 0]),
-            label_type="binary",
-        ),
-        {"count": 5, "jaccard": 1.0},
-    )
-
-
-def test_jaccard_metrics_binary_empty() -> None:
-    assert objects_are_equal(
-        jaccard_metrics(y_true=np.array([]), y_pred=np.array([]), label_type="binary"),
-        {"count": 0, "jaccard": float("nan")},
-        equal_nan=True,
-    )
-
-
-def test_jaccard_metrics_binary_prefix_suffix() -> None:
-    assert objects_are_equal(
-        jaccard_metrics(
-            y_true=np.array([1, 0, 0, 1, 1]),
-            y_pred=np.array([1, 0, 0, 1, 1]),
-            label_type="binary",
-            prefix="prefix_",
-            suffix="_suffix",
-        ),
-        {"prefix_count_suffix": 5, "prefix_jaccard_suffix": 1.0},
-    )
-
-
-def test_jaccard_metrics_binary_incorrect_shape() -> None:
-    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes:"):
-        jaccard_metrics(
-            y_true=np.array([1, 0, 0, 1, 1]),
-            y_pred=np.array([1, 0, 0, 1, 1, 0]),
-            label_type="binary",
-        )
-
-
-def test_jaccard_metrics_multiclass_correct_1d() -> None:
+def test_jaccard_metrics_multiclass() -> None:
     assert objects_are_equal(
         jaccard_metrics(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
@@ -129,12 +65,148 @@ def test_jaccard_metrics_multiclass_correct_1d() -> None:
     )
 
 
-def test_jaccard_metrics_multiclass_correct_2d() -> None:
+def test_jaccard_metrics_auto_multilabel() -> None:
     assert objects_are_equal(
         jaccard_metrics(
-            y_true=np.array([[0, 0, 1], [1, 2, 2]]),
-            y_pred=np.array([[0, 0, 1], [1, 2, 2]]),
-            label_type="multiclass",
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        ),
+        {
+            "count": 5,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_jaccard_metrics_multilabel() -> None:
+    assert objects_are_equal(
+        jaccard_metrics(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            label_type="multilabel",
+        ),
+        {
+            "count": 5,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_jaccard_metrics_label_type_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+        jaccard_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            label_type="incorrect",
+        )
+
+
+############################################
+#     Tests for binary_jaccard_metrics     #
+############################################
+
+
+def test_binary_jaccard_metrics_correct_1d() -> None:
+    assert objects_are_equal(
+        binary_jaccard_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
+        {"count": 5, "jaccard": 1.0},
+    )
+
+
+def test_binary_jaccard_metrics_correct_2d() -> None:
+    assert objects_are_equal(
+        binary_jaccard_metrics(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]),
+            y_pred=np.array([[1, 0, 0], [1, 1, 1]]),
+        ),
+        {"count": 6, "jaccard": 1.0},
+    )
+
+
+def test_binary_jaccard_metrics_incorrect() -> None:
+    assert objects_are_equal(
+        binary_jaccard_metrics(
+            y_true=np.array([1, 0, 0, 1, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1, 1]),
+        ),
+        {"count": 6, "jaccard": 0.6},
+    )
+
+
+def test_binary_jaccard_metrics_nans() -> None:
+    assert objects_are_equal(
+        binary_jaccard_metrics(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
+        ),
+        {"count": 4, "jaccard": 1.0},
+    )
+
+
+def test_binary_jaccard_metrics_y_true_nan() -> None:
+    assert objects_are_equal(
+        binary_jaccard_metrics(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, 1]),
+        ),
+        {"count": 5, "jaccard": 1.0},
+    )
+
+
+def test_binary_jaccard_metrics_y_pred_nan() -> None:
+    assert objects_are_equal(
+        binary_jaccard_metrics(
+            y_true=np.array([1, 0, 0, 1, 1, 0]),
+            y_pred=np.array([1, 0, 0, 1, float("nan"), 0]),
+        ),
+        {"count": 5, "jaccard": 1.0},
+    )
+
+
+def test_binary_jaccard_metrics_empty() -> None:
+    assert objects_are_equal(
+        binary_jaccard_metrics(y_true=np.array([]), y_pred=np.array([])),
+        {"count": 0, "jaccard": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_binary_jaccard_metrics_prefix_suffix() -> None:
+    assert objects_are_equal(
+        binary_jaccard_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            prefix="prefix_",
+            suffix="_suffix",
+        ),
+        {"prefix_count_suffix": 5, "prefix_jaccard_suffix": 1.0},
+    )
+
+
+def test_binary_jaccard_metrics_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes:"):
+        binary_jaccard_metrics(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1, 0]),
+        )
+
+
+###############################################
+#     Tests for multiclass_jaccard_metrics     #
+###############################################
+
+
+def test_multiclass_jaccard_metrics_correct_1d() -> None:
+    assert objects_are_equal(
+        multiclass_jaccard_metrics(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2]),
         ),
         {
             "jaccard": np.array([1.0, 1.0, 1.0]),
@@ -146,12 +218,27 @@ def test_jaccard_metrics_multiclass_correct_2d() -> None:
     )
 
 
-def test_jaccard_metrics_multiclass_incorrect() -> None:
+def test_multiclass_jaccard_metrics_correct_2d() -> None:
+    assert objects_are_equal(
+        multiclass_jaccard_metrics(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]),
+            y_pred=np.array([[0, 0, 1], [1, 2, 2]]),
+        ),
+        {
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_multiclass_jaccard_metrics_incorrect() -> None:
     assert objects_are_allclose(
-        jaccard_metrics(
+        multiclass_jaccard_metrics(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 1, 1]),
-            label_type="multiclass",
         ),
         {
             "count": 6,
@@ -163,12 +250,11 @@ def test_jaccard_metrics_multiclass_incorrect() -> None:
     )
 
 
-def test_jaccard_metrics_multiclass_nans() -> None:
+def test_multiclass_jaccard_metrics_nans() -> None:
     assert objects_are_equal(
-        jaccard_metrics(
+        multiclass_jaccard_metrics(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
-            label_type="multiclass",
         ),
         {
             "jaccard": np.array([1.0, 1.0, 1.0]),
@@ -180,12 +266,11 @@ def test_jaccard_metrics_multiclass_nans() -> None:
     )
 
 
-def test_jaccard_metrics_multiclass_y_true_nans() -> None:
+def test_multiclass_jaccard_metrics_y_true_nans() -> None:
     assert objects_are_equal(
-        jaccard_metrics(
+        multiclass_jaccard_metrics(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
-            label_type="multiclass",
         ),
         {
             "jaccard": np.array([1.0, 1.0, 1.0]),
@@ -197,12 +282,11 @@ def test_jaccard_metrics_multiclass_y_true_nans() -> None:
     )
 
 
-def test_jaccard_metrics_multiclass_y_pred_nans() -> None:
+def test_multiclass_jaccard_metrics_y_pred_nans() -> None:
     assert objects_are_equal(
-        jaccard_metrics(
+        multiclass_jaccard_metrics(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
-            label_type="multiclass",
         ),
         {
             "jaccard": np.array([1.0, 1.0, 1.0]),
@@ -214,9 +298,9 @@ def test_jaccard_metrics_multiclass_y_pred_nans() -> None:
     )
 
 
-def test_jaccard_metrics_multiclass_empty() -> None:
+def test_multiclass_jaccard_metrics_empty() -> None:
     assert objects_are_allclose(
-        jaccard_metrics(y_true=np.array([]), y_pred=np.array([]), label_type="multiclass"),
+        multiclass_jaccard_metrics(y_true=np.array([]), y_pred=np.array([])),
         {
             "jaccard": np.array([]),
             "count": 0,
@@ -228,12 +312,11 @@ def test_jaccard_metrics_multiclass_empty() -> None:
     )
 
 
-def test_jaccard_metrics_multiclass_prefix_suffix() -> None:
+def test_multiclass_jaccard_metrics_prefix_suffix() -> None:
     assert objects_are_equal(
-        jaccard_metrics(
+        multiclass_jaccard_metrics(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
-            label_type="multiclass",
             prefix="prefix_",
             suffix="_suffix",
         ),
@@ -247,12 +330,16 @@ def test_jaccard_metrics_multiclass_prefix_suffix() -> None:
     )
 
 
-def test_jaccard_metrics_multilabel_1_class_1d() -> None:
+################################################
+#     Tests for multilabel_jaccard_metrics     #
+################################################
+
+
+def test_multilabel_jaccard_metrics_1_class_1d() -> None:
     assert objects_are_equal(
-        jaccard_metrics(
+        multilabel_jaccard_metrics(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
-            label_type="multilabel",
         ),
         {
             "jaccard": np.array([1.0]),
@@ -264,12 +351,11 @@ def test_jaccard_metrics_multilabel_1_class_1d() -> None:
     )
 
 
-def test_jaccard_metrics_multilabel_1_class_2d() -> None:
+def test_multilabel_jaccard_metrics_1_class_2d() -> None:
     assert objects_are_equal(
-        jaccard_metrics(
+        multilabel_jaccard_metrics(
             y_true=np.array([[1], [0], [0], [1], [1]]),
             y_pred=np.array([[1], [0], [0], [1], [1]]),
-            label_type="multilabel",
         ),
         {
             "jaccard": np.array([1.0]),
@@ -281,12 +367,11 @@ def test_jaccard_metrics_multilabel_1_class_2d() -> None:
     )
 
 
-def test_jaccard_metrics_multilabel_3_classes() -> None:
+def test_multilabel_jaccard_metrics_3_classes() -> None:
     assert objects_are_allclose(
-        jaccard_metrics(
+        multilabel_jaccard_metrics(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-            label_type="multilabel",
         ),
         {
             "jaccard": np.array([1.0, 1.0, 0.0]),
@@ -295,17 +380,12 @@ def test_jaccard_metrics_multilabel_3_classes() -> None:
             "micro_jaccard": 0.5,
             "weighted_jaccard": 0.625,
         },
-        show_difference=True,
     )
 
 
-def test_jaccard_metrics_multilabel_empty() -> None:
+def test_multilabel_jaccard_metrics_empty() -> None:
     assert objects_are_allclose(
-        jaccard_metrics(
-            y_true=np.array([]),
-            y_pred=np.array([]),
-            label_type="multilabel",
-        ),
+        multilabel_jaccard_metrics(y_true=np.array([]), y_pred=np.array([])),
         {
             "jaccard": np.array([]),
             "count": 0,
@@ -317,12 +397,11 @@ def test_jaccard_metrics_multilabel_empty() -> None:
     )
 
 
-def test_jaccard_metrics_multilabel_prefix_suffix() -> None:
+def test_multilabel_jaccard_metrics_prefix_suffix() -> None:
     assert objects_are_allclose(
-        jaccard_metrics(
+        multilabel_jaccard_metrics(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            label_type="multilabel",
             prefix="prefix_",
             suffix="_suffix",
         ),
@@ -334,12 +413,3 @@ def test_jaccard_metrics_multilabel_prefix_suffix() -> None:
             "prefix_weighted_jaccard_suffix": 1.0,
         },
     )
-
-
-def test_jaccard_metrics_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect label type: 'incorrect'"):
-        jaccard_metrics(
-            y_true=np.array([1, 0, 0, 1, 1]),
-            y_pred=np.array([1, 0, 0, 1, 1]),
-            label_type="incorrect",
-        )
