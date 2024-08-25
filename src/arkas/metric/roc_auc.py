@@ -21,7 +21,7 @@ def roc_auc_metrics(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics.
 
@@ -154,10 +154,7 @@ def _binary_roc_auc_metrics(
     roc_auc = float("nan")
     if count > 0:
         roc_auc = float(metrics.roc_auc_score(y_true=y_true, y_score=y_score))
-    return {
-        f"{prefix}count{suffix}": count,
-        f"{prefix}roc_auc{suffix}": roc_auc,
-    }
+    return {f"{prefix}count{suffix}": count, f"{prefix}roc_auc{suffix}": roc_auc}
 
 
 def _multiclass_roc_auc_metrics(
@@ -166,7 +163,7 @@ def _multiclass_roc_auc_metrics(
     *,
     prefix: str = "",
     suffix: str = "",
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for multiclass labels.
 
@@ -200,7 +197,7 @@ def _multi_roc_auc_metrics(
     prefix: str = "",
     suffix: str = "",
     **kwargs: Any,
-) -> dict[str, float]:
+) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for multilabel or multiclass labels.
 
