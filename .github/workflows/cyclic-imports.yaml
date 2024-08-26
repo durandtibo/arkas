@@ -38,6 +38,9 @@ jobs:
       - name: check arkas.metric
         run: |
           poetry run python -c "from arkas import metric"
+      - name: check arkas.plot
+        run: |
+          poetry run python -c "from arkas import plot"
       - name: check arkas.result
         run: |
           poetry run python -c "from arkas import result"
