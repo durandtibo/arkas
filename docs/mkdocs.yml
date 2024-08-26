@@ -28,6 +28,7 @@ nav:
       - arkas.data: refs/data.md
       - arkas.evaluator: refs/evaluator.md
       - arkas.metric: refs/metric.md
+      - arkas.plot: refs/plot.md
       - arkas.result: refs/result.md
       - arkas.section: refs/section.md
       - arkas.utils: refs/utils.md
