@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.result import BinaryPrecisionResult, PrecisionResult
+from arkas.result import (
+    BinaryPrecisionResult,
+    MultilabelPrecisionResult,
+    PrecisionResult,
+)
 
 #####################################
 #     Tests for PrecisionResult     #
@@ -395,26 +399,26 @@ def test_binary_precision_result_equal_nan_true() -> None:
     )
 
 
-def test_binary_precision_result_compute_metrics_binary_correct() -> None:
+def test_binary_precision_result_compute_metrics_correct() -> None:
     result = BinaryPrecisionResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     )
     assert objects_are_equal(result.compute_metrics(), {"count": 5, "precision": 1.0})
 
 
-def test_binary_precision_result_compute_metrics_binary_incorrect() -> None:
+def test_binary_precision_result_compute_metrics_incorrect() -> None:
     result = BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([1, 0, 1, 0]))
     assert objects_are_allclose(result.compute_metrics(), {"count": 4, "precision": 0.5})
 
 
-def test_binary_precision_result_compute_metrics_binary_empty() -> None:
+def test_binary_precision_result_compute_metrics_empty() -> None:
     result = BinaryPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(
         result.compute_metrics(), {"count": 0, "precision": float("nan")}, equal_nan=True
     )
 
 
-def test_binary_precision_result_compute_metrics_binary_prefix_suffix() -> None:
+def test_binary_precision_result_compute_metrics_prefix_suffix() -> None:
     result = BinaryPrecisionResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     )
@@ -433,4 +437,204 @@ def test_binary_precision_result_generate_figures() -> None:
 
 def test_binary_precision_result_generate_figures_empty() -> None:
     result = BinaryPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+###############################################
+#     Tests for MultilabelPrecisionResult     #
+###############################################
+
+
+def test_multilabel_precision_result_y_true() -> None:
+    assert objects_are_equal(
+        MultilabelPrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        ).y_true,
+        np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    )
+
+
+def test_multilabel_precision_result_y_pred() -> None:
+    assert objects_are_equal(
+        MultilabelPrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        ).y_pred,
+        np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    )
+
+
+def test_multilabel_precision_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        MultilabelPrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0], [1, 1, 1]]),
+        )
+
+
+def test_multilabel_precision_result_repr() -> None:
+    assert repr(
+        MultilabelPrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        )
+    ).startswith("MultilabelPrecisionResult(")
+
+
+def test_multilabel_precision_result_str() -> None:
+    assert str(
+        MultilabelPrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        )
+    ).startswith("MultilabelPrecisionResult(")
+
+
+def test_multilabel_precision_result_equal_true() -> None:
+    assert MultilabelPrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(
+        MultilabelPrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        )
+    )
+
+
+def test_multilabel_precision_result_equal_false_different_y_true() -> None:
+    assert not MultilabelPrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(
+        MultilabelPrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 1, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        )
+    )
+
+
+def test_multilabel_precision_result_equal_false_different_y_pred() -> None:
+    assert not MultilabelPrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(
+        MultilabelPrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 1, 1]]),
+        )
+    )
+
+
+def test_multilabel_precision_result_equal_false_different_type() -> None:
+    assert not MultilabelPrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(42)
+
+
+def test_multilabel_precision_result_equal_nan_true() -> None:
+    assert MultilabelPrecisionResult(
+        y_true=np.array([1, 0, 0, float("nan"), 1]), y_pred=np.array([0, 1, 0, float("nan"), 1])
+    ).equal(
+        MultilabelPrecisionResult(
+            y_true=np.array([1, 0, 0, float("nan"), 1]),
+            y_pred=np.array([0, 1, 0, float("nan"), 1]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_multilabel_precision_result_compute_metrics_1_class_1d() -> None:
+    result = MultilabelPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "precision": np.array([1.0]),
+            "count": 5,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
+        },
+    )
+
+
+def test_multilabel_precision_result_compute_metrics_1_class_2d() -> None:
+    result = MultilabelPrecisionResult(
+        y_true=np.array([[1], [0], [0], [1], [1]]), y_pred=np.array([[1], [0], [0], [1], [1]])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "precision": np.array([1.0]),
+            "count": 5,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
+        },
+    )
+
+
+def test_multilabel_precision_result_compute_metrics_3_classes() -> None:
+    result = MultilabelPrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    )
+    assert objects_are_allclose(
+        result.compute_metrics(),
+        {
+            "precision": np.array([1.0, 1.0, 0.0]),
+            "count": 5,
+            "macro_precision": 0.6666666666666666,
+            "micro_precision": 0.7142857142857143,
+            "weighted_precision": 0.625,
+        },
+    )
+
+
+def test_multilabel_precision_result_compute_metrics_empty() -> None:
+    result = MultilabelPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "precision": np.array([]),
+            "count": 0,
+            "macro_precision": float("nan"),
+            "micro_precision": float("nan"),
+            "weighted_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_precision_result_compute_metrics_prefix_suffix() -> None:
+    result = MultilabelPrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
+            "prefix_count_suffix": 5,
+            "prefix_macro_precision_suffix": 1.0,
+            "prefix_micro_precision_suffix": 1.0,
+            "prefix_weighted_precision_suffix": 1.0,
+        },
+    )
+
+
+def test_multilabel_precision_result_generate_figures() -> None:
+    result = MultilabelPrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multilabel_precision_result_generate_figures_empty() -> None:
+    result = MultilabelPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(result.generate_figures(), {})
