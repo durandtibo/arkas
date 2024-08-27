@@ -336,6 +336,11 @@ def test_binary_precision_result_y_pred_2d() -> None:
     )
 
 
+def test_binary_precision_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1, 0]))
+
+
 def test_binary_precision_result_repr() -> None:
     assert repr(
         BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
