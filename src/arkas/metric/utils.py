@@ -3,6 +3,7 @@ r"""Contain utility functions to compute metrics."""
 from __future__ import annotations
 
 __all__ = [
+    "check_same_shape_pred",
     "check_label_type",
     "check_nan_true_pred",
     "multi_isnan",
@@ -10,13 +11,40 @@ __all__ = [
     "preprocess_true_score_binary",
 ]
 
-
 from typing import TYPE_CHECKING
 
 import numpy as np
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+
+def check_same_shape_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
+    r"""Check if ``y_true`` and ``y_pred`` arrays have the same shape.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_pred: The predicted labels.
+
+    Raises:
+        RuntimeError: ``'y_true'`` and ``'y_pred'`` have different
+            shapes.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import check_same_shape_pred
+    >>> y_true = np.array([1, 0, 0, 1])
+    >>> y_pred = np.array([0, 1, 0, 1])
+    >>> check_same_shape_pred(y_true, y_pred)
+
+    ```
+    """
+    if y_true.shape != y_pred.shape:
+        msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
+        raise RuntimeError(msg)
 
 
 def multi_isnan(arrays: Sequence[np.ndarray]) -> np.ndarray:
@@ -91,11 +119,7 @@ def preprocess_true_pred(
     ```
     """
     check_nan_true_pred(nan)
-
-    if y_true.shape != y_pred.shape:
-        msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
-        raise RuntimeError(msg)
-
+    check_same_shape_pred(y_true, y_pred)
     if nan == "keep":
         return y_true, y_pred
     mask = np.logical_not(multi_isnan([y_true, y_pred]))
