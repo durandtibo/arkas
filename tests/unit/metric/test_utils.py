@@ -7,10 +7,34 @@ from coola import objects_are_equal
 from arkas.metric.utils import (
     check_label_type,
     check_nan_true_pred,
+    check_same_shape_pred,
     multi_isnan,
     preprocess_true_pred,
     preprocess_true_score_binary,
 )
+
+###########################################
+#     Tests for check_same_shape_pred     #
+###########################################
+
+
+def test_check_same_shape_pred_1d() -> None:
+    check_same_shape_pred(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1]))
+
+
+def test_check_same_shape_pred_2d() -> None:
+    check_same_shape_pred(
+        y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[1, 0, 0], [1, 1, 1]])
+    )
+
+
+def test_check_same_shape_pred_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        check_same_shape_pred(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([0, 1, 0, 1, 1, 0]),
+        )
+
 
 #################################
 #     Tests for multi_isnan     #
