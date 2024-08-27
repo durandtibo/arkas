@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.result import PrecisionResult
+from arkas.result import BinaryPrecisionResult, PrecisionResult
 
 #####################################
 #     Tests for PrecisionResult     #
@@ -292,4 +292,145 @@ def test_precision_result_generate_figures() -> None:
 
 def test_precision_result_generate_figures_empty() -> None:
     result = PrecisionResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+###########################################
+#     Tests for BinaryPrecisionResult     #
+###########################################
+
+
+def test_binary_precision_result_y_true() -> None:
+    assert objects_are_equal(
+        BinaryPrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).y_true,
+        np.array([1, 0, 0, 1, 1]),
+    )
+
+
+def test_binary_precision_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        BinaryPrecisionResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[0, 1, 0], [1, 0, 1]])
+        ).y_true,
+        np.array([1, 0, 0, 1, 1, 1]),
+    )
+
+
+def test_binary_precision_result_y_pred() -> None:
+    assert objects_are_equal(
+        BinaryPrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).y_pred,
+        np.array([1, 0, 1, 0, 1]),
+    )
+
+
+def test_binary_precision_result_y_pred_2d() -> None:
+    assert objects_are_equal(
+        BinaryPrecisionResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[0, 1, 0], [1, 0, 1]])
+        ).y_pred,
+        np.array([0, 1, 0, 1, 0, 1]),
+    )
+
+
+def test_binary_precision_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1, 0]))
+
+
+def test_binary_precision_result_repr() -> None:
+    assert repr(
+        BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
+    ).startswith("BinaryPrecisionResult(")
+
+
+def test_binary_precision_result_str() -> None:
+    assert str(
+        BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
+    ).startswith("BinaryPrecisionResult(")
+
+
+def test_binary_precision_result_equal_true() -> None:
+    assert BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(
+        BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
+    )
+
+
+def test_binary_precision_result_equal_false_different_y_true() -> None:
+    assert not BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(
+        BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1, 0]), y_pred=np.array([1, 0, 1, 0, 1]))
+    )
+
+
+def test_binary_precision_result_equal_false_different_y_pred() -> None:
+    assert not BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(
+        BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0]))
+    )
+
+
+def test_binary_precision_result_equal_false_different_type() -> None:
+    assert not BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(42)
+
+
+def test_binary_precision_result_equal_nan_true() -> None:
+    assert BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, float("nan"), 1]), y_pred=np.array([0, 1, 0, float("nan"), 1])
+    ).equal(
+        BinaryPrecisionResult(
+            y_true=np.array([1, 0, 0, float("nan"), 1]),
+            y_pred=np.array([0, 1, 0, float("nan"), 1]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_binary_precision_result_compute_metrics_binary_correct() -> None:
+    result = BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    )
+    assert objects_are_equal(result.compute_metrics(), {"count": 5, "precision": 1.0})
+
+
+def test_binary_precision_result_compute_metrics_binary_incorrect() -> None:
+    result = BinaryPrecisionResult(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([1, 0, 1, 0]))
+    assert objects_are_allclose(result.compute_metrics(), {"count": 4, "precision": 0.5})
+
+
+def test_binary_precision_result_compute_metrics_binary_empty() -> None:
+    result = BinaryPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(), {"count": 0, "precision": float("nan")}, equal_nan=True
+    )
+
+
+def test_binary_precision_result_compute_metrics_binary_prefix_suffix() -> None:
+    result = BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {"prefix_count_suffix": 5, "prefix_precision_suffix": 1.0},
+    )
+
+
+def test_binary_precision_result_generate_figures() -> None:
+    result = BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_binary_precision_result_generate_figures_empty() -> None:
+    result = BinaryPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(result.generate_figures(), {})
