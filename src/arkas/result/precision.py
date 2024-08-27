@@ -2,14 +2,18 @@ r"""Implement the precision result."""
 
 from __future__ import annotations
 
-__all__ = ["PrecisionResult"]
+__all__ = ["PrecisionResult", "BinaryPrecisionResult"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.precision import find_label_type, precision_metrics
-from arkas.metric.utils import check_label_type
+from arkas.metric.precision import (
+    binary_precision_metrics,
+    find_label_type,
+    precision_metrics,
+)
+from arkas.metric.utils import check_label_type, check_same_shape_pred
 from arkas.result.base import BaseResult
 
 if TYPE_CHECKING:
@@ -160,3 +164,70 @@ class PrecisionResult(BaseResult):
             )
             raise ValueError(msg)
         check_label_type(self._label_type)
+
+
+class BinaryPrecisionResult(BaseResult):
+    r"""Implement the precision result for binary labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples, *)`` with ``0`` and
+            ``1`` values.
+        y_pred: The predicted labels. This input must be an array of
+            shape ``(n_samples, *)`` with ``0`` and ``1`` values.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.result import BinaryPrecisionResult
+    >>> result = BinaryPrecisionResult(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ... )
+    >>> result
+    BinaryPrecisionResult(y_true=(5,), y_pred=(5,))
+    >>> result.compute_metrics()
+    {'count': 5, 'precision': 1.0}
+
+    ```
+    """
+
+    def __init__(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
+        check_same_shape_pred(y_true, y_pred)
+        self._y_true = y_true.ravel()
+        self._y_pred = y_pred.ravel()
+
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
+            f"y_pred={self._y_pred.shape})"
+        )
+
+    @property
+    def y_true(self) -> np.ndarray:
+        return self._y_true
+
+    @property
+    def y_pred(self) -> np.ndarray:
+        return self._y_pred
+
+    def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+        return binary_precision_metrics(
+            y_true=self._y_true,
+            y_pred=self._y_pred,
+            prefix=prefix,
+            suffix=suffix,
+        )
+
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(
+            self.y_true, other.y_true, equal_nan=equal_nan
+        ) and objects_are_equal(self.y_pred, other.y_pred, equal_nan=equal_nan)
+
+    def generate_figures(
+        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+    ) -> dict[str, float]:
+        return {}
