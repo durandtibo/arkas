@@ -15,6 +15,7 @@ __all__ = [
     "Result",
     "BinaryPrecisionResult",
     "MultilabelPrecisionResult",
+    "MulticlassPrecisionResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -24,6 +25,7 @@ from arkas.result.binary_classification import BinaryClassificationResult
 from arkas.result.merge import MergedResult
 from arkas.result.precision import (
     BinaryPrecisionResult,
+    MulticlassPrecisionResult,
     MultilabelPrecisionResult,
     PrecisionResult,
 )
