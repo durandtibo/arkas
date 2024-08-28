@@ -8,6 +8,7 @@ __all__ = [
     "balanced_accuracy_metrics",
     "binary_average_precision_metrics",
     "binary_confusion_matrix_metrics",
+    "binary_fbeta_metrics",
     "binary_jaccard_metrics",
     "binary_precision_metrics",
     "binary_recall_metrics",
@@ -17,12 +18,14 @@ __all__ = [
     "jaccard_metrics",
     "multiclass_average_precision_metrics",
     "multiclass_confusion_matrix_metrics",
+    "multiclass_fbeta_metrics",
     "multiclass_jaccard_metrics",
     "multiclass_precision_metrics",
     "multiclass_recall_metrics",
     "multiclass_roc_auc_metrics",
     "multilabel_average_precision_metrics",
     "multilabel_confusion_matrix_metrics",
+    "multilabel_fbeta_metrics",
     "multilabel_jaccard_metrics",
     "multilabel_precision_metrics",
     "multilabel_recall_metrics",
@@ -30,9 +33,6 @@ __all__ = [
     "precision_metrics",
     "recall_metrics",
     "roc_auc_metrics",
-    "multiclass_fbeta_metrics",
-    "multilabel_fbeta_metrics",
-    "binary_fbeta_metrics",
 ]
 
 from arkas.metric.accuracy import accuracy_metrics, balanced_accuracy_metrics

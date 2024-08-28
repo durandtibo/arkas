@@ -3,11 +3,11 @@ r"""Implement the precision result."""
 from __future__ import annotations
 
 __all__ = [
-    "PrecisionResult",
     "BasePrecisionResult",
     "BinaryPrecisionResult",
-    "MultilabelPrecisionResult",
     "MulticlassPrecisionResult",
+    "MultilabelPrecisionResult",
+    "PrecisionResult",
 ]
 
 from typing import TYPE_CHECKING, Any

@@ -42,6 +42,7 @@ def test_binary_precision_evaluator_evaluate_lazy_false() -> None:
     )
     assert isinstance(result, Result)
     assert objects_are_equal(result.compute_metrics(), {"count": 5, "precision": 1.0})
+    assert len(result.generate_figures()) == 1
 
 
 def test_binary_precision_evaluator_evaluate_missing_keys() -> None:
