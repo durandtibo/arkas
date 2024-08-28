@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
@@ -433,12 +434,25 @@ def test_binary_precision_result_generate_figures() -> None:
     result = BinaryPrecisionResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
     )
-    assert objects_are_equal(result.generate_figures(), {})
+    figures = result.generate_figures()
+    assert isinstance(figures, dict)
+    assert len(figures) == 1
+    assert isinstance(figures["precision_recall"], plt.Figure)
 
 
 def test_binary_precision_result_generate_figures_empty() -> None:
     result = BinaryPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_binary_precision_result_generate_figures_prefix_suffix() -> None:
+    result = BinaryPrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    )
+    figures = result.generate_figures(prefix="prefix_", suffix="_suffix")
+    assert isinstance(figures, dict)
+    assert len(figures) == 1
+    assert isinstance(figures["prefix_precision_recall_suffix"], plt.Figure)
 
 
 ###############################################
