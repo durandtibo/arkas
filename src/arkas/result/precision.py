@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
+from arkas.metric.figure import binary_precision_recall_curve
 from arkas.metric.precision import (
     binary_precision_metrics,
     find_label_type,
@@ -25,6 +26,7 @@ from arkas.metric.utils import check_label_type, check_same_shape_pred
 from arkas.result.base import BaseResult
 
 if TYPE_CHECKING:
+    import matplotlib.pyplot as plt
     import numpy as np
 
 
@@ -263,10 +265,14 @@ class BinaryPrecisionResult(BasePrecisionResult):
             suffix=suffix,
         )
 
-    def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
-    ) -> dict[str, float]:
-        return {}
+    def generate_figures(self, prefix: str = "", suffix: str = "") -> dict[str, plt.Figure]:
+        fig = binary_precision_recall_curve(
+            y_true=self._y_true,
+            y_pred=self._y_pred,
+        )
+        if fig is None:
+            return {}
+        return {f"{prefix}precision_recall{suffix}": fig}
 
 
 class MultilabelPrecisionResult(BasePrecisionResult):

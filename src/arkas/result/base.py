@@ -13,6 +13,7 @@ from coola.equality.testers import EqualityTester
 
 if TYPE_CHECKING:
     from coola.equality import EqualityConfig
+    from matplotlib import pyplot as plt
 
 
 class BaseResult(ABC):
@@ -97,7 +98,7 @@ class BaseResult(ABC):
         """
 
     @abstractmethod
-    def generate_figures(self, prefix: str = "", suffix: str = "") -> dict:
+    def generate_figures(self, prefix: str = "", suffix: str = "") -> dict[str, plt.Figure]:
         r"""Return the figures associated to the result.
 
         Args:
