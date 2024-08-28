@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 from matplotlib import pyplot as plt
 
-from arkas.result.figure import binary_precision_recall_curve
+from arkas.metric.figure import binary_precision_recall_curve
 
 ###################################################
 #     Tests for binary_precision_recall_curve     #

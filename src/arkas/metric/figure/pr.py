@@ -43,7 +43,7 @@ def binary_precision_recall_curve(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result.figure import binary_precision_recall_curve
+    >>> from arkas.metric.figure import binary_precision_recall_curve
     >>> fig = binary_precision_recall_curve(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
