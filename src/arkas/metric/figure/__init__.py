@@ -4,4 +4,4 @@ from __future__ import annotations
 
 __all__ = ["binary_precision_recall_curve"]
 
-from arkas.result.figure.pr import binary_precision_recall_curve
+from arkas.metric.figure.pr import binary_precision_recall_curve
