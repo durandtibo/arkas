@@ -1,9 +1,9 @@
-r"""Contain the implementation of a section that analyze accuracy
+r"""Contain the implementation of a section that analyze precision
 results."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracySection", "create_section_template"]
+__all__ = ["BinaryPrecisionSection", "create_section_template"]
 
 import logging
 from typing import TYPE_CHECKING, Any
@@ -29,8 +29,8 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class AccuracySection(BaseSection):
-    r"""Implement a section that analyze accuracy results.
+class BinaryPrecisionSection(BaseSection):
+    r"""Implement a section that analyze precision results.
 
     Args:
         result: The data structure containing the results.
@@ -40,16 +40,16 @@ class AccuracySection(BaseSection):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.section import AccuracySection
-    >>> from arkas.result import AccuracyResult
-    >>> section = AccuracySection(
-    ...     result=AccuracyResult(
+    >>> from arkas.section import BinaryPrecisionSection
+    >>> from arkas.result import BinaryPrecisionResult
+    >>> section = BinaryPrecisionSection(
+    ...     result=BinaryPrecisionResult(
     ...         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ...     )
     ... )
     >>> section
-    AccuracySection(
-      (result): AccuracyResult(y_true=(5,), y_pred=(5,))
+    BinaryPrecisionSection(
+      (result): BinaryPrecisionResult(y_true=(5,), y_pred=(5,))
     )
     >>> section.generate_html_body()
 
@@ -73,7 +73,7 @@ class AccuracySection(BaseSection):
         return self._result.equal(other._result)
 
     def generate_html_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
-        logger.info("Generating the accuracy section...")
+        logger.info("Generating the binary precision section...")
         metrics = self._result.compute_metrics()
         return Template(create_section_template()).render(
             {
@@ -82,11 +82,8 @@ class AccuracySection(BaseSection):
                 "depth": valid_h_tag(depth + 1),
                 "title": tags2title(tags),
                 "section": number,
-                "accuracy": f"{metrics.get('accuracy', float('nan')):.4f}",
+                "precision": f"{metrics.get('precision', float('nan')):.4f}",
                 "count": f"{metrics.get('count', 0):,}",
-                "count_correct": f"{metrics.get('count_correct', 0):,}",
-                "count_incorrect": f"{metrics.get('count_incorrect', 0):,}",
-                "error": f"{metrics.get('error', float('nan')):.4f}",
             }
         )
 
@@ -118,8 +115,8 @@ def create_section_template() -> str:
 <p style="margin-top: 1rem;">
 
 <ul>
-  <li>accuracy: {{accuracy}} ({{count_correct}}/{{count}})</li>
-  <li>error: {{error}} ({{count_incorrect}}/{{count}})</li>
+  <li>precision: {{precision}}</li>
+  <li>count: {{count}}</li>
 </ul>
 
 <p style="margin-top: 1rem;">
