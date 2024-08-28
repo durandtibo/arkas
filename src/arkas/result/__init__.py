@@ -8,14 +8,14 @@ __all__ = [
     "BalancedAccuracyResult",
     "BaseResult",
     "BinaryClassificationResult",
+    "BinaryPrecisionResult",
     "EmptyResult",
     "MergedResult",
+    "MulticlassPrecisionResult",
+    "MultilabelPrecisionResult",
     "PrecisionResult",
     "RecallResult",
     "Result",
-    "BinaryPrecisionResult",
-    "MultilabelPrecisionResult",
-    "MulticlassPrecisionResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult

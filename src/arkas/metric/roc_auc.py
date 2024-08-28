@@ -7,8 +7,8 @@ __all__ = [
     "binary_roc_auc_metrics",
     "multiclass_roc_auc_metrics",
     "multilabel_roc_auc_metrics",
-    "roc_auc_metrics",
     "preprocess_true_score_binary",
+    "roc_auc_metrics",
 ]
 
 from typing import Any

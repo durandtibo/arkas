@@ -3,10 +3,10 @@ r"""Implement the F-beta metrics."""
 from __future__ import annotations
 
 __all__ = [
+    "binary_fbeta_metrics",
     "fbeta_metrics",
     "multiclass_fbeta_metrics",
     "multilabel_fbeta_metrics",
-    "binary_fbeta_metrics",
 ]
 
 from typing import TYPE_CHECKING
