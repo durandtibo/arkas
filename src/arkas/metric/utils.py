@@ -8,8 +8,8 @@ __all__ = [
     "check_same_shape_pred",
     "check_same_shape_score",
     "multi_isnan",
-    "preprocess_true_pred",
-    "preprocess_true_score_binary",
+    "preprocess_pred",
+    "preprocess_score_binary",
 ]
 
 from typing import TYPE_CHECKING
@@ -113,7 +113,7 @@ def multi_isnan(arrays: Sequence[np.ndarray]) -> np.ndarray:
     return mask
 
 
-def preprocess_true_pred(
+def preprocess_pred(
     y_true: np.ndarray, y_pred: np.ndarray, nan: str = "keep"
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_pred`` arrays.
@@ -139,12 +139,12 @@ def preprocess_true_pred(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric.utils import preprocess_true_pred
+    >>> from arkas.metric.utils import preprocess_pred
     >>> y_true = np.array([1, 0, 0, 1, 1, float("nan")])
     >>> y_pred = np.array([0, 1, 0, 1, float("nan"), 1])
-    >>> preprocess_true_pred(y_true, y_pred)
+    >>> preprocess_pred(y_true, y_pred)
     (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
-    >>> preprocess_true_pred(y_true, y_pred, nan="remove")
+    >>> preprocess_pred(y_true, y_pred, nan="remove")
     (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
 
     ```
@@ -209,7 +209,7 @@ def check_label_type(label_type: str) -> None:
         raise RuntimeError(msg)
 
 
-def preprocess_true_score_binary(
+def preprocess_score_binary(
     y_true: np.ndarray, y_score: np.ndarray, nan: str = "keep"
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_score`` arrays in binary
@@ -231,12 +231,12 @@ def preprocess_true_score_binary(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric.utils import preprocess_true_score_binary
+    >>> from arkas.metric.utils import preprocess_score_binary
     >>> y_true = np.array([1, 0, 0, 1, 1, float("nan")])
     >>> y_score = np.array([0, 1, 0, 1, float("nan"), 1])
-    >>> preprocess_true_score_binary(y_true, y_score)
+    >>> preprocess_score_binary(y_true, y_score)
     (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
-    >>> preprocess_true_pred(y_true, y_score, nan="remove")
+    >>> preprocess_pred(y_true, y_score, nan="remove")
     (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
 
     ```

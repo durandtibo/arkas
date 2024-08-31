@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from sklearn.metrics import PrecisionRecallDisplay
 
-from arkas.metric.utils import preprocess_true_pred
+from arkas.metric.utils import preprocess_pred
 
 if TYPE_CHECKING:
     import numpy as np
@@ -44,7 +44,5 @@ def binary_precision_recall_curve(
 
     ```
     """
-    y_true, y_pred = preprocess_true_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
-    )
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
     PrecisionRecallDisplay.from_predictions(y_true=y_true, y_pred=y_pred, ax=ax, **kwargs)
