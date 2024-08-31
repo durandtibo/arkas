@@ -12,6 +12,7 @@ from arkas.metric.utils import (
     multi_isnan,
     preprocess_pred,
     preprocess_score_binary,
+    preprocess_score_multiclass,
 )
 
 ######################################
@@ -276,5 +277,200 @@ def test_preprocess_score_binary_nan_incorrect() -> None:
 def test_preprocess_score_binary_incorrect_shapes() -> None:
     with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different shapes"):
         preprocess_score_binary(
-            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1, 0]), nan="keep"
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1, 0])
         )
+
+
+#################################################
+#     Tests for preprocess_score_multiclass     #
+#################################################
+
+
+def test_preprocess_score_multiclass_no_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multiclass(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+        (
+            np.array([0, 0, 1, 1, 2, 2]),
+            np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+    )
+
+
+def test_preprocess_score_multiclass_keep_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multiclass(
+            y_true=np.array([0, 0, 1, 1, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, float("nan")],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+        (
+            np.array([0, 0, 1, 1, 2, float("nan")]),
+            np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, float("nan")],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_score_multiclass_remove_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multiclass(
+            y_true=np.array([0, 0, 1, 1, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, float("nan")],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+            nan="remove",
+        ),
+        (
+            np.array([0.0, 0.0, 1.0, 2.0]),
+            np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                ]
+            ),
+        ),
+    )
+
+
+def test_preprocess_score_multiclass_remove_y_true_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multiclass(
+            y_true=np.array([0, 0, 1, 1, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+            nan="remove",
+        ),
+        (
+            np.array([0.0, 0.0, 1.0, 1.0, 2.0]),
+            np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                ]
+            ),
+        ),
+    )
+
+
+def test_preprocess_score_multiclass_remove_y_score_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multiclass(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, float("nan")],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+            nan="remove",
+        ),
+        (
+            np.array([0, 0, 1, 2, 2]),
+            np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+    )
+
+
+def test_preprocess_score_multiclass_empty() -> None:
+    assert objects_are_equal(
+        preprocess_score_multiclass(y_true=np.array([]), y_score=np.array([])),
+        (np.array([]), np.array([])),
+    )
+
+
+def test_preprocess_score_multiclass_nan_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
+        preprocess_score_multiclass(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1]), nan="incorrect"
+        )
+
+
+def test_preprocess_score_multiclass_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different first dimension"):
+        preprocess_score_multiclass(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1, 0])
+        )
+
+
+def test_preprocess_score_multiclass_incorrect_ndim_y_true() -> None:
+    with pytest.raises(
+        RuntimeError, match="'y_true' must be a 1d array but received an array of shape"
+    ):
+        preprocess_score_multiclass(y_true=np.ones((5, 3)), y_score=np.ones((5, 3)))
+
+
+def test_preprocess_score_multiclass_incorrect_ndim_y_score() -> None:
+    with pytest.raises(
+        RuntimeError, match="'y_score' must be a 2d array but received an array of shape"
+    ):
+        preprocess_score_multiclass(y_true=np.ones((5,)), y_score=np.ones((5,)))
