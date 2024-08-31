@@ -345,16 +345,16 @@ class MultilabelPrecisionResult(BasePrecisionResult):
     >>> from arkas.result import MultilabelPrecisionResult
     >>> result = MultilabelPrecisionResult(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-    ...     y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )
     >>> result
     MultilabelPrecisionResult(y_true=(5, 3), y_pred=(5, 3))
     >>> result.compute_metrics()
     {'count': 5,
-     'macro_precision': 0.666...,
-     'micro_precision': 0.714...,
-     'precision': array([1., 1., 0.]),
-     'weighted_precision': 0.625}
+     'macro_precision': 1.0,
+     'micro_precision': 1.0,
+     'precision': array([1., 1., 1.]),
+     'weighted_precision': 1.0}
 
     ```
     """
