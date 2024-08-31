@@ -14,7 +14,7 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.precision import find_label_type
-from arkas.metric.utils import check_label_type, preprocess_true_pred
+from arkas.metric.utils import check_label_type, preprocess_pred
 
 
 def recall_metrics(
@@ -127,9 +127,7 @@ def binary_recall_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_true_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
-    )
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
 
     count, recall = y_true.size, float("nan")
     if count > 0:
@@ -174,9 +172,7 @@ def multiclass_recall_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_true_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
-    )
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
 
     n_samples = y_true.shape[0]
     macro_recall, micro_recall, weighted_recall = float("nan"), float("nan"), float("nan")

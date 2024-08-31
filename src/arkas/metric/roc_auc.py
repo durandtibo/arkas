@@ -7,7 +7,7 @@ __all__ = [
     "binary_roc_auc_metrics",
     "multiclass_roc_auc_metrics",
     "multilabel_roc_auc_metrics",
-    "preprocess_true_score_binary",
+    "preprocess_score_binary",
     "roc_auc_metrics",
 ]
 
@@ -17,7 +17,7 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.ap import find_label_type
-from arkas.metric.utils import check_label_type, preprocess_true_score_binary
+from arkas.metric.utils import check_label_type, preprocess_score_binary
 
 
 def roc_auc_metrics(
@@ -143,7 +143,7 @@ def binary_roc_auc_metrics(
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_true_score_binary(y_true=y_true, y_score=y_score, nan="remove")
+    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, nan="remove")
 
     count = y_true.size
     roc_auc = float("nan")

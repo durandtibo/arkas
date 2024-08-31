@@ -15,7 +15,7 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.precision import find_label_type
-from arkas.metric.utils import check_label_type, preprocess_true_pred
+from arkas.metric.utils import check_label_type, preprocess_pred
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
@@ -286,7 +286,7 @@ def _binary_fbeta_metrics(
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_true_pred(y_true=y_true, y_pred=y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, nan="remove")
 
     count, fbeta = y_true.size, float("nan")
     if count > 0:
@@ -316,7 +316,7 @@ def _multiclass_fbeta_metrics(
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_true_pred(y_true=y_true, y_pred=y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, nan="remove")
 
     n_samples = y_true.shape[0]
     macro_fbeta, micro_fbeta, weighted_fbeta = float("nan"), float("nan"), float("nan")

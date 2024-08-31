@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from sklearn import metrics
 
-from arkas.metric.utils import preprocess_true_pred
+from arkas.metric.utils import preprocess_pred
 
 if TYPE_CHECKING:
     import numpy as np
@@ -44,9 +44,7 @@ def accuracy_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_true_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
-    )
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
 
     count = y_true.size
     count_correct = int(metrics.accuracy_score(y_true=y_true, y_pred=y_pred, normalize=False))
@@ -91,9 +89,7 @@ def balanced_accuracy_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_true_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove"
-    )
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
 
     count = y_true.size
     accuracy = float("nan")

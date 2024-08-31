@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from sklearn.metrics import RocCurveDisplay
 
-from arkas.metric.utils import preprocess_true_score_binary
+from arkas.metric.utils import preprocess_score_binary
 
 if TYPE_CHECKING:
     import numpy as np
@@ -45,7 +45,7 @@ def binary_roc_curve(ax: Axes, y_true: np.ndarray, y_score: np.ndarray, **kwargs
 
     ```
     """
-    y_true, y_score = preprocess_true_score_binary(
+    y_true, y_score = preprocess_score_binary(
         y_true=y_true.ravel(), y_score=y_score.ravel(), nan="remove"
     )
     RocCurveDisplay.from_predictions(y_true=y_true, y_pred=y_score, ax=ax, **kwargs)
