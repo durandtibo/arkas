@@ -2,7 +2,7 @@ r"""Implement the recall result."""
 
 from __future__ import annotations
 
-__all__ = ["RecallResult", "BinaryRecallResult", "BaseRecallResult", "MulticlassRecallResult"]
+__all__ = ["BaseRecallResult", "BinaryRecallResult", "MulticlassRecallResult", "RecallResult"]
 
 from typing import TYPE_CHECKING, Any
 

@@ -456,6 +456,194 @@ def test_binary_precision_result_generate_figures_prefix_suffix() -> None:
 
 
 ###############################################
+#     Tests for MulticlassPrecisionResult     #
+###############################################
+
+
+def test_multiclass_precision_result_y_true() -> None:
+    assert objects_are_equal(
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_precision_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        MulticlassPrecisionResult(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_precision_result_y_pred() -> None:
+    assert objects_are_equal(
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).y_pred,
+        np.array([0, 0, 1, 1, 2, 1]),
+    )
+
+
+def test_multiclass_precision_result_y_pred_2d() -> None:
+    assert objects_are_equal(
+        MulticlassPrecisionResult(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
+        ).y_pred,
+        np.array([0, 0, 1, 1, 2, 1]),
+    )
+
+
+def test_multiclass_precision_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2, 1])
+        )
+
+
+def test_multiclass_precision_result_repr() -> None:
+    assert repr(
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+        )
+    ).startswith("MulticlassPrecisionResult(")
+
+
+def test_multiclass_precision_result_str() -> None:
+    assert str(
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+        )
+    ).startswith("MulticlassPrecisionResult(")
+
+
+def test_multiclass_precision_result_equal_true() -> None:
+    assert MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        )
+    )
+
+
+def test_multiclass_precision_result_equal_false_different_y_true() -> None:
+    assert not MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 2, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        )
+    )
+
+
+def test_multiclass_precision_result_equal_false_different_y_pred() -> None:
+    assert not MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
+        )
+    )
+
+
+def test_multiclass_precision_result_equal_false_different_type() -> None:
+    assert not MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(42)
+
+
+def test_multiclass_precision_result_equal_nan_true() -> None:
+    assert MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+    ).equal(
+        MulticlassPrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_multiclass_precision_result_compute_metrics_correct() -> None:
+    result = MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "precision": np.array([1.0, 1.0, 1.0]),
+            "weighted_precision": 1.0,
+        },
+    )
+
+
+def test_multiclass_precision_result_compute_metrics_incorrect() -> None:
+    result = MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 1, 1])
+    )
+    assert objects_are_allclose(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_precision": 0.5,
+            "micro_precision": 0.6666666666666666,
+            "precision": np.array([1.0, 0.5, 0.0]),
+            "weighted_precision": 0.5,
+        },
+    )
+
+
+def test_multiclass_precision_result_compute_metrics_empty() -> None:
+    result = MulticlassPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 0,
+            "macro_precision": float("nan"),
+            "micro_precision": float("nan"),
+            "precision": np.array([]),
+            "weighted_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_precision_result_compute_metrics_prefix_suffix() -> None:
+    result = MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_count_suffix": 6,
+            "prefix_macro_precision_suffix": 1.0,
+            "prefix_micro_precision_suffix": 1.0,
+            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
+            "prefix_weighted_precision_suffix": 1.0,
+        },
+    )
+
+
+def test_multiclass_precision_result_generate_figures() -> None:
+    result = MulticlassPrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multiclass_precision_result_generate_figures_empty() -> None:
+    result = MulticlassPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+###############################################
 #     Tests for MultilabelPrecisionResult     #
 ###############################################
 
@@ -652,192 +840,4 @@ def test_multilabel_precision_result_generate_figures() -> None:
 
 def test_multilabel_precision_result_generate_figures_empty() -> None:
     result = MultilabelPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
-    assert objects_are_equal(result.generate_figures(), {})
-
-
-###############################################
-#     Tests for MulticlassPrecisionResult     #
-###############################################
-
-
-def test_multiclass_precision_result_y_true() -> None:
-    assert objects_are_equal(
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-        ).y_true,
-        np.array([0, 0, 1, 1, 2, 2]),
-    )
-
-
-def test_multiclass_precision_result_y_true_2d() -> None:
-    assert objects_are_equal(
-        MulticlassPrecisionResult(
-            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
-        ).y_true,
-        np.array([0, 0, 1, 1, 2, 2]),
-    )
-
-
-def test_multiclass_precision_result_y_pred() -> None:
-    assert objects_are_equal(
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-        ).y_pred,
-        np.array([0, 0, 1, 1, 2, 1]),
-    )
-
-
-def test_multiclass_precision_result_y_pred_2d() -> None:
-    assert objects_are_equal(
-        MulticlassPrecisionResult(
-            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
-        ).y_pred,
-        np.array([0, 0, 1, 1, 2, 1]),
-    )
-
-
-def test_multiclass_precision_result_incorrect_shape() -> None:
-    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2, 1])
-        )
-
-
-def test_multiclass_precision_result_repr() -> None:
-    assert repr(
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-        )
-    ).startswith("MulticlassPrecisionResult(")
-
-
-def test_multiclass_precision_result_str() -> None:
-    assert str(
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-        )
-    ).startswith("MulticlassPrecisionResult(")
-
-
-def test_multiclass_precision_result_equal_true() -> None:
-    assert MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-    ).equal(
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-        )
-    )
-
-
-def test_multiclass_precision_result_equal_false_different_y_true() -> None:
-    assert not MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-    ).equal(
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 2, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-        )
-    )
-
-
-def test_multiclass_precision_result_equal_false_different_y_pred() -> None:
-    assert not MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-    ).equal(
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
-        )
-    )
-
-
-def test_multiclass_precision_result_equal_false_different_type() -> None:
-    assert not MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-    ).equal(42)
-
-
-def test_multiclass_precision_result_equal_nan_true() -> None:
-    assert MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-    ).equal(
-        MulticlassPrecisionResult(
-            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-        ),
-        equal_nan=True,
-    )
-
-
-def test_multiclass_precision_result_compute_metrics_correct() -> None:
-    result = MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-    )
-    assert objects_are_equal(
-        result.compute_metrics(),
-        {
-            "count": 6,
-            "macro_precision": 1.0,
-            "micro_precision": 1.0,
-            "precision": np.array([1.0, 1.0, 1.0]),
-            "weighted_precision": 1.0,
-        },
-    )
-
-
-def test_multiclass_precision_result_compute_metrics_incorrect() -> None:
-    result = MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 1, 1])
-    )
-    assert objects_are_allclose(
-        result.compute_metrics(),
-        {
-            "count": 6,
-            "macro_precision": 0.5,
-            "micro_precision": 0.6666666666666666,
-            "precision": np.array([1.0, 0.5, 0.0]),
-            "weighted_precision": 0.5,
-        },
-    )
-
-
-def test_multiclass_precision_result_compute_metrics_empty() -> None:
-    result = MulticlassPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
-    assert objects_are_equal(
-        result.compute_metrics(),
-        {
-            "count": 0,
-            "macro_precision": float("nan"),
-            "micro_precision": float("nan"),
-            "precision": np.array([]),
-            "weighted_precision": float("nan"),
-        },
-        equal_nan=True,
-    )
-
-
-def test_multiclass_precision_result_compute_metrics_prefix_suffix() -> None:
-    result = MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-    )
-    assert objects_are_equal(
-        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
-        {
-            "prefix_count_suffix": 6,
-            "prefix_macro_precision_suffix": 1.0,
-            "prefix_micro_precision_suffix": 1.0,
-            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
-            "prefix_weighted_precision_suffix": 1.0,
-        },
-    )
-
-
-def test_multiclass_precision_result_generate_figures() -> None:
-    result = MulticlassPrecisionResult(
-        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-    )
-    assert objects_are_equal(result.generate_figures(), {})
-
-
-def test_multiclass_precision_result_generate_figures_empty() -> None:
-    result = MulticlassPrecisionResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(result.generate_figures(), {})
