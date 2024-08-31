@@ -5,7 +5,7 @@ import pytest
 from coola import objects_are_allclose, objects_are_equal
 from matplotlib import pyplot as plt
 
-from arkas.result import BinaryRecallResult, RecallResult
+from arkas.result import BinaryRecallResult, MulticlassRecallResult, RecallResult
 
 ##################################
 #     Tests for RecallResult     #
@@ -428,3 +428,191 @@ def test_binary_recall_result_generate_figures_prefix_suffix() -> None:
     assert isinstance(figures, dict)
     assert len(figures) == 1
     assert isinstance(figures["prefix_precision_recall_suffix"], plt.Figure)
+
+
+############################################
+#     Tests for MulticlassRecallResult     #
+############################################
+
+
+def test_multiclass_recall_result_y_true() -> None:
+    assert objects_are_equal(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_recall_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        MulticlassRecallResult(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_recall_result_y_pred() -> None:
+    assert objects_are_equal(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).y_pred,
+        np.array([0, 0, 1, 1, 2, 1]),
+    )
+
+
+def test_multiclass_recall_result_y_pred_2d() -> None:
+    assert objects_are_equal(
+        MulticlassRecallResult(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
+        ).y_pred,
+        np.array([0, 0, 1, 1, 2, 1]),
+    )
+
+
+def test_multiclass_recall_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2, 1])
+        )
+
+
+def test_multiclass_recall_result_repr() -> None:
+    assert repr(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+        )
+    ).startswith("MulticlassRecallResult(")
+
+
+def test_multiclass_recall_result_str() -> None:
+    assert str(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+        )
+    ).startswith("MulticlassRecallResult(")
+
+
+def test_multiclass_recall_result_equal_true() -> None:
+    assert MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        )
+    )
+
+
+def test_multiclass_recall_result_equal_false_different_y_true() -> None:
+    assert not MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 2, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        )
+    )
+
+
+def test_multiclass_recall_result_equal_false_different_y_pred() -> None:
+    assert not MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
+        )
+    )
+
+
+def test_multiclass_recall_result_equal_false_different_type() -> None:
+    assert not MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(42)
+
+
+def test_multiclass_recall_result_equal_nan_true() -> None:
+    assert MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+    ).equal(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_multiclass_recall_result_compute_metrics_correct() -> None:
+    result = MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_recall": 1.0,
+            "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
+            "weighted_recall": 1.0,
+        },
+    )
+
+
+def test_multiclass_recall_result_compute_metrics_incorrect() -> None:
+    result = MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 1, 1])
+    )
+    assert objects_are_allclose(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_recall": 0.6666666666666666,
+            "micro_recall": 0.6666666666666666,
+            "recall": np.array([1.0, 1.0, 0.0]),
+            "weighted_recall": 0.6666666666666666,
+        },
+    )
+
+
+def test_multiclass_recall_result_compute_metrics_empty() -> None:
+    result = MulticlassRecallResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 0,
+            "macro_recall": float("nan"),
+            "micro_recall": float("nan"),
+            "recall": np.array([]),
+            "weighted_recall": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_recall_result_compute_metrics_prefix_suffix() -> None:
+    result = MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_count_suffix": 6,
+            "prefix_macro_recall_suffix": 1.0,
+            "prefix_micro_recall_suffix": 1.0,
+            "prefix_recall_suffix": np.array([1.0, 1.0, 1.0]),
+            "prefix_weighted_recall_suffix": 1.0,
+        },
+    )
+
+
+def test_multiclass_recall_result_generate_figures() -> None:
+    result = MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multiclass_recall_result_generate_figures_empty() -> None:
+    result = MulticlassRecallResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})

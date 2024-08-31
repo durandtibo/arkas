@@ -2,7 +2,7 @@ r"""Implement the recall result."""
 
 from __future__ import annotations
 
-__all__ = ["RecallResult", "BinaryRecallResult", "BaseRecallResult"]
+__all__ = ["RecallResult", "BinaryRecallResult", "BaseRecallResult", "MulticlassRecallResult"]
 
 from typing import TYPE_CHECKING, Any
 
@@ -10,7 +10,11 @@ from coola import objects_are_equal
 
 from arkas.metric import recall_metrics
 from arkas.metric.figure import binary_precision_recall_curve
-from arkas.metric.recall import binary_recall_metrics, find_label_type
+from arkas.metric.recall import (
+    binary_recall_metrics,
+    find_label_type,
+    multiclass_recall_metrics,
+)
 from arkas.metric.utils import check_label_type, check_same_shape_pred
 from arkas.result.base import BaseResult
 
@@ -262,3 +266,54 @@ class BinaryRecallResult(BaseRecallResult):
         if fig is None:
             return {}
         return {f"{prefix}precision_recall{suffix}": fig}
+
+
+class MulticlassRecallResult(BaseRecallResult):
+    r"""Implement the recall result for multiclass labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples, *)`` with values in
+            ``{0, ..., n_classes-1}``.
+        y_pred: The predicted labels. This input must be an array of
+            shape ``(n_samples, *)`` with values in
+            ``{0, ..., n_classes-1}``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.result import MulticlassRecallResult
+    >>> result = MulticlassRecallResult(
+    ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
+    ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
+    ... )
+    >>> result
+    MulticlassRecallResult(y_true=(6,), y_pred=(6,))
+    >>> result.compute_metrics()
+    {'count': 6,
+     'macro_recall': 1.0,
+     'micro_recall': 1.0,
+     'recall': array([1., 1., 1.]),
+     'weighted_recall': 1.0}
+
+    ```
+    """
+
+    def __init__(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
+        check_same_shape_pred(y_true, y_pred)
+        super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
+
+    def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+        return multiclass_recall_metrics(
+            y_true=self._y_true,
+            y_pred=self._y_pred,
+            prefix=prefix,
+            suffix=suffix,
+        )
+
+    def generate_figures(
+        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+    ) -> dict[str, float]:
+        return {}

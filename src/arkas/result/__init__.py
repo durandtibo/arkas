@@ -17,6 +17,7 @@ __all__ = [
     "RecallResult",
     "Result",
     "BinaryRecallResult",
+    "MulticlassRecallResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -30,5 +31,5 @@ from arkas.result.precision import (
     MultilabelPrecisionResult,
     PrecisionResult,
 )
-from arkas.result.recall import BinaryRecallResult, RecallResult
+from arkas.result.recall import BinaryRecallResult, MulticlassRecallResult, RecallResult
 from arkas.result.vanilla import EmptyResult, Result
