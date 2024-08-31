@@ -296,10 +296,41 @@ def test_preprocess_score_binary_incorrect_shapes() -> None:
 #################################################
 
 
-def test_preprocess_score_multiclass_no_nan() -> None:
+def test_preprocess_score_multiclass_1d() -> None:
     assert objects_are_equal(
         preprocess_score_multiclass(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+        (
+            np.array([0, 0, 1, 1, 2, 2]),
+            np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+    )
+
+
+def test_preprocess_score_multiclass_2d() -> None:
+    assert objects_are_equal(
+        preprocess_score_multiclass(
+            y_true=np.array([[0], [0], [1], [1], [2], [2]]),
             y_score=np.array(
                 [
                     [0.7, 0.2, 0.1],
@@ -473,9 +504,7 @@ def test_preprocess_score_multiclass_incorrect_shapes() -> None:
 
 
 def test_preprocess_score_multiclass_incorrect_ndim_y_true() -> None:
-    with pytest.raises(
-        RuntimeError, match="'y_true' must be a 1d array but received an array of shape"
-    ):
+    with pytest.raises(RuntimeError, match=r"'y_true' must be a an array of shape"):
         preprocess_score_multiclass(y_true=np.ones((5, 3)), y_score=np.ones((5, 3)))
 
 
