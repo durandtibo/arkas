@@ -218,8 +218,10 @@ def preprocess_score_binary(
     classification case.
 
     Args:
-        y_true: The ground truth target labels.
-        y_score: The predicted labels.
+        y_true: The ground truth target labels. This input must be an
+            array of shape ``(n_samples, *)``.
+        y_score: The predicted labels. This input must be an
+            array of shape ``(n_samples, *)``.
         nan: Indicate how to process the nan values.
             If ``'keep'``, the nan values are kept.
             If ``'remove'``, the nan values are removed.
@@ -265,8 +267,10 @@ def preprocess_score_multiclass(
     classification case.
 
     Args:
-        y_true: The ground truth target labels.
-        y_score: The predicted labels.
+        y_true: The ground truth target labels. This input must be an
+            array of shape ``(n_samples,)`` or ``(n_samples, 1)``.
+        y_score: The predicted labels. This input must be an
+            array of shape ``(n_samples, n_classes)``.
         nan: Indicate how to process the nan values.
             If ``'keep'``, the nan values are kept.
             If ``'remove'``, the nan values are removed.
@@ -313,13 +317,20 @@ def preprocess_score_multiclass(
         return np.array([]), np.array([])
 
     check_nan_option(nan)
+    if y_true.size != y_true.shape[0]:
+        msg = (
+            f"'y_true' must be a an array of shape (n_samples,) or (n_samples, 1) but received: "
+            f"{y_true.shape}"
+        )
+        raise RuntimeError(msg)
+    y_true = y_true.ravel()
     if y_true.shape[0] != y_score.shape[0]:
-        msg = f"'y_true' and 'y_score' have different first dimension: {y_true.shape} vs {y_score.shape}"
+        msg = (
+            f"'y_true' and 'y_score' have different first dimension: {y_true.shape} vs "
+            f"{y_score.shape}"
+        )
         raise RuntimeError(msg)
 
-    if y_true.ndim != 1:
-        msg = f"'y_true' must be a 1d array but received an array of shape: {y_true.shape}"
-        raise RuntimeError(msg)
     if y_score.ndim != 2:
         msg = f"'y_score' must be a 2d array but received an array of shape: {y_score.shape}"
         raise RuntimeError(msg)
@@ -339,8 +350,12 @@ def preprocess_score_multilabel(
     classification case.
 
     Args:
-        y_true: The ground truth target labels.
-        y_score: The predicted labels.
+        y_true: The ground truth target labels. This input must be an
+            array of shape ``(n_samples, n_classes)`` or
+            ``(n_samples,)``.
+        y_score: The predicted labels. This input must be an
+            array of shape ``(n_samples, n_classes)`` or
+            ``(n_samples,)``.
         nan: Indicate how to process the nan values.
             If ``'keep'``, the nan values are kept.
             If ``'remove'``, the nan values are removed.
@@ -389,7 +404,7 @@ def preprocess_score_multilabel(
     if y_true.ndim != 2:
         msg = f"'y_true' must be a 1d or 2d array but received an array of shape: {y_true.shape}"
         raise RuntimeError(msg)
-    if y_score.ndim == 1 and y_score.size > 0:
+    if y_score.ndim == 1:
         y_score = y_score.reshape((-1, 1))
     check_same_shape_score(y_true, y_score)
 
