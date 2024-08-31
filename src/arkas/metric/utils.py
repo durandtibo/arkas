@@ -11,6 +11,7 @@ __all__ = [
     "preprocess_pred",
     "preprocess_score_binary",
     "preprocess_score_multiclass",
+    "preprocess_score_multilabel",
 ]
 
 from typing import TYPE_CHECKING
@@ -288,14 +289,24 @@ def preprocess_score_multiclass(
     ...     ]
     ... )
     >>> preprocess_score_multiclass(y_true, y_score)
-    (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
+    (array([ 0.,  0.,  1.,  1.,  2., nan]),
+     array([[0.7, 0.2, 0.1],
+            [0.4, 0.3, 0.3],
+            [0.1, 0.8, nan],
+            [0.2, 0.3, 0.5],
+            [0.4, 0.4, 0.2],
+            [0.1, 0.2, 0.7]]))
     >>> preprocess_score_multiclass(y_true, y_score, nan="remove")
-    (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
+    (array([0., 0., 1., 2.]),
+     array([[0.7, 0.2, 0.1],
+            [0.4, 0.3, 0.3],
+            [0.2, 0.3, 0.5],
+            [0.4, 0.4, 0.2]]))
 
     ```
     """
-    if y_true.size == 0:
-        return y_true, y_score
+    if y_true.size == 0 and y_score.size == 0:
+        return np.array([]), np.array([])
 
     check_nan_option(nan)
     if y_true.shape[0] != y_score.shape[0]:
@@ -314,4 +325,75 @@ def preprocess_score_multiclass(
 
     # Remove NaN values
     mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_score).any(axis=1)))
+    return y_true[mask], y_score[mask]
+
+
+def preprocess_score_multilabel(
+    y_true: np.ndarray, y_score: np.ndarray, nan: str = "keep"
+) -> tuple[np.ndarray, np.ndarray]:
+    r"""Preprocess ``y_true`` and ``y_score`` arrays for the multilabel
+    classification case.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_score: The predicted labels.
+        nan: Indicate how to process the nan values.
+            If ``'keep'``, the nan values are kept.
+            If ``'remove'``, the nan values are removed.
+
+    Returns:
+        A tuple with the preprocessed ``y_true`` and ``y_score``
+            arrays.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import preprocess_score_multilabel
+    >>> y_true = np.array([[1, float("nan"), 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]])
+    >>> y_score = np.array(
+    ...     [[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, float("nan"), -5]]
+    ... )
+    >>> preprocess_score_multilabel(y_true, y_score)
+    (array([[ 1., nan,  1.],
+            [ 0.,  1.,  0.],
+            [ 0.,  1.,  0.],
+            [ 1.,  0.,  1.],
+            [ 1.,  0.,  1.]]),
+     array([[ 2., -1., -1.],
+            [-1.,  1.,  2.],
+            [ 0.,  2.,  3.],
+            [ 3., -2., -4.],
+            [ 1., nan, -5.]]))
+    >>> preprocess_score_multilabel(y_true, y_score, nan="remove")
+    (array([[0., 1., 0.],
+            [0., 1., 0.],
+            [1., 0., 1.]]),
+     array([[-1.,  1.,  2.],
+            [ 0.,  2.,  3.],
+            [ 3., -2., -4.]]))
+
+    ```
+    """
+    if y_true.size == 0 and y_score.size == 0:
+        return np.array([]), np.array([])
+
+    check_nan_option(nan)
+    if y_true.ndim == 1:
+        y_true = y_true.reshape((-1, 1))
+    if y_true.ndim != 2:
+        msg = f"'y_true' must be a 1d or 2d array but received an array of shape: {y_true.shape}"
+        raise RuntimeError(msg)
+    if y_score.ndim == 1 and y_score.size > 0:
+        y_score = y_score.reshape((-1, 1))
+    check_same_shape_score(y_true, y_score)
+
+    if nan == "keep":
+        return y_true, y_score
+
+    # Remove NaN values
+    mask = np.logical_not(
+        np.logical_or(np.isnan(y_true).any(axis=1), np.isnan(y_score).any(axis=1))
+    )
     return y_true[mask], y_score[mask]

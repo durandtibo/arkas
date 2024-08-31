@@ -13,6 +13,7 @@ from arkas.metric.utils import (
     preprocess_pred,
     preprocess_score_binary,
     preprocess_score_multiclass,
+    preprocess_score_multilabel,
 )
 
 ######################################
@@ -474,3 +475,133 @@ def test_preprocess_score_multiclass_incorrect_ndim_y_score() -> None:
         RuntimeError, match="'y_score' must be a 2d array but received an array of shape"
     ):
         preprocess_score_multiclass(y_true=np.ones((5,)), y_score=np.ones((5,)))
+
+
+#################################################
+#     Tests for preprocess_score_multilabel     #
+#################################################
+
+
+def test_preprocess_score_multilabel_1d() -> None:
+    assert objects_are_equal(
+        preprocess_score_multilabel(np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1])),
+        (np.array([[1], [0], [0], [1], [1]]), np.array([[0], [1], [0], [1], [1]])),
+    )
+
+
+def test_preprocess_score_multilabel_2d() -> None:
+    assert objects_are_equal(
+        preprocess_score_multilabel(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+        ),
+        (
+            np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+        ),
+    )
+
+
+def test_preprocess_score_multilabel_keep_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multilabel(
+            y_true=np.array(
+                [
+                    [1.0, float("nan"), 1.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [1.0, 0.0, 1.0],
+                ]
+            ),
+            y_score=np.array(
+                [
+                    [2.0, -1.0, -1.0],
+                    [-1.0, 1.0, 2.0],
+                    [0.0, 2.0, 3.0],
+                    [3.0, -2.0, -4.0],
+                    [1.0, float("nan"), -5.0],
+                ]
+            ),
+        ),
+        (
+            np.array([[1, float("nan"), 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, float("nan"), -5]]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_score_multilabel_remove_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multilabel(
+            y_true=np.array([[1, float("nan"), 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array(
+                [[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, float("nan"), -5]]
+            ),
+            nan="remove",
+        ),
+        (
+            np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
+            np.array([[-1.0, 1.0, 2.0], [0.0, 2.0, 3.0], [3.0, -2.0, -4.0]]),
+        ),
+    )
+
+
+def test_preprocess_score_multilabel_remove_y_true_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multilabel(
+            y_true=np.array([[1, float("nan"), 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+            nan="remove",
+        ),
+        (
+            np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, 1.0]]),
+            np.array([[-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+        ),
+    )
+
+
+def test_preprocess_score_multilabel_remove_y_score_nan() -> None:
+    assert objects_are_equal(
+        preprocess_score_multilabel(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array(
+                [[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, float("nan"), -5]]
+            ),
+            nan="remove",
+        ),
+        (
+            np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1]]),
+            np.array([[2.0, -1.0, -1.0], [-1.0, 1.0, 2.0], [0.0, 2.0, 3.0], [3.0, -2.0, -4.0]]),
+        ),
+        show_difference=True,
+    )
+
+
+def test_preprocess_score_multilabel_empty() -> None:
+    assert objects_are_equal(
+        preprocess_score_multilabel(y_true=np.array([]), y_score=np.array([])),
+        (np.array([]), np.array([])),
+    )
+
+
+def test_preprocess_score_multilabel_nan_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
+        preprocess_score_multilabel(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1]), nan="incorrect"
+        )
+
+
+def test_preprocess_score_multilabel_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different shapes"):
+        preprocess_score_multilabel(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1, 0])
+        )
+
+
+def test_preprocess_score_multilabel_incorrect_ndim_y_true() -> None:
+    with pytest.raises(
+        RuntimeError, match="'y_true' must be a 1d or 2d array but received an array of shape"
+    ):
+        preprocess_score_multilabel(y_true=np.ones((5, 3, 1)), y_score=np.ones((5, 3)))
