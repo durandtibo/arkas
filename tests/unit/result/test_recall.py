@@ -3,8 +3,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
+from matplotlib import pyplot as plt
 
-from arkas.result import RecallResult
+from arkas.result import BinaryRecallResult, RecallResult
 
 ##################################
 #     Tests for RecallResult     #
@@ -287,3 +288,143 @@ def test_recall_result_generate_figures() -> None:
 def test_recall_result_generate_figures_empty() -> None:
     result = RecallResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(result.generate_figures(), {})
+
+
+########################################
+#     Tests for BinaryRecallResult     #
+########################################
+
+
+def test_binary_recall_result_y_true() -> None:
+    assert objects_are_equal(
+        BinaryRecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).y_true,
+        np.array([1, 0, 0, 1, 1]),
+    )
+
+
+def test_binary_recall_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        BinaryRecallResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[0, 1, 0], [1, 0, 1]])
+        ).y_true,
+        np.array([1, 0, 0, 1, 1, 1]),
+    )
+
+
+def test_binary_recall_result_y_pred() -> None:
+    assert objects_are_equal(
+        BinaryRecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).y_pred,
+        np.array([1, 0, 1, 0, 1]),
+    )
+
+
+def test_binary_recall_result_y_pred_2d() -> None:
+    assert objects_are_equal(
+        BinaryRecallResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_pred=np.array([[0, 1, 0], [1, 0, 1]])
+        ).y_pred,
+        np.array([0, 1, 0, 1, 0, 1]),
+    )
+
+
+def test_binary_recall_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1, 0]))
+
+
+def test_binary_recall_result_repr() -> None:
+    assert repr(
+        BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
+    ).startswith("BinaryRecallResult(")
+
+
+def test_binary_recall_result_str() -> None:
+    assert str(
+        BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
+    ).startswith("BinaryRecallResult(")
+
+
+def test_binary_recall_result_equal_true() -> None:
+    assert BinaryRecallResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])))
+
+
+def test_binary_recall_result_equal_false_different_y_true() -> None:
+    assert not BinaryRecallResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 0]), y_pred=np.array([1, 0, 1, 0, 1])))
+
+
+def test_binary_recall_result_equal_false_different_y_pred() -> None:
+    assert not BinaryRecallResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])))
+
+
+def test_binary_recall_result_equal_false_different_type() -> None:
+    assert not BinaryRecallResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(42)
+
+
+def test_binary_recall_result_equal_nan_true() -> None:
+    assert BinaryRecallResult(
+        y_true=np.array([1, 0, 0, float("nan"), 1]), y_pred=np.array([0, 1, 0, float("nan"), 1])
+    ).equal(
+        BinaryRecallResult(
+            y_true=np.array([1, 0, 0, float("nan"), 1]),
+            y_pred=np.array([0, 1, 0, float("nan"), 1]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_binary_recall_result_compute_metrics_correct() -> None:
+    result = BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
+    assert objects_are_equal(result.compute_metrics(), {"count": 5, "recall": 1.0})
+
+
+def test_binary_recall_result_compute_metrics_incorrect() -> None:
+    result = BinaryRecallResult(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([1, 0, 1, 0]))
+    assert objects_are_allclose(result.compute_metrics(), {"count": 4, "recall": 0.5})
+
+
+def test_binary_recall_result_compute_metrics_empty() -> None:
+    result = BinaryRecallResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(), {"count": 0, "recall": float("nan")}, equal_nan=True
+    )
+
+
+def test_binary_recall_result_compute_metrics_prefix_suffix() -> None:
+    result = BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {"prefix_count_suffix": 5, "prefix_recall_suffix": 1.0},
+    )
+
+
+def test_binary_recall_result_generate_figures() -> None:
+    result = BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
+    figures = result.generate_figures()
+    assert isinstance(figures, dict)
+    assert len(figures) == 1
+    assert isinstance(figures["precision_recall"], plt.Figure)
+
+
+def test_binary_recall_result_generate_figures_empty() -> None:
+    result = BinaryRecallResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_binary_recall_result_generate_figures_prefix_suffix() -> None:
+    result = BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
+    figures = result.generate_figures(prefix="prefix_", suffix="_suffix")
+    assert isinstance(figures, dict)
+    assert len(figures) == 1
+    assert isinstance(figures["prefix_precision_recall_suffix"], plt.Figure)
