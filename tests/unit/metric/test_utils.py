@@ -212,12 +212,21 @@ def test_preprocess_pred_incorrect_shapes() -> None:
 #############################################
 
 
-def test_preprocess_score_binary_no_nan() -> None:
+def test_preprocess_score_binary_1d() -> None:
     assert objects_are_equal(
         preprocess_score_binary(
             y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1])
         ),
         (np.array([1, 0, 0, 1, 1]), np.array([0, 1, 0, 1, 1])),
+    )
+
+
+def test_preprocess_score_binary_2d() -> None:
+    assert objects_are_equal(
+        preprocess_score_binary(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_score=np.array([[0, 1, 0], [1, 1, 0]])
+        ),
+        (np.array([1, 0, 0, 1, 1, 1]), np.array([0, 1, 0, 1, 1, 0])),
     )
 
 

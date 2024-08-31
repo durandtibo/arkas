@@ -243,6 +243,10 @@ def preprocess_score_binary(
 
     ```
     """
+    y_true, y_score = y_true.ravel(), y_score.ravel()
+    if y_true.size == 0 and y_score.size == 0:
+        return y_true, y_score
+
     check_nan_option(nan)
     check_same_shape_score(y_true, y_score)
 
