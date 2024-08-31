@@ -10,6 +10,7 @@ __all__ = [
     "multi_isnan",
     "preprocess_pred",
     "preprocess_score_binary",
+    "preprocess_score_multiclass",
 ]
 
 from typing import TYPE_CHECKING
@@ -236,19 +237,81 @@ def preprocess_score_binary(
     >>> y_score = np.array([0, 1, 0, 1, float("nan"), 1])
     >>> preprocess_score_binary(y_true, y_score)
     (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
-    >>> preprocess_pred(y_true, y_score, nan="remove")
+    >>> preprocess_score_binary(y_true, y_score, nan="remove")
     (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
 
     ```
     """
     check_nan_option(nan)
-    if y_true.shape != y_score.shape:
-        msg = f"'y_true' and 'y_score' have different shapes: {y_true.shape} vs {y_score.shape}"
-        raise RuntimeError(msg)
+    check_same_shape_score(y_true, y_score)
 
     if nan == "keep":
         return y_true, y_score
 
     # Remove NaN values
     mask = np.logical_not(multi_isnan([y_true, y_score]))
+    return y_true[mask], y_score[mask]
+
+
+def preprocess_score_multiclass(
+    y_true: np.ndarray, y_score: np.ndarray, nan: str = "keep"
+) -> tuple[np.ndarray, np.ndarray]:
+    r"""Preprocess ``y_true`` and ``y_score`` arrays for the multiclass
+    classification case.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_score: The predicted labels.
+        nan: Indicate how to process the nan values.
+            If ``'keep'``, the nan values are kept.
+            If ``'remove'``, the nan values are removed.
+
+    Returns:
+        A tuple with the preprocessed ``y_true`` and ``y_score``
+            arrays.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import preprocess_score_multiclass
+    >>> y_true = np.array([0, 0, 1, 1, 2, float("nan")])
+    >>> y_score = np.array(
+    ...     [
+    ...         [0.7, 0.2, 0.1],
+    ...         [0.4, 0.3, 0.3],
+    ...         [0.1, 0.8, float("nan")],
+    ...         [0.2, 0.3, 0.5],
+    ...         [0.4, 0.4, 0.2],
+    ...         [0.1, 0.2, 0.7],
+    ...     ]
+    ... )
+    >>> preprocess_score_multiclass(y_true, y_score)
+    (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
+    >>> preprocess_score_multiclass(y_true, y_score, nan="remove")
+    (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
+
+    ```
+    """
+    if y_true.size == 0:
+        return y_true, y_score
+
+    check_nan_option(nan)
+    if y_true.shape[0] != y_score.shape[0]:
+        msg = f"'y_true' and 'y_score' have different first dimension: {y_true.shape} vs {y_score.shape}"
+        raise RuntimeError(msg)
+
+    if y_true.ndim != 1:
+        msg = f"'y_true' must be a 1d array but received an array of shape: {y_true.shape}"
+        raise RuntimeError(msg)
+    if y_score.ndim != 2:
+        msg = f"'y_score' must be a 2d array but received an array of shape: {y_score.shape}"
+        raise RuntimeError(msg)
+
+    if nan == "keep":
+        return y_true, y_score
+
+    # Remove NaN values
+    mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_score).any(axis=1)))
     return y_true[mask], y_score[mask]
