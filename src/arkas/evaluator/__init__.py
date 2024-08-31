@@ -12,10 +12,12 @@ __all__ = [
     "MultilabelPrecisionEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
+    "BalancedAccuracyEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
 from arkas.evaluator.ap import AveragePrecisionEvaluator
+from arkas.evaluator.balanced_accuracy import BalancedAccuracyEvaluator
 from arkas.evaluator.base import (
     BaseEvaluator,
     BaseLazyEvaluator,

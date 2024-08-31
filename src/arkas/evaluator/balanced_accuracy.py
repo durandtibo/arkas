@@ -2,13 +2,13 @@ r"""Contain an accuracy evaluator."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracyEvaluator"]
+__all__ = ["BalancedAccuracyEvaluator"]
 
 import logging
 from typing import TYPE_CHECKING
 
 from arkas.evaluator.base import BaseLazyEvaluator
-from arkas.result import AccuracyResult, EmptyResult
+from arkas.result import BalancedAccuracyResult, EmptyResult
 from arkas.utils.array import to_array
 from arkas.utils.data import find_keys, find_missing_keys
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class AccuracyEvaluator(BaseLazyEvaluator):
+class BalancedAccuracyEvaluator(BaseLazyEvaluator):
     r"""Implement the accuracy evaluator.
 
     Args:
@@ -34,18 +34,18 @@ class AccuracyEvaluator(BaseLazyEvaluator):
 
     >>> import numpy as np
     >>> import polars as pl
-    >>> from arkas.evaluator import AccuracyEvaluator
+    >>> from arkas.evaluator import BalancedAccuracyEvaluator
     >>> data = {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
-    >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
+    >>> evaluator = BalancedAccuracyEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    AccuracyEvaluator(y_true=target, y_pred=pred)
+    BalancedAccuracyEvaluator(y_true=target, y_pred=pred)
     >>> result = evaluator.evaluate(data)
     >>> result
-    AccuracyResult(y_true=(5,), y_pred=(5,))
+    BalancedAccuracyResult(y_true=(5,), y_pred=(5,))
     >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
     >>> result = evaluator.evaluate(frame)
     >>> result
-    AccuracyResult(y_true=(6,), y_pred=(6,))
+    BalancedAccuracyResult(y_true=(6,), y_pred=(6,))
 
     ```
     """
@@ -67,6 +67,6 @@ class AccuracyEvaluator(BaseLazyEvaluator):
                 f"{sorted(missing_keys)}"
             )
             return EmptyResult()
-        return AccuracyResult(
+        return BalancedAccuracyResult(
             y_true=to_array(data[self._y_true]).ravel(), y_pred=to_array(data[self._y_pred]).ravel()
         )
