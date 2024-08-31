@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.result import AveragePrecisionResult
+from arkas.result import AveragePrecisionResult, BinaryAveragePrecisionResult
 
 ############################################
 #     Tests for AveragePrecisionResult     #
@@ -386,4 +386,169 @@ def test_average_precision_result_generate_figures() -> None:
 
 def test_average_precision_result_generate_figures_empty() -> None:
     result = AveragePrecisionResult(y_true=np.array([]), y_score=np.array([]), label_type="binary")
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+##################################################
+#     Tests for BinaryAveragePrecisionResult     #
+##################################################
+
+
+def test_binary_average_precision_result_y_true() -> None:
+    assert objects_are_equal(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+        ).y_true,
+        np.array([1, 0, 0, 1, 1]),
+    )
+
+
+def test_binary_average_precision_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_score=np.array([[0, 1, 0], [1, 0, 1]])
+        ).y_true,
+        np.array([1, 0, 0, 1, 1, 1]),
+    )
+
+
+def test_binary_average_precision_result_y_score() -> None:
+    assert objects_are_equal(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+        ).y_score,
+        np.array([2, -1, 0, 3, 1]),
+    )
+
+
+def test_binary_average_precision_result_y_score_2d() -> None:
+    assert objects_are_equal(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_score=np.array([[2, -1, 0], [3, 1, -2]])
+        ).y_score,
+        np.array([2, -1, 0, 3, 1, -2]),
+    )
+
+
+def test_binary_average_precision_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different shapes"):
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1, 4])
+        )
+
+
+def test_binary_average_precision_result_repr() -> None:
+    assert repr(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+        )
+    ).startswith("BinaryAveragePrecisionResult(")
+
+
+def test_binary_average_precision_result_str() -> None:
+    assert str(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+        )
+    ).startswith("BinaryAveragePrecisionResult(")
+
+
+def test_binary_average_precision_result_equal_true() -> None:
+    assert BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ).equal(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+        )
+    )
+
+
+def test_binary_average_precision_result_equal_false_different_y_true() -> None:
+    assert not BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ).equal(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 0]), y_score=np.array([2, -1, 0, 3, 1])
+        )
+    )
+
+
+def test_binary_average_precision_result_equal_false_different_y_score() -> None:
+    assert not BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ).equal(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 0])
+        )
+    )
+
+
+def test_binary_average_precision_result_equal_false_different_type() -> None:
+    assert not BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ).equal(42)
+
+
+def test_binary_average_precision_result_equal_nan_true() -> None:
+    assert BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, float("nan"), 1]), y_score=np.array([2, -1, 0, 3, float("nan")])
+    ).equal(
+        BinaryAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, float("nan"), 1]),
+            y_score=np.array([2, -1, 0, 3, float("nan")]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_binary_average_precision_result_compute_metrics_correct() -> None:
+    result = BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    )
+    assert objects_are_equal(result.compute_metrics(), {"count": 5, "average_precision": 1.0})
+
+
+def test_binary_average_precision_result_compute_metrics_incorrect() -> None:
+    result = BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1]), y_score=np.array([-1, 1, 0, -2])
+    )
+    assert objects_are_allclose(
+        result.compute_metrics(),
+        {"count": 4, "average_precision": 0.41666666666666663},
+    )
+
+
+def test_binary_average_precision_result_compute_metrics_empty() -> None:
+    result = BinaryAveragePrecisionResult(y_true=np.array([]), y_score=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(), {"count": 0, "average_precision": float("nan")}, equal_nan=True
+    )
+
+
+def test_binary_average_precision_result_compute_metrics_prefix_suffix() -> None:
+    result = BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 1])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {"prefix_count_suffix": 5, "prefix_average_precision_suffix": 1.0},
+    )
+
+
+def test_binary_average_precision_result_generate_figures() -> None:
+    result = BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_binary_average_precision_result_generate_figures_empty() -> None:
+    result = BinaryAveragePrecisionResult(y_true=np.array([]), y_score=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_binary_average_precision_result_generate_figures_prefix_suffix() -> None:
+    result = BinaryAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    )
     assert objects_are_equal(result.generate_figures(), {})
