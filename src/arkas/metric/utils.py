@@ -4,7 +4,7 @@ from __future__ import annotations
 
 __all__ = [
     "check_label_type",
-    "check_nan_true_pred",
+    "check_nan_option",
     "check_same_shape_pred",
     "check_same_shape_score",
     "multi_isnan",
@@ -18,6 +18,58 @@ import numpy as np
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+
+def check_label_type(label_type: str) -> None:
+    r"""Check if the label type value is valid or not.
+
+    Args:
+        label_type: The type of labels.
+            The valid values are ``'binary'``, ``'multiclass'``,
+            ``'multilabel'``, and ``'auto'``.
+
+    Raises:
+        RuntimeError: if an invalid value is passed to ``label_type``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.metric.utils import check_label_type
+    >>> check_label_type(label_type="binary")
+
+    ```
+    """
+    if label_type not in {"binary", "multiclass", "multilabel", "auto"}:
+        msg = (
+            f"Incorrect 'label_type': {label_type}. The supported label types are: "
+            f"'binary', 'multiclass', 'multilabel', and 'auto'"
+        )
+        raise RuntimeError(msg)
+
+
+def check_nan_option(nan: str) -> None:
+    r"""Check if the value is valid or not.
+
+    Args:
+        nan: Indicate how to process the nan values.
+            The valid values are ``'keep'`` and ``'remove'``.
+
+    Raises:
+        RuntimeError: if an invalid value is passed to ``nan``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.metric.utils import check_nan_option
+    >>> check_nan_option(nan="remove")
+
+    ```
+    """
+    if nan not in {"keep", "remove"}:
+        msg = f"Incorrect 'nan': {nan}. The valid values are 'keep' and 'remove'"
+        raise RuntimeError(msg)
 
 
 def check_same_shape_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
@@ -149,7 +201,7 @@ def preprocess_pred(
 
     ```
     """
-    check_nan_true_pred(nan)
+    check_nan_option(nan)
     check_same_shape_pred(y_true, y_pred)
     if nan == "keep":
         return y_true, y_pred
@@ -157,62 +209,10 @@ def preprocess_pred(
     return y_true[mask], y_pred[mask]
 
 
-def check_nan_true_pred(nan: str) -> None:
-    r"""Check if the value is valid or not.
-
-    Args:
-        nan: Indicate how to process the nan values.
-            The valid values are ``'keep'`` and ``'remove'``.
-
-    Raises:
-        RuntimeError: if an invalid value is passed to ``nan``.
-
-    Example usage:
-
-    ```pycon
-
-    >>> from arkas.metric.utils import check_nan_true_pred
-    >>> check_nan_true_pred(nan="remove")
-
-    ```
-    """
-    if nan not in {"keep", "remove"}:
-        msg = f"Incorrect 'nan': {nan}. The valid values are 'keep' and 'remove'"
-        raise RuntimeError(msg)
-
-
-def check_label_type(label_type: str) -> None:
-    r"""Check if the label type value is valid or not.
-
-    Args:
-        label_type: The type of labels.
-            The valid values are ``'binary'``, ``'multiclass'``,
-            ``'multilabel'``, and ``'auto'``.
-
-    Raises:
-        RuntimeError: if an invalid value is passed to ``label_type``.
-
-    Example usage:
-
-    ```pycon
-
-    >>> from arkas.metric.utils import check_label_type
-    >>> check_label_type(label_type="binary")
-
-    ```
-    """
-    if label_type not in {"binary", "multiclass", "multilabel", "auto"}:
-        msg = (
-            f"Incorrect 'label_type': {label_type}. The supported label types are: "
-            f"'binary', 'multiclass', 'multilabel', and 'auto'"
-        )
-        raise RuntimeError(msg)
-
-
 def preprocess_score_binary(
     y_true: np.ndarray, y_score: np.ndarray, nan: str = "keep"
 ) -> tuple[np.ndarray, np.ndarray]:
-    r"""Preprocess ``y_true`` and ``y_score`` arrays in binary
+    r"""Preprocess ``y_true`` and ``y_score`` arrays for the binary
     classification case.
 
     Args:
@@ -241,7 +241,7 @@ def preprocess_score_binary(
 
     ```
     """
-    check_nan_true_pred(nan)
+    check_nan_option(nan)
     if y_true.shape != y_score.shape:
         msg = f"'y_true' and 'y_score' have different shapes: {y_true.shape} vs {y_score.shape}"
         raise RuntimeError(msg)

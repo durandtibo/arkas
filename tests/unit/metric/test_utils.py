@@ -6,13 +6,43 @@ from coola import objects_are_equal
 
 from arkas.metric.utils import (
     check_label_type,
-    check_nan_true_pred,
+    check_nan_option,
     check_same_shape_pred,
     check_same_shape_score,
     multi_isnan,
     preprocess_pred,
     preprocess_score_binary,
 )
+
+######################################
+#     Tests for check_label_type     #
+######################################
+
+
+@pytest.mark.parametrize("label_type", ["binary", "multiclass", "multilabel", "auto"])
+def test_check_label_type_valid(label_type: str) -> None:
+    check_label_type(label_type)
+
+
+def test_check_label_type_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+        check_label_type("incorrect")
+
+
+######################################
+#     Tests for check_nan_option     #
+######################################
+
+
+def test_check_nan_option_valid() -> None:
+    check_nan_option("keep")
+    check_nan_option("remove")
+
+
+def test_check_nan_option_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
+        check_nan_option(nan="incorrect")
+
 
 ###########################################
 #     Tests for check_same_shape_pred     #
@@ -173,36 +203,6 @@ def test_preprocess_pred_incorrect_shapes() -> None:
         preprocess_pred(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1, 0]), nan="keep"
         )
-
-
-#########################################
-#     Tests for check_nan_true_pred     #
-#########################################
-
-
-def test_check_nan_true_pred_valid() -> None:
-    check_nan_true_pred("keep")
-    check_nan_true_pred("remove")
-
-
-def test_check_nan_true_pred_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
-        check_nan_true_pred(nan="incorrect")
-
-
-######################################
-#     Tests for check_label_type     #
-######################################
-
-
-@pytest.mark.parametrize("label_type", ["binary", "multiclass", "multilabel", "auto"])
-def test_check_label_type_valid(label_type: str) -> None:
-    check_label_type(label_type)
-
-
-def test_check_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
-        check_label_type("incorrect")
 
 
 #############################################
