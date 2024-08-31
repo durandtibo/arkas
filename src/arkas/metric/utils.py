@@ -6,6 +6,7 @@ __all__ = [
     "check_label_type",
     "check_nan_true_pred",
     "check_same_shape_pred",
+    "check_same_shape_score",
     "multi_isnan",
     "preprocess_true_pred",
     "preprocess_true_score_binary",
@@ -44,6 +45,36 @@ def check_same_shape_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
     """
     if y_true.shape != y_pred.shape:
         msg = f"'y_true' and 'y_pred' have different shapes: {y_true.shape} vs {y_pred.shape}"
+        raise RuntimeError(msg)
+
+
+def check_same_shape_score(y_true: np.ndarray, y_score: np.ndarray) -> None:
+    r"""Check if ``y_true`` and ``y_score`` arrays have the same shape.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_score: The target scores, can either be probability
+            estimates of the positive class, confidence values,
+            or non-thresholded measure of decisions.
+
+    Raises:
+        RuntimeError: ``'y_true'`` and ``'y_score'`` have different
+            shapes.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import check_same_shape_score
+    >>> y_true = np.array([1, 0, 0, 1])
+    >>> y_score = np.array([0, 1, 0, 1])
+    >>> check_same_shape_score(y_true, y_score)
+
+    ```
+    """
+    if y_true.shape != y_score.shape:
+        msg = f"'y_true' and 'y_score' have different shapes: {y_true.shape} vs {y_score.shape}"
         raise RuntimeError(msg)
 
 

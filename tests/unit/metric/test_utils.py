@@ -8,6 +8,7 @@ from arkas.metric.utils import (
     check_label_type,
     check_nan_true_pred,
     check_same_shape_pred,
+    check_same_shape_score,
     multi_isnan,
     preprocess_true_pred,
     preprocess_true_score_binary,
@@ -33,6 +34,29 @@ def test_check_same_shape_pred_incorrect_shapes() -> None:
         check_same_shape_pred(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([0, 1, 0, 1, 1, 0]),
+        )
+
+
+############################################
+#     Tests for check_same_shape_score     #
+############################################
+
+
+def test_check_same_shape_score_1d() -> None:
+    check_same_shape_score(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1]))
+
+
+def test_check_same_shape_score_2d() -> None:
+    check_same_shape_score(
+        y_true=np.array([[1, 0, 0], [1, 1, 1]]), y_score=np.array([[1, 0, 0], [1, 1, 1]])
+    )
+
+
+def test_check_same_shape_score_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different shapes"):
+        check_same_shape_score(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([0, 1, 0, 1, 1, 0]),
         )
 
 
