@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = ["Ingestor"]
 
 
-from grizz.ingestor.base import BaseIngestor
+from arkas.data.ingestor.base import BaseIngestor
 
 
 class Ingestor(BaseIngestor):
