@@ -143,7 +143,7 @@ def setup_evaluator(
     by using the ``BaseEvaluator`` factory function.
 
     Args:
-        evaluator: Specifies an evaluator or its configuration.
+        evaluator: An evaluator or its configuration.
 
     Returns:
         An instantiated evaluator.
