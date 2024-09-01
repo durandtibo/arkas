@@ -14,7 +14,12 @@ __all__ = [
 import numpy as np
 from sklearn import metrics
 
-from arkas.metric.utils import check_label_type, multi_isnan
+from arkas.metric.utils import (
+    check_label_type,
+    preprocess_score_binary,
+    preprocess_score_multiclass,
+    preprocess_score_multilabel,
+)
 
 
 def average_precision_metrics(
@@ -154,14 +159,7 @@ def binary_average_precision_metrics(
 
     ```
     """
-    if y_true.shape != y_score.shape:
-        msg = f"'y_true' and 'y_score' have different shapes: {y_true.shape} vs {y_score.shape}"
-        raise RuntimeError(msg)
-
-    y_true, y_score = y_true.ravel(), y_score.ravel()
-    mask = np.logical_not(multi_isnan([y_true, y_score]))
-    y_true, y_score = y_true[mask], y_score[mask]
-
+    y_true, y_score = preprocess_score_binary(y_true.ravel(), y_score.ravel(), nan="remove")
     count = y_true.size
     ap = float("nan")
     if count > 0:
@@ -219,11 +217,7 @@ def multiclass_average_precision_metrics(
 
     ```
     """
-    if y_true.shape[0] > 0:
-        # Remove NaN values
-        mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_score).any(axis=1)))
-        y_true, y_score = y_true[mask], y_score[mask]
-
+    y_true, y_score = preprocess_score_multiclass(y_true, y_score, nan="remove")
     return _average_precision_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
 
 
@@ -268,6 +262,7 @@ def multilabel_average_precision_metrics(
 
     ```
     """
+    y_true, y_score = preprocess_score_multilabel(y_true, y_score, nan="remove")
     return _average_precision_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
 
 
@@ -295,7 +290,7 @@ def _average_precision_metrics(
         The computed metrics.
     """
     n_samples = y_true.shape[0]
-    macro_ap, micro_ap, weighted_ap = [float("nan")] * 3
+    macro_ap, micro_ap, weighted_ap = float("nan"), float("nan"), float("nan")
     n_classes = y_score.shape[1] if y_score.ndim == 2 else 0 if n_samples == 0 else 1
     ap = np.full((n_classes,), fill_value=float("nan"))
     if n_samples > 0:
