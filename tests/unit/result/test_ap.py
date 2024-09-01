@@ -8,6 +8,7 @@ from arkas.result import (
     AveragePrecisionResult,
     BinaryAveragePrecisionResult,
     MulticlassAveragePrecisionResult,
+    MultilabelAveragePrecisionResult,
 )
 
 ############################################
@@ -926,5 +927,218 @@ def test_multiclass_average_precision_result_generate_figures_prefix_suffix() ->
                 [0.1, 0.2, 0.7],
             ]
         ),
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+######################################################
+#     Tests for MultilabelAveragePrecisionResult     #
+######################################################
+
+
+def test_multilabel_average_precision_result_y_true() -> None:
+    assert objects_are_equal(
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        ).y_true,
+        np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    )
+
+
+def test_multilabel_average_precision_result_y_score() -> None:
+    assert objects_are_equal(
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        ).y_score,
+        np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    )
+
+
+def test_multilabel_average_precision_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different shapes"):
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 1, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        )
+
+
+def test_multilabel_average_precision_result_repr() -> None:
+    assert repr(
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        )
+    ).startswith("MultilabelAveragePrecisionResult(")
+
+
+def test_multilabel_average_precision_result_str() -> None:
+    assert str(
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        )
+    ).startswith("MultilabelAveragePrecisionResult(")
+
+
+def test_multilabel_average_precision_result_equal_true() -> None:
+    assert MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    ).equal(
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        )
+    )
+
+
+def test_multilabel_average_precision_result_equal_false_different_y_true() -> None:
+    assert not MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    ).equal(
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [0, 0, 0]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        )
+    )
+
+
+def test_multilabel_average_precision_result_equal_false_different_y_score() -> None:
+    assert not MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    ).equal(
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [5, 5, 5]]),
+        )
+    )
+
+
+def test_multilabel_average_precision_result_equal_false_different_type() -> None:
+    assert not MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    ).equal(42)
+
+
+def test_multilabel_average_precision_result_equal_nan_true() -> None:
+    assert MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+        y_score=np.array([[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    ).equal(
+        MultilabelAveragePrecisionResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_multilabel_average_precision_result_compute_metrics_1_class_1d() -> None:
+    result = MultilabelAveragePrecisionResult(
+        y_true=np.array([1, 0, 0, 1, 1]),
+        y_score=np.array([2, -1, 0, 3, 1]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([1.0]),
+            "count": 5,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "weighted_average_precision": 1.0,
+        },
+    )
+
+
+def test_multilabel_average_precision_result_compute_metrics_1_class_2d() -> None:
+    result = MultilabelAveragePrecisionResult(
+        y_true=np.array([[1], [0], [0], [1], [1]]),
+        y_score=np.array([[2], [-1], [0], [3], [1]]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([1.0]),
+            "count": 5,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "weighted_average_precision": 1.0,
+        },
+    )
+
+
+def test_multilabel_average_precision_result_compute_metrics_incorrect() -> None:
+    result = MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
+    )
+    assert objects_are_allclose(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([1.0, 1.0, 0.4777777777777778]),
+            "count": 5,
+            "macro_average_precision": 0.825925925925926,
+            "micro_average_precision": 0.5884199134199134,
+            "weighted_average_precision": 0.8041666666666667,
+        },
+    )
+
+
+def test_multilabel_average_precision_result_compute_metrics_empty() -> None:
+    result = MultilabelAveragePrecisionResult(y_true=np.array([]), y_score=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([]),
+            "count": 0,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_average_precision_result_compute_metrics_prefix_suffix() -> None:
+    result = MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_average_precision_suffix": np.array([1.0, 1.0, 1.0]),
+            "prefix_count_suffix": 5,
+            "prefix_macro_average_precision_suffix": 1.0,
+            "prefix_micro_average_precision_suffix": 1.0,
+            "prefix_weighted_average_precision_suffix": 1.0,
+        },
+    )
+
+
+def test_multilabel_average_precision_result_generate_figures() -> None:
+    result = MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multilabel_average_precision_result_generate_figures_empty() -> None:
+    result = MultilabelAveragePrecisionResult(y_true=np.array([]), y_score=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multilabel_average_precision_result_generate_figures_prefix_suffix() -> None:
+    result = MultilabelAveragePrecisionResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
     )
     assert objects_are_equal(result.generate_figures(), {})
