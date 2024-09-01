@@ -1,4 +1,6 @@
-from pathlib import Path
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 from coola import objects_are_equal
@@ -7,6 +9,9 @@ from iden.io import PickleSaver, load_pickle
 from arkas.data.ingestor import Ingestor
 from arkas.evaluator import AccuracyEvaluator
 from arkas.runner import EvaluationRunner
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 ######################################
 #     Tests for EvaluationRunner     #
