@@ -326,6 +326,31 @@ def test_multiclass_average_precision_metrics_correct() -> None:
     )
 
 
+def test_multiclass_average_precision_metrics_correct_2d() -> None:
+    assert objects_are_equal(
+        multiclass_average_precision_metrics(
+            y_true=np.array([[0], [0], [1], [1], [2], [2]]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+        {
+            "average_precision": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "weighted_average_precision": 1.0,
+        },
+    )
+
+
 def test_multiclass_average_precision_metrics_incorrect() -> None:
     assert objects_are_allclose(
         multiclass_average_precision_metrics(
@@ -367,9 +392,9 @@ def test_multiclass_average_precision_metrics_empty_1d() -> None:
 
 def test_multiclass_average_precision_metrics_empty_2d() -> None:
     assert objects_are_equal(
-        multiclass_average_precision_metrics(y_true=np.ones((0,)), y_score=np.ones((0, 3))),
+        multiclass_average_precision_metrics(y_true=np.zeros((0, 3)), y_score=np.zeros((0, 3))),
         {
-            "average_precision": np.array([float("nan"), float("nan"), float("nan")]),
+            "average_precision": np.array([]),
             "count": 0,
             "macro_average_precision": float("nan"),
             "micro_average_precision": float("nan"),
@@ -553,9 +578,9 @@ def test_multilabel_average_precision_metrics_empty_1d() -> None:
 
 def test_multilabel_average_precision_metrics_empty_2d() -> None:
     assert objects_are_equal(
-        multilabel_average_precision_metrics(y_true=np.ones((0, 3)), y_score=np.ones((0, 3))),
+        multilabel_average_precision_metrics(y_true=np.zeros((0, 3)), y_score=np.zeros((0, 3))),
         {
-            "average_precision": np.array([float("nan"), float("nan"), float("nan")]),
+            "average_precision": np.array([]),
             "count": 0,
             "macro_average_precision": float("nan"),
             "micro_average_precision": float("nan"),
