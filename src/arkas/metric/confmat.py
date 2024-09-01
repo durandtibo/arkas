@@ -62,6 +62,23 @@ def confusion_matrix_metrics(
      'true_negative': 2,
      'true_positive_rate': 1.0,
      'true_positive': 3}
+    >>> # multiclass
+    >>> confusion_matrix_metrics(
+    ...     y_true=np.array([0, 1, 1, 2, 2, 2]),
+    ...     y_pred=np.array([0, 1, 1, 2, 2, 2]),
+    ...     label_type="multiclass",
+    ... )
+    {'confusion_matrix': array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]), 'count': 6}
+    >>> # multilabel
+    >>> confusion_matrix_metrics(
+    ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ...     label_type="multilabel",
+    ... )
+    {'confusion_matrix': array([[[2, 0], [0, 3]],
+                                [[3, 0], [0, 2]],
+                                [[2, 0], [0, 3]]]),
+     'count': 5}
 
     ```
     """
