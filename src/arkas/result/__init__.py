@@ -11,7 +11,7 @@ __all__ = [
     "BinaryPrecisionResult",
     "BinaryRecallResult",
     "EmptyResult",
-    "MergedResult",
+    "SequentialResult",
     "MulticlassPrecisionResult",
     "MulticlassRecallResult",
     "MultilabelPrecisionResult",
@@ -35,7 +35,6 @@ from arkas.result.ap import (
 from arkas.result.base import BaseResult
 from arkas.result.binary_classification import BinaryClassificationResult
 from arkas.result.mapping import MappingResult
-from arkas.result.merge import MergedResult
 from arkas.result.precision import (
     BinaryPrecisionResult,
     MulticlassPrecisionResult,
@@ -48,4 +47,5 @@ from arkas.result.recall import (
     MultilabelRecallResult,
     RecallResult,
 )
+from arkas.result.sequential import SequentialResult
 from arkas.result.vanilla import EmptyResult, Result

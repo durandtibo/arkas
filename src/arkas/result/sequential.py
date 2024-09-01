@@ -2,7 +2,7 @@ r"""Implement a result that merges multiple results."""
 
 from __future__ import annotations
 
-__all__ = ["MergedResult"]
+__all__ = ["SequentialResult"]
 
 from typing import TYPE_CHECKING, Any
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-class MergedResult(BaseResult):
+class SequentialResult(BaseResult):
     r"""Implement a result to merge multiple result objects into a single
     result object.
 
@@ -29,15 +29,15 @@ class MergedResult(BaseResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import MergedResult, Result
-    >>> result = MergedResult(
+    >>> from arkas.result import SequentialResult, Result
+    >>> result = SequentialResult(
     ...     [
     ...         Result(metrics={"accuracy": 62.0, "count": 42}),
     ...         Result(metrics={"ap": 0.42, "count": 42}),
     ...     ]
     ... )
     >>> result
-    MergedResult(count=2)
+    SequentialResult(count=2)
     >>> result.compute_metrics()
     {'accuracy': 62.0, 'count': 42, 'ap': 0.42}
 
