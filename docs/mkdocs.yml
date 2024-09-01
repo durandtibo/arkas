@@ -29,7 +29,9 @@ nav:
       - arkas.evaluator: refs/evaluator.md
       - arkas.metric: refs/metric.md
       - arkas.plot: refs/plot.md
+      - arkas.reporter: refs/reporter.md
       - arkas.result: refs/result.md
+      - arkas.runner: refs/runner.md
       - arkas.section: refs/section.md
       - arkas.utils: refs/utils.md
   - GitHub: https://github.com/durandtibo/arkas
