@@ -4,9 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.result import (
-    BinaryJaccardResult,
-)
+from arkas.result import BinaryJaccardResult, MulticlassJaccardResult
 
 #########################################
 #     Tests for BinaryJaccardResult     #
@@ -150,195 +148,195 @@ def test_binary_jaccard_result_generate_figures_prefix_suffix() -> None:
 #############################################
 
 
-# def test_multiclass_jaccard_result_y_true() -> None:
-#     assert objects_are_equal(
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#         ).y_true,
-#         np.array([0, 0, 1, 1, 2, 2]),
-#     )
-#
-#
-# def test_multiclass_jaccard_result_y_true_2d() -> None:
-#     assert objects_are_equal(
-#         MulticlassJaccardResult(
-#             y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
-#         ).y_true,
-#         np.array([0, 0, 1, 1, 2, 2]),
-#     )
-#
-#
-# def test_multiclass_jaccard_result_y_pred() -> None:
-#     assert objects_are_equal(
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#         ).y_pred,
-#         np.array([0, 0, 1, 1, 2, 1]),
-#     )
-#
-#
-# def test_multiclass_jaccard_result_y_pred_2d() -> None:
-#     assert objects_are_equal(
-#         MulticlassJaccardResult(
-#             y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
-#         ).y_pred,
-#         np.array([0, 0, 1, 1, 2, 1]),
-#     )
-#
-#
-# def test_multiclass_jaccard_result_incorrect_shape() -> None:
-#     with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2, 1])
-#         )
-#
-#
-# def test_multiclass_jaccard_result_repr() -> None:
-#     assert repr(
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-#         )
-#     ).startswith("MulticlassJaccardResult(")
-#
-#
-# def test_multiclass_jaccard_result_str() -> None:
-#     assert str(
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-#         )
-#     ).startswith("MulticlassJaccardResult(")
-#
-#
-# def test_multiclass_jaccard_result_equal_true() -> None:
-#     assert MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#     ).equal(
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#         )
-#     )
-#
-#
-# def test_multiclass_jaccard_result_equal_false_different_y_true() -> None:
-#     assert not MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#     ).equal(
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 2, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#         )
-#     )
-#
-#
-# def test_multiclass_jaccard_result_equal_false_different_y_pred() -> None:
-#     assert not MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#     ).equal(
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
-#         )
-#     )
-#
-#
-# def test_multiclass_jaccard_result_equal_false_different_type() -> None:
-#     assert not MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#     ).equal(42)
-#
-#
-# def test_multiclass_jaccard_result_equal_nan_true() -> None:
-#     assert MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-#         y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-#     ).equal(
-#         MulticlassJaccardResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-#             y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-#         ),
-#         equal_nan=True,
-#     )
-#
-#
-# def test_multiclass_jaccard_result_compute_metrics_correct() -> None:
-#     result = MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-#     )
-#     assert objects_are_equal(
-#         result.compute_metrics(),
-#         {
-#             "count": 6,
-#             "macro_jaccard": 1.0,
-#             "micro_jaccard": 1.0,
-#             "jaccard": np.array([1.0, 1.0, 1.0]),
-#             "weighted_jaccard": 1.0,
-#         },
-#     )
-#
-#
-# def test_multiclass_jaccard_result_compute_metrics_incorrect() -> None:
-#     result = MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]),
-#         y_pred=np.array([0, 0, 1, 1, 1, 1]),
-#     )
-#     assert objects_are_allclose(
-#         result.compute_metrics(),
-#         {
-#             "count": 6,
-#             "jaccard": np.array([1.0, 0.5, 0.0]),
-#             "macro_jaccard": 0.5,
-#             "micro_jaccard": 0.5,
-#             "weighted_jaccard": 0.5,
-#         },
-#     )
-#
-#
-# def test_multiclass_jaccard_result_compute_metrics_empty() -> None:
-#     result = MulticlassJaccardResult(y_true=np.array([]), y_pred=np.array([]))
-#     assert objects_are_equal(
-#         result.compute_metrics(),
-#         {
-#             "count": 0,
-#             "macro_jaccard": float("nan"),
-#             "micro_jaccard": float("nan"),
-#             "jaccard": np.array([]),
-#             "weighted_jaccard": float("nan"),
-#         },
-#         equal_nan=True,
-#     )
-#
-#
-# def test_multiclass_jaccard_result_compute_metrics_prefix_suffix() -> None:
-#     result = MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-#     )
-#     assert objects_are_equal(
-#         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
-#         {
-#             "prefix_count_suffix": 6,
-#             "prefix_macro_jaccard_suffix": 1.0,
-#             "prefix_micro_jaccard_suffix": 1.0,
-#             "prefix_jaccard_suffix": np.array([1.0, 1.0, 1.0]),
-#             "prefix_weighted_jaccard_suffix": 1.0,
-#         },
-#     )
-#
-#
-# def test_multiclass_jaccard_result_generate_figures() -> None:
-#     result = MulticlassJaccardResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-#     )
-#     assert objects_are_equal(result.generate_figures(), {})
-#
-#
-# def test_multiclass_jaccard_result_generate_figures_empty() -> None:
-#     result = MulticlassJaccardResult(y_true=np.array([]), y_pred=np.array([]))
-#     assert objects_are_equal(result.generate_figures(), {})
-#
-#
-# #############################################
-# #     Tests for MultilabelJaccardResult     #
-# #############################################
-#
-#
+def test_multiclass_jaccard_result_y_true() -> None:
+    assert objects_are_equal(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_jaccard_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        MulticlassJaccardResult(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_jaccard_result_y_pred() -> None:
+    assert objects_are_equal(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).y_pred,
+        np.array([0, 0, 1, 1, 2, 1]),
+    )
+
+
+def test_multiclass_jaccard_result_y_pred_2d() -> None:
+    assert objects_are_equal(
+        MulticlassJaccardResult(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
+        ).y_pred,
+        np.array([0, 0, 1, 1, 2, 1]),
+    )
+
+
+def test_multiclass_jaccard_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2, 1])
+        )
+
+
+def test_multiclass_jaccard_result_repr() -> None:
+    assert repr(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+        )
+    ).startswith("MulticlassJaccardResult(")
+
+
+def test_multiclass_jaccard_result_str() -> None:
+    assert str(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+        )
+    ).startswith("MulticlassJaccardResult(")
+
+
+def test_multiclass_jaccard_result_equal_true() -> None:
+    assert MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        )
+    )
+
+
+def test_multiclass_jaccard_result_equal_false_different_y_true() -> None:
+    assert not MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 2, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        )
+    )
+
+
+def test_multiclass_jaccard_result_equal_false_different_y_pred() -> None:
+    assert not MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
+        )
+    )
+
+
+def test_multiclass_jaccard_result_equal_false_different_type() -> None:
+    assert not MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(42)
+
+
+def test_multiclass_jaccard_result_equal_nan_true() -> None:
+    assert MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+    ).equal(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_multiclass_jaccard_result_compute_metrics_correct() -> None:
+    result = MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_multiclass_jaccard_result_compute_metrics_incorrect() -> None:
+    result = MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_pred=np.array([0, 0, 1, 1, 1, 1]),
+    )
+    assert objects_are_allclose(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "jaccard": np.array([1.0, 0.5, 0.0]),
+            "macro_jaccard": 0.5,
+            "micro_jaccard": 0.5,
+            "weighted_jaccard": 0.5,
+        },
+    )
+
+
+def test_multiclass_jaccard_result_compute_metrics_empty() -> None:
+    result = MulticlassJaccardResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 0,
+            "macro_jaccard": float("nan"),
+            "micro_jaccard": float("nan"),
+            "jaccard": np.array([]),
+            "weighted_jaccard": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_jaccard_result_compute_metrics_prefix_suffix() -> None:
+    result = MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_count_suffix": 6,
+            "prefix_macro_jaccard_suffix": 1.0,
+            "prefix_micro_jaccard_suffix": 1.0,
+            "prefix_jaccard_suffix": np.array([1.0, 1.0, 1.0]),
+            "prefix_weighted_jaccard_suffix": 1.0,
+        },
+    )
+
+
+def test_multiclass_jaccard_result_generate_figures() -> None:
+    result = MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multiclass_jaccard_result_generate_figures_empty() -> None:
+    result = MulticlassJaccardResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+#############################################
+#     Tests for MultilabelJaccardResult     #
+#############################################
+
+
 # def test_multilabel_jaccard_result_y_true() -> None:
 #     assert objects_are_equal(
 #         MultilabelJaccardResult(
