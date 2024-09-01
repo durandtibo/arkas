@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __all__ = ["EvaluationRunner"]
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 from coola.utils import str_indent, str_mapping
@@ -16,6 +17,8 @@ from arkas.runner.base import BaseRunner
 
 if TYPE_CHECKING:
     from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 class EvaluationRunner(BaseRunner):
@@ -90,6 +93,9 @@ class EvaluationRunner(BaseRunner):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def run(self) -> Any:
+        logger.info("Ingesting data...")
         data = self._ingestor.ingest()
+        logger.info("Evaluating...")
         result = self._evaluator.evaluate(data)
-        self._saver.save(result.compute_metrics(), path=self._path)
+        logger.info(f"Saving metrics at {self._path}...")
+        self._saver.save(result.compute_metrics(), path=self._path, exist_ok=True)
