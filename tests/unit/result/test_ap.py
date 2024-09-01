@@ -4,7 +4,11 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.result import AveragePrecisionResult, BinaryAveragePrecisionResult
+from arkas.result import (
+    AveragePrecisionResult,
+    BinaryAveragePrecisionResult,
+    MulticlassAveragePrecisionResult,
+)
 
 ############################################
 #     Tests for AveragePrecisionResult     #
@@ -550,5 +554,377 @@ def test_binary_average_precision_result_generate_figures_empty() -> None:
 def test_binary_average_precision_result_generate_figures_prefix_suffix() -> None:
     result = BinaryAveragePrecisionResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+######################################################
+#     Tests for MulticlassAveragePrecisionResult     #
+######################################################
+
+
+def test_multiclass_average_precision_result_y_true() -> None:
+    assert objects_are_equal(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_average_precision_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([[0], [0], [1], [1], [2], [2]]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_average_precision_result_y_score() -> None:
+    assert objects_are_equal(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ).y_score,
+        np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    )
+
+
+def test_multiclass_average_precision_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different first dimension"):
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                ]
+            ),
+        )
+
+
+def test_multiclass_average_precision_result_repr() -> None:
+    assert repr(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        )
+    ).startswith("MulticlassAveragePrecisionResult(")
+
+
+def test_multiclass_average_precision_result_str() -> None:
+    assert str(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        )
+    ).startswith("MulticlassAveragePrecisionResult(")
+
+
+def test_multiclass_average_precision_result_equal_true() -> None:
+    assert MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    ).equal(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        )
+    )
+
+
+def test_multiclass_average_precision_result_equal_false_different_y_true() -> None:
+    assert not MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    ).equal(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 0]), y_score=np.array([2, -1, 0, 3, 1])
+        )
+    )
+
+
+def test_multiclass_average_precision_result_equal_false_different_y_score() -> None:
+    assert not MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    ).equal(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 0])
+        )
+    )
+
+
+def test_multiclass_average_precision_result_equal_false_different_type() -> None:
+    assert not MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    ).equal(42)
+
+
+def test_multiclass_average_precision_result_equal_nan_true() -> None:
+    assert MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, float("nan")]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, float("nan")],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    ).equal(
+        MulticlassAveragePrecisionResult(
+            y_true=np.array([0, 0, 1, 1, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, float("nan")],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_multiclass_average_precision_result_compute_metrics_correct() -> None:
+    result = MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "weighted_average_precision": 1.0,
+        },
+    )
+
+
+def test_multiclass_average_precision_result_compute_metrics_incorrect() -> None:
+    result = MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.3, 0.5],
+                [0.4, 0.4, 0.2],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    )
+    assert objects_are_allclose(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([0.8333333333333333, 0.75, 0.75]),
+            "count": 6,
+            "macro_average_precision": 0.7777777777777777,
+            "micro_average_precision": 0.75,
+            "weighted_average_precision": 0.7777777777777777,
+        },
+    )
+
+
+def test_multiclass_average_precision_result_compute_metrics_empty() -> None:
+    result = MulticlassAveragePrecisionResult(y_true=np.array([]), y_score=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "average_precision": np.array([]),
+            "count": 0,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_average_precision_result_compute_metrics_prefix_suffix() -> None:
+    result = MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_average_precision_suffix": np.array([1.0, 1.0, 1.0]),
+            "prefix_count_suffix": 6,
+            "prefix_macro_average_precision_suffix": 1.0,
+            "prefix_micro_average_precision_suffix": 1.0,
+            "prefix_weighted_average_precision_suffix": 1.0,
+        },
+    )
+
+
+def test_multiclass_average_precision_result_generate_figures() -> None:
+    result = MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multiclass_average_precision_result_generate_figures_empty() -> None:
+    result = MulticlassAveragePrecisionResult(y_true=np.array([]), y_score=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multiclass_average_precision_result_generate_figures_prefix_suffix() -> None:
+    result = MulticlassAveragePrecisionResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
     )
     assert objects_are_equal(result.generate_figures(), {})

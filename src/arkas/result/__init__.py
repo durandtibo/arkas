@@ -20,10 +20,15 @@ __all__ = [
     "Result",
     "MultilabelRecallResult",
     "BinaryAveragePrecisionResult",
+    "MulticlassAveragePrecisionResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
-from arkas.result.ap import AveragePrecisionResult, BinaryAveragePrecisionResult
+from arkas.result.ap import (
+    AveragePrecisionResult,
+    BinaryAveragePrecisionResult,
+    MulticlassAveragePrecisionResult,
+)
 from arkas.result.base import BaseResult
 from arkas.result.binary_classification import BinaryClassificationResult
 from arkas.result.merge import MergedResult

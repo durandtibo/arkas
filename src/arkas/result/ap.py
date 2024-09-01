@@ -2,7 +2,12 @@ r"""Implement the average precision result."""
 
 from __future__ import annotations
 
-__all__ = ["AveragePrecisionResult", "BinaryAveragePrecisionResult", "BaseAveragePrecisionResult"]
+__all__ = [
+    "AveragePrecisionResult",
+    "BinaryAveragePrecisionResult",
+    "BaseAveragePrecisionResult",
+    "MulticlassAveragePrecisionResult",
+]
 
 from typing import TYPE_CHECKING, Any
 
@@ -10,7 +15,11 @@ import numpy as np
 from coola import objects_are_equal
 
 from arkas.metric import binary_average_precision_metrics
-from arkas.metric.ap import average_precision_metrics, find_label_type
+from arkas.metric.ap import (
+    average_precision_metrics,
+    find_label_type,
+    multiclass_average_precision_metrics,
+)
 from arkas.metric.utils import check_label_type, check_same_shape_score
 from arkas.result.base import BaseResult
 
@@ -275,6 +284,59 @@ class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return binary_average_precision_metrics(
+            y_true=self._y_true,
+            y_score=self._y_score,
+            prefix=prefix,
+            suffix=suffix,
+        )
+
+    def generate_figures(
+        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+    ) -> dict[str, plt.Figure]:
+        return {}
+
+
+class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
+    r"""Implement the precision result for multiclass labels.
+
+    Args:
+        y_true: The ground truth target labels. This input must
+            be an array of shape ``(n_samples, *)`` with ``0`` and
+            ``1`` values.
+        y_score: The target scores, can either be probability
+            estimates of the positive class, confidence values,
+            or non-thresholded measure of decisions. This input must
+            be an array of shape ``(n_samples, *)``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.result import MulticlassAveragePrecisionResult
+    >>> result = MulticlassAveragePrecisionResult(
+    ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ... )
+    >>> result
+    MulticlassAveragePrecisionResult(y_true=(5,), y_score=(5,))
+    >>> result.compute_metrics()
+    {'average_precision': 1.0, 'count': 5}
+
+    ```
+    """
+
+    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+        y_true = y_true.ravel()
+        if y_true.shape[0] != y_score.shape[0]:
+            msg = (
+                f"'y_true' and 'y_score' have different first dimension: {y_true.shape} vs "
+                f"{y_score.shape}"
+            )
+            raise RuntimeError(msg)
+        super().__init__(y_true=y_true, y_score=y_score)
+
+    def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+        return multiclass_average_precision_metrics(
             y_true=self._y_true,
             y_score=self._y_score,
             prefix=prefix,
