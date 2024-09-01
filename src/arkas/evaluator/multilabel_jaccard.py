@@ -1,14 +1,14 @@
-r"""Contain the multiclass Jaccard evaluator."""
+r"""Contain the multilabel Jaccard evaluator."""
 
 from __future__ import annotations
 
-__all__ = ["MulticlassJaccardEvaluator"]
+__all__ = ["MultilabelJaccardEvaluator"]
 
 import logging
 from typing import TYPE_CHECKING
 
 from arkas.evaluator.base import BaseLazyEvaluator
-from arkas.result import EmptyResult, MulticlassJaccardResult
+from arkas.result import EmptyResult, MultilabelJaccardResult
 from arkas.utils.array import to_array
 from arkas.utils.data import find_keys, find_missing_keys
 
@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MulticlassJaccardEvaluator(BaseLazyEvaluator):
-    r"""Implement the multiclass Jaccard evaluator.
+class MultilabelJaccardEvaluator(BaseLazyEvaluator):
+    r"""Implement the multilabel Jaccard evaluator.
 
     Args:
         y_true: The key or column name of the ground truth target
@@ -34,14 +34,17 @@ class MulticlassJaccardEvaluator(BaseLazyEvaluator):
 
     >>> import numpy as np
     >>> import polars as pl
-    >>> from arkas.evaluator import MulticlassJaccardEvaluator
-    >>> data = {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])}
-    >>> evaluator = MulticlassJaccardEvaluator(y_true="target", y_pred="pred")
+    >>> from arkas.evaluator import MultilabelJaccardEvaluator
+    >>> data = {
+    ...     "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ...     "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+    ... }
+    >>> evaluator = MultilabelJaccardEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    MulticlassJaccardEvaluator(y_true=target, y_pred=pred)
+    MultilabelJaccardEvaluator(y_true=target, y_pred=pred)
     >>> result = evaluator.evaluate(data)
     >>> result
-    MulticlassJaccardResult(y_true=(6,), y_pred=(6,))
+    MultilabelJaccardResult(y_true=(5, 3), y_pred=(5, 3))
 
     ```
     """
@@ -55,16 +58,16 @@ class MulticlassJaccardEvaluator(BaseLazyEvaluator):
 
     def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
         logger.info(
-            f"Evaluating the multiclass Jaccard | y_true={self._y_true} | y_pred={self._y_pred}"
+            f"Evaluating the multilabel Jaccard | y_true={self._y_true} | y_pred={self._y_pred}"
         )
         if missing_keys := find_missing_keys(
             keys=find_keys(data), queries=[self._y_pred, self._y_true]
         ):
             logger.warning(
-                "Skipping the multiclass Jaccard evaluation because some keys are missing: "
+                "Skipping the multilabel Jaccard evaluation because some keys are missing: "
                 f"{sorted(missing_keys)}"
             )
             return EmptyResult()
-        return MulticlassJaccardResult(
-            y_true=to_array(data[self._y_true]).ravel(), y_pred=to_array(data[self._y_pred]).ravel()
+        return MultilabelJaccardResult(
+            y_true=to_array(data[self._y_true]), y_pred=to_array(data[self._y_pred])
         )
