@@ -2,29 +2,29 @@ from __future__ import annotations
 
 from coola import objects_are_equal
 
-from arkas.result import MergedResult, Result
+from arkas.result import Result, SequentialResult
 
-##################################
-#     Tests for MergedResult     #
-##################################
-
-
-def test_merged_result_repr() -> None:
-    assert repr(MergedResult([])).startswith("MergedResult(")
+######################################
+#     Tests for SequentialResult     #
+######################################
 
 
-def test_merged_result_str() -> None:
-    assert str(MergedResult([])).startswith("MergedResult(")
+def test_sequential_result_repr() -> None:
+    assert repr(SequentialResult([])).startswith("SequentialResult(")
 
 
-def test_merged_result_equal_true() -> None:
-    assert MergedResult(
+def test_sequential_result_str() -> None:
+    assert str(SequentialResult([])).startswith("SequentialResult(")
+
+
+def test_sequential_result_equal_true() -> None:
+    assert SequentialResult(
         [
             Result(metrics={"accuracy": 62.0, "count": 42}),
             Result(metrics={"ap": 0.42, "count": 42}),
         ]
     ).equal(
-        MergedResult(
+        SequentialResult(
             [
                 Result(metrics={"accuracy": 62.0, "count": 42}),
                 Result(metrics={"ap": 0.42, "count": 42}),
@@ -33,17 +33,17 @@ def test_merged_result_equal_true() -> None:
     )
 
 
-def test_merged_result_equal_false_different_results() -> None:
-    assert not MergedResult(
+def test_sequential_result_equal_false_different_results() -> None:
+    assert not SequentialResult(
         [
             Result(metrics={"accuracy": 62.0, "count": 42}),
             Result(metrics={"ap": 0.42, "count": 42}),
         ]
-    ).equal(MergedResult([Result(metrics={"accuracy": 62.0, "count": 42})]))
+    ).equal(SequentialResult([Result(metrics={"accuracy": 62.0, "count": 42})]))
 
 
-def test_merged_result_equal_false_different_types() -> None:
-    assert not MergedResult(
+def test_sequential_result_equal_false_different_types() -> None:
+    assert not SequentialResult(
         [
             Result(metrics={"accuracy": 62.0, "count": 42}),
             Result(metrics={"ap": 0.42, "count": 42}),
@@ -51,14 +51,14 @@ def test_merged_result_equal_false_different_types() -> None:
     ).equal(Result(metrics={"accuracy": 62.0, "count": 42}))
 
 
-def test_merged_result_equal_nan_true() -> None:
-    assert MergedResult(
+def test_sequential_result_equal_nan_true() -> None:
+    assert SequentialResult(
         [
             Result(metrics={"accuracy": float("nan"), "count": 42}),
             Result(metrics={"ap": 0.42, "count": 42}),
         ]
     ).equal(
-        MergedResult(
+        SequentialResult(
             [
                 Result(metrics={"accuracy": float("nan"), "count": 42}),
                 Result(metrics={"ap": 0.42, "count": 42}),
@@ -68,14 +68,14 @@ def test_merged_result_equal_nan_true() -> None:
     )
 
 
-def test_merged_result_equal_nan_false() -> None:
-    assert not MergedResult(
+def test_sequential_result_equal_nan_false() -> None:
+    assert not SequentialResult(
         [
             Result(metrics={"accuracy": float("nan"), "count": 42}),
             Result(metrics={"ap": 0.42, "count": 42}),
         ]
     ).equal(
-        MergedResult(
+        SequentialResult(
             [
                 Result(metrics={"accuracy": float("nan"), "count": 42}),
                 Result(metrics={"ap": 0.42, "count": 42}),
@@ -84,9 +84,9 @@ def test_merged_result_equal_nan_false() -> None:
     )
 
 
-def test_merged_result_compute_metrics() -> None:
+def test_sequential_result_compute_metrics() -> None:
     assert objects_are_equal(
-        MergedResult(
+        SequentialResult(
             [
                 Result(metrics={"accuracy": 62.0, "count": 42}),
                 Result(metrics={"ap": 0.42, "count": 42}),
@@ -96,13 +96,13 @@ def test_merged_result_compute_metrics() -> None:
     )
 
 
-def test_merged_result_compute_metrics_empty() -> None:
-    assert objects_are_equal(MergedResult([]).compute_metrics(), {})
+def test_sequential_result_compute_metrics_empty() -> None:
+    assert objects_are_equal(SequentialResult([]).compute_metrics(), {})
 
 
-def test_merged_result_generate_figures() -> None:
+def test_sequential_result_generate_figures() -> None:
     assert objects_are_equal(
-        MergedResult(
+        SequentialResult(
             [
                 Result(figures={"accuracy": 62.0, "count": 42}),
                 Result(figures={"ap": 0.42, "count": 42}),
@@ -112,5 +112,5 @@ def test_merged_result_generate_figures() -> None:
     )
 
 
-def test_merged_result_generate_figures_empty() -> None:
-    assert objects_are_equal(MergedResult([]).generate_figures(), {})
+def test_sequential_result_generate_figures_empty() -> None:
+    assert objects_are_equal(SequentialResult([]).generate_figures(), {})
