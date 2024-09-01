@@ -301,12 +301,12 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
 
     Args:
         y_true: The ground truth target labels. This input must
-            be an array of shape ``(n_samples, *)`` with ``0`` and
+            be an array of shape ``(n_samples,)`` with ``0`` and
             ``1`` values.
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
-            be an array of shape ``(n_samples, *)``.
+            be an array of shape ``(n_samples, n_classes)``.
 
     Example usage:
 
