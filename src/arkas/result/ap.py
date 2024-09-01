@@ -315,12 +315,26 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
     >>> import numpy as np
     >>> from arkas.result import MulticlassAveragePrecisionResult
     >>> result = MulticlassAveragePrecisionResult(
-    ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
+    ...     y_score=np.array(
+    ...         [
+    ...             [0.7, 0.2, 0.1],
+    ...             [0.4, 0.3, 0.3],
+    ...             [0.1, 0.8, 0.1],
+    ...             [0.2, 0.5, 0.3],
+    ...             [0.3, 0.3, 0.4],
+    ...             [0.1, 0.2, 0.7],
+    ...         ]
+    ...     ),
     ... )
     >>> result
-    MulticlassAveragePrecisionResult(y_true=(5,), y_score=(5,))
+    MulticlassAveragePrecisionResult(y_true=(6,), y_score=(6, 3))
     >>> result.compute_metrics()
-    {'average_precision': 1.0, 'count': 5}
+    {'average_precision': array([1., 1., 1.]),
+     'count': 6,
+     'macro_average_precision': 1.0,
+     'micro_average_precision': 1.0,
+     'weighted_average_precision': 1.0}
 
     ```
     """
