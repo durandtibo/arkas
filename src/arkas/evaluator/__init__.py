@@ -16,6 +16,7 @@ __all__ = [
     "MultilabelRecallEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
+    "BinaryAveragePrecisionEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
@@ -27,6 +28,7 @@ from arkas.evaluator.base import (
     is_evaluator_config,
     setup_evaluator,
 )
+from arkas.evaluator.binary_ap import BinaryAveragePrecisionEvaluator
 from arkas.evaluator.binary_precision import BinaryPrecisionEvaluator
 from arkas.evaluator.binary_recall import BinaryRecallEvaluator
 from arkas.evaluator.multiclass_precision import MulticlassPrecisionEvaluator
