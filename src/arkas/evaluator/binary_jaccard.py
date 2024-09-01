@@ -55,13 +55,13 @@ class BinaryJaccardEvaluator(BaseLazyEvaluator):
 
     def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
         logger.info(
-            f"Evaluating the binary jaccard | y_true={self._y_true} | y_pred={self._y_pred}"
+            f"Evaluating the binary Jaccard | y_true={self._y_true} | y_pred={self._y_pred}"
         )
         if missing_keys := find_missing_keys(
             keys=find_keys(data), queries=[self._y_pred, self._y_true]
         ):
             logger.warning(
-                "Skipping the binary jaccard evaluation because some keys are missing: "
+                "Skipping the binary Jaccard evaluation because some keys are missing: "
                 f"{sorted(missing_keys)}"
             )
             return EmptyResult()
