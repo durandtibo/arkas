@@ -64,7 +64,7 @@ class MultilabelRecallEvaluator(BaseLazyEvaluator):
             keys=find_keys(data), queries=[self._y_pred, self._y_true]
         ):
             logger.warning(
-                "Skipping the accuracy evaluation because some keys are missing: "
+                "Skipping the multilabel recall evaluation because some keys are missing: "
                 f"{sorted(missing_keys)}"
             )
             return EmptyResult()

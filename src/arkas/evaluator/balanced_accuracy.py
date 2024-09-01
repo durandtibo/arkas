@@ -58,12 +58,14 @@ class BalancedAccuracyEvaluator(BaseLazyEvaluator):
         return f"{self.__class__.__qualname__}(y_true={self._y_true}, y_pred={self._y_pred})"
 
     def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
-        logger.info(f"Evaluating the accuracy | y_true={self._y_true} | y_pred={self._y_pred}")
+        logger.info(
+            f"Evaluating the balanced accuracy | y_true={self._y_true} | y_pred={self._y_pred}"
+        )
         if missing_keys := find_missing_keys(
             keys=find_keys(data), queries=[self._y_pred, self._y_true]
         ):
             logger.warning(
-                "Skipping the accuracy evaluation because some keys are missing: "
+                "Skipping the balanced accuracy evaluation because some keys are missing: "
                 f"{sorted(missing_keys)}"
             )
             return EmptyResult()
