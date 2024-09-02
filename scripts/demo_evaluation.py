@@ -14,6 +14,8 @@ from iden.io import PickleSaver, load_pickle
 from arkas.data.ingestor import Ingestor
 from arkas.evaluator import (
     AccuracyEvaluator,
+    BinaryConfusionMatrixEvaluator,
+    BinaryJaccardEvaluator,
     BinaryPrecisionEvaluator,
     BinaryRecallEvaluator,
     SequentialEvaluator,
@@ -43,7 +45,8 @@ def main() -> None:
                 AccuracyEvaluator(y_true="target", y_pred="pred"),
                 BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
                 BinaryRecallEvaluator(y_true="target", y_pred="pred"),
-                # BinaryJaccardEvaluator(y_true="target", y_pred="pred"),
+                BinaryJaccardEvaluator(y_true="target", y_pred="pred"),
+                BinaryConfusionMatrixEvaluator(y_true="target", y_pred="pred"),
             ]
         ),
         saver=PickleSaver(),
