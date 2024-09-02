@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import numpy as np
 import polars as pl
-from coola import objects_are_equal
 
 from arkas.evaluator import MulticlassPrecisionEvaluator
 from arkas.result import EmptyResult, MulticlassPrecisionResult, Result
@@ -37,21 +36,24 @@ def test_multiclass_precision_evaluator_evaluate() -> None:
 
 
 def test_multiclass_precision_evaluator_evaluate_lazy_false() -> None:
-    result = MulticlassPrecisionEvaluator(y_true="target", y_pred="pred").evaluate(
-        {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])}, lazy=False
+    assert (
+        MulticlassPrecisionEvaluator(y_true="target", y_pred="pred")
+        .evaluate(
+            {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])},
+            lazy=False,
+        )
+        .equal(
+            Result(
+                {
+                    "precision": np.array([1.0, 1.0, 1.0]),
+                    "count": 6,
+                    "macro_precision": 1.0,
+                    "micro_precision": 1.0,
+                    "weighted_precision": 1.0,
+                }
+            )
+        )
     )
-    assert isinstance(result, Result)
-    assert objects_are_equal(
-        result.compute_metrics(),
-        {
-            "precision": np.array([1.0, 1.0, 1.0]),
-            "count": 6,
-            "macro_precision": 1.0,
-            "micro_precision": 1.0,
-            "weighted_precision": 1.0,
-        },
-    )
-    assert result.generate_figures() == {}
 
 
 def test_multiclass_precision_evaluator_evaluate_missing_keys() -> None:

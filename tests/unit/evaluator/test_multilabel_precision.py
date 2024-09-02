@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-from coola import objects_are_equal
 
 from arkas.evaluator import MultilabelPrecisionEvaluator
 from arkas.result import EmptyResult, MultilabelPrecisionResult, Result
@@ -42,25 +41,27 @@ def test_multilabel_precision_evaluator_evaluate() -> None:
 
 
 def test_multilabel_precision_evaluator_evaluate_lazy_false() -> None:
-    result = MultilabelPrecisionEvaluator(y_true="target", y_pred="pred").evaluate(
-        {
-            "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-            "target": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-        },
-        lazy=False,
+    assert (
+        MultilabelPrecisionEvaluator(y_true="target", y_pred="pred")
+        .evaluate(
+            {
+                "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+                "target": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            },
+            lazy=False,
+        )
+        .equal(
+            Result(
+                metrics={
+                    "count": 5,
+                    "macro_precision": 1.0,
+                    "micro_precision": 1.0,
+                    "precision": np.array([1.0, 1.0, 1.0]),
+                    "weighted_precision": 1.0,
+                }
+            )
+        )
     )
-    assert isinstance(result, Result)
-    assert objects_are_equal(
-        result.compute_metrics(),
-        {
-            "count": 5,
-            "macro_precision": 1.0,
-            "micro_precision": 1.0,
-            "precision": np.array([1.0, 1.0, 1.0]),
-            "weighted_precision": 1.0,
-        },
-    )
-    assert result.generate_figures() == {}
 
 
 def test_multilabel_precision_evaluator_evaluate_missing_keys() -> None:

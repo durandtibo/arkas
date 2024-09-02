@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import numpy as np
 import polars as pl
-from coola import objects_are_equal
 
 from arkas.evaluator import MultilabelAveragePrecisionEvaluator
 from arkas.result import EmptyResult, MultilabelAveragePrecisionResult, Result
@@ -43,25 +42,27 @@ def test_multilabel_average_precision_evaluator_evaluate() -> None:
 
 
 def test_multilabel_average_precision_evaluator_evaluate_lazy_false() -> None:
-    result = MultilabelAveragePrecisionEvaluator(y_true="target", y_score="pred").evaluate(
-        {
-            "pred": np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
-            "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-        },
-        lazy=False,
+    assert (
+        MultilabelAveragePrecisionEvaluator(y_true="target", y_score="pred")
+        .evaluate(
+            {
+                "pred": np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+                "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            },
+            lazy=False,
+        )
+        .equal(
+            Result(
+                metrics={
+                    "average_precision": np.array([1.0, 1.0, 1.0]),
+                    "count": 5,
+                    "macro_average_precision": 1.0,
+                    "micro_average_precision": 1.0,
+                    "weighted_average_precision": 1.0,
+                }
+            )
+        )
     )
-    assert isinstance(result, Result)
-    assert objects_are_equal(
-        result.compute_metrics(),
-        {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
-            "count": 5,
-            "macro_average_precision": 1.0,
-            "micro_average_precision": 1.0,
-            "weighted_average_precision": 1.0,
-        },
-    )
-    assert objects_are_equal(result.generate_figures(), {})
 
 
 def test_multilabel_average_precision_evaluator_evaluate_missing_keys() -> None:
