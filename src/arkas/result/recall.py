@@ -6,8 +6,8 @@ __all__ = [
     "BaseRecallResult",
     "BinaryRecallResult",
     "MulticlassRecallResult",
-    "RecallResult",
     "MultilabelRecallResult",
+    "RecallResult",
 ]
 
 from typing import TYPE_CHECKING, Any
