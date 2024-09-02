@@ -4,8 +4,8 @@ from __future__ import annotations
 
 __all__ = [
     "AveragePrecisionResult",
-    "BinaryAveragePrecisionResult",
     "BaseAveragePrecisionResult",
+    "BinaryAveragePrecisionResult",
     "MulticlassAveragePrecisionResult",
 ]
 
