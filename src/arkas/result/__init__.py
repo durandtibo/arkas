@@ -26,6 +26,9 @@ __all__ = [
     "RecallResult",
     "Result",
     "SequentialResult",
+    "BinaryConfusionMatrixResult",
+    "MulticlassConfusionMatrixResult",
+    "MultilabelConfusionMatrixResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -37,6 +40,11 @@ from arkas.result.ap import (
 )
 from arkas.result.base import BaseResult
 from arkas.result.binary_classification import BinaryClassificationResult
+from arkas.result.confmat import (
+    BinaryConfusionMatrixResult,
+    MulticlassConfusionMatrixResult,
+    MultilabelConfusionMatrixResult,
+)
 from arkas.result.jaccard import (
     BinaryJaccardResult,
     MulticlassJaccardResult,
