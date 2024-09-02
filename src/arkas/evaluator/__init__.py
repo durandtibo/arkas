@@ -26,6 +26,7 @@ __all__ = [
     "setup_evaluator",
     "BinaryConfusionMatrixEvaluator",
     "MulticlassConfusionMatrixEvaluator",
+    "MultilabelConfusionMatrixEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
@@ -49,6 +50,7 @@ from arkas.evaluator.multiclass_jaccard import MulticlassJaccardEvaluator
 from arkas.evaluator.multiclass_precision import MulticlassPrecisionEvaluator
 from arkas.evaluator.multiclass_recall import MulticlassRecallEvaluator
 from arkas.evaluator.multilabel_ap import MultilabelAveragePrecisionEvaluator
+from arkas.evaluator.multilabel_confmat import MultilabelConfusionMatrixEvaluator
 from arkas.evaluator.multilabel_jaccard import MultilabelJaccardEvaluator
 from arkas.evaluator.multilabel_precision import MultilabelPrecisionEvaluator
 from arkas.evaluator.multilabel_recall import MultilabelRecallEvaluator
