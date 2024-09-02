@@ -4,9 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from arkas.result import (
-    BinaryConfusionMatrixResult,
-)
+from arkas.result import BinaryConfusionMatrixResult, MulticlassConfusionMatrixResult
 
 #################################################
 #     Tests for BinaryConfusionMatrixResult     #
@@ -227,177 +225,177 @@ def test_binary_confusion_matrix_result_generate_figures_prefix_suffix() -> None
 #####################################################
 
 
-# def test_multiclass_confusion_matrix_result_y_true() -> None:
-#     assert objects_are_equal(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#         ).y_true,
-#         np.array([0, 0, 1, 1, 2, 2]),
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_y_true_2d() -> None:
-#     assert objects_are_equal(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
-#         ).y_true,
-#         np.array([0, 0, 1, 1, 2, 2]),
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_y_pred() -> None:
-#     assert objects_are_equal(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#         ).y_pred,
-#         np.array([0, 0, 1, 1, 2, 1]),
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_y_pred_2d() -> None:
-#     assert objects_are_equal(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
-#         ).y_pred,
-#         np.array([0, 0, 1, 1, 2, 1]),
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_incorrect_shape() -> None:
-#     with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2, 1])
-#         )
-#
-#
-# def test_multiclass_confusion_matrix_result_repr() -> None:
-#     assert repr(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-#         )
-#     ).startswith("MulticlassConfusionMatrixResult(")
-#
-#
-# def test_multiclass_confusion_matrix_result_str() -> None:
-#     assert str(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-#         )
-#     ).startswith("MulticlassConfusionMatrixResult(")
-#
-#
-# def test_multiclass_confusion_matrix_result_equal_true() -> None:
-#     assert MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#     ).equal(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#         )
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_equal_false_different_y_true() -> None:
-#     assert not MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#     ).equal(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 2, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#         )
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_equal_false_different_y_pred() -> None:
-#     assert not MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#     ).equal(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
-#         )
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_equal_false_different_type() -> None:
-#     assert not MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
-#     ).equal(42)
-#
-#
-# def test_multiclass_confusion_matrix_result_equal_nan_true() -> None:
-#     assert MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-#         y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-#     ).equal(
-#         MulticlassConfusionMatrixResult(
-#             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-#             y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-#         ),
-#         equal_nan=True,
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_compute_metrics_correct() -> None:
-#     result = MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 1, 1, 2, 2, 2]), y_pred=np.array([0, 1, 1, 2, 2, 2])
-#     )
-#     assert objects_are_equal(
-#         result.compute_metrics(),
-#         {
-#             "confusion_matrix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
-#             "count": 6,
-#         },
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_compute_metrics_incorrect() -> None:
-#     result = MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 1, 2, 0, 1, 2]), y_pred=np.array([0, 1, 1, 2, 2, 2])
-#     )
-#     assert objects_are_allclose(
-#         result.compute_metrics(),
-#         {
-#             "confusion_matrix": np.array([[1, 0, 1], [0, 1, 1], [0, 1, 1]]),
-#             "count": 6,
-#         },
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_compute_metrics_empty() -> None:
-#     result = MulticlassConfusionMatrixResult(y_true=np.array([]), y_pred=np.array([]))
-#     assert objects_are_equal(
-#         result.compute_metrics(),
-#         {
-#             "confusion_matrix": np.zeros((0, 0), dtype=np.int64),
-#             "count": 0,
-#         },
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_compute_metrics_prefix_suffix() -> None:
-#     result = MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 1, 1, 2, 2, 2]),
-#         y_pred=np.array([0, 1, 1, 2, 2, 2]),
-#     )
-#     assert objects_are_equal(
-#         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
-#         {
-#             "prefix_confusion_matrix_suffix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
-#             "prefix_count_suffix": 6,
-#         },
-#     )
-#
-#
-# def test_multiclass_confusion_matrix_result_generate_figures() -> None:
-#     result = MulticlassConfusionMatrixResult(
-#         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-#     )
-#     assert objects_are_equal(result.generate_figures(), {})
-#
-#
-# def test_multiclass_confusion_matrix_result_generate_figures_empty() -> None:
-#     result = MulticlassConfusionMatrixResult(y_true=np.array([]), y_pred=np.array([]))
-#     assert objects_are_equal(result.generate_figures(), {})
-#
-#
+def test_multiclass_confusion_matrix_result_y_true() -> None:
+    assert objects_are_equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_confusion_matrix_result_y_true_2d() -> None:
+    assert objects_are_equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
+        ).y_true,
+        np.array([0, 0, 1, 1, 2, 2]),
+    )
+
+
+def test_multiclass_confusion_matrix_result_y_pred() -> None:
+    assert objects_are_equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).y_pred,
+        np.array([0, 0, 1, 1, 2, 1]),
+    )
+
+
+def test_multiclass_confusion_matrix_result_y_pred_2d() -> None:
+    assert objects_are_equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([[0, 0, 1], [1, 2, 2]]), y_pred=np.array([[0, 0, 1], [1, 2, 1]])
+        ).y_pred,
+        np.array([0, 0, 1, 1, 2, 1]),
+    )
+
+
+def test_multiclass_confusion_matrix_result_incorrect_shape() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2, 1])
+        )
+
+
+def test_multiclass_confusion_matrix_result_repr() -> None:
+    assert repr(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+        )
+    ).startswith("MulticlassConfusionMatrixResult(")
+
+
+def test_multiclass_confusion_matrix_result_str() -> None:
+    assert str(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+        )
+    ).startswith("MulticlassConfusionMatrixResult(")
+
+
+def test_multiclass_confusion_matrix_result_equal_true() -> None:
+    assert MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        )
+    )
+
+
+def test_multiclass_confusion_matrix_result_equal_false_different_y_true() -> None:
+    assert not MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 2, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        )
+    )
+
+
+def test_multiclass_confusion_matrix_result_equal_false_different_y_pred() -> None:
+    assert not MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
+        )
+    )
+
+
+def test_multiclass_confusion_matrix_result_equal_false_different_type() -> None:
+    assert not MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(42)
+
+
+def test_multiclass_confusion_matrix_result_equal_nan_true() -> None:
+    assert MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+    ).equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_multiclass_confusion_matrix_result_compute_metrics_correct() -> None:
+    result = MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2]), y_pred=np.array([0, 1, 1, 2, 2, 2])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
+            "count": 6,
+        },
+    )
+
+
+def test_multiclass_confusion_matrix_result_compute_metrics_incorrect() -> None:
+    result = MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 1, 2, 0, 1, 2]), y_pred=np.array([0, 1, 1, 2, 2, 2])
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.array([[1, 0, 1], [0, 1, 1], [0, 1, 1]]),
+            "count": 6,
+        },
+    )
+
+
+def test_multiclass_confusion_matrix_result_compute_metrics_empty() -> None:
+    result = MulticlassConfusionMatrixResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.zeros((0, 0), dtype=np.int64),
+            "count": 0,
+        },
+    )
+
+
+def test_multiclass_confusion_matrix_result_compute_metrics_prefix_suffix() -> None:
+    result = MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(prefix="prefix_", suffix="_suffix"),
+        {
+            "prefix_confusion_matrix_suffix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
+            "prefix_count_suffix": 6,
+        },
+    )
+
+
+def test_multiclass_confusion_matrix_result_generate_figures() -> None:
+    result = MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
+    )
+    assert objects_are_equal(result.generate_figures(), {})
+
+
+def test_multiclass_confusion_matrix_result_generate_figures_empty() -> None:
+    result = MulticlassConfusionMatrixResult(y_true=np.array([]), y_pred=np.array([]))
+    assert objects_are_equal(result.generate_figures(), {})
+
+
 # #####################################################
 # #     Tests for MultilabelConfusionMatrixResult     #
 # #####################################################
