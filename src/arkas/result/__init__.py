@@ -29,6 +29,9 @@ __all__ = [
     "RecallResult",
     "Result",
     "SequentialResult",
+    "BinaryFbetaResult",
+    "MulticlassFbetaResult",
+    "MultilabelFbetaResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -44,6 +47,11 @@ from arkas.result.confmat import (
     BinaryConfusionMatrixResult,
     MulticlassConfusionMatrixResult,
     MultilabelConfusionMatrixResult,
+)
+from arkas.result.fbeta import (
+    BinaryFbetaResult,
+    MulticlassFbetaResult,
+    MultilabelFbetaResult,
 )
 from arkas.result.jaccard import (
     BinaryJaccardResult,
