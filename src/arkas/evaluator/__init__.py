@@ -27,6 +27,7 @@ __all__ = [
     "SequentialEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
+    "BinaryFbetaEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
@@ -40,6 +41,7 @@ from arkas.evaluator.base import (
 )
 from arkas.evaluator.binary_ap import BinaryAveragePrecisionEvaluator
 from arkas.evaluator.binary_confmat import BinaryConfusionMatrixEvaluator
+from arkas.evaluator.binary_fbeta import BinaryFbetaEvaluator
 from arkas.evaluator.binary_jaccard import BinaryJaccardEvaluator
 from arkas.evaluator.binary_precision import BinaryPrecisionEvaluator
 from arkas.evaluator.binary_recall import BinaryRecallEvaluator
