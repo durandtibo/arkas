@@ -82,6 +82,16 @@ def test_binary_fbeta_result_equal_false_different_y_pred() -> None:
     ).equal(BinaryFbetaResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])))
 
 
+def test_binary_fbeta_result_equal_false_different_betas() -> None:
+    assert not BinaryFbetaResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(
+        BinaryFbetaResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]), betas=[0.5, 1, 2]
+        )
+    )
+
+
 def test_binary_fbeta_result_equal_false_different_type() -> None:
     assert not BinaryFbetaResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
@@ -241,6 +251,18 @@ def test_multiclass_fbeta_result_equal_false_different_y_pred() -> None:
     ).equal(
         MulticlassFbetaResult(
             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
+        )
+    )
+
+
+def test_multiclass_fbeta_result_equal_false_different_betas() -> None:
+    assert not MulticlassFbetaResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassFbetaResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            betas=[0.5, 1, 2],
         )
     )
 
@@ -449,6 +471,19 @@ def test_multilabel_fbeta_result_equal_false_different_y_pred() -> None:
         MultilabelFbetaResult(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 1, 1]]),
+        )
+    )
+
+
+def test_multilabel_fbeta_result_equal_false_different_betas() -> None:
+    assert not MultilabelFbetaResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(
+        MultilabelFbetaResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            betas=[0.5, 1, 2],
         )
     )
 

@@ -69,6 +69,10 @@ class BaseFbetaResult(BaseResult):
         )
 
     @property
+    def betas(self) -> tuple[float, ...]:
+        return self._betas
+
+    @property
     def y_true(self) -> np.ndarray:
         return self._y_true
 
@@ -79,9 +83,11 @@ class BaseFbetaResult(BaseResult):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(
-            self.y_true, other.y_true, equal_nan=equal_nan
-        ) and objects_are_equal(self.y_pred, other.y_pred, equal_nan=equal_nan)
+        return (
+            objects_are_equal(self.y_true, other.y_true, equal_nan=equal_nan)
+            and objects_are_equal(self.y_pred, other.y_pred, equal_nan=equal_nan)
+            and objects_are_equal(self.betas, other.betas, equal_nan=equal_nan)
+        )
 
 
 class BinaryFbetaResult(BaseFbetaResult):
