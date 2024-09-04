@@ -30,6 +30,7 @@ __all__ = [
     "BinaryFbetaEvaluator",
     "MulticlassFbetaEvaluator",
     "MultilabelFbetaEvaluator",
+    "BinaryRocAucEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
@@ -47,6 +48,7 @@ from arkas.evaluator.binary_fbeta import BinaryFbetaEvaluator
 from arkas.evaluator.binary_jaccard import BinaryJaccardEvaluator
 from arkas.evaluator.binary_precision import BinaryPrecisionEvaluator
 from arkas.evaluator.binary_recall import BinaryRecallEvaluator
+from arkas.evaluator.binary_roc_auc import BinaryRocAucEvaluator
 from arkas.evaluator.mapping import MappingEvaluator
 from arkas.evaluator.multiclass_ap import MulticlassAveragePrecisionEvaluator
 from arkas.evaluator.multiclass_confmat import MulticlassConfusionMatrixEvaluator
