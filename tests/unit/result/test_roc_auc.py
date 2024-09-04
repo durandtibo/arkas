@@ -4,9 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.result import (
-    BinaryRocAucResult, MulticlassRocAucResult,
-)
+from arkas.result import BinaryRocAucResult, MulticlassRocAucResult
 
 ########################################
 #     Tests for BinaryRocAucResult     #
