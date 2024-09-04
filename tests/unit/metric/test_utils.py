@@ -11,6 +11,7 @@ from arkas.metric.utils import (
     check_same_shape_score,
     multi_isnan,
     preprocess_pred,
+    preprocess_pred_multilabel,
     preprocess_score_binary,
     preprocess_score_multiclass,
     preprocess_score_multilabel,
@@ -205,6 +206,195 @@ def test_preprocess_pred_incorrect_shapes() -> None:
         preprocess_pred(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1, 0]), nan="keep"
         )
+
+
+################################################
+#     Tests for preprocess_pred_multilabel     #
+################################################
+
+
+def test_preprocess_pred_multilabel_1d() -> None:
+    assert objects_are_equal(
+        preprocess_pred_multilabel(np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1])),
+        (np.array([[1], [0], [0], [1], [1]]), np.array([[0], [1], [0], [1], [1]])),
+    )
+
+
+def test_preprocess_pred_multilabel_2d() -> None:
+    assert objects_are_equal(
+        preprocess_pred_multilabel(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0], [1, 0, 1], [0, 1, 0]]),
+        ),
+        (
+            np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0], [1, 0, 1], [0, 1, 0]]),
+        ),
+    )
+
+
+def test_preprocess_pred_multilabel_keep_nan() -> None:
+    assert objects_are_equal(
+        preprocess_pred_multilabel(
+            y_true=np.array(
+                [
+                    [1.0, float("nan"), 1.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [1.0, 0.0, 1.0],
+                ]
+            ),
+            y_pred=np.array(
+                [
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, float("nan")],
+                ]
+            ),
+        ),
+        (
+            np.array(
+                [
+                    [1.0, float("nan"), 1.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [1.0, 0.0, 1.0],
+                ]
+            ),
+            np.array(
+                [
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, float("nan")],
+                ]
+            ),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_pred_multilabel_remove_nan() -> None:
+    assert objects_are_equal(
+        preprocess_pred_multilabel(
+            y_true=np.array(
+                [
+                    [1.0, float("nan"), 1.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [1.0, 0.0, 1.0],
+                ]
+            ),
+            y_pred=np.array(
+                [
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, float("nan")],
+                ]
+            ),
+            nan="remove",
+        ),
+        (
+            np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
+            np.array([[1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
+        ),
+    )
+
+
+def test_preprocess_pred_multilabel_remove_y_true_nan() -> None:
+    assert objects_are_equal(
+        preprocess_pred_multilabel(
+            y_true=np.array(
+                [
+                    [1.0, float("nan"), 1.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [1.0, 0.0, 1.0],
+                ]
+            ),
+            y_pred=np.array(
+                [
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, 0.0],
+                ]
+            ),
+            nan="remove",
+        ),
+        (
+            np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, 1.0]]),
+            np.array([[1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 1.0, 0.0]]),
+        ),
+    )
+
+
+def test_preprocess_pred_multilabel_remove_y_pred_nan() -> None:
+    assert objects_are_equal(
+        preprocess_pred_multilabel(
+            y_true=np.array(
+                [
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [1.0, 0.0, 1.0],
+                ]
+            ),
+            y_pred=np.array(
+                [
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 1.0],
+                    [0.0, 1.0, float("nan")],
+                ]
+            ),
+            nan="remove",
+        ),
+        (
+            np.array([[1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
+            np.array([[0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
+        ),
+    )
+
+
+def test_preprocess_pred_multilabel_empty() -> None:
+    assert objects_are_equal(
+        preprocess_pred_multilabel(y_true=np.array([]), y_pred=np.array([])),
+        (np.array([]), np.array([])),
+    )
+
+
+def test_preprocess_pred_multilabel_nan_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
+        preprocess_pred_multilabel(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1]), nan="incorrect"
+        )
+
+
+def test_preprocess_pred_multilabel_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
+        preprocess_pred_multilabel(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1, 0])
+        )
+
+
+def test_preprocess_pred_multilabel_incorrect_ndim_y_true() -> None:
+    with pytest.raises(
+        RuntimeError, match="'y_true' must be a 1d or 2d array but received an array of shape"
+    ):
+        preprocess_pred_multilabel(y_true=np.ones((5, 3, 1)), y_pred=np.ones((5, 3)))
 
 
 #############################################

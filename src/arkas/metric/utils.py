@@ -9,6 +9,7 @@ __all__ = [
     "check_same_shape_score",
     "multi_isnan",
     "preprocess_pred",
+    "preprocess_pred_multilabel",
     "preprocess_score_binary",
     "preprocess_score_multiclass",
     "preprocess_score_multilabel",
@@ -208,6 +209,75 @@ def preprocess_pred(
     if nan == "keep":
         return y_true, y_pred
     mask = np.logical_not(multi_isnan([y_true, y_pred]))
+    return y_true[mask], y_pred[mask]
+
+
+def preprocess_pred_multilabel(
+    y_true: np.ndarray, y_pred: np.ndarray, nan: str = "keep"
+) -> tuple[np.ndarray, np.ndarray]:
+    r"""Preprocess ``y_true`` and ``y_pred`` arrays.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_pred: The predicted labels.
+        nan: Indicate how to process the nan values.
+            If ``'keep'``, the nan values are kept.
+            If ``'remove'``, the nan values are removed.
+
+    Returns:
+        A tuple with the preprocessed ``y_true`` and ``y_pred``
+            arrays.
+
+    Raises:
+        RuntimeError: if an invalid value is passed to ``nan``.
+        RuntimeError: ``'y_true'`` and ``'y_pred'`` have different
+            shapes.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import preprocess_pred_multilabel
+    >>> y_true = np.array([[1, float("nan"), 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]])
+    >>> y_pred = np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]])
+    >>> preprocess_pred_multilabel(y_true, y_pred)
+    (array([[ 1., nan,  1.],
+            [ 0.,  1.,  0.],
+            [ 0.,  1.,  0.],
+            [ 1.,  0.,  1.],
+            [ 1.,  0.,  1.]]),
+     array([[ 1.,  0.,  1.],
+            [ 0.,  1.,  0.],
+            [ 0.,  1.,  0.],
+            [ 1.,  0.,  1.],
+            [ 1.,  0., nan]]))
+    >>> preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+    (array([[0., 1., 0.],
+            [0., 1., 0.],
+            [1., 0., 1.]]),
+     array([[0., 1., 0.],
+            [0., 1., 0.],
+            [1., 0., 1.]]))
+
+    ```
+    """
+    if y_true.size == 0 and y_pred.size == 0:
+        return np.array([]), np.array([])
+
+    check_nan_option(nan)
+    if y_true.ndim == 1:
+        y_true = y_true.reshape((-1, 1))
+    if y_true.ndim != 2:
+        msg = f"'y_true' must be a 1d or 2d array but received an array of shape: {y_true.shape}"
+        raise RuntimeError(msg)
+    if y_pred.ndim == 1:
+        y_pred = y_pred.reshape((-1, 1))
+    check_same_shape_pred(y_true, y_pred)
+    if nan == "keep":
+        return y_true, y_pred
+
+    mask = np.logical_not(np.logical_or(np.isnan(y_true).any(axis=1), np.isnan(y_pred).any(axis=1)))
     return y_true[mask], y_pred[mask]
 
 
