@@ -17,6 +17,7 @@ from arkas.evaluator import (
     BalancedAccuracyEvaluator,
     BinaryAveragePrecisionEvaluator,
     BinaryConfusionMatrixEvaluator,
+    BinaryFbetaEvaluator,
     BinaryJaccardEvaluator,
     BinaryPrecisionEvaluator,
     BinaryRecallEvaluator,
@@ -47,11 +48,12 @@ def main() -> None:
             [
                 AccuracyEvaluator(y_true="target", y_pred="pred"),
                 BalancedAccuracyEvaluator(y_true="target", y_pred="pred"),
+                BinaryAveragePrecisionEvaluator(y_true="target", y_score="score"),
+                BinaryConfusionMatrixEvaluator(y_true="target", y_pred="pred"),
+                BinaryFbetaEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2]),
+                BinaryJaccardEvaluator(y_true="target", y_pred="pred"),
                 BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
                 BinaryRecallEvaluator(y_true="target", y_pred="pred"),
-                BinaryJaccardEvaluator(y_true="target", y_pred="pred"),
-                BinaryConfusionMatrixEvaluator(y_true="target", y_pred="pred"),
-                BinaryAveragePrecisionEvaluator(y_true="target", y_score="score"),
             ]
         ),
         saver=PickleSaver(),
