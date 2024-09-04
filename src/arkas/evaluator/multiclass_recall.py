@@ -1,4 +1,4 @@
-r"""Contain the multiclass recall evaluator."""
+r"""Contain the recall evaluator for multiclass labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class MulticlassRecallEvaluator(BaseLazyEvaluator):
-    r"""Implement the multiclass recall evaluator.
+    r"""Implement the recall evaluator for multiclass labels.
 
     Args:
         y_true: The key or column name of the ground truth target

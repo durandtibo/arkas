@@ -1,4 +1,4 @@
-r"""Contain the multilabel confusion matrix evaluator."""
+r"""Contain the confusion matrix evaluator for multilabel labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class MultilabelConfusionMatrixEvaluator(BaseLazyEvaluator):
-    r"""Implement the multilabel confusion matrix evaluator.
+    r"""Implement the confusion matrix evaluator for multilabel labels.
 
     Args:
         y_true: The key or column name of the ground truth target

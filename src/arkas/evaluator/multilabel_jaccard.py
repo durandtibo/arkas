@@ -1,4 +1,4 @@
-r"""Contain the multilabel Jaccard evaluator."""
+r"""Contain the Jaccard evaluator for multilabel labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class MultilabelJaccardEvaluator(BaseLazyEvaluator):
-    r"""Implement the multilabel Jaccard evaluator.
+    r"""Implement the Jaccard evaluator for multilabel labels.
 
     Args:
         y_true: The key or column name of the ground truth target

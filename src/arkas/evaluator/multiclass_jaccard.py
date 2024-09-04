@@ -1,4 +1,4 @@
-r"""Contain the multiclass Jaccard evaluator."""
+r"""Contain the Jaccard evaluator for multiclass labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class MulticlassJaccardEvaluator(BaseLazyEvaluator):
-    r"""Implement the multiclass Jaccard evaluator.
+    r"""Implement the Jaccard evaluator for multiclass labels.
 
     Args:
         y_true: The key or column name of the ground truth target
