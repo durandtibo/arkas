@@ -1,4 +1,4 @@
-r"""Contain the multilabel recall evaluator."""
+r"""Contain the recall evaluator for multilabel labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class MultilabelRecallEvaluator(BaseLazyEvaluator):
-    r"""Implement the multilabel recall evaluator.
+    r"""Implement the recall evaluator for multilabel labels.
 
     Args:
         y_true: The key or column name of the ground truth target

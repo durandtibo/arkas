@@ -1,4 +1,4 @@
-r"""Contain the multilabel F-beta evaluator."""
+r"""Contain the F-beta evaluator for multilabel labels."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class MultilabelFbetaEvaluator(BaseLazyEvaluator):
-    r"""Implement the multilabel F-beta evaluator.
+    r"""Implement the F-beta evaluator for multilabel labels.
 
     Args:
         y_true: The key or column name of the ground truth target

@@ -1,4 +1,4 @@
-r"""Contain the multiclass precision evaluator."""
+r"""Contain the precision evaluator for multiclass labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class MulticlassPrecisionEvaluator(BaseLazyEvaluator):
-    r"""Implement the multiclass precision evaluator.
+    r"""Implement the precision evaluator for multiclass labels.
 
     Args:
         y_true: The key or column name of the ground truth target

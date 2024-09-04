@@ -1,4 +1,4 @@
-r"""Contain the binary Jaccard evaluator."""
+r"""Contain the Jaccard evaluator for binary labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class BinaryJaccardEvaluator(BaseLazyEvaluator):
-    r"""Implement the binary Jaccard evaluator.
+    r"""Implement the Jaccard evaluator for binary labels.
 
     Args:
         y_true: The key or column name of the ground truth target

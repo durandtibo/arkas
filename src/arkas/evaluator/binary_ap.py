@@ -1,4 +1,4 @@
-r"""Contain the binary average precision evaluator."""
+r"""Contain the average precision evaluator for binary labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class BinaryAveragePrecisionEvaluator(BaseLazyEvaluator):
-    r"""Implement the binary average precision evaluator.
+    r"""Implement the average precision evaluator for binary labels.
 
     Args:
         y_true: The key or column name of the ground truth target

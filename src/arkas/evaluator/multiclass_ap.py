@@ -1,4 +1,4 @@
-r"""Contain the multiclass average precision evaluator."""
+r"""Contain the average precision evaluator for multiclass labels."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator):
-    r"""Implement the multiclass average precision evaluator.
+    r"""Implement the average precision evaluator for multiclass labels.
 
     Args:
         y_true: The key or column name of the ground truth target
