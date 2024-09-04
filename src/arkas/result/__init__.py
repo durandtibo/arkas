@@ -32,6 +32,9 @@ __all__ = [
     "BinaryFbetaResult",
     "MulticlassFbetaResult",
     "MultilabelFbetaResult",
+    "BinaryRocAucResult",
+    "MulticlassRocAucResult",
+    "MultilabelRocAucResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -70,6 +73,11 @@ from arkas.result.recall import (
     MulticlassRecallResult,
     MultilabelRecallResult,
     RecallResult,
+)
+from arkas.result.roc_auc import (
+    BinaryRocAucResult,
+    MulticlassRocAucResult,
+    MultilabelRocAucResult,
 )
 from arkas.result.sequential import SequentialResult
 from arkas.result.vanilla import EmptyResult, Result
