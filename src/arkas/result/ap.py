@@ -7,6 +7,7 @@ __all__ = [
     "BaseAveragePrecisionResult",
     "BinaryAveragePrecisionResult",
     "MulticlassAveragePrecisionResult",
+    "MultilabelAveragePrecisionResult",
 ]
 
 from typing import TYPE_CHECKING, Any
@@ -14,9 +15,9 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from coola import objects_are_equal
 
-from arkas.metric import binary_average_precision_metrics
 from arkas.metric.ap import (
     average_precision_metrics,
+    binary_average_precision_metrics,
     find_label_type,
     multiclass_average_precision_metrics,
     multilabel_average_precision_metrics,
@@ -199,7 +200,8 @@ class AveragePrecisionResult(BaseResult):
 
 
 class BaseAveragePrecisionResult(BaseResult):
-    r"""Implement the base class to implement the precision results.
+    r"""Implement the base class to implement the average precision
+    results.
 
     Args:
         y_true: The ground truth target labels.
@@ -251,7 +253,7 @@ class BaseAveragePrecisionResult(BaseResult):
 
 
 class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
-    r"""Implement the precision result for binary labels.
+    r"""Implement the average precision result for binary labels.
 
     Args:
         y_true: The ground truth target labels. This input must
@@ -298,7 +300,7 @@ class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
 
 
 class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
-    r"""Implement the precision result for multiclass labels.
+    r"""Implement the average precision result for multiclass labels.
 
     Args:
         y_true: The ground truth target labels. This input must
@@ -365,7 +367,7 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
 
 
 class MultilabelAveragePrecisionResult(BaseAveragePrecisionResult):
-    r"""Implement the precision result for multilabel labels.
+    r"""Implement the average precision result for multilabel labels.
 
     Args:
         y_true: The ground truth target labels. This input must
