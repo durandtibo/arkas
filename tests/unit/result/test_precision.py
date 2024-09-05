@@ -170,10 +170,10 @@ def test_precision_result_compute_metrics_multiclass_correct() -> None:
     assert objects_are_equal(
         result.compute_metrics(),
         {
-            "precision": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_precision": 1.0,
             "micro_precision": 1.0,
+            "precision": np.array([1.0, 1.0, 1.0]),
             "weighted_precision": 1.0,
         },
     )
@@ -186,10 +186,10 @@ def test_precision_result_compute_metrics_multiclass_incorrect() -> None:
     assert objects_are_equal(
         result.compute_metrics(),
         {
-            "precision": np.array([1.0, 0.5, 0.0]),
             "count": 6,
             "macro_precision": 0.5,
             "micro_precision": 0.6666666666666666,
+            "precision": np.array([1.0, 0.5, 0.0]),
             "weighted_precision": 0.5,
         },
     )
@@ -200,10 +200,10 @@ def test_precision_result_compute_metrics_multiclass_empty() -> None:
     assert objects_are_equal(
         result.compute_metrics(),
         {
-            "precision": np.array([]),
             "count": 0,
             "macro_precision": float("nan"),
             "micro_precision": float("nan"),
+            "precision": np.array([]),
             "weighted_precision": float("nan"),
         },
         equal_nan=True,
@@ -217,10 +217,10 @@ def test_precision_result_compute_metrics_multiclass_prefix_suffix() -> None:
     assert objects_are_equal(
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {
-            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_count_suffix": 6,
             "prefix_macro_precision_suffix": 1.0,
             "prefix_micro_precision_suffix": 1.0,
+            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_weighted_precision_suffix": 1.0,
         },
     )
@@ -233,10 +233,10 @@ def test_precision_result_compute_metrics_multilabel_1_class() -> None:
     assert objects_are_equal(
         result.compute_metrics(),
         {
-            "precision": np.array([1.0]),
             "count": 5,
             "macro_precision": 1.0,
             "micro_precision": 1.0,
+            "precision": np.array([1.0]),
             "weighted_precision": 1.0,
         },
     )
@@ -250,24 +250,39 @@ def test_precision_result_compute_metrics_multilabel_3_classes() -> None:
     assert objects_are_allclose(
         result.compute_metrics(),
         {
-            "precision": np.array([1.0, 1.0, 0.0]),
             "count": 5,
             "macro_precision": 0.6666666666666666,
             "micro_precision": 0.7142857142857143,
+            "precision": np.array([1.0, 1.0, 0.0]),
             "weighted_precision": 0.625,
         },
     )
 
 
-def test_precision_result_compute_metrics_multilabel_empty() -> None:
+def test_precision_result_compute_metrics_multilabel_empty_1d() -> None:
+    result = PrecisionResult(y_true=np.array([]), y_pred=np.array([]), label_type="multilabel")
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 0,
+            "macro_precision": float("nan"),
+            "micro_precision": float("nan"),
+            "precision": np.array([]),
+            "weighted_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_precision_result_compute_metrics_multilabel_empty_2d() -> None:
     result = PrecisionResult(y_true=np.ones((0, 3)), y_pred=np.ones((0, 3)))
     assert objects_are_equal(
         result.compute_metrics(),
         {
-            "precision": np.array([float("nan"), float("nan"), float("nan")]),
             "count": 0,
             "macro_precision": float("nan"),
             "micro_precision": float("nan"),
+            "precision": np.array([]),
             "weighted_precision": float("nan"),
         },
         equal_nan=True,
@@ -282,10 +297,10 @@ def test_precision_result_compute_metrics_multilabel_prefix_suffix() -> None:
     assert objects_are_allclose(
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {
-            "prefix_precision_suffix": np.array([1.0, 1.0, 0.0]),
             "prefix_count_suffix": 5,
             "prefix_macro_precision_suffix": 0.6666666666666666,
             "prefix_micro_precision_suffix": 0.7142857142857143,
+            "prefix_precision_suffix": np.array([1.0, 1.0, 0.0]),
             "prefix_weighted_precision_suffix": 0.625,
         },
     )
