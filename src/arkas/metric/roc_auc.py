@@ -240,7 +240,7 @@ def _multi_roc_auc_metrics(
         The computed metrics.
     """
     n_samples = y_true.shape[0]
-    macro_roc_auc, micro_roc_auc, weighted_roc_auc = [float("nan")] * 3
+    macro_roc_auc, micro_roc_auc, weighted_roc_auc = float("nan"), float("nan"), float("nan")
     n_classes = y_score.shape[1] if y_score.ndim == 2 else 0 if n_samples == 0 else 1
     roc_auc = np.full((n_classes,), fill_value=float("nan"))
     if n_samples > 0:
