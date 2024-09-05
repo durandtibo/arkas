@@ -29,6 +29,7 @@ class MulticlassFbetaEvaluator(BaseLazyEvaluator):
         y_true: The key or column name of the ground truth target
             labels.
         y_pred: The key or column name of the predicted labels.
+        betas: The betas used to compute the F-beta scores.
 
     Example usage:
 
