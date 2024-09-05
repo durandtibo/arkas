@@ -248,16 +248,15 @@ def multilabel_jaccard_metrics(
     """
     y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
 
+    jaccard = np.array([])
+    macro_jaccard, micro_jaccard, weighted_jaccard = float("nan"), float("nan"), float("nan")
     n_samples = y_true.shape[0]
-    n_classes = y_pred.shape[1] if y_pred.ndim == 2 and n_samples > 0 else 0
-    jaccard = np.full((n_classes,), fill_value=float("nan"))
-    macro_jaccard, micro_jaccard, weighted_jaccard = [float("nan")] * 3
     if n_samples > 0:
         jaccard = np.array(
             metrics.jaccard_score(
                 y_true=y_true,
                 y_pred=y_pred,
-                average="binary" if n_classes == 1 else None,
+                average="binary" if y_pred.shape[1] == 1 else None,
             )
         ).ravel()
         macro_jaccard = float(metrics.jaccard_score(y_true=y_true, y_pred=y_pred, average="macro"))

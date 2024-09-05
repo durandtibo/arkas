@@ -253,16 +253,15 @@ def multilabel_precision_metrics(
     """
     y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
 
+    precision = np.array([])
+    macro_precision, micro_precision, weighted_precision = float("nan"), float("nan"), float("nan")
     n_samples = y_true.shape[0]
-    n_classes = y_pred.shape[1] if y_pred.ndim == 2 and n_samples > 0 else 0
-    precision = np.full((n_classes,), fill_value=float("nan"))
-    macro_precision, micro_precision, weighted_precision = [float("nan")] * 3
     if n_samples > 0:
         precision = np.array(
             metrics.precision_score(
                 y_true=y_true,
                 y_pred=y_pred,
-                average="binary" if n_classes == 1 else None,
+                average="binary" if y_pred.shape[1] == 1 else None,
             )
         ).ravel()
         macro_precision = float(
