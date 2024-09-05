@@ -206,10 +206,10 @@ def test_multiclass_recall_metrics_correct_1d() -> None:
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
         ),
         {
-            "recall": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_recall": 1.0,
             "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
             "weighted_recall": 1.0,
         },
     )
@@ -222,10 +222,10 @@ def test_multiclass_recall_metrics_correct_2d() -> None:
             y_pred=np.array([[0, 0, 1], [1, 2, 2]]),
         ),
         {
-            "recall": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_recall": 1.0,
             "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
             "weighted_recall": 1.0,
         },
     )
@@ -238,10 +238,10 @@ def test_multiclass_recall_metrics_incorrect() -> None:
             y_pred=np.array([0, 0, 1, 1, 1, 1]),
         ),
         {
-            "recall": np.array([1.0, 1.0, 0.0]),
             "count": 6,
             "macro_recall": 0.6666666666666666,
             "micro_recall": 0.6666666666666666,
+            "recall": np.array([1.0, 1.0, 0.0]),
             "weighted_recall": 0.6666666666666666,
         },
     )
@@ -254,10 +254,10 @@ def test_multiclass_recall_metrics_nans() -> None:
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
         ),
         {
-            "recall": np.array([1.0, 1.0, 1.0]),
             "count": 5,
             "macro_recall": 1.0,
             "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
             "weighted_recall": 1.0,
         },
     )
@@ -270,10 +270,10 @@ def test_multiclass_recall_metrics_y_true_nans() -> None:
             y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
         ),
         {
-            "recall": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_recall": 1.0,
             "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
             "weighted_recall": 1.0,
         },
     )
@@ -286,10 +286,10 @@ def test_multiclass_recall_metrics_y_pred_nans() -> None:
             y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
         ),
         {
-            "recall": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_recall": 1.0,
             "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
             "weighted_recall": 1.0,
         },
     )
@@ -299,10 +299,10 @@ def test_multiclass_recall_metrics_empty() -> None:
     assert objects_are_allclose(
         multiclass_recall_metrics(y_true=np.array([]), y_pred=np.array([])),
         {
-            "recall": np.array([]),
             "count": 0,
             "macro_recall": float("nan"),
             "micro_recall": float("nan"),
+            "recall": np.array([]),
             "weighted_recall": float("nan"),
         },
         equal_nan=True,
@@ -318,10 +318,10 @@ def test_multiclass_recall_metrics_prefix_suffix() -> None:
             suffix="_suffix",
         ),
         {
-            "prefix_recall_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_count_suffix": 6,
             "prefix_macro_recall_suffix": 1.0,
             "prefix_micro_recall_suffix": 1.0,
+            "prefix_recall_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_weighted_recall_suffix": 1.0,
         },
     )
@@ -339,10 +339,10 @@ def test_multilabel_recall_metrics_1_class_1d() -> None:
             y_pred=np.array([1, 0, 0, 1, 1]),
         ),
         {
-            "recall": np.array([1.0]),
             "count": 5,
             "macro_recall": 1.0,
             "micro_recall": 1.0,
+            "recall": np.array([1.0]),
             "weighted_recall": 1.0,
         },
     )
@@ -355,10 +355,10 @@ def test_multilabel_recall_metrics_1_class_2d() -> None:
             y_pred=np.array([[1], [0], [0], [1], [1]]),
         ),
         {
-            "recall": np.array([1.0]),
             "count": 5,
             "macro_recall": 1.0,
             "micro_recall": 1.0,
+            "recall": np.array([1.0]),
             "weighted_recall": 1.0,
         },
     )
@@ -371,10 +371,10 @@ def test_multilabel_recall_metrics_3_classes() -> None:
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
         ),
         {
-            "recall": np.array([1.0, 1.0, 0.0]),
             "count": 5,
             "macro_recall": 0.6666666666666666,
             "micro_recall": 0.625,
+            "recall": np.array([1.0, 1.0, 0.0]),
             "weighted_recall": 0.625,
         },
     )
@@ -465,10 +465,10 @@ def test_multilabel_recall_metrics_prefix_suffix() -> None:
             suffix="_suffix",
         ),
         {
-            "prefix_recall_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_count_suffix": 5,
             "prefix_macro_recall_suffix": 1.0,
             "prefix_micro_recall_suffix": 1.0,
+            "prefix_recall_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_weighted_recall_suffix": 1.0,
         },
     )
