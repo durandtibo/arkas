@@ -14,7 +14,11 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.precision import find_label_type
-from arkas.metric.utils import check_label_type, preprocess_pred
+from arkas.metric.utils import (
+    check_label_type,
+    preprocess_pred,
+    preprocess_pred_multilabel,
+)
 
 
 def jaccard_metrics(
@@ -242,8 +246,10 @@ def multilabel_jaccard_metrics(
 
     ```
     """
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+
     n_samples = y_true.shape[0]
-    n_classes = y_pred.shape[1] if y_pred.ndim == 2 else 0 if n_samples == 0 else 1
+    n_classes = y_pred.shape[1] if y_pred.ndim == 2 and n_samples > 0 else 0
     jaccard = np.full((n_classes,), fill_value=float("nan"))
     macro_jaccard, micro_jaccard, weighted_jaccard = [float("nan")] * 3
     if n_samples > 0:

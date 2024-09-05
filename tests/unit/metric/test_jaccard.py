@@ -383,14 +383,76 @@ def test_multilabel_jaccard_metrics_3_classes() -> None:
     )
 
 
-def test_multilabel_jaccard_metrics_empty() -> None:
+def test_multilabel_jaccard_metrics_nans() -> None:
+    assert objects_are_allclose(
+        multilabel_jaccard_metrics(
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
+        ),
+        {
+            "count": 3,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_multilabel_jaccard_metrics_y_true_nans() -> None:
+    assert objects_are_allclose(
+        multilabel_jaccard_metrics(
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        ),
+        {
+            "count": 4,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_multilabel_jaccard_metrics_y_pred_nans() -> None:
+    assert objects_are_allclose(
+        multilabel_jaccard_metrics(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        ),
+        {
+            "count": 4,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_multilabel_jaccard_metrics_empty_1d() -> None:
     assert objects_are_allclose(
         multilabel_jaccard_metrics(y_true=np.array([]), y_pred=np.array([])),
         {
-            "jaccard": np.array([]),
             "count": 0,
             "macro_jaccard": float("nan"),
             "micro_jaccard": float("nan"),
+            "jaccard": np.array([]),
+            "weighted_jaccard": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_jaccard_metrics_empty_2d() -> None:
+    assert objects_are_allclose(
+        multilabel_jaccard_metrics(y_true=np.ones((0, 3)), y_pred=np.ones((0, 3))),
+        {
+            "count": 0,
+            "macro_jaccard": float("nan"),
+            "micro_jaccard": float("nan"),
+            "jaccard": np.array([]),
             "weighted_jaccard": float("nan"),
         },
         equal_nan=True,
