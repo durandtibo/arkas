@@ -209,10 +209,10 @@ def test_multiclass_precision_metrics_correct_1d() -> None:
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
         ),
         {
-            "precision": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_precision": 1.0,
             "micro_precision": 1.0,
+            "precision": np.array([1.0, 1.0, 1.0]),
             "weighted_precision": 1.0,
         },
     )
@@ -225,10 +225,10 @@ def test_multiclass_precision_metrics_correct_2d() -> None:
             y_pred=np.array([[0, 0, 1], [1, 2, 2]]),
         ),
         {
-            "precision": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_precision": 1.0,
             "micro_precision": 1.0,
+            "precision": np.array([1.0, 1.0, 1.0]),
             "weighted_precision": 1.0,
         },
     )
@@ -241,10 +241,10 @@ def test_multiclass_precision_metrics_incorrect() -> None:
             y_pred=np.array([0, 0, 1, 1, 1, 1]),
         ),
         {
-            "precision": np.array([1.0, 0.5, 0.0]),
             "count": 6,
             "macro_precision": 0.5,
             "micro_precision": 0.6666666666666666,
+            "precision": np.array([1.0, 0.5, 0.0]),
             "weighted_precision": 0.5,
         },
     )
@@ -257,10 +257,10 @@ def test_multiclass_precision_metrics_nans() -> None:
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
         ),
         {
-            "precision": np.array([1.0, 1.0, 1.0]),
             "count": 5,
             "macro_precision": 1.0,
             "micro_precision": 1.0,
+            "precision": np.array([1.0, 1.0, 1.0]),
             "weighted_precision": 1.0,
         },
     )
@@ -273,10 +273,10 @@ def test_multiclass_precision_metrics_y_true_nans() -> None:
             y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
         ),
         {
-            "precision": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_precision": 1.0,
             "micro_precision": 1.0,
+            "precision": np.array([1.0, 1.0, 1.0]),
             "weighted_precision": 1.0,
         },
     )
@@ -289,10 +289,10 @@ def test_multiclass_precision_metrics_y_pred_nans() -> None:
             y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
         ),
         {
-            "precision": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_precision": 1.0,
             "micro_precision": 1.0,
+            "precision": np.array([1.0, 1.0, 1.0]),
             "weighted_precision": 1.0,
         },
     )
@@ -302,10 +302,10 @@ def test_multiclass_precision_metrics_empty() -> None:
     assert objects_are_allclose(
         multiclass_precision_metrics(y_true=np.array([]), y_pred=np.array([])),
         {
-            "precision": np.array([]),
             "count": 0,
             "macro_precision": float("nan"),
             "micro_precision": float("nan"),
+            "precision": np.array([]),
             "weighted_precision": float("nan"),
         },
         equal_nan=True,
@@ -321,10 +321,10 @@ def test_multiclass_precision_metrics_prefix_suffix() -> None:
             suffix="_suffix",
         ),
         {
-            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_count_suffix": 6,
             "prefix_macro_precision_suffix": 1.0,
             "prefix_micro_precision_suffix": 1.0,
+            "prefix_precision_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_weighted_precision_suffix": 1.0,
         },
     )
