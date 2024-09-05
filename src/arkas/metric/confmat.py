@@ -14,7 +14,11 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.precision import find_label_type
-from arkas.metric.utils import check_label_type, preprocess_pred
+from arkas.metric.utils import (
+    check_label_type,
+    preprocess_pred,
+    preprocess_pred_multilabel,
+)
 
 
 def confusion_matrix_metrics(
@@ -235,10 +239,10 @@ def multilabel_confusion_matrix_metrics(
 
     ```
     """
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
     count = y_true.shape[0]
     if count > 0:
-        n_classes = y_true.shape[1] if y_true.ndim > 1 else 1
-        if n_classes > 1:
+        if y_true.shape[1] > 1:
             confmat = metrics.multilabel_confusion_matrix(y_true=y_true, y_pred=y_pred)
         else:
             confmat = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred).reshape(1, 2, 2)
