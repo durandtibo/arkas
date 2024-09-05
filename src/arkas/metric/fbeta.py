@@ -380,17 +380,16 @@ def _multilabel_fbeta_metrics(
     """
     y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
 
-    n_samples = y_true.shape[0]
     fbeta = np.array([])
     macro_fbeta, micro_fbeta, weighted_fbeta = float("nan"), float("nan"), float("nan")
+    n_samples = y_true.shape[0]
     if n_samples > 0:
-        n_classes = y_pred.shape[1]
         fbeta = np.array(
             metrics.fbeta_score(
                 y_true=y_true,
                 y_pred=y_pred,
                 beta=beta,
-                average="binary" if n_classes == 1 else None,
+                average="binary" if y_pred.shape[1] == 1 else None,
             )
         ).ravel()
         macro_fbeta = float(
