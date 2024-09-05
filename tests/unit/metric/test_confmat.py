@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from coola import objects_are_equal
+from coola import objects_are_allclose, objects_are_equal
 
 from arkas.metric import (
     binary_confusion_matrix_metrics,
@@ -497,9 +497,58 @@ def test_multilabel_confusion_matrix_metrics_incorrect() -> None:
     )
 
 
-def test_multilabel_confusion_matrix_metrics_empty() -> None:
-    assert objects_are_equal(
+def test_multilabel_confusion_matrix_metrics_nans() -> None:
+    assert objects_are_allclose(
+        multilabel_confusion_matrix_metrics(
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
+        ),
+        {
+            "confusion_matrix": np.array([[[2, 0], [0, 1]], [[1, 0], [0, 2]], [[2, 0], [0, 1]]]),
+            "count": 3,
+        },
+    )
+
+
+def test_multilabel_confusion_matrix_metrics_y_true_nans() -> None:
+    assert objects_are_allclose(
+        multilabel_confusion_matrix_metrics(
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        ),
+        {
+            "confusion_matrix": np.array([[[2, 0], [0, 2]], [[2, 0], [0, 2]], [[2, 0], [0, 2]]]),
+            "count": 4,
+        },
+    )
+
+
+def test_multilabel_confusion_matrix_metrics_y_pred_nans() -> None:
+    assert objects_are_allclose(
+        multilabel_confusion_matrix_metrics(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        ),
+        {
+            "confusion_matrix": np.array([[[2, 0], [0, 2]], [[2, 0], [0, 2]], [[2, 0], [0, 2]]]),
+            "count": 4,
+        },
+    )
+
+
+def test_multilabel_confusion_matrix_metrics_empty_1d() -> None:
+    assert objects_are_allclose(
         multilabel_confusion_matrix_metrics(y_true=np.array([]), y_pred=np.array([])),
+        {
+            "confusion_matrix": np.zeros((0, 0, 0), dtype=np.int64),
+            "count": 0,
+        },
+    )
+
+
+def test_multilabel_confusion_matrix_metrics_empty_2d() -> None:
+    assert objects_are_allclose(
+        multilabel_confusion_matrix_metrics(y_true=np.ones((0, 3)), y_pred=np.ones((0, 3))),
         {
             "confusion_matrix": np.zeros((0, 0, 0), dtype=np.int64),
             "count": 0,
