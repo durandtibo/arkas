@@ -15,7 +15,11 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.precision import find_label_type
-from arkas.metric.utils import check_label_type, preprocess_pred
+from arkas.metric.utils import (
+    check_label_type,
+    preprocess_pred,
+    preprocess_pred_multilabel,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
@@ -374,17 +378,18 @@ def _multilabel_fbeta_metrics(
     Returns:
         The computed metrics.
     """
-    n_samples = y_true.shape[0]
-    n_classes = y_pred.shape[1] if y_pred.ndim == 2 else 0 if n_samples == 0 else 1
-    fbeta = np.full((n_classes,), fill_value=float("nan"))
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+
+    fbeta = np.array([])
     macro_fbeta, micro_fbeta, weighted_fbeta = float("nan"), float("nan"), float("nan")
+    n_samples = y_true.shape[0]
     if n_samples > 0:
         fbeta = np.array(
             metrics.fbeta_score(
                 y_true=y_true,
                 y_pred=y_pred,
                 beta=beta,
-                average="binary" if n_classes == 1 else None,
+                average="binary" if y_pred.shape[1] == 1 else None,
             )
         ).ravel()
         macro_fbeta = float(

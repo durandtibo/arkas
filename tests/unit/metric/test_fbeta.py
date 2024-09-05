@@ -509,8 +509,8 @@ def test_multilabel_fbeta_metrics_1_class_1d() -> None:
             y_pred=np.array([1, 0, 0, 1, 1]),
         ),
         {
-            "f1": np.array([1.0]),
             "count": 5,
+            "f1": np.array([1.0]),
             "macro_f1": 1.0,
             "micro_f1": 1.0,
             "weighted_f1": 1.0,
@@ -525,8 +525,8 @@ def test_multilabel_fbeta_metrics_1_class_2d() -> None:
             y_pred=np.array([[1], [0], [0], [1], [1]]),
         ),
         {
-            "f1": np.array([1.0]),
             "count": 5,
+            "f1": np.array([1.0]),
             "macro_f1": 1.0,
             "micro_f1": 1.0,
             "weighted_f1": 1.0,
@@ -541,8 +541,8 @@ def test_multilabel_fbeta_metrics_3_classes() -> None:
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
         ),
         {
-            "f1": np.array([1.0, 1.0, 0.0]),
             "count": 5,
+            "f1": np.array([1.0, 1.0, 0.0]),
             "macro_f1": 0.6666666666666666,
             "micro_f1": 0.6666666666666666,
             "weighted_f1": 0.625,
@@ -575,15 +575,74 @@ def test_multilabel_fbeta_metrics_betas() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_empty() -> None:
+def test_multilabel_fbeta_metrics_nans() -> None:
     assert objects_are_allclose(
         multilabel_fbeta_metrics(
-            y_true=np.array([]),
-            y_pred=np.array([]),
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
         ),
         {
-            "f1": np.array([]),
+            "count": 3,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multilabel_fbeta_metrics_y_true_nans() -> None:
+    assert objects_are_allclose(
+        multilabel_fbeta_metrics(
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        ),
+        {
+            "count": 4,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multilabel_fbeta_metrics_y_pred_nans() -> None:
+    assert objects_are_allclose(
+        multilabel_fbeta_metrics(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        ),
+        {
+            "count": 4,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multilabel_fbeta_metrics_empty_1d() -> None:
+    assert objects_are_allclose(
+        multilabel_fbeta_metrics(y_true=np.array([]), y_pred=np.array([])),
+        {
             "count": 0,
+            "f1": np.array([]),
+            "macro_f1": float("nan"),
+            "micro_f1": float("nan"),
+            "weighted_f1": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_fbeta_metrics_empty_2d() -> None:
+    assert objects_are_allclose(
+        multilabel_fbeta_metrics(y_true=np.ones((0, 3)), y_pred=np.ones((0, 3))),
+        {
+            "count": 0,
+            "f1": np.array([]),
             "macro_f1": float("nan"),
             "micro_f1": float("nan"),
             "weighted_f1": float("nan"),
@@ -601,8 +660,8 @@ def test_multilabel_fbeta_metrics_prefix_suffix() -> None:
             suffix="_suffix",
         ),
         {
-            "prefix_f1_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_count_suffix": 5,
+            "prefix_f1_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_macro_f1_suffix": 1.0,
             "prefix_micro_f1_suffix": 1.0,
             "prefix_weighted_f1_suffix": 1.0,
