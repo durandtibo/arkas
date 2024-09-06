@@ -21,8 +21,9 @@ from arkas.result.roc_auc import BinaryRocAucResult
 from arkas.result.sequential import SequentialResult
 
 if TYPE_CHECKING:
-    import numpy as np
     from collections.abc import Sequence
+
+    import numpy as np
 
 
 class BinaryClassificationResult(BaseResult):
