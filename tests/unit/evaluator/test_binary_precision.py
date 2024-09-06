@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import polars as pl
 from coola import objects_are_equal
+from matplotlib import pyplot as plt
 
 from arkas.evaluator import BinaryPrecisionEvaluator
 from arkas.result import BinaryPrecisionResult, EmptyResult, Result
@@ -42,7 +43,9 @@ def test_binary_precision_evaluator_evaluate_lazy_false() -> None:
     )
     assert isinstance(result, Result)
     assert objects_are_equal(result.compute_metrics(), {"count": 5, "precision": 1.0})
-    assert len(result.generate_figures()) == 1
+    figures = result.generate_figures()
+    assert len(figures) == 1
+    assert isinstance(figures["precision_recall"], plt.Figure)
 
 
 def test_binary_precision_evaluator_evaluate_missing_keys() -> None:

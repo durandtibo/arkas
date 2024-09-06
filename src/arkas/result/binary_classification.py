@@ -7,7 +7,7 @@ __all__ = ["BinaryClassificationResult"]
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
-from coola.utils import repr_indent, repr_mapping
+from coola.utils.format import repr_mapping_line
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
 from arkas.result.ap import BinaryAveragePrecisionResult
@@ -53,12 +53,7 @@ class BinaryClassificationResult(BaseResult):
     ...     y_score=np.array([2, -1, 0, 3, 1]),
     ... )
     >>> result
-    BinaryClassificationResult(
-      (y_true): (5,)
-      (y_pred): (5,)
-      (y_score): (5,)
-      (betas): (1,)
-    )
+    BinaryClassificationResult(y_true=(5,), y_pred=(5,), y_score=(5,), betas=(1,))
     >>> result.compute_metrics()
     {'accuracy': 1.0,
      'count_correct': 5,
@@ -116,17 +111,15 @@ class BinaryClassificationResult(BaseResult):
         self._results = SequentialResult(results)
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "y_true": self._y_true.shape,
-                    "y_pred": self._y_pred.shape,
-                    "y_score": self._y_score.shape if self._y_score is not None else None,
-                    "betas": self._betas,
-                }
-            )
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_pred": self._y_pred.shape,
+                "y_score": self._y_score.shape if self._y_score is not None else None,
+                "betas": self._betas,
+            }
         )
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def y_true(self) -> np.ndarray:
