@@ -6,14 +6,22 @@ __all__ = ["BinaryClassificationResult"]
 
 from typing import TYPE_CHECKING, Any
 
-import numpy as np
 from coola import objects_are_equal
 from coola.utils import repr_indent, repr_mapping
-from sklearn import metrics
 
+from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
+from arkas.result.ap import BinaryAveragePrecisionResult
 from arkas.result.base import BaseResult
+from arkas.result.confmat import BinaryConfusionMatrixResult
+from arkas.result.fbeta import BinaryFbetaResult
+from arkas.result.jaccard import BinaryJaccardResult
+from arkas.result.precision import BinaryPrecisionResult
+from arkas.result.recall import BinaryRecallResult
+from arkas.result.roc_auc import BinaryRocAucResult
+from arkas.result.sequential import SequentialResult
 
 if TYPE_CHECKING:
+    import numpy as np
     from collections.abc import Sequence
 
 
@@ -30,7 +38,7 @@ class BinaryClassificationResult(BaseResult):
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions.
-        f1_betas: The betas used to compute the F-beta scores.
+        betas: The betas used to compute the F-beta scores.
 
     Example usage:
 
@@ -48,17 +56,16 @@ class BinaryClassificationResult(BaseResult):
       (y_true): (5,)
       (y_pred): (5,)
       (y_score): (5,)
-      (f1_betas): (1,)
+      (betas): (1,)
     )
     >>> result.compute_metrics()
     {'accuracy': 1.0,
-     'balanced_accuracy': 1.0,
-     'precision': 1.0,
-     'recall': 1.0,
-     'jaccard': 1.0,
-     'count': 5,
      'count_correct': 5,
      'count_incorrect': 0,
+     'count': 5,
+     'error': 0.0,
+     'balanced_accuracy': 1.0,
+     'confusion_matrix': array([[2, 0], [0, 3]]),
      'false_negative_rate': 0.0,
      'false_negative': 0,
      'false_positive_rate': 0.0,
@@ -68,6 +75,9 @@ class BinaryClassificationResult(BaseResult):
      'true_positive_rate': 1.0,
      'true_positive': 3,
      'f1': 1.0,
+     'jaccard': 1.0,
+     'precision': 1.0,
+     'recall': 1.0,
      'average_precision': 1.0,
      'roc_auc': 1.0}
 
@@ -79,14 +89,32 @@ class BinaryClassificationResult(BaseResult):
         y_true: np.ndarray,
         y_pred: np.ndarray,
         y_score: np.ndarray | None = None,
-        f1_betas: Sequence[float] = (1,),
+        betas: Sequence[float] = (1,),
     ) -> None:
         self._y_true = y_true.ravel()
         self._y_pred = y_pred.ravel()
-        self._y_score = None if y_score is None else y_score.ravel().astype(np.float64)
-        self._f1_betas = tuple(f1_betas)
+        self._y_score = None if y_score is None else y_score.ravel()
+        self._betas = tuple(betas)
 
         self._check_inputs()
+
+        results = [
+            AccuracyResult(y_true=self._y_true, y_pred=self._y_pred),
+            BalancedAccuracyResult(y_true=self._y_true, y_pred=self._y_pred),
+            BinaryConfusionMatrixResult(y_true=self._y_true, y_pred=self._y_pred),
+            BinaryFbetaResult(y_true=self._y_true, y_pred=self._y_pred, betas=self._betas),
+            BinaryJaccardResult(y_true=self._y_true, y_pred=self._y_pred),
+            BinaryPrecisionResult(y_true=self._y_true, y_pred=self._y_pred),
+            BinaryRecallResult(y_true=self._y_true, y_pred=self._y_pred),
+        ]
+        if self._y_score is not None:
+            results.extend(
+                [
+                    BinaryAveragePrecisionResult(y_true=self._y_true, y_score=self._y_score),
+                    BinaryRocAucResult(y_true=self._y_true, y_score=self._y_score),
+                ]
+            )
+        self._results = SequentialResult(results)
 
     def __repr__(self) -> str:
         args = repr_indent(
@@ -95,7 +123,7 @@ class BinaryClassificationResult(BaseResult):
                     "y_true": self._y_true.shape,
                     "y_pred": self._y_pred.shape,
                     "y_score": self._y_score.shape if self._y_score is not None else None,
-                    "f1_betas": self._f1_betas,
+                    "betas": self._betas,
                 }
             )
         )
@@ -114,12 +142,7 @@ class BinaryClassificationResult(BaseResult):
         return self._y_score
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return (
-            self.compute_base_metrics(prefix=prefix, suffix=suffix)
-            | self.compute_confmat_metrics(prefix=prefix, suffix=suffix)
-            | self.compute_fbeta_metrics(prefix=prefix, suffix=suffix)
-            | self.compute_rank_metrics(prefix=prefix, suffix=suffix)
-        )
+        return self._results.compute_metrics(prefix=prefix, suffix=suffix)
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
@@ -128,111 +151,11 @@ class BinaryClassificationResult(BaseResult):
             objects_are_equal(self.y_true, other.y_true, equal_nan=equal_nan)
             and objects_are_equal(self.y_pred, other.y_pred, equal_nan=equal_nan)
             and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
-            and objects_are_equal(self._f1_betas, other._f1_betas, equal_nan=equal_nan)
+            and objects_are_equal(self._betas, other._betas, equal_nan=equal_nan)
         )
 
-    def compute_base_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        r"""Return the base metrics associated to the result.
-
-        Args:
-            prefix: The key prefix in the returned dictionary.
-            suffix: The key suffix in the returned dictionary.
-
-        Returns:
-            The metrics.
-        """
-        return {
-            f"{prefix}accuracy{suffix}": float(
-                metrics.accuracy_score(y_true=self._y_true, y_pred=self._y_pred)
-            ),
-            f"{prefix}balanced_accuracy{suffix}": float(
-                metrics.balanced_accuracy_score(y_true=self._y_true, y_pred=self._y_pred)
-            ),
-            f"{prefix}precision{suffix}": float(
-                metrics.precision_score(y_true=self._y_true, y_pred=self._y_pred)
-            ),
-            f"{prefix}recall{suffix}": float(
-                metrics.recall_score(y_true=self._y_true, y_pred=self._y_pred)
-            ),
-            f"{prefix}jaccard{suffix}": float(
-                metrics.jaccard_score(y_true=self._y_true, y_pred=self._y_pred)
-            ),
-        }
-
-    def compute_confmat_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        r"""Return the confusion matrix-based metrics associated to the
-        result.
-
-        Args:
-            prefix: The key prefix in the returned dictionary.
-            suffix: The key suffix in the returned dictionary.
-
-        Returns:
-            The metrics.
-        """
-        count = self._y_true.size
-        tn, fp, fn, tp = (
-            metrics.confusion_matrix(y_true=self._y_true, y_pred=self._y_pred).ravel().tolist()
-        )
-        correct = tn + tp
-        neg = tn + fp
-        pos = tp + fn
-        return {
-            f"{prefix}count{suffix}": count,
-            f"{prefix}count_correct{suffix}": correct,
-            f"{prefix}count_incorrect{suffix}": count - correct,
-            f"{prefix}false_negative_rate{suffix}": fn / pos,
-            f"{prefix}false_negative{suffix}": fn,
-            f"{prefix}false_positive_rate{suffix}": fp / neg,
-            f"{prefix}false_positive{suffix}": fp,
-            f"{prefix}true_negative_rate{suffix}": tn / neg,
-            f"{prefix}true_negative{suffix}": tn,
-            f"{prefix}true_positive_rate{suffix}": tp / pos,
-            f"{prefix}true_positive{suffix}": tp,
-        }
-
-    def compute_fbeta_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        r"""Return the F-beta metrics associated to the result.
-
-        Args:
-            prefix: The key prefix in the returned dictionary.
-            suffix: The key suffix in the returned dictionary.
-
-        Returns:
-            The metrics.
-        """
-        return {
-            f"{prefix}f{beta}{suffix}": float(
-                metrics.fbeta_score(y_true=self._y_true, y_pred=self._y_pred, beta=beta)
-            )
-            for beta in self._f1_betas
-        }
-
-    def compute_rank_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        r"""Return the ranking-based metrics associated to the result.
-
-        Args:
-            prefix: The key prefix in the returned dictionary.
-            suffix: The key suffix in the returned dictionary.
-
-        Returns:
-            The metrics.
-        """
-        if self._y_score is None:
-            return {}
-        return {
-            f"{prefix}average_precision{suffix}": float(
-                metrics.average_precision_score(y_true=self._y_true, y_score=self._y_score)
-            ),
-            f"{prefix}roc_auc{suffix}": float(
-                metrics.roc_auc_score(y_true=self._y_true, y_score=self._y_score)
-            ),
-        }
-
-    def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
-    ) -> dict[str, float]:
-        return {}
+    def generate_figures(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+        return self._results.generate_figures(prefix=prefix, suffix=suffix)
 
     def _check_inputs(self) -> None:
         if self._y_true.shape != self._y_pred.shape:
