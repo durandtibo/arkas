@@ -59,3 +59,63 @@
     </a>
     <br/>
 </p>
+
+## Overview
+
+`arkas` is a simple Python library to evaluate ML model performances.
+
+## Installation
+
+We highly recommend installing
+a [virtual environment](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/).
+`arkas` can be installed from pip using the following command:
+
+```shell
+pip install arkas
+```
+
+To make the package as slim as possible, only the minimal packages required to use `arkas` are
+installed.
+To include all the dependencies, you can use the following command:
+
+```shell
+pip install arkas[all]
+```
+
+Please check the [get started page](https://durandtibo.github.io/arkas/get_started) to see how to
+install only some specific dependencies or other alternatives to install the library.
+The following is the corresponding `arkas` versions and tested dependencies.
+
+| `arkas` | `coola`        | `grizz`        | `iden`         | `matplotlib` | `numpy`       | `objectory`  | `polars`     | `scikit-learn` | `python`      |
+|---------|----------------|----------------|----------------|--------------|---------------|--------------|--------------|----------------|---------------|
+| `main`  | `>=0.8.2,<1.0` | `>=0.0.5,<1.0` | `>=0.0.4,<1.0` | `>=3.6,<4.0` | `>=1.22,<2.0` | `>=0.1,<1.0` | `>=1.0,<2.0` | `>=1.3,<2.0`   | `>=3.9,<3.12` |
+
+| `arkas` | `colorlog`<sup>*</sup> | `hya`<sup>*</sup> | `markdown`<sup>*</sup> | `tqdm`<sup>*</sup> |
+|---------|------------------------|-------------------|------------------------|--------------------|
+| `main`  | `>=6.7,<7.0`           | `>=0.2,<1.0`      | `>=3.4,<4.0`           | `>=4.65,<5.0`      |
+
+<sup>*</sup> indicates an optional dependency
+
+## Contributing
+
+Please check the instructions in [CONTRIBUTING.md](.github/CONTRIBUTING.md).
+
+## Suggestions and Communication
+
+Everyone is welcome to contribute to the community.
+If you have any questions or suggestions, you can
+submit [Github Issues](https://github.com/durandtibo/arkas/issues).
+We will reply to you as soon as possible. Thank you very much.
+
+## API stability
+
+:warning: While `arkas` is in development stage, no API is guaranteed to be stable from one
+release to the next.
+In fact, it is very likely that the API will change multiple times before a stable 1.0.0 release.
+In practice, this means that upgrading `arkas` to a new version will possibly break any code that
+was using the old version of `arkas`.
+
+## License
+
+`arkas` is licensed under BSD 3-Clause "New" or "Revised" license available in [LICENSE](LICENSE)
+file.
