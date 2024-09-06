@@ -6,7 +6,7 @@ readme = "README.md"
 authors = ["Thibaut Durand <durand.tibo+gh@gmail.com>"]
 homepage = "https://github.com/durandtibo/arkas"
 repository = "https://github.com/durandtibo/arkas"
-keywords = []
+keywords = ["ML model", "evaluation", "classification", "regression"]
 license = "BSD-3-Clause"
 
 classifiers = [
