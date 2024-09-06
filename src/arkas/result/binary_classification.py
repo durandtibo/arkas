@@ -97,8 +97,6 @@ class BinaryClassificationResult(BaseResult):
         self._y_score = None if y_score is None else y_score.ravel()
         self._betas = tuple(betas)
 
-        self._check_inputs()
-
         results = [
             AccuracyResult(y_true=self._y_true, y_pred=self._y_pred),
             BalancedAccuracyResult(y_true=self._y_true, y_pred=self._y_pred),
@@ -157,17 +155,3 @@ class BinaryClassificationResult(BaseResult):
 
     def generate_figures(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return self._results.generate_figures(prefix=prefix, suffix=suffix)
-
-    def _check_inputs(self) -> None:
-        if self._y_true.shape != self._y_pred.shape:
-            msg = (
-                f"'y_true' and 'y_pred' have different shapes: {self._y_true.shape} vs "
-                f"{self._y_pred.shape}"
-            )
-            raise ValueError(msg)
-        if self._y_score is not None and self._y_true.shape != self._y_score.shape:
-            msg = (
-                f"'y_true' and 'y_score' have different shapes: {self._y_true.shape} vs "
-                f"{self._y_score.shape}"
-            )
-            raise ValueError(msg)
