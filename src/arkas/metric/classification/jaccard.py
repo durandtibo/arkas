@@ -73,9 +73,9 @@ def jaccard(
     ...     label_type="multiclass",
     ... )
     {'count': 6,
+     'jaccard': array([1., 1., 1.]),
      'macro_jaccard': 1.0,
      'micro_jaccard': 1.0,
-     'jaccard': array([1., 1., 1.]),
      'weighted_jaccard': 1.0}
     >>> # multilabel
     >>> jaccard(
@@ -84,9 +84,9 @@ def jaccard(
     ...     label_type="multilabel",
     ... )
     {'count': 5,
+     'jaccard': array([1., 1., 1.]),
      'macro_jaccard': 1.0,
      'micro_jaccard': 1.0,
-     'jaccard': array([1., 1., 1.]),
      'weighted_jaccard': 1.0}
 
     ```
@@ -184,9 +184,9 @@ def multiclass_jaccard(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
     ... )
     {'count': 6,
+     'jaccard': array([1., 1., 1.]),
      'macro_jaccard': 1.0,
      'micro_jaccard': 1.0,
-     'jaccard': array([1., 1., 1.]),
      'weighted_jaccard': 1.0}
 
     ```
@@ -213,9 +213,9 @@ def multiclass_jaccard(
         ).ravel()
     return {
         f"{prefix}count{suffix}": n_samples,
+        f"{prefix}jaccard{suffix}": per_class,
         f"{prefix}macro_jaccard{suffix}": float(macro),
         f"{prefix}micro_jaccard{suffix}": float(micro),
-        f"{prefix}jaccard{suffix}": per_class,
         f"{prefix}weighted_jaccard{suffix}": float(weighted),
     }
 
@@ -254,9 +254,9 @@ def multilabel_jaccard(
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )
     {'count': 5,
+     'jaccard': array([1., 1., 1.]),
      'macro_jaccard': 1.0,
      'micro_jaccard': 1.0,
-     'jaccard': array([1., 1., 1.]),
      'weighted_jaccard': 1.0}
 
     ```
@@ -280,8 +280,8 @@ def multilabel_jaccard(
 
     return {
         f"{prefix}count{suffix}": n_samples,
+        f"{prefix}jaccard{suffix}": per_class,
         f"{prefix}macro_jaccard{suffix}": float(macro),
         f"{prefix}micro_jaccard{suffix}": float(micro),
-        f"{prefix}jaccard{suffix}": per_class,
         f"{prefix}weighted_jaccard{suffix}": float(weighted),
     }
