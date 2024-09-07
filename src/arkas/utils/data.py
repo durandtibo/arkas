@@ -2,12 +2,15 @@ r"""Contain data utility functions."""
 
 from __future__ import annotations
 
-__all__ = ["find_keys", "find_missing_keys", "flat_keys"]
+__all__ = ["find_keys", "find_missing_keys", "flat_keys", "prepare_array"]
 
 
 from typing import TYPE_CHECKING
 
+import numpy as np
 import polars as pl
+
+from arkas.utils.array import to_array
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -100,3 +103,31 @@ def flat_keys(keys: Sequence[str | Sequence[str]]) -> list[str]:
         else:
             out.extend(key)
     return out
+
+
+def prepare_array(data: dict | pl.DataFrame, keys: Sequence[str]) -> np.ndarray:
+    r"""Prepare the data and return an array.
+
+    Args:
+        data: The input data.
+        keys: The keys or columns to extract from the input data.
+
+    Returns:
+        The prepared array.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.data import prepare_array
+    >>> keys = prepare_array({"key": np.array([1, 2, 3, 4, 5])}, keys="key")
+    >>> keys
+    array([1, 2, 3, 4, 5])
+
+    ```
+    """
+    if isinstance(keys, str):
+        return to_array(data[keys])
+    if isinstance(data, pl.DataFrame):
+        return to_array(data.select(keys))
+    return np.stack([to_array(data[key]) for key in keys], axis=1)
