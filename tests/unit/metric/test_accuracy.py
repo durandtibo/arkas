@@ -1,55 +1,54 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.metric import accuracy_metrics, balanced_accuracy_metrics
+from arkas.metric import accuracy, balanced_accuracy
 
-######################################
-#     Tests for accuracy_metrics     #
-######################################
+##############################
+#     Tests for accuracy     #
+##############################
 
 
-def test_accuracy_metrics_binary_correct() -> None:
+def test_accuracy_binary_correct() -> None:
     assert objects_are_equal(
-        accuracy_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
+        accuracy(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_metrics_binary_correct_2d() -> None:
+def test_accuracy_binary_correct_2d() -> None:
     assert objects_are_equal(
-        accuracy_metrics(
-            y_true=np.array([[1, 0, 0], [1, 1, 0]]), y_pred=np.array([[1, 0, 0], [1, 1, 0]])
-        ),
+        accuracy(y_true=np.array([[1, 0, 0], [1, 1, 0]]), y_pred=np.array([[1, 0, 0], [1, 1, 0]])),
         {"accuracy": 1.0, "count": 6, "count_correct": 6, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_metrics_binary_incorrect() -> None:
+def test_accuracy_binary_incorrect() -> None:
     assert objects_are_equal(
-        accuracy_metrics(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([0, 1, 1, 0])),
+        accuracy(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([0, 1, 1, 0])),
         {"accuracy": 0.0, "count": 4, "count_correct": 0, "count_incorrect": 4, "error": 1.0},
     )
 
 
-def test_accuracy_metrics_multiclass_correct() -> None:
+def test_accuracy_multiclass_correct() -> None:
     assert objects_are_equal(
-        accuracy_metrics(y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])),
+        accuracy(y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])),
         {"accuracy": 1.0, "count": 6, "count_correct": 6, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_metrics_multiclass_incorrect() -> None:
+def test_accuracy_multiclass_incorrect() -> None:
     assert objects_are_allclose(
-        accuracy_metrics(y_true=np.array([0, 0, 1, 1, 2]), y_pred=np.array([0, 0, 1, 1, 1])),
+        accuracy(y_true=np.array([0, 0, 1, 1, 2]), y_pred=np.array([0, 0, 1, 1, 1])),
         {"accuracy": 0.8, "count": 5, "count_correct": 4, "count_incorrect": 1, "error": 0.2},
     )
 
 
-def test_accuracy_metrics_empty() -> None:
+def test_accuracy_empty() -> None:
     assert objects_are_equal(
-        accuracy_metrics(y_true=np.array([]), y_pred=np.array([])),
+        accuracy(y_true=np.array([]), y_pred=np.array([])),
         {
             "accuracy": float("nan"),
             "count": 0,
@@ -61,9 +60,9 @@ def test_accuracy_metrics_empty() -> None:
     )
 
 
-def test_accuracy_metrics_prefix_suffix() -> None:
+def test_accuracy_prefix_suffix() -> None:
     assert objects_are_equal(
-        accuracy_metrics(
+        accuracy(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             prefix="prefix_",
@@ -79,95 +78,102 @@ def test_accuracy_metrics_prefix_suffix() -> None:
     )
 
 
-def test_accuracy_metrics_nans() -> None:
-    assert objects_are_equal(
-        accuracy_metrics(
+def test_accuracy_nan() -> None:
+    with pytest.raises(ValueError, match="Input .* contains NaN"):
+        accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        )
+
+
+def test_accuracy_ignore_nan() -> None:
+    assert objects_are_equal(
+        accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            ignore_nan=True,
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_metrics_y_true_nan() -> None:
+def test_accuracy_ignore_nan_y_true() -> None:
     assert objects_are_equal(
-        accuracy_metrics(
+        accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
+            ignore_nan=True,
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_metrics_y_pred_nan() -> None:
+def test_accuracy_ignore_nan_y_pred() -> None:
     assert objects_are_equal(
-        accuracy_metrics(
+        accuracy(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            ignore_nan=True,
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
 
 
-###############################################
-#     Tests for balanced_accuracy_metrics     #
-###############################################
+#######################################
+#     Tests for balanced_accuracy     #
+#######################################
 
 
-def test_balanced_accuracy_metrics_binary_correct() -> None:
+def test_balanced_accuracy_binary_correct() -> None:
     assert objects_are_equal(
-        balanced_accuracy_metrics(
-            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
-        ),
+        balanced_accuracy(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
         {"balanced_accuracy": 1.0, "count": 5},
     )
 
 
-def test_balanced_accuracy_metrics_binary_correct_2d() -> None:
+def test_balanced_accuracy_binary_correct_2d() -> None:
     assert objects_are_equal(
-        balanced_accuracy_metrics(
+        balanced_accuracy(
             y_true=np.array([[1, 0, 0], [1, 1, 0]]), y_pred=np.array([[1, 0, 0], [1, 1, 0]])
         ),
         {"balanced_accuracy": 1.0, "count": 6},
     )
 
 
-def test_balanced_accuracy_metrics_binary_incorrect() -> None:
+def test_balanced_accuracy_binary_incorrect() -> None:
     assert objects_are_equal(
-        balanced_accuracy_metrics(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([0, 1, 1, 0])),
+        balanced_accuracy(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([0, 1, 1, 0])),
         {"balanced_accuracy": 0.0, "count": 4},
     )
 
 
-def test_balanced_accuracy_metrics_multiclass_correct() -> None:
+def test_balanced_accuracy_multiclass_correct() -> None:
     assert objects_are_equal(
-        balanced_accuracy_metrics(
-            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
-        ),
+        balanced_accuracy(y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])),
         {"balanced_accuracy": 1.0, "count": 6},
     )
 
 
-def test_balanced_accuracy_metrics_multiclass_incorrect() -> None:
+def test_balanced_accuracy_multiclass_incorrect() -> None:
     assert objects_are_allclose(
-        balanced_accuracy_metrics(
+        balanced_accuracy(
             y_true=np.array([0, 0, 1, 1, 2, 2, 3]), y_pred=np.array([0, 0, 1, 1, 1, 1, 3])
         ),
         {"balanced_accuracy": 0.75, "count": 7},
     )
 
 
-def test_balanced_accuracy_metrics_empty() -> None:
+def test_balanced_accuracy_empty() -> None:
     assert objects_are_equal(
-        balanced_accuracy_metrics(y_true=np.array([]), y_pred=np.array([])),
+        balanced_accuracy(y_true=np.array([]), y_pred=np.array([])),
         {"balanced_accuracy": float("nan"), "count": 0},
         equal_nan=True,
     )
 
 
-def test_balanced_accuracy_metrics_prefix_suffix() -> None:
+def test_balanced_accuracy_prefix_suffix() -> None:
     assert objects_are_equal(
-        balanced_accuracy_metrics(
+        balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             prefix="prefix_",
@@ -180,31 +186,42 @@ def test_balanced_accuracy_metrics_prefix_suffix() -> None:
     )
 
 
-def test_balanced_accuracy_metrics_nans() -> None:
-    assert objects_are_equal(
-        balanced_accuracy_metrics(
+def test_balanced_accuracy_nan() -> None:
+    with pytest.raises(ValueError, match="Input .* contains NaN"):
+        balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        )
+
+
+def test_balanced_accuracy_ignore_nan() -> None:
+    assert objects_are_equal(
+        balanced_accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            ignore_nan=True,
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
 
 
-def test_balanced_accuracy_metrics_y_true_nan() -> None:
+def test_balanced_accuracy_ignore_nan_y_true() -> None:
     assert objects_are_equal(
-        balanced_accuracy_metrics(
+        balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
+            ignore_nan=True,
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
 
 
-def test_balanced_accuracy_metrics_y_pred_nan() -> None:
+def test_balanced_accuracy_ignore_nan_y_pred() -> None:
     assert objects_are_equal(
-        balanced_accuracy_metrics(
+        balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            ignore_nan=True,
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
