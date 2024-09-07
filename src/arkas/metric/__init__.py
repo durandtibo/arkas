@@ -4,9 +4,9 @@ from __future__ import annotations
 
 __all__ = [
     "accuracy",
-    "average_precision_metrics",
+    "average_precision",
     "balanced_accuracy",
-    "binary_average_precision_metrics",
+    "binary_average_precision",
     "binary_confusion_matrix_metrics",
     "binary_fbeta_metrics",
     "binary_jaccard_metrics",
@@ -16,14 +16,14 @@ __all__ = [
     "confusion_matrix_metrics",
     "fbeta_metrics",
     "jaccard_metrics",
-    "multiclass_average_precision_metrics",
+    "multiclass_average_precision",
     "multiclass_confusion_matrix_metrics",
     "multiclass_fbeta_metrics",
     "multiclass_jaccard_metrics",
     "multiclass_precision_metrics",
     "multiclass_recall_metrics",
     "multiclass_roc_auc_metrics",
-    "multilabel_average_precision_metrics",
+    "multilabel_average_precision",
     "multilabel_confusion_matrix_metrics",
     "multilabel_fbeta_metrics",
     "multilabel_jaccard_metrics",
@@ -42,13 +42,13 @@ __all__ = [
 ]
 
 from arkas.metric.abs_error import mean_absolute_error, median_absolute_error
-from arkas.metric.ap import (
-    average_precision_metrics,
-    binary_average_precision_metrics,
-    multiclass_average_precision_metrics,
-    multilabel_average_precision_metrics,
-)
 from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
+from arkas.metric.classification.ap import (
+    average_precision,
+    binary_average_precision,
+    multiclass_average_precision,
+    multilabel_average_precision,
+)
 from arkas.metric.confmat import (
     binary_confusion_matrix_metrics,
     confusion_matrix_metrics,
