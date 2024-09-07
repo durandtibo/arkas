@@ -21,6 +21,7 @@ def mean_absolute_error(
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the mean absolute error (MAE).
 
@@ -29,6 +30,8 @@ def mean_absolute_error(
         y_pred: The predicted values.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -44,7 +47,9 @@ def mean_absolute_error(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove" if ignore_nan else "keep"
+    )
 
     count = y_true.size
     error = float("nan")
@@ -62,6 +67,7 @@ def median_absolute_error(
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the median absolute error.
 
@@ -70,6 +76,8 @@ def median_absolute_error(
         y_pred: The predicted values.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -87,7 +95,9 @@ def median_absolute_error(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove" if ignore_nan else "keep"
+    )
 
     count = y_true.size
     error = float("nan")
