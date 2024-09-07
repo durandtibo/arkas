@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.abs_error import mean_absolute_error
+from arkas.metric.regression.abs_error import mean_absolute_error
 from arkas.metric.utils import check_same_shape_pred
 from arkas.result.base import BaseResult
 
