@@ -137,6 +137,35 @@ def test_multiclass_average_precision_evaluator_evaluate_lazy_false_missing_keys
     )
 
 
+def test_multiclass_average_precision_evaluator_evaluate_multi_arrays() -> None:
+    assert (
+        MulticlassAveragePrecisionEvaluator(y_true="target", y_score=["pred1", "pred2", "pred3"])
+        .evaluate(
+            {
+                "pred1": np.array([0.7, 0.4, 0.1, 0.2, 0.3, 0.1]),
+                "pred2": np.array([0.2, 0.3, 0.8, 0.5, 0.2, 0.2]),
+                "pred3": np.array([0.1, 0.3, 0.1, 0.3, 0.5, 0.7]),
+                "target": np.array([0, 0, 1, 1, 2, 2]),
+            }
+        )
+        .equal(
+            MulticlassAveragePrecisionResult(
+                y_true=np.array([0, 0, 1, 1, 2, 2]),
+                y_score=np.array(
+                    [
+                        [0.7, 0.2, 0.1],
+                        [0.4, 0.3, 0.3],
+                        [0.1, 0.8, 0.1],
+                        [0.2, 0.5, 0.3],
+                        [0.3, 0.2, 0.5],
+                        [0.1, 0.2, 0.7],
+                    ]
+                ),
+            )
+        )
+    )
+
+
 def test_multiclass_average_precision_evaluator_evaluate_dataframe() -> None:
     assert (
         MulticlassAveragePrecisionEvaluator(y_true="target", y_score="pred")
@@ -153,6 +182,37 @@ def test_multiclass_average_precision_evaluator_evaluate_dataframe() -> None:
                             [0.1, 0.2, 0.7],
                         ]
                     ),
+                    "target": [0, 0, 1, 1, 2, 2],
+                }
+            )
+        )
+        .equal(
+            MulticlassAveragePrecisionResult(
+                y_true=np.array([0, 0, 1, 1, 2, 2]),
+                y_score=np.array(
+                    [
+                        [0.7, 0.2, 0.1],
+                        [0.4, 0.3, 0.3],
+                        [0.1, 0.8, 0.1],
+                        [0.2, 0.5, 0.3],
+                        [0.3, 0.2, 0.5],
+                        [0.1, 0.2, 0.7],
+                    ]
+                ),
+            )
+        )
+    )
+
+
+def test_multiclass_average_precision_evaluator_evaluate_dataframe_multi_cols() -> None:
+    assert (
+        MulticlassAveragePrecisionEvaluator(y_true="target", y_score=["pred1", "pred2", "pred3"])
+        .evaluate(
+            pl.DataFrame(
+                {
+                    "pred1": [0.7, 0.4, 0.1, 0.2, 0.3, 0.1],
+                    "pred2": [0.2, 0.3, 0.8, 0.5, 0.2, 0.2],
+                    "pred3": [0.1, 0.3, 0.1, 0.3, 0.5, 0.7],
                     "target": [0, 0, 1, 1, 2, 2],
                 }
             )
