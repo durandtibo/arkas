@@ -7,24 +7,24 @@ __all__ = [
     "average_precision",
     "balanced_accuracy",
     "binary_average_precision",
-    "binary_confusion_matrix_metrics",
+    "binary_confusion_matrix",
     "binary_fbeta_score",
     "binary_jaccard",
     "binary_precision",
     "binary_recall",
     "binary_roc_auc_metrics",
-    "confusion_matrix_metrics",
+    "confusion_matrix",
     "fbeta_score",
     "jaccard",
     "multiclass_average_precision",
-    "multiclass_confusion_matrix_metrics",
+    "multiclass_confusion_matrix",
     "multiclass_fbeta_score",
     "multiclass_jaccard",
     "multiclass_precision",
     "multiclass_recall",
     "multiclass_roc_auc_metrics",
     "multilabel_average_precision",
-    "multilabel_confusion_matrix_metrics",
+    "multilabel_confusion_matrix",
     "multilabel_fbeta_score",
     "multilabel_jaccard",
     "multilabel_precision",
@@ -47,6 +47,12 @@ from arkas.metric.classification.ap import (
     binary_average_precision,
     multiclass_average_precision,
     multilabel_average_precision,
+)
+from arkas.metric.classification.confmat import (
+    binary_confusion_matrix,
+    confusion_matrix,
+    multiclass_confusion_matrix,
+    multilabel_confusion_matrix,
 )
 from arkas.metric.classification.fbeta import (
     binary_fbeta_score,
@@ -71,12 +77,6 @@ from arkas.metric.classification.recall import (
     multiclass_recall,
     multilabel_recall,
     recall,
-)
-from arkas.metric.confmat import (
-    binary_confusion_matrix_metrics,
-    confusion_matrix_metrics,
-    multiclass_confusion_matrix_metrics,
-    multilabel_confusion_matrix_metrics,
 )
 from arkas.metric.regression.abs_error import mean_absolute_error, median_absolute_error
 from arkas.metric.regression.mape import mean_absolute_percentage_error
