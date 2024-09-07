@@ -14,9 +14,9 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 
 from arkas.metric.fbeta import (
-    binary_fbeta_metrics,
-    multiclass_fbeta_metrics,
-    multilabel_fbeta_metrics,
+    binary_fbeta_score,
+    multiclass_fbeta_score,
+    multilabel_fbeta_score,
 )
 from arkas.metric.utils import check_same_shape_pred
 from arkas.result.base import BaseResult
@@ -128,7 +128,7 @@ class BinaryFbetaResult(BaseFbetaResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel(), betas=betas)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return binary_fbeta_metrics(
+        return binary_fbeta_score(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -186,7 +186,7 @@ class MulticlassFbetaResult(BaseFbetaResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel(), betas=betas)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multiclass_fbeta_metrics(
+        return multiclass_fbeta_score(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -244,7 +244,7 @@ class MultilabelFbetaResult(BaseFbetaResult):
         super().__init__(y_true=y_true, y_pred=y_pred, betas=betas)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multilabel_fbeta_metrics(
+        return multilabel_fbeta_score(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
