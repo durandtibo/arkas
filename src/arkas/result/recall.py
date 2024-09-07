@@ -14,12 +14,12 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric import recall_metrics
+from arkas.metric import recall
 from arkas.metric.classification.recall import (
-    binary_recall_metrics,
+    binary_recall,
     find_label_type,
-    multiclass_recall_metrics,
-    multilabel_recall_metrics,
+    multiclass_recall,
+    multilabel_recall,
 )
 from arkas.metric.figure import binary_precision_recall_curve
 from arkas.metric.utils import check_label_type, check_same_shape_pred
@@ -138,7 +138,7 @@ class RecallResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return recall_metrics(
+        return recall(
             y_true=self._y_true,
             y_pred=self._y_pred,
             label_type=self._label_type,
@@ -258,7 +258,7 @@ class BinaryRecallResult(BaseRecallResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return binary_recall_metrics(
+        return binary_recall(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -313,7 +313,7 @@ class MulticlassRecallResult(BaseRecallResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multiclass_recall_metrics(
+        return multiclass_recall(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -364,7 +364,7 @@ class MultilabelRecallResult(BaseRecallResult):
         super().__init__(y_true=y_true, y_pred=y_pred)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multilabel_recall_metrics(
+        return multilabel_recall(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
