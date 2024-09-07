@@ -159,7 +159,7 @@ def binary_average_precision_metrics(
 
     ```
     """
-    y_true, y_score = preprocess_score_binary(y_true.ravel(), y_score.ravel(), nan="remove")
+    y_true, y_score = preprocess_score_binary(y_true.ravel(), y_score.ravel(), remove_nan=True)
     count = y_true.size
     ap = float("nan")
     if count > 0:
@@ -217,7 +217,7 @@ def multiclass_average_precision_metrics(
 
     ```
     """
-    y_true, y_score = preprocess_score_multiclass(y_true, y_score, nan="remove")
+    y_true, y_score = preprocess_score_multiclass(y_true, y_score, remove_nan=True)
     return _average_precision_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
 
 
@@ -262,7 +262,7 @@ def multilabel_average_precision_metrics(
 
     ```
     """
-    y_true, y_score = preprocess_score_multilabel(y_true, y_score, nan="remove")
+    y_true, y_score = preprocess_score_multilabel(y_true, y_score, remove_nan=True)
     return _average_precision_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
 
 

@@ -131,7 +131,7 @@ def binary_recall_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     count, recall = y_true.size, float("nan")
     if count > 0:
@@ -176,7 +176,7 @@ def multiclass_recall_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     n_samples = y_true.shape[0]
     macro_recall, micro_recall, weighted_recall = float("nan"), float("nan"), float("nan")
@@ -244,7 +244,7 @@ def multilabel_recall_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
 
     recall = np.array([])
     macro_recall, micro_recall, weighted_recall = float("nan"), float("nan"), float("nan")

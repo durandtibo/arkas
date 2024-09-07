@@ -133,7 +133,7 @@ def binary_jaccard_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     count, jaccard = y_true.size, float("nan")
     if count > 0:
@@ -178,7 +178,7 @@ def multiclass_jaccard_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     n_samples = y_true.shape[0]
     macro_jaccard, micro_jaccard, weighted_jaccard = float("nan"), float("nan"), float("nan")
@@ -246,7 +246,7 @@ def multilabel_jaccard_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
 
     jaccard = np.array([])
     macro_jaccard, micro_jaccard, weighted_jaccard = float("nan"), float("nan"), float("nan")

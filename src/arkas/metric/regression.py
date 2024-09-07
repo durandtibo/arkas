@@ -51,7 +51,7 @@ def regression_errors(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove" if ignore_nan else "keep"
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
     )
 
     return (

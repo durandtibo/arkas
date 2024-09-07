@@ -169,16 +169,15 @@ def multi_isnan(arrays: Sequence[np.ndarray]) -> np.ndarray:
 
 
 def preprocess_pred(
-    y_true: np.ndarray, y_pred: np.ndarray, nan: str = "keep"
+    y_true: np.ndarray, y_pred: np.ndarray, remove_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_pred`` arrays.
 
     Args:
         y_true: The ground truth target labels.
         y_pred: The predicted labels.
-        nan: Indicate how to process the nan values.
-            If ``'keep'``, the nan values are kept.
-            If ``'remove'``, the nan values are removed.
+        remove_nan: If ``True``, the NaN values are removed,
+            otherwise they are kept.
 
     Returns:
         A tuple with the preprocessed ``y_true`` and ``y_pred``
@@ -199,30 +198,28 @@ def preprocess_pred(
     >>> y_pred = np.array([0, 1, 0, 1, float("nan"), 1])
     >>> preprocess_pred(y_true, y_pred)
     (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
-    >>> preprocess_pred(y_true, y_pred, nan="remove")
+    >>> preprocess_pred(y_true, y_pred, remove_nan=True)
     (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
 
     ```
     """
-    check_nan_option(nan)
     check_same_shape_pred(y_true, y_pred)
-    if nan == "keep":
+    if not remove_nan:
         return y_true, y_pred
     mask = np.logical_not(multi_isnan([y_true, y_pred]))
     return y_true[mask], y_pred[mask]
 
 
 def preprocess_pred_multilabel(
-    y_true: np.ndarray, y_pred: np.ndarray, nan: str = "keep"
+    y_true: np.ndarray, y_pred: np.ndarray, remove_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_pred`` arrays.
 
     Args:
         y_true: The ground truth target labels.
         y_pred: The predicted labels.
-        nan: Indicate how to process the nan values.
-            If ``'keep'``, the nan values are kept.
-            If ``'remove'``, the nan values are removed.
+        remove_nan: If ``True``, the NaN values are removed,
+            otherwise they are kept.
 
     Returns:
         A tuple with the preprocessed ``y_true`` and ``y_pred``
@@ -252,7 +249,7 @@ def preprocess_pred_multilabel(
             [ 0.,  1.,  0.],
             [ 1.,  0.,  1.],
             [ 1.,  0., nan]]))
-    >>> preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+    >>> preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
     (array([[0., 1., 0.],
             [0., 1., 0.],
             [1., 0., 1.]]),
@@ -265,7 +262,6 @@ def preprocess_pred_multilabel(
     if y_true.size == 0 and y_pred.size == 0:
         return np.array([]), np.array([])
 
-    check_nan_option(nan)
     if y_true.ndim == 1:
         y_true = y_true.reshape((-1, 1))
     if y_true.ndim != 2:
@@ -274,7 +270,7 @@ def preprocess_pred_multilabel(
     if y_pred.ndim == 1:
         y_pred = y_pred.reshape((-1, 1))
     check_same_shape_pred(y_true, y_pred)
-    if nan == "keep":
+    if not remove_nan:
         return y_true, y_pred
 
     mask = np.logical_not(np.logical_or(np.isnan(y_true).any(axis=1), np.isnan(y_pred).any(axis=1)))
@@ -282,7 +278,7 @@ def preprocess_pred_multilabel(
 
 
 def preprocess_score_binary(
-    y_true: np.ndarray, y_score: np.ndarray, nan: str = "keep"
+    y_true: np.ndarray, y_score: np.ndarray, remove_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_score`` arrays for the binary
     classification case.
@@ -292,9 +288,8 @@ def preprocess_score_binary(
             array of shape ``(n_samples, *)``.
         y_score: The predicted labels. This input must be an
             array of shape ``(n_samples, *)``.
-        nan: Indicate how to process the nan values.
-            If ``'keep'``, the nan values are kept.
-            If ``'remove'``, the nan values are removed.
+        remove_nan: If ``True``, the NaN values are removed,
+            otherwise they are kept.
 
     Returns:
         A tuple with the preprocessed ``y_true`` and ``y_score``
@@ -310,7 +305,7 @@ def preprocess_score_binary(
     >>> y_score = np.array([0, 1, 0, 1, float("nan"), 1])
     >>> preprocess_score_binary(y_true, y_score)
     (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
-    >>> preprocess_score_binary(y_true, y_score, nan="remove")
+    >>> preprocess_score_binary(y_true, y_score, remove_nan=True)
     (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
 
     ```
@@ -319,10 +314,8 @@ def preprocess_score_binary(
     if y_true.size == 0 and y_score.size == 0:
         return y_true, y_score
 
-    check_nan_option(nan)
     check_same_shape_score(y_true, y_score)
-
-    if nan == "keep":
+    if not remove_nan:
         return y_true, y_score
 
     # Remove NaN values
@@ -331,7 +324,7 @@ def preprocess_score_binary(
 
 
 def preprocess_score_multiclass(
-    y_true: np.ndarray, y_score: np.ndarray, nan: str = "keep"
+    y_true: np.ndarray, y_score: np.ndarray, remove_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_score`` arrays for the multiclass
     classification case.
@@ -341,9 +334,8 @@ def preprocess_score_multiclass(
             array of shape ``(n_samples,)`` or ``(n_samples, 1)``.
         y_score: The predicted labels. This input must be an
             array of shape ``(n_samples, n_classes)``.
-        nan: Indicate how to process the nan values.
-            If ``'keep'``, the nan values are kept.
-            If ``'remove'``, the nan values are removed.
+        remove_nan: If ``True``, the NaN values are removed,
+            otherwise they are kept.
 
     Returns:
         A tuple with the preprocessed ``y_true`` and ``y_score``
@@ -374,7 +366,7 @@ def preprocess_score_multiclass(
             [0.2, 0.3, 0.5],
             [0.4, 0.4, 0.2],
             [0.1, 0.2, 0.7]]))
-    >>> preprocess_score_multiclass(y_true, y_score, nan="remove")
+    >>> preprocess_score_multiclass(y_true, y_score, remove_nan=True)
     (array([0., 0., 1., 2.]),
      array([[0.7, 0.2, 0.1],
             [0.4, 0.3, 0.3],
@@ -386,7 +378,6 @@ def preprocess_score_multiclass(
     if y_true.size == 0 and y_score.size == 0:
         return np.array([]), np.array([])
 
-    check_nan_option(nan)
     if y_true.size != y_true.shape[0]:
         msg = (
             f"'y_true' must be a an array of shape (n_samples,) or (n_samples, 1) but received: "
@@ -405,7 +396,7 @@ def preprocess_score_multiclass(
         msg = f"'y_score' must be a 2d array but received an array of shape: {y_score.shape}"
         raise RuntimeError(msg)
 
-    if nan == "keep":
+    if not remove_nan:
         return y_true, y_score
 
     # Remove NaN values
@@ -414,7 +405,7 @@ def preprocess_score_multiclass(
 
 
 def preprocess_score_multilabel(
-    y_true: np.ndarray, y_score: np.ndarray, nan: str = "keep"
+    y_true: np.ndarray, y_score: np.ndarray, remove_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_score`` arrays for the multilabel
     classification case.
@@ -426,9 +417,8 @@ def preprocess_score_multilabel(
         y_score: The predicted labels. This input must be an
             array of shape ``(n_samples, n_classes)`` or
             ``(n_samples,)``.
-        nan: Indicate how to process the nan values.
-            If ``'keep'``, the nan values are kept.
-            If ``'remove'``, the nan values are removed.
+        remove_nan: If ``True``, the NaN values are removed,
+            otherwise they are kept.
 
     Returns:
         A tuple with the preprocessed ``y_true`` and ``y_score``
@@ -455,7 +445,7 @@ def preprocess_score_multilabel(
             [ 0.,  2.,  3.],
             [ 3., -2., -4.],
             [ 1., nan, -5.]]))
-    >>> preprocess_score_multilabel(y_true, y_score, nan="remove")
+    >>> preprocess_score_multilabel(y_true, y_score, remove_nan=True)
     (array([[0., 1., 0.],
             [0., 1., 0.],
             [1., 0., 1.]]),
@@ -468,7 +458,6 @@ def preprocess_score_multilabel(
     if y_true.size == 0 and y_score.size == 0:
         return np.array([]), np.array([])
 
-    check_nan_option(nan)
     if y_true.ndim == 1:
         y_true = y_true.reshape((-1, 1))
     if y_true.ndim != 2:
@@ -478,7 +467,7 @@ def preprocess_score_multilabel(
         y_score = y_score.reshape((-1, 1))
     check_same_shape_score(y_true, y_score)
 
-    if nan == "keep":
+    if not remove_nan:
         return y_true, y_score
 
     # Remove NaN values

@@ -44,7 +44,7 @@ def accuracy_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     count = y_true.size
     count_correct = int(metrics.accuracy_score(y_true=y_true, y_pred=y_pred, normalize=False))
@@ -89,7 +89,7 @@ def balanced_accuracy_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     count = y_true.size
     accuracy = float("nan")
