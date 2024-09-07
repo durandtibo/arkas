@@ -4,7 +4,6 @@ from __future__ import annotations
 
 __all__ = [
     "check_label_type",
-    "check_nan_option",
     "check_same_shape_pred",
     "check_same_shape_score",
     "multi_isnan",
@@ -48,30 +47,6 @@ def check_label_type(label_type: str) -> None:
             f"Incorrect 'label_type': {label_type}. The supported label types are: "
             f"'binary', 'multiclass', 'multilabel', and 'auto'"
         )
-        raise RuntimeError(msg)
-
-
-def check_nan_option(nan: str) -> None:
-    r"""Check if the value is valid or not.
-
-    Args:
-        nan: Indicate how to process the nan values.
-            The valid values are ``'keep'`` and ``'remove'``.
-
-    Raises:
-        RuntimeError: if an invalid value is passed to ``nan``.
-
-    Example usage:
-
-    ```pycon
-
-    >>> from arkas.metric.utils import check_nan_option
-    >>> check_nan_option(nan="remove")
-
-    ```
-    """
-    if nan not in {"keep", "remove"}:
-        msg = f"Incorrect 'nan': {nan}. The valid values are 'keep' and 'remove'"
         raise RuntimeError(msg)
 
 
