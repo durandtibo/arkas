@@ -5,36 +5,36 @@ import pytest
 from coola import objects_are_allclose, objects_are_equal
 
 from arkas.metric import (
-    binary_fbeta_metrics,
-    fbeta_metrics,
-    multiclass_fbeta_metrics,
-    multilabel_fbeta_metrics,
+    binary_fbeta_score,
+    fbeta_score,
+    multiclass_fbeta_score,
+    multilabel_fbeta_score,
 )
 
-###################################
-#     Tests for fbeta_metrics     #
-###################################
+#################################
+#     Tests for fbeta_score     #
+#################################
 
 
-def test_fbeta_metrics_auto_binary() -> None:
+def test_fbeta_score_auto_binary() -> None:
     assert objects_are_equal(
-        fbeta_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
+        fbeta_score(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
         {"count": 5, "f1": 1.0},
     )
 
 
-def test_fbeta_metrics_binary() -> None:
+def test_fbeta_score_binary() -> None:
     assert objects_are_equal(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), label_type="binary"
         ),
         {"count": 5, "f1": 1.0},
     )
 
 
-def test_fbeta_metrics_binary_betas() -> None:
+def test_fbeta_score_binary_betas() -> None:
     assert objects_are_equal(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             label_type="binary",
@@ -44,9 +44,9 @@ def test_fbeta_metrics_binary_betas() -> None:
     )
 
 
-def test_fbeta_metrics_binary_prefix_suffix() -> None:
+def test_fbeta_score_binary_prefix_suffix() -> None:
     assert objects_are_equal(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             label_type="binary",
@@ -57,9 +57,9 @@ def test_fbeta_metrics_binary_prefix_suffix() -> None:
     )
 
 
-def test_fbeta_metrics_auto_multiclass() -> None:
+def test_fbeta_score_auto_multiclass() -> None:
     assert objects_are_equal(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
         ),
@@ -73,9 +73,9 @@ def test_fbeta_metrics_auto_multiclass() -> None:
     )
 
 
-def test_fbeta_metrics_multiclass() -> None:
+def test_fbeta_score_multiclass() -> None:
     assert objects_are_equal(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
             label_type="multiclass",
@@ -90,9 +90,9 @@ def test_fbeta_metrics_multiclass() -> None:
     )
 
 
-def test_fbeta_metrics_multiclass_betas() -> None:
+def test_fbeta_score_multiclass_betas() -> None:
     assert objects_are_equal(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
             label_type="multiclass",
@@ -116,9 +116,9 @@ def test_fbeta_metrics_multiclass_betas() -> None:
     )
 
 
-def test_fbeta_metrics_multiclass_prefix_suffix() -> None:
+def test_fbeta_score_multiclass_prefix_suffix() -> None:
     assert objects_are_equal(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
             label_type="multiclass",
@@ -135,9 +135,9 @@ def test_fbeta_metrics_multiclass_prefix_suffix() -> None:
     )
 
 
-def test_fbeta_metrics_auto_multilabel() -> None:
+def test_fbeta_score_auto_multilabel() -> None:
     assert objects_are_allclose(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             label_type="multilabel",
@@ -152,9 +152,9 @@ def test_fbeta_metrics_auto_multilabel() -> None:
     )
 
 
-def test_fbeta_metrics_multilabel() -> None:
+def test_fbeta_score_multilabel() -> None:
     assert objects_are_allclose(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             label_type="multilabel",
@@ -169,9 +169,9 @@ def test_fbeta_metrics_multilabel() -> None:
     )
 
 
-def test_fbeta_metrics_multilabel_betas() -> None:
+def test_fbeta_score_multilabel_betas() -> None:
     assert objects_are_allclose(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             label_type="multilabel",
@@ -195,9 +195,9 @@ def test_fbeta_metrics_multilabel_betas() -> None:
     )
 
 
-def test_fbeta_metrics_multilabel_prefix_suffix() -> None:
+def test_fbeta_score_multilabel_prefix_suffix() -> None:
     assert objects_are_allclose(
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             label_type="multilabel",
@@ -214,30 +214,30 @@ def test_fbeta_metrics_multilabel_prefix_suffix() -> None:
     )
 
 
-def test_fbeta_metrics_label_type_incorrect() -> None:
+def test_fbeta_score_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
-        fbeta_metrics(
+        fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             label_type="incorrect",
         )
 
 
-##########################################
-#     Tests for binary_fbeta_metrics     #
-##########################################
+########################################
+#     Tests for binary_fbeta_score     #
+########################################
 
 
-def test_binary_fbeta_metrics_correct_1d() -> None:
+def test_binary_fbeta_score_correct_1d() -> None:
     assert objects_are_equal(
-        binary_fbeta_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
+        binary_fbeta_score(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
         {"count": 5, "f1": 1.0},
     )
 
 
-def test_binary_fbeta_metrics_correct_2d() -> None:
+def test_binary_fbeta_score_correct_2d() -> None:
     assert objects_are_equal(
-        binary_fbeta_metrics(
+        binary_fbeta_score(
             y_true=np.array([[1, 0, 0], [1, 1, 1]]),
             y_pred=np.array([[1, 0, 0], [1, 1, 1]]),
         ),
@@ -245,9 +245,9 @@ def test_binary_fbeta_metrics_correct_2d() -> None:
     )
 
 
-def test_binary_fbeta_metrics_incorrect() -> None:
+def test_binary_fbeta_score_incorrect() -> None:
     assert objects_are_allclose(
-        binary_fbeta_metrics(
+        binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 0, 0]),
             betas=[0.5, 1, 2],
@@ -261,9 +261,9 @@ def test_binary_fbeta_metrics_incorrect() -> None:
     )
 
 
-def test_binary_fbeta_metrics_betas() -> None:
+def test_binary_fbeta_score_betas() -> None:
     assert objects_are_equal(
-        binary_fbeta_metrics(
+        binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             betas=[0.5, 1, 2],
@@ -272,9 +272,9 @@ def test_binary_fbeta_metrics_betas() -> None:
     )
 
 
-def test_binary_fbeta_metrics_nans() -> None:
+def test_binary_fbeta_score_nans() -> None:
     assert objects_are_equal(
-        binary_fbeta_metrics(
+        binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
         ),
@@ -282,9 +282,9 @@ def test_binary_fbeta_metrics_nans() -> None:
     )
 
 
-def test_binary_fbeta_metrics_y_true_nan() -> None:
+def test_binary_fbeta_score_y_true_nan() -> None:
     assert objects_are_equal(
-        binary_fbeta_metrics(
+        binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 1]),
         ),
@@ -292,9 +292,9 @@ def test_binary_fbeta_metrics_y_true_nan() -> None:
     )
 
 
-def test_binary_fbeta_metrics_y_pred_nan() -> None:
+def test_binary_fbeta_score_y_pred_nan() -> None:
     assert objects_are_equal(
-        binary_fbeta_metrics(
+        binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, float("nan"), 0]),
         ),
@@ -302,17 +302,17 @@ def test_binary_fbeta_metrics_y_pred_nan() -> None:
     )
 
 
-def test_binary_fbeta_metrics_empty() -> None:
+def test_binary_fbeta_score_empty() -> None:
     assert objects_are_equal(
-        binary_fbeta_metrics(y_true=np.array([]), y_pred=np.array([])),
+        binary_fbeta_score(y_true=np.array([]), y_pred=np.array([])),
         {"count": 0, "f1": float("nan")},
         equal_nan=True,
     )
 
 
-def test_binary_fbeta_metrics_prefix_suffix() -> None:
+def test_binary_fbeta_score_prefix_suffix() -> None:
     assert objects_are_equal(
-        binary_fbeta_metrics(
+        binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             prefix="prefix_",
@@ -322,22 +322,22 @@ def test_binary_fbeta_metrics_prefix_suffix() -> None:
     )
 
 
-def test_binary_fbeta_metrics_incorrect_shape() -> None:
+def test_binary_fbeta_score_incorrect_shape() -> None:
     with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes:"):
-        binary_fbeta_metrics(
+        binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
         )
 
 
-##############################################
-#     Tests for multiclass_fbeta_metrics     #
-##############################################
+############################################
+#     Tests for multiclass_fbeta_score     #
+############################################
 
 
-def test_multiclass_fbeta_metrics_correct_1d() -> None:
+def test_multiclass_fbeta_score_correct_1d() -> None:
     assert objects_are_equal(
-        multiclass_fbeta_metrics(
+        multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
         ),
@@ -351,9 +351,9 @@ def test_multiclass_fbeta_metrics_correct_1d() -> None:
     )
 
 
-def test_multiclass_fbeta_metrics_correct_2d() -> None:
+def test_multiclass_fbeta_score_correct_2d() -> None:
     assert objects_are_equal(
-        multiclass_fbeta_metrics(
+        multiclass_fbeta_score(
             y_true=np.array([[0, 0, 1], [1, 2, 2]]),
             y_pred=np.array([[0, 0, 1], [1, 2, 2]]),
         ),
@@ -367,9 +367,9 @@ def test_multiclass_fbeta_metrics_correct_2d() -> None:
     )
 
 
-def test_multiclass_fbeta_metrics_incorrect() -> None:
+def test_multiclass_fbeta_score_incorrect() -> None:
     assert objects_are_allclose(
-        multiclass_fbeta_metrics(
+        multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 1, 1]),
             betas=[0.5, 1, 2],
@@ -392,9 +392,9 @@ def test_multiclass_fbeta_metrics_incorrect() -> None:
     )
 
 
-def test_multiclass_fbeta_metrics_betas() -> None:
+def test_multiclass_fbeta_score_betas() -> None:
     assert objects_are_equal(
-        multiclass_fbeta_metrics(
+        multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
             betas=[0.5, 1, 2],
@@ -417,9 +417,9 @@ def test_multiclass_fbeta_metrics_betas() -> None:
     )
 
 
-def test_multiclass_fbeta_metrics_nans() -> None:
+def test_multiclass_fbeta_score_nans() -> None:
     assert objects_are_equal(
-        multiclass_fbeta_metrics(
+        multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
         ),
@@ -433,9 +433,9 @@ def test_multiclass_fbeta_metrics_nans() -> None:
     )
 
 
-def test_multiclass_fbeta_metrics_y_true_nans() -> None:
+def test_multiclass_fbeta_score_y_true_nans() -> None:
     assert objects_are_equal(
-        multiclass_fbeta_metrics(
+        multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
         ),
@@ -449,9 +449,9 @@ def test_multiclass_fbeta_metrics_y_true_nans() -> None:
     )
 
 
-def test_multiclass_fbeta_metrics_y_pred_nans() -> None:
+def test_multiclass_fbeta_score_y_pred_nans() -> None:
     assert objects_are_equal(
-        multiclass_fbeta_metrics(
+        multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
         ),
@@ -465,9 +465,9 @@ def test_multiclass_fbeta_metrics_y_pred_nans() -> None:
     )
 
 
-def test_multiclass_fbeta_metrics_empty() -> None:
+def test_multiclass_fbeta_score_empty() -> None:
     assert objects_are_allclose(
-        multiclass_fbeta_metrics(y_true=np.array([]), y_pred=np.array([])),
+        multiclass_fbeta_score(y_true=np.array([]), y_pred=np.array([])),
         {
             "count": 0,
             "f1": np.array([]),
@@ -479,9 +479,9 @@ def test_multiclass_fbeta_metrics_empty() -> None:
     )
 
 
-def test_multiclass_fbeta_metrics_prefix_suffix() -> None:
+def test_multiclass_fbeta_score_prefix_suffix() -> None:
     assert objects_are_equal(
-        multiclass_fbeta_metrics(
+        multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
             prefix="prefix_",
@@ -497,14 +497,14 @@ def test_multiclass_fbeta_metrics_prefix_suffix() -> None:
     )
 
 
-##############################################
-#     Tests for multilabel_fbeta_metrics     #
-##############################################
+############################################
+#     Tests for multilabel_fbeta_score     #
+############################################
 
 
-def test_multilabel_fbeta_metrics_1_class_1d() -> None:
+def test_multilabel_fbeta_score_1_class_1d() -> None:
     assert objects_are_equal(
-        multilabel_fbeta_metrics(
+        multilabel_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
         ),
@@ -518,9 +518,9 @@ def test_multilabel_fbeta_metrics_1_class_1d() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_1_class_2d() -> None:
+def test_multilabel_fbeta_score_1_class_2d() -> None:
     assert objects_are_equal(
-        multilabel_fbeta_metrics(
+        multilabel_fbeta_score(
             y_true=np.array([[1], [0], [0], [1], [1]]),
             y_pred=np.array([[1], [0], [0], [1], [1]]),
         ),
@@ -534,9 +534,9 @@ def test_multilabel_fbeta_metrics_1_class_2d() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_3_classes() -> None:
+def test_multilabel_fbeta_score_3_classes() -> None:
     assert objects_are_allclose(
-        multilabel_fbeta_metrics(
+        multilabel_fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
         ),
@@ -550,9 +550,9 @@ def test_multilabel_fbeta_metrics_3_classes() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_betas() -> None:
+def test_multilabel_fbeta_score_betas() -> None:
     assert objects_are_allclose(
-        multilabel_fbeta_metrics(
+        multilabel_fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             betas=[0.5, 1, 2],
@@ -575,9 +575,9 @@ def test_multilabel_fbeta_metrics_betas() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_nans() -> None:
+def test_multilabel_fbeta_score_nans() -> None:
     assert objects_are_allclose(
-        multilabel_fbeta_metrics(
+        multilabel_fbeta_score(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
         ),
@@ -591,9 +591,9 @@ def test_multilabel_fbeta_metrics_nans() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_y_true_nans() -> None:
+def test_multilabel_fbeta_score_y_true_nans() -> None:
     assert objects_are_allclose(
-        multilabel_fbeta_metrics(
+        multilabel_fbeta_score(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
         ),
@@ -607,9 +607,9 @@ def test_multilabel_fbeta_metrics_y_true_nans() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_y_pred_nans() -> None:
+def test_multilabel_fbeta_score_y_pred_nans() -> None:
     assert objects_are_allclose(
-        multilabel_fbeta_metrics(
+        multilabel_fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
         ),
@@ -623,9 +623,9 @@ def test_multilabel_fbeta_metrics_y_pred_nans() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_empty_1d() -> None:
+def test_multilabel_fbeta_score_empty_1d() -> None:
     assert objects_are_allclose(
-        multilabel_fbeta_metrics(y_true=np.array([]), y_pred=np.array([])),
+        multilabel_fbeta_score(y_true=np.array([]), y_pred=np.array([])),
         {
             "count": 0,
             "f1": np.array([]),
@@ -637,9 +637,9 @@ def test_multilabel_fbeta_metrics_empty_1d() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_empty_2d() -> None:
+def test_multilabel_fbeta_score_empty_2d() -> None:
     assert objects_are_allclose(
-        multilabel_fbeta_metrics(y_true=np.ones((0, 3)), y_pred=np.ones((0, 3))),
+        multilabel_fbeta_score(y_true=np.ones((0, 3)), y_pred=np.ones((0, 3))),
         {
             "count": 0,
             "f1": np.array([]),
@@ -651,9 +651,9 @@ def test_multilabel_fbeta_metrics_empty_2d() -> None:
     )
 
 
-def test_multilabel_fbeta_metrics_prefix_suffix() -> None:
+def test_multilabel_fbeta_score_prefix_suffix() -> None:
     assert objects_are_allclose(
-        multilabel_fbeta_metrics(
+        multilabel_fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             prefix="prefix_",

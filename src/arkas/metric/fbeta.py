@@ -3,10 +3,10 @@ r"""Implement the F-beta metrics."""
 from __future__ import annotations
 
 __all__ = [
-    "binary_fbeta_metrics",
-    "fbeta_metrics",
-    "multiclass_fbeta_metrics",
-    "multilabel_fbeta_metrics",
+    "binary_fbeta_score",
+    "fbeta_score",
+    "multiclass_fbeta_score",
+    "multilabel_fbeta_score",
 ]
 
 from typing import TYPE_CHECKING
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
 
-def fbeta_metrics(
+def fbeta_score(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -58,19 +58,19 @@ def fbeta_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import fbeta_metrics
+    >>> from arkas.metric import fbeta_score
     >>> # auto
-    >>> fbeta_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
+    >>> fbeta_score(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
     {'count': 5, 'f1': 1.0}
     >>> # binary
-    >>> fbeta_metrics(
+    >>> fbeta_score(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
     ...     y_pred=np.array([1, 0, 0, 1, 1]),
     ...     label_type="binary",
     ... )
     {'count': 5, 'f1': 1.0}
     >>> # multiclass
-    >>> fbeta_metrics(
+    >>> fbeta_score(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ...     label_type="multiclass",
@@ -81,7 +81,7 @@ def fbeta_metrics(
      'micro_f1': 1.0,
      'weighted_f1': 1.0}
     >>> # multilabel
-    >>> fbeta_metrics(
+    >>> fbeta_score(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     label_type="multilabel",
@@ -98,7 +98,7 @@ def fbeta_metrics(
     if label_type == "auto":
         label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
-        return binary_fbeta_metrics(
+        return binary_fbeta_score(
             y_true=y_true.ravel(),
             y_pred=y_pred.ravel(),
             betas=betas,
@@ -106,14 +106,14 @@ def fbeta_metrics(
             suffix=suffix,
         )
     if label_type == "multilabel":
-        return multilabel_fbeta_metrics(
+        return multilabel_fbeta_score(
             y_true=y_true,
             y_pred=y_pred,
             betas=betas,
             prefix=prefix,
             suffix=suffix,
         )
-    return multiclass_fbeta_metrics(
+    return multiclass_fbeta_score(
         y_true=y_true.ravel(),
         y_pred=y_pred.ravel(),
         betas=betas,
@@ -122,7 +122,7 @@ def fbeta_metrics(
     )
 
 
-def binary_fbeta_metrics(
+def binary_fbeta_score(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -149,8 +149,8 @@ def binary_fbeta_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import binary_fbeta_metrics
-    >>> binary_fbeta_metrics(
+    >>> from arkas.metric import binary_fbeta_score
+    >>> binary_fbeta_score(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
     ...     y_pred=np.array([1, 0, 0, 1, 1]),
     ... )
@@ -159,7 +159,7 @@ def binary_fbeta_metrics(
     ```
     """
     return _eval_all(
-        fn=_binary_fbeta_metrics,
+        fn=_binary_fbeta_score,
         y_true=y_true.ravel(),
         y_pred=y_pred.ravel(),
         betas=betas,
@@ -168,7 +168,7 @@ def binary_fbeta_metrics(
     )
 
 
-def multiclass_fbeta_metrics(
+def multiclass_fbeta_score(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -195,8 +195,8 @@ def multiclass_fbeta_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import multiclass_fbeta_metrics
-    >>> multiclass_fbeta_metrics(
+    >>> from arkas.metric import multiclass_fbeta_score
+    >>> multiclass_fbeta_score(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ... )
@@ -209,7 +209,7 @@ def multiclass_fbeta_metrics(
     ```
     """
     return _eval_all(
-        fn=_multiclass_fbeta_metrics,
+        fn=_multiclass_fbeta_score,
         y_true=y_true.ravel(),
         y_pred=y_pred.ravel(),
         betas=betas,
@@ -218,7 +218,7 @@ def multiclass_fbeta_metrics(
     )
 
 
-def multilabel_fbeta_metrics(
+def multilabel_fbeta_score(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -245,8 +245,8 @@ def multilabel_fbeta_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import multilabel_fbeta_metrics
-    >>> multilabel_fbeta_metrics(
+    >>> from arkas.metric import multilabel_fbeta_score
+    >>> multilabel_fbeta_score(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )
@@ -259,7 +259,7 @@ def multilabel_fbeta_metrics(
     ```
     """
     return _eval_all(
-        fn=_multilabel_fbeta_metrics,
+        fn=_multilabel_fbeta_score,
         y_true=y_true,
         y_pred=y_pred,
         betas=betas,
@@ -268,7 +268,7 @@ def multilabel_fbeta_metrics(
     )
 
 
-def _binary_fbeta_metrics(
+def _binary_fbeta_score(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -298,7 +298,7 @@ def _binary_fbeta_metrics(
     return {f"{prefix}count{suffix}": count, f"{prefix}f{beta}{suffix}": fbeta}
 
 
-def _multiclass_fbeta_metrics(
+def _multiclass_fbeta_score(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -356,7 +356,7 @@ def _multiclass_fbeta_metrics(
     }
 
 
-def _multilabel_fbeta_metrics(
+def _multilabel_fbeta_score(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
