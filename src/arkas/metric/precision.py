@@ -1,4 +1,4 @@
-r"""Implement the precision result."""
+r"""Implement the precision metrics."""
 
 from __future__ import annotations
 
