@@ -34,6 +34,7 @@ __all__ = [
     "SequentialEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
+    "MeanAbsoluteErrorEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
@@ -53,6 +54,7 @@ from arkas.evaluator.binary_jaccard import BinaryJaccardEvaluator
 from arkas.evaluator.binary_precision import BinaryPrecisionEvaluator
 from arkas.evaluator.binary_recall import BinaryRecallEvaluator
 from arkas.evaluator.binary_roc_auc import BinaryRocAucEvaluator
+from arkas.evaluator.mae import MeanAbsoluteErrorEvaluator
 from arkas.evaluator.mapping import MappingEvaluator
 from arkas.evaluator.multiclass_ap import MulticlassAveragePrecisionEvaluator
 from arkas.evaluator.multiclass_confmat import MulticlassConfusionMatrixEvaluator

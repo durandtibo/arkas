@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class MeanAbsoluteErrorResult(BaseResult):
-    r"""Implement the mean absolute error result.
+    r"""Implement the mean absolute error (MAE) result.
 
     Args:
         y_true: The ground truth target values.
