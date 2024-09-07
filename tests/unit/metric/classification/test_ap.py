@@ -4,13 +4,13 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.metric.ap import (
+from arkas.metric import (
     average_precision,
     binary_average_precision,
-    find_label_type,
     multiclass_average_precision,
     multilabel_average_precision,
 )
+from arkas.metric.classification.ap import find_label_type
 
 #######################################
 #     Tests for average_precision     #

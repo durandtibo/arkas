@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from coola import objects_are_equal
 
-from arkas.metric.ap import (
+from arkas.metric.classification.ap import (
     average_precision,
     binary_average_precision,
     find_label_type,
