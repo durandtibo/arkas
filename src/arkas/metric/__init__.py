@@ -34,9 +34,14 @@ __all__ = [
     "recall_metrics",
     "roc_auc_metrics",
     "mean_absolute_error_metrics",
+    "median_absolute_error_metrics",
     "mean_squared_error_metrics",
 ]
 
+from arkas.metric.abs_error import (
+    mean_absolute_error_metrics,
+    median_absolute_error_metrics,
+)
 from arkas.metric.accuracy import accuracy_metrics, balanced_accuracy_metrics
 from arkas.metric.ap import (
     average_precision_metrics,
@@ -62,7 +67,6 @@ from arkas.metric.jaccard import (
     multiclass_jaccard_metrics,
     multilabel_jaccard_metrics,
 )
-from arkas.metric.mae import mean_absolute_error_metrics
 from arkas.metric.mse import mean_squared_error_metrics
 from arkas.metric.precision import (
     binary_precision_metrics,
