@@ -48,7 +48,7 @@ from arkas.metric.ap import (
     multiclass_average_precision_metrics,
     multilabel_average_precision_metrics,
 )
-from arkas.metric.cls_accuracy import accuracy, balanced_accuracy
+from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
 from arkas.metric.confmat import (
     binary_confusion_matrix_metrics,
     confusion_matrix_metrics,
