@@ -1,4 +1,4 @@
-r"""Implement accuracy metrics."""
+r"""Implement classification accuracy metrics."""
 
 from __future__ import annotations
 

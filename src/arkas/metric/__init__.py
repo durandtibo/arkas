@@ -42,13 +42,13 @@ __all__ = [
 ]
 
 from arkas.metric.abs_error import mean_absolute_error, median_absolute_error
-from arkas.metric.accuracy_ import accuracy, balanced_accuracy
 from arkas.metric.ap import (
     average_precision_metrics,
     binary_average_precision_metrics,
     multiclass_average_precision_metrics,
     multilabel_average_precision_metrics,
 )
+from arkas.metric.cls_accuracy import accuracy, balanced_accuracy
 from arkas.metric.confmat import (
     binary_confusion_matrix_metrics,
     confusion_matrix_metrics,
