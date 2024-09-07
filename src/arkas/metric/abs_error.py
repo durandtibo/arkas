@@ -2,7 +2,7 @@ r"""Implement the absolute error metrics."""
 
 from __future__ import annotations
 
-__all__ = ["mean_absolute_error_metrics", "median_absolute_error_metrics"]
+__all__ = ["mean_absolute_error", "median_absolute_error"]
 
 
 from typing import TYPE_CHECKING
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-def mean_absolute_error_metrics(
+def mean_absolute_error(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -38,10 +38,8 @@ def mean_absolute_error_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import mean_absolute_error_metrics
-    >>> mean_absolute_error_metrics(
-    ...     y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
-    ... )
+    >>> from arkas.metric import mean_absolute_error
+    >>> mean_absolute_error(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]))
     {'count': 5, 'mean_absolute_error': 0.0}
 
     ```
@@ -58,7 +56,7 @@ def mean_absolute_error_metrics(
     }
 
 
-def median_absolute_error_metrics(
+def median_absolute_error(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -81,8 +79,8 @@ def median_absolute_error_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import median_absolute_error_metrics
-    >>> median_absolute_error_metrics(
+    >>> from arkas.metric import median_absolute_error
+    >>> median_absolute_error(
     ...     y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
     ... )
     {'count': 5, 'median_absolute_error': 0.0}
