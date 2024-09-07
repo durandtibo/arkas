@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 from coola import objects_are_equal
 
 from arkas.metric import regression_errors
@@ -78,19 +79,12 @@ def test_regression_errors_prefix_suffix() -> None:
     )
 
 
-def test_regression_errors_keep_nan() -> None:
-    assert objects_are_equal(
+def test_regression_errors_nan() -> None:
+    with pytest.raises(ValueError, match="Input contains NaN."):
         regression_errors(
             y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
-        ),
-        {
-            "count": 3,
-            "mean_absolute_error": 0.0,
-            "median_absolute_error": 0.0,
-            "mean_squared_error": 0.0,
-        },
-    )
+        )
 
 
 def test_regression_errors_ignore_nan() -> None:

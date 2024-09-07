@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 from coola import objects_are_equal
 
 from arkas.metric import mean_absolute_error, median_absolute_error
@@ -53,31 +54,42 @@ def test_mean_absolute_error_prefix_suffix() -> None:
     )
 
 
-def test_mean_absolute_error_nans() -> None:
+def test_mean_absolute_error_nan() -> None:
+    with pytest.raises(ValueError, match="Input contains NaN."):
+        mean_absolute_error(
+            y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
+            y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+        )
+
+
+def test_mean_absolute_error_ignore_nan() -> None:
     assert objects_are_equal(
         mean_absolute_error(
             y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+            ignore_nan=True,
         ),
         {"count": 3, "mean_absolute_error": 0.0},
     )
 
 
-def test_mean_absolute_error_y_true_nan() -> None:
+def test_mean_absolute_error_ignore_nan_y_true() -> None:
     assert objects_are_equal(
         mean_absolute_error(
             y_true=np.array([1, 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, 5, 0]),
+            ignore_nan=True,
         ),
         {"count": 5, "mean_absolute_error": 0.0},
     )
 
 
-def test_mean_absolute_error_y_pred_nan() -> None:
+def test_mean_absolute_error_ignore_nan_y_pred() -> None:
     assert objects_are_equal(
         mean_absolute_error(
             y_true=np.array([1, 2, 3, 4, 5, 0]),
             y_pred=np.array([1, 2, 3, 4, 5, float("nan")]),
+            ignore_nan=True,
         ),
         {"count": 5, "mean_absolute_error": 0.0},
     )
@@ -131,31 +143,42 @@ def test_median_absolute_error_prefix_suffix() -> None:
     )
 
 
-def test_median_absolute_error_nans() -> None:
+def test_median_absolute_error_nan() -> None:
+    with pytest.raises(ValueError, match="Input contains NaN."):
+        median_absolute_error(
+            y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
+            y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+        )
+
+
+def test_median_absolute_error_ignore_nan() -> None:
     assert objects_are_equal(
         median_absolute_error(
             y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+            ignore_nan=True,
         ),
         {"count": 3, "median_absolute_error": 0.0},
     )
 
 
-def test_median_absolute_error_y_true_nan() -> None:
+def test_median_absolute_error_ignore_nan_y_true() -> None:
     assert objects_are_equal(
         median_absolute_error(
             y_true=np.array([1, 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, 5, 0]),
+            ignore_nan=True,
         ),
         {"count": 5, "median_absolute_error": 0.0},
     )
 
 
-def test_median_absolute_error_y_pred_nan() -> None:
+def test_median_absolute_error_ignore_nan_y_pred() -> None:
     assert objects_are_equal(
         median_absolute_error(
             y_true=np.array([1, 2, 3, 4, 5, 0]),
             y_pred=np.array([1, 2, 3, 4, 5, float("nan")]),
+            ignore_nan=True,
         ),
         {"count": 5, "median_absolute_error": 0.0},
     )
