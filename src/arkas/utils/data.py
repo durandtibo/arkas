@@ -2,7 +2,7 @@ r"""Contain data utility functions."""
 
 from __future__ import annotations
 
-__all__ = ["find_keys", "find_missing_keys"]
+__all__ = ["find_keys", "find_missing_keys", "flat_keys"]
 
 
 from typing import TYPE_CHECKING
@@ -71,3 +71,32 @@ def find_missing_keys(keys: set | Sequence, queries: set | Sequence) -> set:
     queries = set(queries)
     intersection = set(keys).intersection(queries)
     return queries.difference(intersection)
+
+
+def flat_keys(keys: Sequence[str | Sequence[str]]) -> list[str]:
+    r"""Flat and merge a sequence of keys or sequence of keys.
+
+    Args:
+        keys: The keys to flat.
+
+    Returns:
+        The list of keys.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.data import flat_keys
+    >>> keys = flat_keys(["key0", ["key1"], ["key2", "key3", "key4"]])
+    >>> keys
+    ['key0', 'key1', 'key2', 'key3', 'key4']
+
+    ```
+    """
+    out = []
+    for key in keys:
+        if isinstance(key, str):
+            out.append(key)
+        else:
+            out.extend(key)
+    return out
