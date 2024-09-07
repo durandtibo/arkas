@@ -48,6 +48,12 @@ from arkas.metric.classification.ap import (
     multiclass_average_precision,
     multilabel_average_precision,
 )
+from arkas.metric.classification.fbeta import (
+    binary_fbeta_score,
+    fbeta_score,
+    multiclass_fbeta_score,
+    multilabel_fbeta_score,
+)
 from arkas.metric.classification.jaccard import (
     binary_jaccard,
     jaccard,
@@ -71,12 +77,6 @@ from arkas.metric.confmat import (
     confusion_matrix_metrics,
     multiclass_confusion_matrix_metrics,
     multilabel_confusion_matrix_metrics,
-)
-from arkas.metric.fbeta import (
-    binary_fbeta_score,
-    fbeta_score,
-    multiclass_fbeta_score,
-    multilabel_fbeta_score,
 )
 from arkas.metric.regression.abs_error import mean_absolute_error, median_absolute_error
 from arkas.metric.regression.mape import mean_absolute_percentage_error

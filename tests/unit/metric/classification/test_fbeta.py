@@ -57,6 +57,18 @@ def test_fbeta_score_binary_prefix_suffix() -> None:
     )
 
 
+def test_fbeta_score_binary_ignore_nan() -> None:
+    assert objects_are_equal(
+        fbeta_score(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            label_type="binary",
+            ignore_nan=True,
+        ),
+        {"count": 5, "f1": 1.0},
+    )
+
+
 def test_fbeta_score_auto_multiclass() -> None:
     assert objects_are_equal(
         fbeta_score(
@@ -131,6 +143,24 @@ def test_fbeta_score_multiclass_prefix_suffix() -> None:
             "prefix_macro_f1_suffix": 1.0,
             "prefix_micro_f1_suffix": 1.0,
             "prefix_weighted_f1_suffix": 1.0,
+        },
+    )
+
+
+def test_fbeta_score_multiclass_ignore_nan() -> None:
+    assert objects_are_equal(
+        fbeta_score(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            label_type="multiclass",
+            ignore_nan=True,
+        ),
+        {
+            "count": 6,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
         },
     )
 
@@ -214,6 +244,28 @@ def test_fbeta_score_multilabel_prefix_suffix() -> None:
     )
 
 
+def test_fbeta_score_multilabel_ignore_nan() -> None:
+    assert objects_are_allclose(
+        fbeta_score(
+            y_true=np.array(
+                [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+            ),
+            y_pred=np.array(
+                [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [0, 1, float("nan")]]
+            ),
+            label_type="multilabel",
+            ignore_nan=True,
+        ),
+        {
+            "count": 5,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
+        },
+    )
+
+
 def test_fbeta_score_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
         fbeta_score(
@@ -272,36 +324,6 @@ def test_binary_fbeta_score_betas() -> None:
     )
 
 
-def test_binary_fbeta_score_nans() -> None:
-    assert objects_are_equal(
-        binary_fbeta_score(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
-        ),
-        {"count": 4, "f1": 1.0},
-    )
-
-
-def test_binary_fbeta_score_y_true_nan() -> None:
-    assert objects_are_equal(
-        binary_fbeta_score(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_pred=np.array([1, 0, 0, 1, 1, 1]),
-        ),
-        {"count": 5, "f1": 1.0},
-    )
-
-
-def test_binary_fbeta_score_y_pred_nan() -> None:
-    assert objects_are_equal(
-        binary_fbeta_score(
-            y_true=np.array([1, 0, 0, 1, 1, 0]),
-            y_pred=np.array([1, 0, 0, 1, float("nan"), 0]),
-        ),
-        {"count": 5, "f1": 1.0},
-    )
-
-
 def test_binary_fbeta_score_empty() -> None:
     assert objects_are_equal(
         binary_fbeta_score(y_true=np.array([]), y_pred=np.array([])),
@@ -328,6 +350,47 @@ def test_binary_fbeta_score_incorrect_shape() -> None:
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
         )
+
+
+def test_binary_fbeta_score_nan() -> None:
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
+        binary_fbeta_score(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
+        )
+
+
+def test_binary_fbeta_score_ignore_nan() -> None:
+    assert objects_are_equal(
+        binary_fbeta_score(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
+            ignore_nan=True,
+        ),
+        {"count": 4, "f1": 1.0},
+    )
+
+
+def test_binary_fbeta_score_ignore_nan_y_true() -> None:
+    assert objects_are_equal(
+        binary_fbeta_score(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, 1]),
+            ignore_nan=True,
+        ),
+        {"count": 5, "f1": 1.0},
+    )
+
+
+def test_binary_fbeta_score_ignore_nan_y_pred() -> None:
+    assert objects_are_equal(
+        binary_fbeta_score(
+            y_true=np.array([1, 0, 0, 1, 1, 0]),
+            y_pred=np.array([1, 0, 0, 1, float("nan"), 0]),
+            ignore_nan=True,
+        ),
+        {"count": 5, "f1": 1.0},
+    )
 
 
 ############################################
@@ -417,54 +480,6 @@ def test_multiclass_fbeta_score_betas() -> None:
     )
 
 
-def test_multiclass_fbeta_score_nans() -> None:
-    assert objects_are_equal(
-        multiclass_fbeta_score(
-            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-            y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
-        ),
-        {
-            "count": 5,
-            "f1": np.array([1.0, 1.0, 1.0]),
-            "macro_f1": 1.0,
-            "micro_f1": 1.0,
-            "weighted_f1": 1.0,
-        },
-    )
-
-
-def test_multiclass_fbeta_score_y_true_nans() -> None:
-    assert objects_are_equal(
-        multiclass_fbeta_score(
-            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-            y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
-        ),
-        {
-            "count": 6,
-            "f1": np.array([1.0, 1.0, 1.0]),
-            "macro_f1": 1.0,
-            "micro_f1": 1.0,
-            "weighted_f1": 1.0,
-        },
-    )
-
-
-def test_multiclass_fbeta_score_y_pred_nans() -> None:
-    assert objects_are_equal(
-        multiclass_fbeta_score(
-            y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
-            y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
-        ),
-        {
-            "count": 6,
-            "f1": np.array([1.0, 1.0, 1.0]),
-            "macro_f1": 1.0,
-            "micro_f1": 1.0,
-            "weighted_f1": 1.0,
-        },
-    )
-
-
 def test_multiclass_fbeta_score_empty() -> None:
     assert objects_are_allclose(
         multiclass_fbeta_score(y_true=np.array([]), y_pred=np.array([])),
@@ -493,6 +508,65 @@ def test_multiclass_fbeta_score_prefix_suffix() -> None:
             "prefix_macro_f1_suffix": 1.0,
             "prefix_micro_f1_suffix": 1.0,
             "prefix_weighted_f1_suffix": 1.0,
+        },
+    )
+
+
+def test_multiclass_fbeta_score_nan() -> None:
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
+        multiclass_fbeta_score(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
+        )
+
+
+def test_multiclass_fbeta_score_ignore_nan() -> None:
+    assert objects_are_equal(
+        multiclass_fbeta_score(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
+            ignore_nan=True,
+        ),
+        {
+            "count": 5,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multiclass_fbeta_score_ignore_nan_y_true() -> None:
+    assert objects_are_equal(
+        multiclass_fbeta_score(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
+            ignore_nan=True,
+        ),
+        {
+            "count": 6,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multiclass_fbeta_score_ignore_nan_y_pred() -> None:
+    assert objects_are_equal(
+        multiclass_fbeta_score(
+            y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
+            ignore_nan=True,
+        ),
+        {
+            "count": 6,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
         },
     )
 
@@ -575,54 +649,6 @@ def test_multilabel_fbeta_score_betas() -> None:
     )
 
 
-def test_multilabel_fbeta_score_nans() -> None:
-    assert objects_are_allclose(
-        multilabel_fbeta_score(
-            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
-        ),
-        {
-            "count": 3,
-            "f1": np.array([1.0, 1.0, 1.0]),
-            "macro_f1": 1.0,
-            "micro_f1": 1.0,
-            "weighted_f1": 1.0,
-        },
-    )
-
-
-def test_multilabel_fbeta_score_y_true_nans() -> None:
-    assert objects_are_allclose(
-        multilabel_fbeta_score(
-            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-        ),
-        {
-            "count": 4,
-            "f1": np.array([1.0, 1.0, 1.0]),
-            "macro_f1": 1.0,
-            "micro_f1": 1.0,
-            "weighted_f1": 1.0,
-        },
-    )
-
-
-def test_multilabel_fbeta_score_y_pred_nans() -> None:
-    assert objects_are_allclose(
-        multilabel_fbeta_score(
-            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-        ),
-        {
-            "count": 4,
-            "f1": np.array([1.0, 1.0, 1.0]),
-            "macro_f1": 1.0,
-            "micro_f1": 1.0,
-            "weighted_f1": 1.0,
-        },
-    )
-
-
 def test_multilabel_fbeta_score_empty_1d() -> None:
     assert objects_are_allclose(
         multilabel_fbeta_score(y_true=np.array([]), y_pred=np.array([])),
@@ -665,5 +691,64 @@ def test_multilabel_fbeta_score_prefix_suffix() -> None:
             "prefix_macro_f1_suffix": 1.0,
             "prefix_micro_f1_suffix": 1.0,
             "prefix_weighted_f1_suffix": 1.0,
+        },
+    )
+
+
+def test_multilabel_fbeta_score_nan() -> None:
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
+        multilabel_fbeta_score(
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
+        )
+
+
+def test_multilabel_fbeta_score_ignore_nan() -> None:
+    assert objects_are_allclose(
+        multilabel_fbeta_score(
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
+            ignore_nan=True,
+        ),
+        {
+            "count": 3,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multilabel_fbeta_score_ignore_nan_y_true() -> None:
+    assert objects_are_allclose(
+        multilabel_fbeta_score(
+            y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            ignore_nan=True,
+        ),
+        {
+            "count": 4,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multilabel_fbeta_score_ignore_nan_y_pred() -> None:
+    assert objects_are_allclose(
+        multilabel_fbeta_score(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            ignore_nan=True,
+        ),
+        {
+            "count": 4,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "weighted_f1": 1.0,
         },
     )
