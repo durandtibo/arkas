@@ -9,7 +9,7 @@ __all__ = [
     "multilabel_fbeta_score",
 ]
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from sklearn import metrics
@@ -33,6 +33,7 @@ def fbeta_score(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the fbeta metrics.
 
@@ -49,6 +50,8 @@ def fbeta_score(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -104,6 +107,7 @@ def fbeta_score(
             betas=betas,
             prefix=prefix,
             suffix=suffix,
+            ignore_nan=ignore_nan,
         )
     if label_type == "multilabel":
         return multilabel_fbeta_score(
@@ -112,6 +116,7 @@ def fbeta_score(
             betas=betas,
             prefix=prefix,
             suffix=suffix,
+            ignore_nan=ignore_nan,
         )
     return multiclass_fbeta_score(
         y_true=y_true.ravel(),
@@ -119,6 +124,7 @@ def fbeta_score(
         betas=betas,
         prefix=prefix,
         suffix=suffix,
+        ignore_nan=ignore_nan,
     )
 
 
@@ -129,6 +135,7 @@ def binary_fbeta_score(
     betas: Sequence[float] = (1,),
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the F-beta metrics for binary labels.
 
@@ -140,6 +147,8 @@ def binary_fbeta_score(
         betas: The betas used to compute the F-beta scores.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -165,6 +174,7 @@ def binary_fbeta_score(
         betas=betas,
         prefix=prefix,
         suffix=suffix,
+        ignore_nan=ignore_nan,
     )
 
 
@@ -175,6 +185,7 @@ def multiclass_fbeta_score(
     betas: Sequence[float] = (1,),
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the F-beta metrics for multiclass labels.
 
@@ -186,6 +197,8 @@ def multiclass_fbeta_score(
         betas: The betas used to compute the F-beta scores.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -215,6 +228,7 @@ def multiclass_fbeta_score(
         betas=betas,
         prefix=prefix,
         suffix=suffix,
+        ignore_nan=ignore_nan,
     )
 
 
@@ -225,6 +239,7 @@ def multilabel_fbeta_score(
     betas: Sequence[float] = (1,),
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the F-beta metrics for multilabel labels.
 
@@ -236,6 +251,8 @@ def multilabel_fbeta_score(
         betas: The betas used to compute the F-beta scores.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -265,6 +282,7 @@ def multilabel_fbeta_score(
         betas=betas,
         prefix=prefix,
         suffix=suffix,
+        ignore_nan=ignore_nan,
     )
 
 
@@ -275,6 +293,7 @@ def _binary_fbeta_score(
     beta: float = 1,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the F-beta metrics for binary labels.
 
@@ -286,11 +305,13 @@ def _binary_fbeta_score(
         beta: The beta used to compute the F-beta score.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, remove_nan=True)
+    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, remove_nan=ignore_nan)
 
     count, fbeta = y_true.size, float("nan")
     if count > 0:
@@ -305,6 +326,7 @@ def _multiclass_fbeta_score(
     beta: float = 1,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the F-beta metrics for multiclass labels.
 
@@ -316,28 +338,29 @@ def _multiclass_fbeta_score(
         beta: The beta used to compute the F-beta score.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, remove_nan=True)
+    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, remove_nan=ignore_nan)
 
+    fbeta = np.array([])
+    macro, micro, weighted = float("nan"), float("nan"), float("nan")
     n_samples = y_true.shape[0]
-    macro_fbeta, micro_fbeta, weighted_fbeta = float("nan"), float("nan"), float("nan")
-    n_classes = y_pred.shape[1] if y_pred.ndim == 2 else 0 if n_samples == 0 else 1
-    fbeta = np.full((n_classes,), fill_value=float("nan"))
     if n_samples > 0:
-        macro_fbeta = float(
+        macro = float(
             metrics.fbeta_score(
                 y_true=y_true, y_pred=y_pred, beta=beta, average="macro", zero_division=0.0
             )
         )
-        micro_fbeta = float(
+        micro = float(
             metrics.fbeta_score(
                 y_true=y_true, y_pred=y_pred, beta=beta, average="micro", zero_division=0.0
             )
         )
-        weighted_fbeta = float(
+        weighted = float(
             metrics.fbeta_score(
                 y_true=y_true, y_pred=y_pred, beta=beta, average="weighted", zero_division=0.0
             )
@@ -350,9 +373,9 @@ def _multiclass_fbeta_score(
     return {
         f"{prefix}count{suffix}": n_samples,
         f"{prefix}f{beta}{suffix}": fbeta,
-        f"{prefix}macro_f{beta}{suffix}": macro_fbeta,
-        f"{prefix}micro_f{beta}{suffix}": micro_fbeta,
-        f"{prefix}weighted_f{beta}{suffix}": weighted_fbeta,
+        f"{prefix}macro_f{beta}{suffix}": macro,
+        f"{prefix}micro_f{beta}{suffix}": micro,
+        f"{prefix}weighted_f{beta}{suffix}": weighted,
     }
 
 
@@ -363,6 +386,7 @@ def _multilabel_fbeta_score(
     beta: float = 1,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the fbeta metrics for multilabel labels.
 
@@ -374,14 +398,16 @@ def _multilabel_fbeta_score(
         beta: The beta used to compute the F-beta score.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=ignore_nan)
 
     fbeta = np.array([])
-    macro_fbeta, micro_fbeta, weighted_fbeta = float("nan"), float("nan"), float("nan")
+    macro, micro, weighted = float("nan"), float("nan"), float("nan")
     n_samples = y_true.shape[0]
     if n_samples > 0:
         fbeta = np.array(
@@ -392,21 +418,15 @@ def _multilabel_fbeta_score(
                 average="binary" if y_pred.shape[1] == 1 else None,
             )
         ).ravel()
-        macro_fbeta = float(
-            metrics.fbeta_score(y_true=y_true, y_pred=y_pred, beta=beta, average="macro")
-        )
-        micro_fbeta = float(
-            metrics.fbeta_score(y_true=y_true, y_pred=y_pred, beta=beta, average="micro")
-        )
-        weighted_fbeta = float(
-            metrics.fbeta_score(y_true=y_true, y_pred=y_pred, beta=beta, average="weighted")
-        )
+        macro = metrics.fbeta_score(y_true=y_true, y_pred=y_pred, beta=beta, average="macro")
+        micro = metrics.fbeta_score(y_true=y_true, y_pred=y_pred, beta=beta, average="micro")
+        weighted = metrics.fbeta_score(y_true=y_true, y_pred=y_pred, beta=beta, average="weighted")
     return {
         f"{prefix}count{suffix}": n_samples,
         f"{prefix}f{beta}{suffix}": fbeta,
-        f"{prefix}macro_f{beta}{suffix}": macro_fbeta,
-        f"{prefix}micro_f{beta}{suffix}": micro_fbeta,
-        f"{prefix}weighted_f{beta}{suffix}": weighted_fbeta,
+        f"{prefix}macro_f{beta}{suffix}": float(macro),
+        f"{prefix}micro_f{beta}{suffix}": float(micro),
+        f"{prefix}weighted_f{beta}{suffix}": float(weighted),
     }
 
 
@@ -415,9 +435,7 @@ def _eval_all(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     betas: Sequence[float],
-    *,
-    prefix: str = "",
-    suffix: str = "",
+    **kwargs: Any,
 ) -> dict[str, float | np.ndarray]:
     r"""Evaluate the function for all the betas and merge the results in
     a single dictionary.
@@ -430,13 +448,12 @@ def _eval_all(
         y_pred: The predicted labels. This input must be an array of
             shape ``(n_samples,)`` or ``(n_samples, n_classes)``.
         betas: The betas used to compute the F-beta scores.
-        prefix: The key prefix in the returned dictionary.
-        suffix: The key suffix in the returned dictionary.
+        kwargs: Keyword arguments.
 
     Returns:
         The computed metrics.
     """
     out = {}
     for beta in betas:
-        out |= fn(y_true=y_true, y_pred=y_pred, beta=beta, prefix=prefix, suffix=suffix)
+        out |= fn(y_true=y_true, y_pred=y_pred, beta=beta, **kwargs)
     return out

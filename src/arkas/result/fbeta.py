@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.fbeta import (
+from arkas.metric.classification.fbeta import (
     binary_fbeta_score,
     multiclass_fbeta_score,
     multilabel_fbeta_score,
