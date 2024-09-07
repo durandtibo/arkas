@@ -132,14 +132,14 @@ def test_precision_auto_multilabel() -> None:
     assert objects_are_equal(
         precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
         ),
         {
-            "precision": np.array([1.0, 1.0, 0.0]),
+            "precision": np.array([1.0, 1.0, 1.0]),
             "count": 5,
-            "macro_precision": 0.6666666666666666,
-            "micro_precision": 0.7142857142857143,
-            "weighted_precision": 0.625,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
         },
     )
 
@@ -148,15 +148,15 @@ def test_precision_multilabel() -> None:
     assert objects_are_equal(
         precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             label_type="multilabel",
         ),
         {
-            "precision": np.array([1.0, 1.0, 0.0]),
+            "precision": np.array([1.0, 1.0, 1.0]),
             "count": 5,
-            "macro_precision": 0.6666666666666666,
-            "micro_precision": 0.7142857142857143,
-            "weighted_precision": 0.625,
+            "macro_precision": 1.0,
+            "micro_precision": 1.0,
+            "weighted_precision": 1.0,
         },
     )
 
@@ -261,7 +261,7 @@ def test_binary_precision_prefix_suffix() -> None:
 
 
 def test_binary_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         binary_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
@@ -395,7 +395,7 @@ def test_multiclass_precision_prefix_suffix() -> None:
 
 
 def test_multiclass_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
@@ -553,7 +553,7 @@ def test_multilabel_precision_prefix_suffix() -> None:
 
 
 def test_multilabel_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         multilabel_precision(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),

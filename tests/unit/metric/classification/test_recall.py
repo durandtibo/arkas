@@ -255,7 +255,7 @@ def test_binary_recall_prefix_suffix() -> None:
 
 
 def test_binary_recall_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         binary_recall(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
@@ -376,7 +376,7 @@ def test_multiclass_recall_prefix_suffix() -> None:
 
 
 def test_multiclass_recall_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         multiclass_recall(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
@@ -534,7 +534,7 @@ def test_multilabel_recall_prefix_suffix() -> None:
 
 
 def test_multilabel_recall_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         multilabel_recall(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),

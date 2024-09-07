@@ -79,7 +79,7 @@ def test_accuracy_prefix_suffix() -> None:
 
 
 def test_accuracy_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
@@ -187,7 +187,7 @@ def test_balanced_accuracy_prefix_suffix() -> None:
 
 
 def test_balanced_accuracy_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
