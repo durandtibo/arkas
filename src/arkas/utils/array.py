@@ -26,13 +26,19 @@ def to_array(data: Any) -> np.ndarray:
 
     ```pycon
 
+    >>> import polars as pl
     >>> from arkas.utils.array import to_array
-    >>> x = to_array([1, 2, 3, 4, 5])
-    >>> x
+    >>> to_array([1, 2, 3, 4, 5])
     array([1, 2, 3, 4, 5])
+    >>> to_array(pl.Series([1, 2, 3, 4, 5]))
+    array([1, 2, 3, 4, 5])
+    >>> to_array(pl.DataFrame({"col1": [1, 2, 3, 4, 5], "col2": [0, 1, 0, 1, 0]}))
+    array([[1, 0], [2, 1], [3, 0], [4, 1], [5, 0]])
 
     ```
     """
     if isinstance(data, pl.Series):
+        return data.to_numpy()
+    if isinstance(data, pl.DataFrame):
         return data.to_numpy()
     return coola_to_array(data)
