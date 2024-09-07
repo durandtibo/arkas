@@ -41,7 +41,6 @@ __all__ = [
     "mean_absolute_percentage_error",
 ]
 
-from arkas.metric.abs_error import mean_absolute_error, median_absolute_error
 from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
 from arkas.metric.classification.ap import (
     average_precision,
@@ -79,13 +78,14 @@ from arkas.metric.jaccard import (
     multiclass_jaccard_metrics,
     multilabel_jaccard_metrics,
 )
-from arkas.metric.mape import mean_absolute_percentage_error
-from arkas.metric.msle import mean_squared_log_error
+from arkas.metric.regression.abs_error import mean_absolute_error, median_absolute_error
+from arkas.metric.regression.mape import mean_absolute_percentage_error
 from arkas.metric.regression.mse import mean_squared_error
+from arkas.metric.regression.msle import mean_squared_log_error
+from arkas.metric.regression.universal import regression_errors
 from arkas.metric.roc_auc import (
     binary_roc_auc_metrics,
     multiclass_roc_auc_metrics,
     multilabel_roc_auc_metrics,
     roc_auc_metrics,
 )
-from arkas.metric.universal import regression_errors
