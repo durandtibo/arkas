@@ -13,10 +13,10 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.confmat import (
-    binary_confusion_matrix_metrics,
-    multiclass_confusion_matrix_metrics,
-    multilabel_confusion_matrix_metrics,
+from arkas.metric.classification.confmat import (
+    binary_confusion_matrix,
+    multiclass_confusion_matrix,
+    multilabel_confusion_matrix,
 )
 from arkas.metric.utils import check_same_shape_pred
 from arkas.result.base import BaseResult
@@ -126,7 +126,7 @@ class BinaryConfusionMatrixResult(BaseConfusionMatrixResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return binary_confusion_matrix_metrics(
+        return binary_confusion_matrix(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -173,7 +173,7 @@ class MulticlassConfusionMatrixResult(BaseConfusionMatrixResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multiclass_confusion_matrix_metrics(
+        return multiclass_confusion_matrix(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -223,7 +223,7 @@ class MultilabelConfusionMatrixResult(BaseConfusionMatrixResult):
         super().__init__(y_true=y_true, y_pred=y_pred)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multilabel_confusion_matrix_metrics(
+        return multilabel_confusion_matrix(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,

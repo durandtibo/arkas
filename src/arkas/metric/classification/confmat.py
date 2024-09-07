@@ -3,10 +3,10 @@ r"""Contain confusion matrix metrics."""
 from __future__ import annotations
 
 __all__ = [
-    "binary_confusion_matrix_metrics",
-    "confusion_matrix_metrics",
-    "multiclass_confusion_matrix_metrics",
-    "multilabel_confusion_matrix_metrics",
+    "binary_confusion_matrix",
+    "confusion_matrix",
+    "multiclass_confusion_matrix",
+    "multilabel_confusion_matrix",
 ]
 
 
@@ -21,13 +21,14 @@ from arkas.metric.utils import (
 )
 
 
-def confusion_matrix_metrics(
+def confusion_matrix(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the confusion matrix metrics.
 
@@ -40,6 +41,8 @@ def confusion_matrix_metrics(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -49,9 +52,9 @@ def confusion_matrix_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import confusion_matrix_metrics
+    >>> from arkas.metric import confusion_matrix
     >>> # binary
-    >>> confusion_matrix_metrics(
+    >>> confusion_matrix(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
     ...     y_pred=np.array([1, 0, 0, 1, 1]),
     ...     label_type="binary",
@@ -67,14 +70,14 @@ def confusion_matrix_metrics(
      'true_positive_rate': 1.0,
      'true_positive': 3}
     >>> # multiclass
-    >>> confusion_matrix_metrics(
+    >>> confusion_matrix(
     ...     y_true=np.array([0, 1, 1, 2, 2, 2]),
     ...     y_pred=np.array([0, 1, 1, 2, 2, 2]),
     ...     label_type="multiclass",
     ... )
     {'confusion_matrix': array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]), 'count': 6}
     >>> # multilabel
-    >>> confusion_matrix_metrics(
+    >>> confusion_matrix(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     label_type="multilabel",
@@ -90,24 +93,25 @@ def confusion_matrix_metrics(
     if label_type == "auto":
         label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
-        return binary_confusion_matrix_metrics(
-            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix
+        return binary_confusion_matrix(
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
         )
     if label_type == "multilabel":
-        return multilabel_confusion_matrix_metrics(
-            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix
+        return multilabel_confusion_matrix(
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
         )
-    return multiclass_confusion_matrix_metrics(
-        y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix
+    return multiclass_confusion_matrix(
+        y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
     )
 
 
-def binary_confusion_matrix_metrics(
+def binary_confusion_matrix(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the confusion matrix metrics for binary labels.
 
@@ -116,6 +120,8 @@ def binary_confusion_matrix_metrics(
         y_pred: The predicted labels.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -125,8 +131,8 @@ def binary_confusion_matrix_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import binary_confusion_matrix_metrics
-    >>> binary_confusion_matrix_metrics(
+    >>> from arkas.metric import binary_confusion_matrix
+    >>> binary_confusion_matrix(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     {'confusion_matrix': array([[2, 0], [0, 3]]),
@@ -142,7 +148,9 @@ def binary_confusion_matrix_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
+    y_true, y_pred = preprocess_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
+    )
 
     count = y_true.size
     if count > 0:
@@ -166,12 +174,13 @@ def binary_confusion_matrix_metrics(
     }
 
 
-def multiclass_confusion_matrix_metrics(
+def multiclass_confusion_matrix(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the confusion matrix metrics for multiclass labels.
 
@@ -180,6 +189,8 @@ def multiclass_confusion_matrix_metrics(
         y_pred: The predicted labels.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -189,27 +200,30 @@ def multiclass_confusion_matrix_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import multiclass_confusion_matrix_metrics
-    >>> multiclass_confusion_matrix_metrics(
+    >>> from arkas.metric import multiclass_confusion_matrix
+    >>> multiclass_confusion_matrix(
     ...     y_true=np.array([0, 1, 1, 2, 2, 2]), y_pred=np.array([0, 1, 1, 2, 2, 2])
     ... )
     {'confusion_matrix': array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]), 'count': 6}
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
+    y_true, y_pred = preprocess_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
+    )
     return {
         f"{prefix}confusion_matrix{suffix}": metrics.confusion_matrix(y_true=y_true, y_pred=y_pred),
         f"{prefix}count{suffix}": y_true.size,
     }
 
 
-def multilabel_confusion_matrix_metrics(
+def multilabel_confusion_matrix(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the confusion matrix metrics for multilabel labels.
 
@@ -218,6 +232,8 @@ def multilabel_confusion_matrix_metrics(
         y_pred: The predicted labels.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -227,8 +243,8 @@ def multilabel_confusion_matrix_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import multilabel_confusion_matrix_metrics
-    >>> multilabel_confusion_matrix_metrics(
+    >>> from arkas.metric import multilabel_confusion_matrix
+    >>> multilabel_confusion_matrix(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )
@@ -239,7 +255,7 @@ def multilabel_confusion_matrix_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=ignore_nan)
     count = y_true.shape[0]
     if count > 0:
         if y_true.shape[1] > 1:
