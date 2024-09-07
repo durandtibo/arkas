@@ -267,7 +267,7 @@ def test_binary_average_precision_incorrect_shape() -> None:
 
 
 def test_binary_average_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         binary_average_precision(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
@@ -443,7 +443,7 @@ def test_multiclass_average_precision_prefix_suffix() -> None:
 
 
 def test_multiclass_average_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         multiclass_average_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_score=np.array(
@@ -641,7 +641,7 @@ def test_multilabel_average_precision_prefix_suffix() -> None:
 
 
 def test_multilabel_average_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input .* contains NaN"):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         multilabel_average_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
             y_score=np.array(

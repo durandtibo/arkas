@@ -55,7 +55,7 @@ def test_mean_squared_log_error_prefix_suffix() -> None:
 
 
 def test_mean_squared_log_error_nan() -> None:
-    with pytest.raises(ValueError, match="Input contains NaN."):
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
         mean_squared_log_error(
             y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
