@@ -350,20 +350,14 @@ def _multiclass_fbeta_score(
     macro, micro, weighted = float("nan"), float("nan"), float("nan")
     n_samples = y_true.shape[0]
     if n_samples > 0:
-        macro = float(
-            metrics.fbeta_score(
-                y_true=y_true, y_pred=y_pred, beta=beta, average="macro", zero_division=0.0
-            )
+        macro = metrics.fbeta_score(
+            y_true=y_true, y_pred=y_pred, beta=beta, average="macro", zero_division=0.0
         )
-        micro = float(
-            metrics.fbeta_score(
-                y_true=y_true, y_pred=y_pred, beta=beta, average="micro", zero_division=0.0
-            )
+        micro = metrics.fbeta_score(
+            y_true=y_true, y_pred=y_pred, beta=beta, average="micro", zero_division=0.0
         )
-        weighted = float(
-            metrics.fbeta_score(
-                y_true=y_true, y_pred=y_pred, beta=beta, average="weighted", zero_division=0.0
-            )
+        weighted = metrics.fbeta_score(
+            y_true=y_true, y_pred=y_pred, beta=beta, average="weighted", zero_division=0.0
         )
         fbeta = np.asarray(
             metrics.fbeta_score(
@@ -373,9 +367,9 @@ def _multiclass_fbeta_score(
     return {
         f"{prefix}count{suffix}": n_samples,
         f"{prefix}f{beta}{suffix}": fbeta,
-        f"{prefix}macro_f{beta}{suffix}": macro,
-        f"{prefix}micro_f{beta}{suffix}": micro,
-        f"{prefix}weighted_f{beta}{suffix}": weighted,
+        f"{prefix}macro_f{beta}{suffix}": float(macro),
+        f"{prefix}micro_f{beta}{suffix}": float(micro),
+        f"{prefix}weighted_f{beta}{suffix}": float(weighted),
     }
 
 

@@ -304,18 +304,13 @@ def _average_precision(
         The computed metrics.
     """
     n_samples = y_true.shape[0]
-    macro_ap, micro_ap, weighted_ap = float("nan"), float("nan"), float("nan")
-    n_classes = y_score.shape[1] if y_score.ndim == 2 else 0 if n_samples == 0 else 1
-    ap = np.full((n_classes,), fill_value=float("nan"))
+    macro, micro, weighted = float("nan"), float("nan"), float("nan")
+    ap = np.array([])
     if n_samples > 0:
-        macro_ap = float(
-            metrics.average_precision_score(y_true=y_true, y_score=y_score, average="macro")
-        )
-        micro_ap = float(
-            metrics.average_precision_score(y_true=y_true, y_score=y_score, average="micro")
-        )
-        weighted_ap = float(
-            metrics.average_precision_score(y_true=y_true, y_score=y_score, average="weighted")
+        macro = metrics.average_precision_score(y_true=y_true, y_score=y_score, average="macro")
+        micro = metrics.average_precision_score(y_true=y_true, y_score=y_score, average="micro")
+        weighted = metrics.average_precision_score(
+            y_true=y_true, y_score=y_score, average="weighted"
         )
         ap = np.asarray(
             metrics.average_precision_score(y_true=y_true, y_score=y_score, average=None)
@@ -324,9 +319,9 @@ def _average_precision(
     return {
         f"{prefix}average_precision{suffix}": ap,
         f"{prefix}count{suffix}": n_samples,
-        f"{prefix}macro_average_precision{suffix}": macro_ap,
-        f"{prefix}micro_average_precision{suffix}": micro_ap,
-        f"{prefix}weighted_average_precision{suffix}": weighted_ap,
+        f"{prefix}macro_average_precision{suffix}": float(macro),
+        f"{prefix}micro_average_precision{suffix}": float(micro),
+        f"{prefix}weighted_average_precision{suffix}": float(weighted),
     }
 
 
