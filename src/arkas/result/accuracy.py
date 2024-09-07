@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.accuracy import accuracy_metrics, balanced_accuracy_metrics
+from arkas.metric.cls_accuracy import accuracy, balanced_accuracy
 from arkas.metric.utils import check_same_shape_pred
 from arkas.result.base import BaseResult
 
@@ -62,9 +62,7 @@ class AccuracyResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return accuracy_metrics(
-            y_true=self._y_true, y_pred=self._y_pred, prefix=prefix, suffix=suffix
-        )
+        return accuracy(y_true=self._y_true, y_pred=self._y_pred, prefix=prefix, suffix=suffix)
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
@@ -125,7 +123,7 @@ class BalancedAccuracyResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return balanced_accuracy_metrics(
+        return balanced_accuracy(
             y_true=self._y_true, y_pred=self._y_pred, prefix=prefix, suffix=suffix
         )
 
