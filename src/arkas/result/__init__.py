@@ -35,6 +35,7 @@ __all__ = [
     "RecallResult",
     "Result",
     "SequentialResult",
+    "MeanAbsoluteErrorResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -61,6 +62,7 @@ from arkas.result.jaccard import (
     MulticlassJaccardResult,
     MultilabelJaccardResult,
 )
+from arkas.result.mae import MeanAbsoluteErrorResult
 from arkas.result.mapping import MappingResult
 from arkas.result.precision import (
     BinaryPrecisionResult,
