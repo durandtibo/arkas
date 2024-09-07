@@ -37,6 +37,7 @@ __all__ = [
     "median_absolute_error",
     "mean_squared_error_metrics",
     "mean_squared_log_error_metrics",
+    "regression_errors",
 ]
 
 from arkas.metric.abs_error import mean_absolute_error, median_absolute_error
@@ -79,6 +80,7 @@ from arkas.metric.recall import (
     multilabel_recall_metrics,
     recall_metrics,
 )
+from arkas.metric.regression import regression_errors
 from arkas.metric.roc_auc import (
     binary_roc_auc_metrics,
     multiclass_roc_auc_metrics,
