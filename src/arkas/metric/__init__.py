@@ -55,6 +55,12 @@ from arkas.metric.classification.precision import (
     multilabel_precision,
     precision,
 )
+from arkas.metric.classification.recall import (
+    binary_recall_metrics,
+    multiclass_recall_metrics,
+    multilabel_recall_metrics,
+    recall_metrics,
+)
 from arkas.metric.confmat import (
     binary_confusion_matrix_metrics,
     confusion_matrix_metrics,
@@ -76,12 +82,6 @@ from arkas.metric.jaccard import (
 from arkas.metric.mape import mean_absolute_percentage_error
 from arkas.metric.mse import mean_squared_error
 from arkas.metric.msle import mean_squared_log_error
-from arkas.metric.recall import (
-    binary_recall_metrics,
-    multiclass_recall_metrics,
-    multilabel_recall_metrics,
-    recall_metrics,
-)
 from arkas.metric.regression import regression_errors
 from arkas.metric.roc_auc import (
     binary_roc_auc_metrics,

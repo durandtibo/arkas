@@ -307,7 +307,7 @@ def find_label_type(y_true: np.ndarray, y_pred: np.ndarray) -> str:
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric.precision import find_label_type
+    >>> from arkas.metric.classification.precision import find_label_type
     >>> # binary
     >>> label_type = find_label_type(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])

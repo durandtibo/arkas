@@ -15,13 +15,13 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 
 from arkas.metric import recall_metrics
-from arkas.metric.figure import binary_precision_recall_curve
-from arkas.metric.recall import (
+from arkas.metric.classification.recall import (
     binary_recall_metrics,
     find_label_type,
     multiclass_recall_metrics,
     multilabel_recall_metrics,
 )
+from arkas.metric.figure import binary_precision_recall_curve
 from arkas.metric.utils import check_label_type, check_same_shape_pred
 from arkas.result.base import BaseResult
 
