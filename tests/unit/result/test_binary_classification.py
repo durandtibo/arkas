@@ -53,7 +53,7 @@ def test_binary_classification_result_y_score_none() -> None:
 
 
 def test_binary_classification_result_y_pred_incorrect_shape() -> None:
-    with pytest.raises(ValueError, match="'y_true' and 'y_pred' have different shapes"):
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
         BinaryClassificationResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),

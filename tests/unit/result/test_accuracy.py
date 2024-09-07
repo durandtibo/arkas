@@ -44,7 +44,7 @@ def test_accuracy_result_y_pred_2d() -> None:
 
 
 def test_accuracy_result_y_pred_incorrect_shape() -> None:
-    with pytest.raises(ValueError, match="'y_true' and 'y_pred' have different shapes"):
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
         AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1, 0]))
 
 
@@ -218,7 +218,7 @@ def test_balanced_accuracy_result_y_pred_2d() -> None:
 
 
 def test_balanced_accuracy_result_y_pred_incorrect_shape() -> None:
-    with pytest.raises(ValueError, match="'y_true' and 'y_pred' have different shapes"):
+    with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
         BalancedAccuracyResult(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1, 0])
         )
