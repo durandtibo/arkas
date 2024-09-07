@@ -6,7 +6,6 @@ from coola import objects_are_equal
 
 from arkas.metric.utils import (
     check_label_type,
-    check_nan_option,
     check_same_shape_pred,
     check_same_shape_score,
     multi_isnan,
@@ -30,21 +29,6 @@ def test_check_label_type_valid(label_type: str) -> None:
 def test_check_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
         check_label_type("incorrect")
-
-
-######################################
-#     Tests for check_nan_option     #
-######################################
-
-
-def test_check_nan_option_valid() -> None:
-    check_nan_option("keep")
-    check_nan_option("remove")
-
-
-def test_check_nan_option_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
-        check_nan_option(nan="incorrect")
 
 
 ###########################################
