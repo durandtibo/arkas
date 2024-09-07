@@ -148,10 +148,10 @@ def binary_precision_metrics(
         y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
     )
 
-    count, precision = y_true.size, float("nan")
+    count, score = y_true.size, float("nan")
     if count > 0:
-        precision = float(metrics.precision_score(y_true=y_true, y_pred=y_pred))
-    return {f"{prefix}count{suffix}": count, f"{prefix}precision{suffix}": precision}
+        score = float(metrics.precision_score(y_true=y_true, y_pred=y_pred))
+    return {f"{prefix}count{suffix}": count, f"{prefix}precision{suffix}": score}
 
 
 def multiclass_precision_metrics(
