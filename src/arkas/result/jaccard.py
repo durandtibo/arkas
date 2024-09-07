@@ -14,9 +14,9 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 
 from arkas.metric.classification.jaccard import (
-    binary_jaccard_metrics,
-    multiclass_jaccard_metrics,
-    multilabel_jaccard_metrics,
+    binary_jaccard,
+    multiclass_jaccard,
+    multilabel_jaccard,
 )
 from arkas.metric.utils import check_same_shape_pred
 from arkas.result.base import BaseResult
@@ -107,7 +107,7 @@ class BinaryJaccardResult(BaseJaccardResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return binary_jaccard_metrics(
+        return binary_jaccard(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -158,7 +158,7 @@ class MulticlassJaccardResult(BaseJaccardResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multiclass_jaccard_metrics(
+        return multiclass_jaccard(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -209,7 +209,7 @@ class MultilabelJaccardResult(BaseJaccardResult):
         super().__init__(y_true=y_true, y_pred=y_pred)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multilabel_jaccard_metrics(
+        return multilabel_jaccard(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
