@@ -80,12 +80,12 @@ from arkas.metric.jaccard import (
     multilabel_jaccard_metrics,
 )
 from arkas.metric.mape import mean_absolute_percentage_error
-from arkas.metric.mse import mean_squared_error
 from arkas.metric.msle import mean_squared_log_error
-from arkas.metric.regression import regression_errors
+from arkas.metric.regression.mse import mean_squared_error
 from arkas.metric.roc_auc import (
     binary_roc_auc_metrics,
     multiclass_roc_auc_metrics,
     multilabel_roc_auc_metrics,
     roc_auc_metrics,
 )
+from arkas.metric.universal import regression_errors
