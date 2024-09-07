@@ -134,7 +134,7 @@ def binary_precision_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     count, precision = y_true.size, float("nan")
     if count > 0:
@@ -179,7 +179,7 @@ def multiclass_precision_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     n_samples = y_true.shape[0]
     macro_precision, micro_precision, weighted_precision = float("nan"), float("nan"), float("nan")
@@ -251,7 +251,7 @@ def multilabel_precision_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
 
     precision = np.array([])
     macro_precision, micro_precision, weighted_precision = float("nan"), float("nan"), float("nan")

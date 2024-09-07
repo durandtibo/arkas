@@ -142,7 +142,7 @@ def binary_confusion_matrix_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
 
     count = y_true.size
     if count > 0:
@@ -197,7 +197,7 @@ def multiclass_confusion_matrix_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
     return {
         f"{prefix}confusion_matrix{suffix}": metrics.confusion_matrix(y_true=y_true, y_pred=y_pred),
         f"{prefix}count{suffix}": y_true.size,
@@ -239,7 +239,7 @@ def multilabel_confusion_matrix_metrics(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
     count = y_true.shape[0]
     if count > 0:
         if y_true.shape[1] > 1:

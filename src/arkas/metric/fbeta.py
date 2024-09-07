@@ -290,7 +290,7 @@ def _binary_fbeta_metrics(
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, remove_nan=True)
 
     count, fbeta = y_true.size, float("nan")
     if count > 0:
@@ -320,7 +320,7 @@ def _multiclass_fbeta_metrics(
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, remove_nan=True)
 
     n_samples = y_true.shape[0]
     macro_fbeta, micro_fbeta, weighted_fbeta = float("nan"), float("nan"), float("nan")
@@ -378,7 +378,7 @@ def _multilabel_fbeta_metrics(
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, nan="remove")
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
 
     fbeta = np.array([])
     macro_fbeta, micro_fbeta, weighted_fbeta = float("nan"), float("nan"), float("nan")

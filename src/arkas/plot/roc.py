@@ -46,6 +46,6 @@ def binary_roc_curve(ax: Axes, y_true: np.ndarray, y_score: np.ndarray, **kwargs
     ```
     """
     y_true, y_score = preprocess_score_binary(
-        y_true=y_true.ravel(), y_score=y_score.ravel(), nan="remove"
+        y_true=y_true.ravel(), y_score=y_score.ravel(), remove_nan=True
     )
     RocCurveDisplay.from_predictions(y_true=y_true, y_pred=y_score, ax=ax, **kwargs)

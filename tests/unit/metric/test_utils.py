@@ -166,7 +166,7 @@ def test_preprocess_pred_remove_nan() -> None:
         preprocess_pred(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
             y_pred=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
-            nan="remove",
+            remove_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0])),
     )
@@ -177,7 +177,7 @@ def test_preprocess_pred_remove_y_true_nan() -> None:
         preprocess_pred(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
             y_pred=np.array([0.0, 1.0, 0.0, 1.0, 1.0, 1.0]),
-            nan="remove",
+            remove_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
@@ -188,24 +188,15 @@ def test_preprocess_pred_remove_y_pred_nan() -> None:
         preprocess_pred(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, 0.0]),
             y_pred=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
-            nan="remove",
+            remove_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0, 0.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
 
 
-def test_preprocess_pred_nan_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
-        preprocess_pred(
-            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1]), nan="incorrect"
-        )
-
-
 def test_preprocess_pred_incorrect_shapes() -> None:
     with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes"):
-        preprocess_pred(
-            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1, 0]), nan="keep"
-        )
+        preprocess_pred(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1, 0]))
 
 
 ################################################
@@ -300,7 +291,7 @@ def test_preprocess_pred_multilabel_remove_nan() -> None:
                     [0.0, 1.0, float("nan")],
                 ]
             ),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
@@ -330,7 +321,7 @@ def test_preprocess_pred_multilabel_remove_y_true_nan() -> None:
                     [0.0, 1.0, 0.0],
                 ]
             ),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, 1.0]]),
@@ -360,7 +351,7 @@ def test_preprocess_pred_multilabel_remove_y_pred_nan() -> None:
                     [0.0, 1.0, float("nan")],
                 ]
             ),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([[1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
@@ -374,13 +365,6 @@ def test_preprocess_pred_multilabel_empty() -> None:
         preprocess_pred_multilabel(y_true=np.array([]), y_pred=np.array([])),
         (np.array([]), np.array([])),
     )
-
-
-def test_preprocess_pred_multilabel_nan_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
-        preprocess_pred_multilabel(
-            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1]), nan="incorrect"
-        )
 
 
 def test_preprocess_pred_multilabel_incorrect_shapes() -> None:
@@ -439,7 +423,7 @@ def test_preprocess_score_binary_remove_nan() -> None:
         preprocess_score_binary(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
             y_score=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
-            nan="remove",
+            remove_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0])),
     )
@@ -450,7 +434,7 @@ def test_preprocess_score_binary_remove_y_true_nan() -> None:
         preprocess_score_binary(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
             y_score=np.array([0.0, 1.0, 0.0, 1.0, 1.0, 1.0]),
-            nan="remove",
+            remove_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
@@ -461,17 +445,10 @@ def test_preprocess_score_binary_remove_y_score_nan() -> None:
         preprocess_score_binary(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, 0.0]),
             y_score=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
-            nan="remove",
+            remove_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0, 0.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
-
-
-def test_preprocess_score_binary_nan_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
-        preprocess_score_binary(
-            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1]), nan="incorrect"
-        )
 
 
 def test_preprocess_score_binary_incorrect_shapes() -> None:
@@ -594,7 +571,7 @@ def test_preprocess_score_multiclass_remove_nan() -> None:
                     [0.1, 0.2, 0.7],
                 ]
             ),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([0.0, 0.0, 1.0, 2.0]),
@@ -624,7 +601,7 @@ def test_preprocess_score_multiclass_remove_y_true_nan() -> None:
                     [0.1, 0.2, 0.7],
                 ]
             ),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([0.0, 0.0, 1.0, 1.0, 2.0]),
@@ -655,7 +632,7 @@ def test_preprocess_score_multiclass_remove_y_score_nan() -> None:
                     [0.1, 0.2, 0.7],
                 ]
             ),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([0, 0, 1, 2, 2]),
@@ -677,13 +654,6 @@ def test_preprocess_score_multiclass_empty() -> None:
         preprocess_score_multiclass(y_true=np.array([]), y_score=np.array([])),
         (np.array([]), np.array([])),
     )
-
-
-def test_preprocess_score_multiclass_nan_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
-        preprocess_score_multiclass(
-            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1]), nan="incorrect"
-        )
 
 
 def test_preprocess_score_multiclass_incorrect_shapes() -> None:
@@ -767,7 +737,7 @@ def test_preprocess_score_multilabel_remove_nan() -> None:
             y_score=np.array(
                 [[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, float("nan"), -5]]
             ),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
@@ -781,7 +751,7 @@ def test_preprocess_score_multilabel_remove_y_true_nan() -> None:
         preprocess_score_multilabel(
             y_true=np.array([[1, float("nan"), 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, 1.0]]),
@@ -797,7 +767,7 @@ def test_preprocess_score_multilabel_remove_y_score_nan() -> None:
             y_score=np.array(
                 [[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, float("nan"), -5]]
             ),
-            nan="remove",
+            remove_nan=True,
         ),
         (
             np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1]]),
@@ -812,13 +782,6 @@ def test_preprocess_score_multilabel_empty() -> None:
         preprocess_score_multilabel(y_true=np.array([]), y_score=np.array([])),
         (np.array([]), np.array([])),
     )
-
-
-def test_preprocess_score_multilabel_nan_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'nan': incorrect"):
-        preprocess_score_multilabel(
-            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([0, 1, 0, 1, 1]), nan="incorrect"
-        )
 
 
 def test_preprocess_score_multilabel_incorrect_shapes() -> None:

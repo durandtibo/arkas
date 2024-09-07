@@ -143,7 +143,7 @@ def binary_roc_auc_metrics(
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, nan="remove")
+    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, remove_nan=True)
 
     count = y_true.size
     roc_auc = float("nan")
