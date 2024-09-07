@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.mse import mean_squared_error_metrics
+from arkas.metric.mse import mean_squared_error
 from arkas.metric.utils import check_same_shape_pred
 from arkas.result.base import BaseResult
 
@@ -61,7 +61,7 @@ class MeanSquaredErrorResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return mean_squared_error_metrics(
+        return mean_squared_error(
             y_true=self._y_true, y_pred=self._y_pred, prefix=prefix, suffix=suffix
         )
 

@@ -2,7 +2,7 @@ r"""Implement the mean squared error metrics."""
 
 from __future__ import annotations
 
-__all__ = ["mean_squared_error_metrics"]
+__all__ = ["mean_squared_error"]
 
 
 from typing import TYPE_CHECKING
@@ -15,12 +15,13 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-def mean_squared_error_metrics(
+def mean_squared_error(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the mean squared error (MSE).
 
@@ -29,6 +30,8 @@ def mean_squared_error_metrics(
         y_pred: The predicted values.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -38,15 +41,15 @@ def mean_squared_error_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import mean_squared_error_metrics
-    >>> mean_squared_error_metrics(
-    ...     y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
-    ... )
+    >>> from arkas.metric import mean_squared_error
+    >>> mean_squared_error(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]))
     {'count': 5, 'mean_squared_error': 0.0}
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove")
+    y_true, y_pred = preprocess_pred(
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), nan="remove" if ignore_nan else "keep"
+    )
 
     count = y_true.size
     error = float("nan")

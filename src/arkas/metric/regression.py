@@ -8,7 +8,7 @@ __all__ = ["regression_errors"]
 from typing import TYPE_CHECKING
 
 from arkas.metric.abs_error import mean_absolute_error, median_absolute_error
-from arkas.metric.mse import mean_squared_error_metrics
+from arkas.metric.mse import mean_squared_error
 from arkas.metric.utils import preprocess_pred
 
 if TYPE_CHECKING:
@@ -57,5 +57,5 @@ def regression_errors(
     return (
         mean_absolute_error(y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix)
         | median_absolute_error(y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix)
-        | mean_squared_error_metrics(y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix)
+        | mean_squared_error(y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix)
     )
