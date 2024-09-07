@@ -13,7 +13,7 @@ __all__ = [
 import numpy as np
 from sklearn import metrics
 
-from arkas.metric.precision import find_label_type
+from arkas.metric.classification.precision import find_label_type
 from arkas.metric.utils import (
     check_label_type,
     preprocess_pred,

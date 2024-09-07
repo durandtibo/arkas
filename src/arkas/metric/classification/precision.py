@@ -3,11 +3,11 @@ r"""Implement the precision metrics."""
 from __future__ import annotations
 
 __all__ = [
-    "binary_precision_metrics",
+    "binary_precision",
     "find_label_type",
-    "multiclass_precision_metrics",
-    "multilabel_precision_metrics",
-    "precision_metrics",
+    "multiclass_precision",
+    "multilabel_precision",
+    "precision",
 ]
 
 import math
@@ -22,7 +22,7 @@ from arkas.metric.utils import (
 )
 
 
-def precision_metrics(
+def precision(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -56,19 +56,19 @@ def precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import precision_metrics
+    >>> from arkas.metric import precision
     >>> # auto
-    >>> precision_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
+    >>> precision(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
     {'count': 5, 'precision': 1.0}
     >>> # binary
-    >>> precision_metrics(
+    >>> precision(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
     ...     y_pred=np.array([1, 0, 0, 1, 1]),
     ...     label_type="binary",
     ... )
     {'count': 5, 'precision': 1.0}
     >>> # multiclass
-    >>> precision_metrics(
+    >>> precision(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ...     label_type="multiclass",
@@ -79,7 +79,7 @@ def precision_metrics(
      'precision': array([1., 1., 1.]),
      'weighted_precision': 1.0}
     >>> # multilabel
-    >>> precision_metrics(
+    >>> precision(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     label_type="multilabel",
@@ -96,19 +96,19 @@ def precision_metrics(
     if label_type == "auto":
         label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
-        return binary_precision_metrics(
+        return binary_precision(
             y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
         )
     if label_type == "multilabel":
-        return multilabel_precision_metrics(
+        return multilabel_precision(
             y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
         )
-    return multiclass_precision_metrics(
+    return multiclass_precision(
         y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
     )
 
 
-def binary_precision_metrics(
+def binary_precision(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -136,10 +136,8 @@ def binary_precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import binary_precision_metrics
-    >>> binary_precision_metrics(
-    ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
-    ... )
+    >>> from arkas.metric import binary_precision
+    >>> binary_precision(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
     {'count': 5, 'precision': 1.0}
 
     ```
@@ -154,7 +152,7 @@ def binary_precision_metrics(
     return {f"{prefix}count{suffix}": count, f"{prefix}precision{suffix}": score}
 
 
-def multiclass_precision_metrics(
+def multiclass_precision(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -182,8 +180,8 @@ def multiclass_precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import multiclass_precision_metrics
-    >>> multiclass_precision_metrics(
+    >>> from arkas.metric import multiclass_precision
+    >>> multiclass_precision(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
     ... )
     {'count': 6,
@@ -223,7 +221,7 @@ def multiclass_precision_metrics(
     }
 
 
-def multilabel_precision_metrics(
+def multilabel_precision(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -251,8 +249,8 @@ def multilabel_precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import multilabel_precision_metrics
-    >>> multilabel_precision_metrics(
+    >>> from arkas.metric import multilabel_precision
+    >>> multilabel_precision(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )

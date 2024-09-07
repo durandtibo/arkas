@@ -10,7 +10,7 @@ __all__ = [
     "binary_confusion_matrix_metrics",
     "binary_fbeta_metrics",
     "binary_jaccard_metrics",
-    "binary_precision_metrics",
+    "binary_precision",
     "binary_recall_metrics",
     "binary_roc_auc_metrics",
     "confusion_matrix_metrics",
@@ -20,17 +20,17 @@ __all__ = [
     "multiclass_confusion_matrix_metrics",
     "multiclass_fbeta_metrics",
     "multiclass_jaccard_metrics",
-    "multiclass_precision_metrics",
+    "multiclass_precision",
     "multiclass_recall_metrics",
     "multiclass_roc_auc_metrics",
     "multilabel_average_precision",
     "multilabel_confusion_matrix_metrics",
     "multilabel_fbeta_metrics",
     "multilabel_jaccard_metrics",
-    "multilabel_precision_metrics",
+    "multilabel_precision",
     "multilabel_recall_metrics",
     "multilabel_roc_auc_metrics",
-    "precision_metrics",
+    "precision",
     "recall_metrics",
     "roc_auc_metrics",
     "mean_absolute_error",
@@ -48,6 +48,12 @@ from arkas.metric.classification.ap import (
     binary_average_precision,
     multiclass_average_precision,
     multilabel_average_precision,
+)
+from arkas.metric.classification.precision import (
+    binary_precision,
+    multiclass_precision,
+    multilabel_precision,
+    precision,
 )
 from arkas.metric.confmat import (
     binary_confusion_matrix_metrics,
@@ -70,12 +76,6 @@ from arkas.metric.jaccard import (
 from arkas.metric.mape import mean_absolute_percentage_error
 from arkas.metric.mse import mean_squared_error
 from arkas.metric.msle import mean_squared_log_error
-from arkas.metric.precision import (
-    binary_precision_metrics,
-    multiclass_precision_metrics,
-    multilabel_precision_metrics,
-    precision_metrics,
-)
 from arkas.metric.recall import (
     binary_recall_metrics,
     multiclass_recall_metrics,

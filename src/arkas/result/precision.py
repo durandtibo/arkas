@@ -14,14 +14,14 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.figure import binary_precision_recall_curve
-from arkas.metric.precision import (
-    binary_precision_metrics,
+from arkas.metric.classification.precision import (
+    binary_precision,
     find_label_type,
-    multiclass_precision_metrics,
-    multilabel_precision_metrics,
-    precision_metrics,
+    multiclass_precision,
+    multilabel_precision,
+    precision,
 )
+from arkas.metric.figure import binary_precision_recall_curve
 from arkas.metric.utils import check_label_type, check_same_shape_pred
 from arkas.result.base import BaseResult
 
@@ -138,7 +138,7 @@ class PrecisionResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return precision_metrics(
+        return precision(
             y_true=self._y_true,
             y_pred=self._y_pred,
             label_type=self._label_type,
@@ -258,7 +258,7 @@ class BinaryPrecisionResult(BasePrecisionResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return binary_precision_metrics(
+        return binary_precision(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -313,7 +313,7 @@ class MulticlassPrecisionResult(BasePrecisionResult):
         super().__init__(y_true=y_true.ravel(), y_pred=y_pred.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multiclass_precision_metrics(
+        return multiclass_precision(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
@@ -364,7 +364,7 @@ class MultilabelPrecisionResult(BasePrecisionResult):
         super().__init__(y_true=y_true, y_pred=y_pred)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multilabel_precision_metrics(
+        return multilabel_precision(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,

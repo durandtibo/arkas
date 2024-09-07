@@ -5,37 +5,37 @@ import pytest
 from coola import objects_are_allclose, objects_are_equal
 
 from arkas.metric import (
-    binary_precision_metrics,
-    multiclass_precision_metrics,
-    multilabel_precision_metrics,
-    precision_metrics,
+    binary_precision,
+    multiclass_precision,
+    multilabel_precision,
+    precision,
 )
-from arkas.metric.precision import find_label_type
+from arkas.metric.classification.precision import find_label_type
 
-#######################################
-#     Tests for precision_metrics     #
-#######################################
+###############################
+#     Tests for precision     #
+###############################
 
 
-def test_precision_metrics_auto_binary() -> None:
+def test_precision_auto_binary() -> None:
     assert objects_are_equal(
-        precision_metrics(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
+        precision(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
         {"count": 5, "precision": 1.0},
     )
 
 
-def test_precision_metrics_binary() -> None:
+def test_precision_binary() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), label_type="binary"
         ),
         {"count": 5, "precision": 1.0},
     )
 
 
-def test_precision_metrics_binary_prefix_suffix() -> None:
+def test_precision_binary_prefix_suffix() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             label_type="binary",
@@ -46,9 +46,9 @@ def test_precision_metrics_binary_prefix_suffix() -> None:
     )
 
 
-def test_precision_metrics_binary_ignore_nan() -> None:
+def test_precision_binary_ignore_nan() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
             label_type="binary",
@@ -58,9 +58,9 @@ def test_precision_metrics_binary_ignore_nan() -> None:
     )
 
 
-def test_precision_metrics_auto_multiclass() -> None:
+def test_precision_auto_multiclass() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
         ),
@@ -74,9 +74,9 @@ def test_precision_metrics_auto_multiclass() -> None:
     )
 
 
-def test_precision_metrics_multiclass() -> None:
+def test_precision_multiclass() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
             label_type="multiclass",
@@ -91,9 +91,9 @@ def test_precision_metrics_multiclass() -> None:
     )
 
 
-def test_precision_metrics_multiclass_prefix_suffix() -> None:
+def test_precision_multiclass_prefix_suffix() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
             label_type="multiclass",
@@ -110,9 +110,9 @@ def test_precision_metrics_multiclass_prefix_suffix() -> None:
     )
 
 
-def test_precision_metrics_multiclass_ignore_nan() -> None:
+def test_precision_multiclass_ignore_nan() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             label_type="multiclass",
@@ -128,9 +128,9 @@ def test_precision_metrics_multiclass_ignore_nan() -> None:
     )
 
 
-def test_precision_metrics_auto_multilabel() -> None:
+def test_precision_auto_multilabel() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
         ),
@@ -144,9 +144,9 @@ def test_precision_metrics_auto_multilabel() -> None:
     )
 
 
-def test_precision_metrics_multilabel() -> None:
+def test_precision_multilabel() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
             label_type="multilabel",
@@ -161,9 +161,9 @@ def test_precision_metrics_multilabel() -> None:
     )
 
 
-def test_precision_metrics_multilabel_prefix_suffix() -> None:
+def test_precision_multilabel_prefix_suffix() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             label_type="multilabel",
@@ -180,9 +180,9 @@ def test_precision_metrics_multilabel_prefix_suffix() -> None:
     )
 
 
-def test_precision_metrics_multilabel_ignore_nan() -> None:
+def test_precision_multilabel_ignore_nan() -> None:
     assert objects_are_equal(
-        precision_metrics(
+        precision(
             y_true=np.array(
                 [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
             ),
@@ -202,32 +202,30 @@ def test_precision_metrics_multilabel_ignore_nan() -> None:
     )
 
 
-def test_precision_metrics_label_type_incorrect() -> None:
+def test_precision_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
-        precision_metrics(
+        precision(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             label_type="incorrect",
         )
 
 
-##############################################
-#     Tests for binary_precision_metrics     #
-##############################################
+######################################
+#     Tests for binary_precision     #
+######################################
 
 
-def test_binary_precision_metrics_correct_1d() -> None:
+def test_binary_precision_correct_1d() -> None:
     assert objects_are_equal(
-        binary_precision_metrics(
-            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
-        ),
+        binary_precision(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])),
         {"count": 5, "precision": 1.0},
     )
 
 
-def test_binary_precision_metrics_correct_2d() -> None:
+def test_binary_precision_correct_2d() -> None:
     assert objects_are_equal(
-        binary_precision_metrics(
+        binary_precision(
             y_true=np.array([[1, 0, 0], [1, 1, 1]]),
             y_pred=np.array([[1, 0, 0], [1, 1, 1]]),
         ),
@@ -235,24 +233,24 @@ def test_binary_precision_metrics_correct_2d() -> None:
     )
 
 
-def test_binary_precision_metrics_incorrect() -> None:
+def test_binary_precision_incorrect() -> None:
     assert objects_are_equal(
-        binary_precision_metrics(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([1, 0, 1, 0])),
+        binary_precision(y_true=np.array([1, 0, 0, 1]), y_pred=np.array([1, 0, 1, 0])),
         {"count": 4, "precision": 0.5},
     )
 
 
-def test_binary_precision_metrics_empty() -> None:
+def test_binary_precision_empty() -> None:
     assert objects_are_equal(
-        binary_precision_metrics(y_true=np.array([]), y_pred=np.array([])),
+        binary_precision(y_true=np.array([]), y_pred=np.array([])),
         {"count": 0, "precision": float("nan")},
         equal_nan=True,
     )
 
 
-def test_binary_precision_metrics_prefix_suffix() -> None:
+def test_binary_precision_prefix_suffix() -> None:
     assert objects_are_equal(
-        binary_precision_metrics(
+        binary_precision(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             prefix="prefix_",
@@ -262,17 +260,17 @@ def test_binary_precision_metrics_prefix_suffix() -> None:
     )
 
 
-def test_binary_precision_metrics_nan() -> None:
+def test_binary_precision_nan() -> None:
     with pytest.raises(ValueError, match="Input .* contains NaN"):
-        binary_precision_metrics(
+        binary_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
         )
 
 
-def test_binary_precision_metrics_ignore_nan() -> None:
+def test_binary_precision_ignore_nan() -> None:
     assert objects_are_equal(
-        binary_precision_metrics(
+        binary_precision(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
             ignore_nan=True,
@@ -281,9 +279,9 @@ def test_binary_precision_metrics_ignore_nan() -> None:
     )
 
 
-def test_binary_precision_metrics_ignore_nan_y_true() -> None:
+def test_binary_precision_ignore_nan_y_true() -> None:
     assert objects_are_equal(
-        binary_precision_metrics(
+        binary_precision(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 1]),
             ignore_nan=True,
@@ -292,9 +290,9 @@ def test_binary_precision_metrics_ignore_nan_y_true() -> None:
     )
 
 
-def test_binary_precision_metrics_ignore_nan_y_pred() -> None:
+def test_binary_precision_ignore_nan_y_pred() -> None:
     assert objects_are_equal(
-        binary_precision_metrics(
+        binary_precision(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, float("nan"), 0]),
             ignore_nan=True,
@@ -303,22 +301,22 @@ def test_binary_precision_metrics_ignore_nan_y_pred() -> None:
     )
 
 
-def test_binary_precision_metrics_incorrect_shape() -> None:
+def test_binary_precision_incorrect_shape() -> None:
     with pytest.raises(RuntimeError, match="'y_true' and 'y_pred' have different shapes:"):
-        binary_precision_metrics(
+        binary_precision(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
         )
 
 
-##################################################
-#     Tests for multiclass_precision_metrics     #
-##################################################
+##########################################
+#     Tests for multiclass_precision     #
+##########################################
 
 
-def test_multiclass_precision_metrics_correct_1d() -> None:
+def test_multiclass_precision_correct_1d() -> None:
     assert objects_are_equal(
-        multiclass_precision_metrics(
+        multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
         ),
@@ -332,9 +330,9 @@ def test_multiclass_precision_metrics_correct_1d() -> None:
     )
 
 
-def test_multiclass_precision_metrics_correct_2d() -> None:
+def test_multiclass_precision_correct_2d() -> None:
     assert objects_are_equal(
-        multiclass_precision_metrics(
+        multiclass_precision(
             y_true=np.array([[0, 0, 1], [1, 2, 2]]),
             y_pred=np.array([[0, 0, 1], [1, 2, 2]]),
         ),
@@ -348,9 +346,9 @@ def test_multiclass_precision_metrics_correct_2d() -> None:
     )
 
 
-def test_multiclass_precision_metrics_incorrect() -> None:
+def test_multiclass_precision_incorrect() -> None:
     assert objects_are_allclose(
-        multiclass_precision_metrics(
+        multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 1, 1]),
         ),
@@ -364,9 +362,9 @@ def test_multiclass_precision_metrics_incorrect() -> None:
     )
 
 
-def test_multiclass_precision_metrics_empty() -> None:
+def test_multiclass_precision_empty() -> None:
     assert objects_are_allclose(
-        multiclass_precision_metrics(y_true=np.array([]), y_pred=np.array([])),
+        multiclass_precision(y_true=np.array([]), y_pred=np.array([])),
         {
             "count": 0,
             "macro_precision": float("nan"),
@@ -378,9 +376,9 @@ def test_multiclass_precision_metrics_empty() -> None:
     )
 
 
-def test_multiclass_precision_metrics_prefix_suffix() -> None:
+def test_multiclass_precision_prefix_suffix() -> None:
     assert objects_are_equal(
-        multiclass_precision_metrics(
+        multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 2]),
             prefix="prefix_",
@@ -396,17 +394,17 @@ def test_multiclass_precision_metrics_prefix_suffix() -> None:
     )
 
 
-def test_multiclass_precision_metrics_nan() -> None:
+def test_multiclass_precision_nan() -> None:
     with pytest.raises(ValueError, match="Input .* contains NaN"):
-        multiclass_precision_metrics(
+        multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
         )
 
 
-def test_multiclass_precision_metrics_ignore_nan() -> None:
+def test_multiclass_precision_ignore_nan() -> None:
     assert objects_are_equal(
-        multiclass_precision_metrics(
+        multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
             ignore_nan=True,
@@ -421,9 +419,9 @@ def test_multiclass_precision_metrics_ignore_nan() -> None:
     )
 
 
-def test_multiclass_precision_metrics_ignore_nan_y_true() -> None:
+def test_multiclass_precision_ignore_nan_y_true() -> None:
     assert objects_are_equal(
-        multiclass_precision_metrics(
+        multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
             ignore_nan=True,
@@ -438,9 +436,9 @@ def test_multiclass_precision_metrics_ignore_nan_y_true() -> None:
     )
 
 
-def test_multiclass_precision_metrics_ignore_nan_y_pred() -> None:
+def test_multiclass_precision_ignore_nan_y_pred() -> None:
     assert objects_are_equal(
-        multiclass_precision_metrics(
+        multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
             ignore_nan=True,
@@ -455,14 +453,14 @@ def test_multiclass_precision_metrics_ignore_nan_y_pred() -> None:
     )
 
 
-##################################################
-#     Tests for multilabel_precision_metrics     #
-##################################################
+##########################################
+#     Tests for multilabel_precision     #
+##########################################
 
 
-def test_multilabel_precision_metrics_1_class_1d() -> None:
+def test_multilabel_precision_1_class_1d() -> None:
     assert objects_are_equal(
-        multilabel_precision_metrics(
+        multilabel_precision(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
         ),
@@ -476,9 +474,9 @@ def test_multilabel_precision_metrics_1_class_1d() -> None:
     )
 
 
-def test_multilabel_precision_metrics_1_class_2d() -> None:
+def test_multilabel_precision_1_class_2d() -> None:
     assert objects_are_equal(
-        multilabel_precision_metrics(
+        multilabel_precision(
             y_true=np.array([[1], [0], [0], [1], [1]]),
             y_pred=np.array([[1], [0], [0], [1], [1]]),
         ),
@@ -492,9 +490,9 @@ def test_multilabel_precision_metrics_1_class_2d() -> None:
     )
 
 
-def test_multilabel_precision_metrics_3_classes() -> None:
+def test_multilabel_precision_3_classes() -> None:
     assert objects_are_allclose(
-        multilabel_precision_metrics(
+        multilabel_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
         ),
@@ -508,9 +506,9 @@ def test_multilabel_precision_metrics_3_classes() -> None:
     )
 
 
-def test_multilabel_precision_metrics_empty_1d() -> None:
+def test_multilabel_precision_empty_1d() -> None:
     assert objects_are_allclose(
-        multilabel_precision_metrics(y_true=np.array([]), y_pred=np.array([])),
+        multilabel_precision(y_true=np.array([]), y_pred=np.array([])),
         {
             "count": 0,
             "macro_precision": float("nan"),
@@ -522,9 +520,9 @@ def test_multilabel_precision_metrics_empty_1d() -> None:
     )
 
 
-def test_multilabel_precision_metrics_empty_2d() -> None:
+def test_multilabel_precision_empty_2d() -> None:
     assert objects_are_allclose(
-        multilabel_precision_metrics(y_true=np.ones((0, 3)), y_pred=np.ones((0, 3))),
+        multilabel_precision(y_true=np.ones((0, 3)), y_pred=np.ones((0, 3))),
         {
             "count": 0,
             "macro_precision": float("nan"),
@@ -536,9 +534,9 @@ def test_multilabel_precision_metrics_empty_2d() -> None:
     )
 
 
-def test_multilabel_precision_metrics_prefix_suffix() -> None:
+def test_multilabel_precision_prefix_suffix() -> None:
     assert objects_are_allclose(
-        multilabel_precision_metrics(
+        multilabel_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             prefix="prefix_",
@@ -554,17 +552,17 @@ def test_multilabel_precision_metrics_prefix_suffix() -> None:
     )
 
 
-def test_multilabel_precision_metrics_nan() -> None:
+def test_multilabel_precision_nan() -> None:
     with pytest.raises(ValueError, match="Input .* contains NaN"):
-        multilabel_precision_metrics(
+        multilabel_precision(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
         )
 
 
-def test_multilabel_precision_metrics_ignore_nan() -> None:
+def test_multilabel_precision_ignore_nan() -> None:
     assert objects_are_allclose(
-        multilabel_precision_metrics(
+        multilabel_precision(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
             ignore_nan=True,
@@ -579,9 +577,9 @@ def test_multilabel_precision_metrics_ignore_nan() -> None:
     )
 
 
-def test_multilabel_precision_metrics_ignore_nan_y_true() -> None:
+def test_multilabel_precision_ignore_nan_y_true() -> None:
     assert objects_are_allclose(
-        multilabel_precision_metrics(
+        multilabel_precision(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             ignore_nan=True,
@@ -596,9 +594,9 @@ def test_multilabel_precision_metrics_ignore_nan_y_true() -> None:
     )
 
 
-def test_multilabel_precision_metrics_ignore_nan_y_pred() -> None:
+def test_multilabel_precision_ignore_nan_y_pred() -> None:
     assert objects_are_allclose(
-        multilabel_precision_metrics(
+        multilabel_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             ignore_nan=True,
