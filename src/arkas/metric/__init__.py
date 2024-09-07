@@ -38,6 +38,7 @@ __all__ = [
     "mean_squared_error",
     "mean_squared_log_error",
     "regression_errors",
+    "mean_absolute_percentage_error",
 ]
 
 from arkas.metric.abs_error import mean_absolute_error, median_absolute_error
@@ -66,6 +67,7 @@ from arkas.metric.jaccard import (
     multiclass_jaccard_metrics,
     multilabel_jaccard_metrics,
 )
+from arkas.metric.mape import mean_absolute_percentage_error
 from arkas.metric.mse import mean_squared_error
 from arkas.metric.msle import mean_squared_log_error
 from arkas.metric.precision import (
