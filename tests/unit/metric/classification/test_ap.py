@@ -51,6 +51,18 @@ def test_average_precision_binary_prefix_suffix() -> None:
     )
 
 
+def test_average_precision_binary_ignore_nan() -> None:
+    assert objects_are_equal(
+        average_precision(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
+            label_type="binary",
+            ignore_nan=True,
+        ),
+        {"count": 5, "average_precision": 1.0},
+    )
+
+
 def test_average_precision_auto_multiclass() -> None:
     assert objects_are_equal(
         average_precision(
@@ -130,6 +142,34 @@ def test_average_precision_multiclass_prefix_suffix() -> None:
     )
 
 
+def test_average_precision_multiclass_ignore_nan() -> None:
+    assert objects_are_equal(
+        average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                    [0.1, float("nan"), 0.7],
+                ]
+            ),
+            label_type="multiclass",
+            ignore_nan=True,
+        ),
+        {
+            "average_precision": np.array([1.0, 1.0, 1.0]),
+            "count": 6,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "weighted_average_precision": 1.0,
+        },
+    )
+
+
 def test_average_precision_auto_multilabel() -> None:
     assert objects_are_allclose(
         average_precision(
@@ -178,6 +218,28 @@ def test_average_precision_multilabel_prefix_suffix() -> None:
             "prefix_macro_average_precision_suffix": 1.0,
             "prefix_micro_average_precision_suffix": 1.0,
             "prefix_weighted_average_precision_suffix": 1.0,
+        },
+    )
+
+
+def test_average_precision_multilabel_ignore_nan() -> None:
+    assert objects_are_allclose(
+        average_precision(
+            y_true=np.array(
+                [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+            ),
+            y_score=np.array(
+                [[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5], [float("nan"), 0, 1]]
+            ),
+            label_type="multilabel",
+            ignore_nan=True,
+        ),
+        {
+            "average_precision": np.array([1.0, 1.0, 1.0]),
+            "count": 5,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "weighted_average_precision": 1.0,
         },
     )
 
