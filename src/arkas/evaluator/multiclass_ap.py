@@ -10,9 +10,11 @@ from typing import TYPE_CHECKING
 from arkas.evaluator.base import BaseLazyEvaluator
 from arkas.result import EmptyResult, MulticlassAveragePrecisionResult
 from arkas.utils.array import to_array
-from arkas.utils.data import find_keys, find_missing_keys
+from arkas.utils.data import find_keys, find_missing_keys, flat_keys, prepare_array
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import polars as pl
 
     from arkas.result import BaseResult
@@ -60,9 +62,9 @@ class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator):
     ```
     """
 
-    def __init__(self, y_true: str, y_score: str) -> None:
+    def __init__(self, y_true: str, y_score: str | Sequence[str]) -> None:
         self._y_true = y_true
-        self._y_score = y_score
+        self._y_score = y_score if isinstance(y_score, str) else tuple(y_score)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score})"
@@ -72,7 +74,7 @@ class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator):
             f"Evaluating the multiclass average precision | y_true={self._y_true} | y_score={self._y_score}"
         )
         if missing_keys := find_missing_keys(
-            keys=find_keys(data), queries=[self._y_score, self._y_true]
+            keys=find_keys(data), queries=flat_keys([self._y_true, self._y_score])
         ):
             logger.warning(
                 "Skipping the multiclass average precision evaluation because some keys are missing: "
@@ -81,5 +83,5 @@ class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator):
             return EmptyResult()
         return MulticlassAveragePrecisionResult(
             y_true=to_array(data[self._y_true]).ravel(),
-            y_score=to_array(data[self._y_score]),
+            y_score=prepare_array(data, keys=self._y_score),
         )
