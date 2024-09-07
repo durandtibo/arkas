@@ -240,18 +240,13 @@ def _multi_roc_auc_metrics(
         The computed metrics.
     """
     n_samples = y_true.shape[0]
-    macro_roc_auc, micro_roc_auc, weighted_roc_auc = float("nan"), float("nan"), float("nan")
-    n_classes = y_score.shape[1] if y_score.ndim == 2 else 0 if n_samples == 0 else 1
-    roc_auc = np.full((n_classes,), fill_value=float("nan"))
+    macro, micro, weighted = float("nan"), float("nan"), float("nan")
+    roc_auc = np.array([])
     if n_samples > 0:
-        macro_roc_auc = float(
-            metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="macro", **kwargs)
-        )
-        micro_roc_auc = float(
-            metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="micro", **kwargs)
-        )
-        weighted_roc_auc = float(
-            metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="weighted", **kwargs)
+        macro = metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="macro", **kwargs)
+        micro = metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="micro", **kwargs)
+        weighted = metrics.roc_auc_score(
+            y_true=y_true, y_score=y_score, average="weighted", **kwargs
         )
         roc_auc = np.asarray(
             metrics.roc_auc_score(y_true=y_true, y_score=y_score, average=None, **kwargs)
@@ -259,8 +254,8 @@ def _multi_roc_auc_metrics(
 
     return {
         f"{prefix}count{suffix}": n_samples,
-        f"{prefix}macro_roc_auc{suffix}": macro_roc_auc,
-        f"{prefix}micro_roc_auc{suffix}": micro_roc_auc,
+        f"{prefix}macro_roc_auc{suffix}": float(macro),
+        f"{prefix}micro_roc_auc{suffix}": float(micro),
         f"{prefix}roc_auc{suffix}": roc_auc,
-        f"{prefix}weighted_roc_auc{suffix}": weighted_roc_auc,
+        f"{prefix}weighted_roc_auc{suffix}": float(weighted),
     }
