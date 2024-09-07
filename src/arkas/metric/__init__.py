@@ -35,7 +35,7 @@ __all__ = [
     "roc_auc_metrics",
     "mean_absolute_error",
     "median_absolute_error",
-    "mean_squared_error_metrics",
+    "mean_squared_error",
     "mean_squared_log_error_metrics",
     "regression_errors",
 ]
@@ -66,7 +66,7 @@ from arkas.metric.jaccard import (
     multiclass_jaccard_metrics,
     multilabel_jaccard_metrics,
 )
-from arkas.metric.mse import mean_squared_error_metrics
+from arkas.metric.mse import mean_squared_error
 from arkas.metric.msle import mean_squared_log_error_metrics
 from arkas.metric.precision import (
     binary_precision_metrics,
