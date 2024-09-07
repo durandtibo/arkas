@@ -16,11 +16,11 @@ import numpy as np
 from coola import objects_are_equal
 
 from arkas.metric.ap import (
-    average_precision_metrics,
-    binary_average_precision_metrics,
+    average_precision,
+    binary_average_precision,
     find_label_type,
-    multiclass_average_precision_metrics,
-    multilabel_average_precision_metrics,
+    multiclass_average_precision,
+    multilabel_average_precision,
 )
 from arkas.metric.utils import check_label_type, check_same_shape_score
 from arkas.result.base import BaseResult
@@ -155,7 +155,7 @@ class AveragePrecisionResult(BaseResult):
         return self._y_score
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return average_precision_metrics(
+        return average_precision(
             y_true=self._y_true,
             y_score=self._y_score,
             label_type=self._label_type,
@@ -286,7 +286,7 @@ class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
         super().__init__(y_true=y_true.ravel(), y_score=y_score.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return binary_average_precision_metrics(
+        return binary_average_precision(
             y_true=self._y_true,
             y_score=self._y_score,
             prefix=prefix,
@@ -353,7 +353,7 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
         super().__init__(y_true=y_true, y_score=y_score)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multiclass_average_precision_metrics(
+        return multiclass_average_precision(
             y_true=self._y_true,
             y_score=self._y_score,
             prefix=prefix,
@@ -405,7 +405,7 @@ class MultilabelAveragePrecisionResult(BaseAveragePrecisionResult):
         super().__init__(y_true=y_true, y_score=y_score)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multilabel_average_precision_metrics(
+        return multilabel_average_precision(
             y_true=self._y_true,
             y_score=self._y_score,
             prefix=prefix,

@@ -3,11 +3,11 @@ r"""Implement the average precision result."""
 from __future__ import annotations
 
 __all__ = [
-    "average_precision_metrics",
-    "binary_average_precision_metrics",
+    "average_precision",
+    "binary_average_precision",
     "find_label_type",
-    "multiclass_average_precision_metrics",
-    "multilabel_average_precision_metrics",
+    "multiclass_average_precision",
+    "multilabel_average_precision",
 ]
 
 
@@ -22,13 +22,14 @@ from arkas.metric.utils import (
 )
 
 
-def average_precision_metrics(
+def average_precision(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics.
 
@@ -47,6 +48,8 @@ def average_precision_metrics(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -56,15 +59,15 @@ def average_precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import average_precision_metrics
+    >>> from arkas.metric import average_precision
     >>> # auto
-    >>> metrics = average_precision_metrics(
+    >>> metrics = average_precision(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ... )
     >>> metrics
     {'average_precision': 1.0, 'count': 5}
     >>> # binary
-    >>> metrics = average_precision_metrics(
+    >>> metrics = average_precision(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
     ...     y_score=np.array([2, -1, 0, 3, 1]),
     ...     label_type="binary",
@@ -72,7 +75,7 @@ def average_precision_metrics(
     >>> metrics
     {'average_precision': 1.0, 'count': 5}
     >>> # multiclass
-    >>> metrics = average_precision_metrics(
+    >>> metrics = average_precision(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_score=np.array(
     ...         [
@@ -93,7 +96,7 @@ def average_precision_metrics(
      'micro_average_precision': 0.75,
      'weighted_average_precision': 0.777...}
     >>> # multilabel
-    >>> metrics = average_precision_metrics(
+    >>> metrics = average_precision(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
     ...     label_type="multilabel",
@@ -111,24 +114,25 @@ def average_precision_metrics(
     if label_type == "auto":
         label_type = find_label_type(y_true=y_true, y_score=y_score)
     if label_type == "binary":
-        return binary_average_precision_metrics(
-            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
+        return binary_average_precision(
+            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
         )
     if label_type == "multilabel":
-        return multilabel_average_precision_metrics(
-            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
+        return multilabel_average_precision(
+            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
         )
-    return multiclass_average_precision_metrics(
-        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
+    return multiclass_average_precision(
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
     )
 
 
-def binary_average_precision_metrics(
+def binary_average_precision(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the average precision metrics for binary labels.
 
@@ -141,6 +145,8 @@ def binary_average_precision_metrics(
             be an array of shape ``(n_samples, *)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -150,8 +156,8 @@ def binary_average_precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import binary_average_precision_metrics
-    >>> metrics = binary_average_precision_metrics(
+    >>> from arkas.metric import binary_average_precision
+    >>> metrics = binary_average_precision(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ... )
     >>> metrics
@@ -159,7 +165,9 @@ def binary_average_precision_metrics(
 
     ```
     """
-    y_true, y_score = preprocess_score_binary(y_true.ravel(), y_score.ravel(), remove_nan=True)
+    y_true, y_score = preprocess_score_binary(
+        y_true.ravel(), y_score.ravel(), remove_nan=ignore_nan
+    )
     count = y_true.size
     ap = float("nan")
     if count > 0:
@@ -167,12 +175,13 @@ def binary_average_precision_metrics(
     return {f"{prefix}average_precision{suffix}": ap, f"{prefix}count{suffix}": count}
 
 
-def multiclass_average_precision_metrics(
+def multiclass_average_precision(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics for multiclass labels.
 
@@ -185,6 +194,8 @@ def multiclass_average_precision_metrics(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -194,8 +205,8 @@ def multiclass_average_precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import multiclass_average_precision_metrics
-    >>> metrics = multiclass_average_precision_metrics(
+    >>> from arkas.metric import multiclass_average_precision
+    >>> metrics = multiclass_average_precision(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_score=np.array(
     ...         [
@@ -217,16 +228,17 @@ def multiclass_average_precision_metrics(
 
     ```
     """
-    y_true, y_score = preprocess_score_multiclass(y_true, y_score, remove_nan=True)
-    return _average_precision_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
+    y_true, y_score = preprocess_score_multiclass(y_true, y_score, remove_nan=ignore_nan)
+    return _average_precision(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
 
 
-def multilabel_average_precision_metrics(
+def multilabel_average_precision(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics for multilabel labels.
 
@@ -239,6 +251,8 @@ def multilabel_average_precision_metrics(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -248,8 +262,8 @@ def multilabel_average_precision_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import multilabel_average_precision_metrics
-    >>> metrics = multilabel_average_precision_metrics(
+    >>> from arkas.metric import multilabel_average_precision
+    >>> metrics = multilabel_average_precision(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
     ... )
@@ -262,11 +276,11 @@ def multilabel_average_precision_metrics(
 
     ```
     """
-    y_true, y_score = preprocess_score_multilabel(y_true, y_score, remove_nan=True)
-    return _average_precision_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
+    y_true, y_score = preprocess_score_multilabel(y_true, y_score, remove_nan=ignore_nan)
+    return _average_precision(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
 
 
-def _average_precision_metrics(
+def _average_precision(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
