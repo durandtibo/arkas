@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.jaccard import (
+from arkas.metric.classification.jaccard import (
     binary_jaccard_metrics,
     multiclass_jaccard_metrics,
     multilabel_jaccard_metrics,
