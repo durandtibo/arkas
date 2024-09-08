@@ -13,7 +13,7 @@ from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
 from arkas.result.ap import BinaryAveragePrecisionResult
 from arkas.result.base import BaseResult
 from arkas.result.confmat import BinaryConfusionMatrixResult
-from arkas.result.fbeta import BinaryFbetaResult
+from arkas.result.fbeta import BinaryFbetaScoreResult
 from arkas.result.jaccard import BinaryJaccardResult
 from arkas.result.precision import BinaryPrecisionResult
 from arkas.result.recall import BinaryRecallResult
@@ -96,7 +96,7 @@ class BinaryClassificationResult(BaseResult):
             AccuracyResult(y_true=self._y_true, y_pred=self._y_pred),
             BalancedAccuracyResult(y_true=self._y_true, y_pred=self._y_pred),
             BinaryConfusionMatrixResult(y_true=self._y_true, y_pred=self._y_pred),
-            BinaryFbetaResult(y_true=self._y_true, y_pred=self._y_pred, betas=self._betas),
+            BinaryFbetaScoreResult(y_true=self._y_true, y_pred=self._y_pred, betas=self._betas),
             BinaryJaccardResult(y_true=self._y_true, y_pred=self._y_pred),
             BinaryPrecisionResult(y_true=self._y_true, y_pred=self._y_pred),
             BinaryRecallResult(y_true=self._y_true, y_pred=self._y_pred),

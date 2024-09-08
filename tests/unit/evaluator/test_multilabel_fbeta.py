@@ -2,29 +2,29 @@ from __future__ import annotations
 
 import numpy as np
 
-from arkas.evaluator import MultilabelFbetaEvaluator
-from arkas.result import EmptyResult, MultilabelFbetaResult, Result
+from arkas.evaluator import MultilabelFbetaScoreEvaluator
+from arkas.result import EmptyResult, MultilabelFbetaScoreResult, Result
 
-##############################################
-#     Tests for MultilabelFbetaEvaluator     #
-##############################################
+###################################################
+#     Tests for MultilabelFbetaScoreEvaluator     #
+###################################################
 
 
-def test_multilabel_fbeta_evaluator_repr() -> None:
-    assert repr(MultilabelFbetaEvaluator(y_true="target", y_pred="pred")).startswith(
-        "MultilabelFbetaEvaluator("
+def test_multilabel_fbeta_score_evaluator_repr() -> None:
+    assert repr(MultilabelFbetaScoreEvaluator(y_true="target", y_pred="pred")).startswith(
+        "MultilabelFbetaScoreEvaluator("
     )
 
 
-def test_multilabel_fbeta_evaluator_str() -> None:
-    assert str(MultilabelFbetaEvaluator(y_true="target", y_pred="pred")).startswith(
-        "MultilabelFbetaEvaluator("
+def test_multilabel_fbeta_score_evaluator_str() -> None:
+    assert str(MultilabelFbetaScoreEvaluator(y_true="target", y_pred="pred")).startswith(
+        "MultilabelFbetaScoreEvaluator("
     )
 
 
-def test_multilabel_fbeta_evaluator_evaluate() -> None:
+def test_multilabel_fbeta_score_evaluator_evaluate() -> None:
     assert (
-        MultilabelFbetaEvaluator(y_true="target", y_pred="pred")
+        MultilabelFbetaScoreEvaluator(y_true="target", y_pred="pred")
         .evaluate(
             {
                 "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
@@ -32,7 +32,7 @@ def test_multilabel_fbeta_evaluator_evaluate() -> None:
             }
         )
         .equal(
-            MultilabelFbetaResult(
+            MultilabelFbetaScoreResult(
                 y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
                 y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
             )
@@ -40,9 +40,9 @@ def test_multilabel_fbeta_evaluator_evaluate() -> None:
     )
 
 
-def test_multilabel_fbeta_evaluator_evaluate_betas() -> None:
+def test_multilabel_fbeta_score_evaluator_evaluate_betas() -> None:
     assert (
-        MultilabelFbetaEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
+        MultilabelFbetaScoreEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
         .evaluate(
             {
                 "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
@@ -50,7 +50,7 @@ def test_multilabel_fbeta_evaluator_evaluate_betas() -> None:
             }
         )
         .equal(
-            MultilabelFbetaResult(
+            MultilabelFbetaScoreResult(
                 y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
                 y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
                 betas=[0.5, 1, 2],
@@ -59,9 +59,9 @@ def test_multilabel_fbeta_evaluator_evaluate_betas() -> None:
     )
 
 
-def test_multilabel_fbeta_evaluator_evaluate_lazy_false() -> None:
+def test_multilabel_fbeta_score_evaluator_evaluate_lazy_false() -> None:
     assert (
-        MultilabelFbetaEvaluator(y_true="target", y_pred="pred")
+        MultilabelFbetaScoreEvaluator(y_true="target", y_pred="pred")
         .evaluate(
             {
                 "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
@@ -83,9 +83,9 @@ def test_multilabel_fbeta_evaluator_evaluate_lazy_false() -> None:
     )
 
 
-def test_multilabel_fbeta_evaluator_evaluate_lazy_false_beteas() -> None:
+def test_multilabel_fbeta_score_evaluator_evaluate_lazy_false_beteas() -> None:
     assert (
-        MultilabelFbetaEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
+        MultilabelFbetaScoreEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
         .evaluate(
             {
                 "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
@@ -115,9 +115,9 @@ def test_multilabel_fbeta_evaluator_evaluate_lazy_false_beteas() -> None:
     )
 
 
-def test_multilabel_fbeta_evaluator_evaluate_missing_keys() -> None:
+def test_multilabel_fbeta_score_evaluator_evaluate_missing_keys() -> None:
     assert (
-        MultilabelFbetaEvaluator(y_true="target", y_pred="prediction")
+        MultilabelFbetaScoreEvaluator(y_true="target", y_pred="prediction")
         .evaluate(
             {
                 "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
@@ -128,9 +128,9 @@ def test_multilabel_fbeta_evaluator_evaluate_missing_keys() -> None:
     )
 
 
-def test_multilabel_fbeta_evaluator_evaluate_lazy_false_missing_keys() -> None:
+def test_multilabel_fbeta_score_evaluator_evaluate_lazy_false_missing_keys() -> None:
     assert (
-        MultilabelFbetaEvaluator(y_true="target", y_pred="missing")
+        MultilabelFbetaScoreEvaluator(y_true="target", y_pred="missing")
         .evaluate(
             {
                 "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),

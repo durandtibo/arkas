@@ -2,13 +2,13 @@ r"""Contain the F-beta evaluator for multiclass labels."""
 
 from __future__ import annotations
 
-__all__ = ["MulticlassFbetaEvaluator"]
+__all__ = ["MulticlassFbetaScoreEvaluator"]
 
 import logging
 from typing import TYPE_CHECKING
 
 from arkas.evaluator.base import BaseLazyEvaluator
-from arkas.result import EmptyResult, MulticlassFbetaResult
+from arkas.result import EmptyResult, MulticlassFbetaScoreResult
 from arkas.utils.array import to_array
 from arkas.utils.data import find_keys, find_missing_keys
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MulticlassFbetaEvaluator(BaseLazyEvaluator):
+class MulticlassFbetaScoreEvaluator(BaseLazyEvaluator):
     r"""Implement the F-beta evaluator for multiclass labels.
 
     Args:
@@ -37,14 +37,14 @@ class MulticlassFbetaEvaluator(BaseLazyEvaluator):
 
     >>> import numpy as np
     >>> import polars as pl
-    >>> from arkas.evaluator import MulticlassFbetaEvaluator
+    >>> from arkas.evaluator import MulticlassFbetaScoreEvaluator
     >>> data = {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])}
-    >>> evaluator = MulticlassFbetaEvaluator(y_true="target", y_pred="pred")
+    >>> evaluator = MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    MulticlassFbetaEvaluator(y_true=target, y_pred=pred, betas=(1,))
+    MulticlassFbetaScoreEvaluator(y_true=target, y_pred=pred, betas=(1,))
     >>> result = evaluator.evaluate(data)
     >>> result
-    MulticlassFbetaResult(y_true=(6,), y_pred=(6,), betas=(1,))
+    MulticlassFbetaScoreResult(y_true=(6,), y_pred=(6,), betas=(1,))
 
     ```
     """
@@ -73,7 +73,7 @@ class MulticlassFbetaEvaluator(BaseLazyEvaluator):
                 f"{sorted(missing_keys)}"
             )
             return EmptyResult()
-        return MulticlassFbetaResult(
+        return MulticlassFbetaScoreResult(
             y_true=to_array(data[self._y_true]).ravel(),
             y_pred=to_array(data[self._y_pred]).ravel(),
             betas=self._betas,

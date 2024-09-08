@@ -8,7 +8,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from arkas.evaluator.lazy import BaseLazyEvaluator
-from arkas.result import BinaryFbetaResult, Result
+from arkas.result import BinaryFbetaScoreResult, Result
 from arkas.utils.array import to_array
 
 if TYPE_CHECKING:
@@ -42,7 +42,7 @@ class BinaryFbetaScoreEvaluator(BaseLazyEvaluator):
     ...     pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     ... )
     >>> result
-    BinaryFbetaResult(y_true=(5,), y_pred=(5,), betas=(1,))
+    BinaryFbetaScoreResult(y_true=(5,), y_pred=(5,), betas=(1,))
 
     ```
     """
@@ -61,15 +61,15 @@ class BinaryFbetaScoreEvaluator(BaseLazyEvaluator):
             f"y_pred={self._y_pred}, betas={self._betas}, drop_nulls={self._drop_nulls})"
         )
 
-    def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BinaryFbetaResult | Result:
+    def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BinaryFbetaScoreResult | Result:
         logger.info(
             f"Evaluating the accuracy | y_true={self._y_true} | y_pred={self._y_pred} | "
             f"drop_nulls={self._drop_nulls}"
         )
         return self._evaluate(data, lazy)
 
-    def _compute_result(self, data: pl.DataFrame) -> BinaryFbetaResult:
-        return BinaryFbetaResult(
+    def _compute_result(self, data: pl.DataFrame) -> BinaryFbetaScoreResult:
+        return BinaryFbetaScoreResult(
             y_true=to_array(data[self._y_true]).ravel(),
             y_pred=to_array(data[self._y_pred]).ravel(),
             betas=self._betas,

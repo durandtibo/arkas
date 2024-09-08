@@ -4,7 +4,7 @@ import numpy as np
 import polars as pl
 
 from arkas.evaluator import BinaryFbetaScoreEvaluator
-from arkas.result import BinaryFbetaResult, EmptyResult, Result
+from arkas.result import BinaryFbetaScoreResult, EmptyResult, Result
 
 ###############################################
 #     Tests for BinaryFbetaScoreEvaluator     #
@@ -28,7 +28,9 @@ def test_binary_fbeta_score_evaluator_evaluate() -> None:
         BinaryFbetaScoreEvaluator(y_true="target", y_pred="pred")
         .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}))
         .equal(
-            BinaryFbetaResult(y_true=np.array([1, 0, 1, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
+            BinaryFbetaScoreResult(
+                y_true=np.array([1, 0, 1, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+            )
         )
     )
 
@@ -38,7 +40,7 @@ def test_binary_fbeta_score_evaluator_evaluate_betas() -> None:
         BinaryFbetaScoreEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
         .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}))
         .equal(
-            BinaryFbetaResult(
+            BinaryFbetaScoreResult(
                 y_true=np.array([1, 0, 1, 0, 1]),
                 y_pred=np.array([1, 0, 0, 1, 1]),
                 betas=[0.5, 1, 2],
@@ -84,7 +86,9 @@ def test_binary_fbeta_score_evaluator_evaluate_dataframe() -> None:
         BinaryFbetaScoreEvaluator(y_true="target", y_pred="pred")
         .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}))
         .equal(
-            BinaryFbetaResult(y_true=np.array([1, 0, 1, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1]))
+            BinaryFbetaScoreResult(
+                y_true=np.array([1, 0, 1, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+            )
         )
     )
 
@@ -102,7 +106,9 @@ def test_binary_fbeta_score_evaluator_evaluate_drop_nulls() -> None:
             )
         )
         .equal(
-            BinaryFbetaResult(y_true=np.array([1, 2, 3, 2, 1]), y_pred=np.array([3, 2, 0, 1, 0]))
+            BinaryFbetaScoreResult(
+                y_true=np.array([1, 2, 3, 2, 1]), y_pred=np.array([3, 2, 0, 1, 0])
+            )
         )
     )
 
@@ -120,7 +126,7 @@ def test_binary_fbeta_score_evaluator_evaluate_drop_nulls_false() -> None:
             )
         )
         .equal(
-            BinaryFbetaResult(
+            BinaryFbetaScoreResult(
                 y_true=np.array([1.0, 2.0, 3.0, 2.0, 1.0, 2.0, float("nan"), float("nan")]),
                 y_pred=np.array([3.0, 2.0, 0.0, 1.0, 0.0, float("nan"), 1.0, float("nan")]),
             ),
