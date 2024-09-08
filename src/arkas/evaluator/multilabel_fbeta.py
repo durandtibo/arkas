@@ -2,13 +2,13 @@ r"""Contain the F-beta evaluator for multilabel labels."""
 
 from __future__ import annotations
 
-__all__ = ["MultilabelFbetaEvaluator"]
+__all__ = ["MultilabelFbetaScoreEvaluator"]
 
 import logging
 from typing import TYPE_CHECKING
 
 from arkas.evaluator.base import BaseLazyEvaluator
-from arkas.result import EmptyResult, MultilabelFbetaResult
+from arkas.result import EmptyResult, MultilabelFbetaScoreResult
 from arkas.utils.array import to_array
 from arkas.utils.data import find_keys, find_missing_keys
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MultilabelFbetaEvaluator(BaseLazyEvaluator):
+class MultilabelFbetaScoreEvaluator(BaseLazyEvaluator):
     r"""Implement the F-beta evaluator for multilabel labels.
 
     Args:
@@ -37,17 +37,17 @@ class MultilabelFbetaEvaluator(BaseLazyEvaluator):
 
     >>> import numpy as np
     >>> import polars as pl
-    >>> from arkas.evaluator import MultilabelFbetaEvaluator
+    >>> from arkas.evaluator import MultilabelFbetaScoreEvaluator
     >>> data = {
     ...     "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
     ...     "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... }
-    >>> evaluator = MultilabelFbetaEvaluator(y_true="target", y_pred="pred")
+    >>> evaluator = MultilabelFbetaScoreEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    MultilabelFbetaEvaluator(y_true=target, y_pred=pred, betas=(1,))
+    MultilabelFbetaScoreEvaluator(y_true=target, y_pred=pred, betas=(1,))
     >>> result = evaluator.evaluate(data)
     >>> result
-    MultilabelFbetaResult(y_true=(5, 3), y_pred=(5, 3), betas=(1,))
+    MultilabelFbetaScoreResult(y_true=(5, 3), y_pred=(5, 3), betas=(1,))
 
     ```
     """
@@ -76,7 +76,7 @@ class MultilabelFbetaEvaluator(BaseLazyEvaluator):
                 f"{sorted(missing_keys)}"
             )
             return EmptyResult()
-        return MultilabelFbetaResult(
+        return MultilabelFbetaScoreResult(
             y_true=to_array(data[self._y_true]),
             y_pred=to_array(data[self._y_pred]),
             betas=self._betas,

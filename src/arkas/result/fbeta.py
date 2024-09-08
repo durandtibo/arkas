@@ -3,10 +3,10 @@ r"""Implement the F-beta result."""
 from __future__ import annotations
 
 __all__ = [
-    "BaseFbetaResult",
-    "BinaryFbetaResult",
-    "MulticlassFbetaResult",
-    "MultilabelFbetaResult",
+    "BaseFbetaScoreResult",
+    "BinaryFbetaScoreResult",
+    "MulticlassFbetaScoreResult",
+    "MultilabelFbetaScoreResult",
 ]
 
 from typing import TYPE_CHECKING, Any
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-class BaseFbetaResult(BaseResult):
+class BaseFbetaScoreResult(BaseResult):
     r"""Implement the base class to implement the F-beta results.
 
     Args:
@@ -40,12 +40,12 @@ class BaseFbetaResult(BaseResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import BinaryFbetaResult
-    >>> result = BinaryFbetaResult(
+    >>> from arkas.result import BinaryFbetaScoreResult
+    >>> result = BinaryFbetaScoreResult(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryFbetaResult(y_true=(5,), y_pred=(5,), betas=(1,))
+    BinaryFbetaScoreResult(y_true=(5,), y_pred=(5,), betas=(1,))
     >>> result.compute_metrics()
     {'count': 5, 'f1': 1.0}
 
@@ -90,7 +90,7 @@ class BaseFbetaResult(BaseResult):
         )
 
 
-class BinaryFbetaResult(BaseFbetaResult):
+class BinaryFbetaScoreResult(BaseFbetaScoreResult):
     r"""Implement the F-beta result for binary labels.
 
     Args:
@@ -106,12 +106,12 @@ class BinaryFbetaResult(BaseFbetaResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import BinaryFbetaResult
-    >>> result = BinaryFbetaResult(
+    >>> from arkas.result import BinaryFbetaScoreResult
+    >>> result = BinaryFbetaScoreResult(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryFbetaResult(y_true=(5,), y_pred=(5,), betas=(1,))
+    BinaryFbetaScoreResult(y_true=(5,), y_pred=(5,), betas=(1,))
     >>> result.compute_metrics()
     {'count': 5, 'f1': 1.0}
 
@@ -142,7 +142,7 @@ class BinaryFbetaResult(BaseFbetaResult):
         return {}
 
 
-class MulticlassFbetaResult(BaseFbetaResult):
+class MulticlassFbetaScoreResult(BaseFbetaScoreResult):
     r"""Implement the F-beta result for multiclass labels.
 
     Args:
@@ -159,13 +159,13 @@ class MulticlassFbetaResult(BaseFbetaResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import MulticlassFbetaResult
-    >>> result = MulticlassFbetaResult(
+    >>> from arkas.result import MulticlassFbetaScoreResult
+    >>> result = MulticlassFbetaScoreResult(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ... )
     >>> result
-    MulticlassFbetaResult(y_true=(6,), y_pred=(6,), betas=(1,))
+    MulticlassFbetaScoreResult(y_true=(6,), y_pred=(6,), betas=(1,))
     >>> result.compute_metrics()
     {'count': 6,
      'f1': array([1., 1., 1.]),
@@ -200,7 +200,7 @@ class MulticlassFbetaResult(BaseFbetaResult):
         return {}
 
 
-class MultilabelFbetaResult(BaseFbetaResult):
+class MultilabelFbetaScoreResult(BaseFbetaScoreResult):
     r"""Implement the F-beta result for multilabel labels.
 
     Args:
@@ -217,13 +217,13 @@ class MultilabelFbetaResult(BaseFbetaResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import MultilabelFbetaResult
-    >>> result = MultilabelFbetaResult(
+    >>> from arkas.result import MultilabelFbetaScoreResult
+    >>> result = MultilabelFbetaScoreResult(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )
     >>> result
-    MultilabelFbetaResult(y_true=(5, 3), y_pred=(5, 3), betas=(1,))
+    MultilabelFbetaScoreResult(y_true=(5, 3), y_pred=(5, 3), betas=(1,))
     >>> result.compute_metrics()
     {'count': 5,
      'f1': array([1., 1., 1.]),

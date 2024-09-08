@@ -3,44 +3,44 @@ from __future__ import annotations
 import numpy as np
 import polars as pl
 
-from arkas.evaluator import MulticlassFbetaEvaluator
-from arkas.result import EmptyResult, MulticlassFbetaResult, Result
+from arkas.evaluator import MulticlassFbetaScoreEvaluator
+from arkas.result import EmptyResult, MulticlassFbetaScoreResult, Result
 
-##############################################
-#     Tests for MulticlassFbetaEvaluator     #
-##############################################
+###################################################
+#     Tests for MulticlassFbetaScoreEvaluator     #
+###################################################
 
 
-def test_multiclass_fbeta_evaluator_repr() -> None:
-    assert repr(MulticlassFbetaEvaluator(y_true="target", y_pred="pred")).startswith(
-        "MulticlassFbetaEvaluator("
+def test_multiclass_fbeta_score_evaluator_repr() -> None:
+    assert repr(MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred")).startswith(
+        "MulticlassFbetaScoreEvaluator("
     )
 
 
-def test_multiclass_fbeta_evaluator_str() -> None:
-    assert str(MulticlassFbetaEvaluator(y_true="target", y_pred="pred")).startswith(
-        "MulticlassFbetaEvaluator("
+def test_multiclass_fbeta_score_evaluator_str() -> None:
+    assert str(MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred")).startswith(
+        "MulticlassFbetaScoreEvaluator("
     )
 
 
-def test_multiclass_fbeta_evaluator_evaluate() -> None:
+def test_multiclass_fbeta_score_evaluator_evaluate() -> None:
     assert (
-        MulticlassFbetaEvaluator(y_true="target", y_pred="pred")
+        MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred")
         .evaluate({"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 2, 2, 1])})
         .equal(
-            MulticlassFbetaResult(
+            MulticlassFbetaScoreResult(
                 y_true=np.array([0, 0, 1, 2, 2, 1]), y_pred=np.array([0, 0, 1, 1, 2, 2])
             )
         )
     )
 
 
-def test_multiclass_fbeta_evaluator_evaluate_betas() -> None:
+def test_multiclass_fbeta_score_evaluator_evaluate_betas() -> None:
     assert (
-        MulticlassFbetaEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
+        MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
         .evaluate({"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 2, 2, 1])})
         .equal(
-            MulticlassFbetaResult(
+            MulticlassFbetaScoreResult(
                 y_true=np.array([0, 0, 1, 2, 2, 1]),
                 y_pred=np.array([0, 0, 1, 1, 2, 2]),
                 betas=[0.5, 1, 2],
@@ -49,9 +49,9 @@ def test_multiclass_fbeta_evaluator_evaluate_betas() -> None:
     )
 
 
-def test_multiclass_fbeta_evaluator_evaluate_lazy_false() -> None:
+def test_multiclass_fbeta_score_evaluator_evaluate_lazy_false() -> None:
     assert (
-        MulticlassFbetaEvaluator(y_true="target", y_pred="pred")
+        MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred")
         .evaluate(
             {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])},
             lazy=False,
@@ -70,9 +70,9 @@ def test_multiclass_fbeta_evaluator_evaluate_lazy_false() -> None:
     )
 
 
-def test_multiclass_fbeta_evaluator_evaluate_lazy_false_betas() -> None:
+def test_multiclass_fbeta_score_evaluator_evaluate_lazy_false_betas() -> None:
     assert (
-        MulticlassFbetaEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
+        MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred", betas=[0.5, 1, 2])
         .evaluate(
             {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])},
             lazy=False,
@@ -99,17 +99,17 @@ def test_multiclass_fbeta_evaluator_evaluate_lazy_false_betas() -> None:
     )
 
 
-def test_multiclass_fbeta_evaluator_evaluate_missing_keys() -> None:
+def test_multiclass_fbeta_score_evaluator_evaluate_missing_keys() -> None:
     assert (
-        MulticlassFbetaEvaluator(y_true="target", y_pred="prediction")
+        MulticlassFbetaScoreEvaluator(y_true="target", y_pred="prediction")
         .evaluate({"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])})
         .equal(EmptyResult())
     )
 
 
-def test_multiclass_fbeta_evaluator_evaluate_lazy_false_missing_keys() -> None:
+def test_multiclass_fbeta_score_evaluator_evaluate_lazy_false_missing_keys() -> None:
     assert (
-        MulticlassFbetaEvaluator(y_true="target", y_pred="missing")
+        MulticlassFbetaScoreEvaluator(y_true="target", y_pred="missing")
         .evaluate(
             {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])},
             lazy=False,
@@ -118,12 +118,12 @@ def test_multiclass_fbeta_evaluator_evaluate_lazy_false_missing_keys() -> None:
     )
 
 
-def test_multiclass_fbeta_evaluator_evaluate_dataframe() -> None:
+def test_multiclass_fbeta_score_evaluator_evaluate_dataframe() -> None:
     assert (
-        MulticlassFbetaEvaluator(y_true="target", y_pred="pred")
+        MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred")
         .evaluate(pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 2, 2, 1]}))
         .equal(
-            MulticlassFbetaResult(
+            MulticlassFbetaScoreResult(
                 y_true=np.array([0, 0, 1, 2, 2, 1]), y_pred=np.array([0, 0, 1, 1, 2, 2])
             )
         )

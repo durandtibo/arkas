@@ -10,7 +10,7 @@ __all__ = [
     "BinaryAveragePrecisionResult",
     "BinaryClassificationResult",
     "BinaryConfusionMatrixResult",
-    "BinaryFbetaResult",
+    "BinaryFbetaScoreResult",
     "BinaryJaccardResult",
     "BinaryPrecisionResult",
     "BinaryRecallResult",
@@ -21,14 +21,14 @@ __all__ = [
     "MeanSquaredErrorResult",
     "MulticlassAveragePrecisionResult",
     "MulticlassConfusionMatrixResult",
-    "MulticlassFbetaResult",
+    "MulticlassFbetaScoreResult",
     "MulticlassJaccardResult",
     "MulticlassPrecisionResult",
     "MulticlassRecallResult",
     "MulticlassRocAucResult",
     "MultilabelAveragePrecisionResult",
     "MultilabelConfusionMatrixResult",
-    "MultilabelFbetaResult",
+    "MultilabelFbetaScoreResult",
     "MultilabelJaccardResult",
     "MultilabelPrecisionResult",
     "MultilabelRecallResult",
@@ -54,9 +54,9 @@ from arkas.result.confmat import (
     MultilabelConfusionMatrixResult,
 )
 from arkas.result.fbeta import (
-    BinaryFbetaResult,
-    MulticlassFbetaResult,
-    MultilabelFbetaResult,
+    BinaryFbetaScoreResult,
+    MulticlassFbetaScoreResult,
+    MultilabelFbetaScoreResult,
 )
 from arkas.result.jaccard import (
     BinaryJaccardResult,
