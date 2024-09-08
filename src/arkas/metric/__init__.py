@@ -16,6 +16,12 @@ __all__ = [
     "confusion_matrix",
     "fbeta_score",
     "jaccard",
+    "mean_absolute_error",
+    "mean_absolute_percentage_error",
+    "mean_squared_error",
+    "mean_squared_log_error",
+    "mean_tweedie_deviance",
+    "median_absolute_error",
     "multiclass_average_precision",
     "multiclass_confusion_matrix",
     "multiclass_fbeta_score",
@@ -32,14 +38,8 @@ __all__ = [
     "multilabel_roc_auc",
     "precision",
     "recall",
-    "roc_auc",
-    "mean_absolute_error",
-    "median_absolute_error",
-    "mean_squared_error",
-    "mean_squared_log_error",
     "regression_errors",
-    "mean_absolute_percentage_error",
-    "mean_tweedie_deviance",
+    "roc_auc",
 ]
 
 from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
