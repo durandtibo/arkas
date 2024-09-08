@@ -28,40 +28,42 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
 
     ```pycon
 
-    >>> import numpy as np
+    >>> import polars as pl
     >>> from arkas.evaluator import AccuracyEvaluator
-    >>> data = {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
     >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     AccuracyEvaluator(y_true=target, y_pred=pred)
-    >>> result = evaluator.evaluate(data)
+    >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+    >>> result = evaluator.evaluate(frame)
     >>> result
-    AccuracyResult(y_true=(5,), y_pred=(5,))
+    AccuracyResult(y_true=(6,), y_pred=(6,))
 
     ```
     """
 
     def evaluate(self, data: dict | pl.DataFrame, lazy: bool = True) -> BaseResult:
-        r"""Evaluate the results.
+        r"""Evaluate the result.
 
         Args:
             data: The data to evaluate.
-            lazy: If ``False``, it forces the computation of the results, otherwise it tries to
+            lazy: If ``True``, it forces the computation of the
+                result, otherwise it returns a result object that
+                delays the evaluation of the result.
 
         Returns:
-            The generated results.
+            The generated result.
 
         Example usage:
 
         ```pycon
 
-        >>> import numpy as np
+        >>> import polars as pl
         >>> from arkas.evaluator import AccuracyEvaluator
-        >>> data = {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
         >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
-        >>> result = evaluator.evaluate(data)
+        >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+        >>> result = evaluator.evaluate(frame)
         >>> result
-        AccuracyResult(y_true=(5,), y_pred=(5,))
+        AccuracyResult(y_true=(6,), y_pred=(6,))
 
         ```
         """
