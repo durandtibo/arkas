@@ -11,7 +11,7 @@ __all__ = [
     "BinaryAveragePrecisionEvaluator",
     "BinaryClassificationEvaluator",
     "BinaryConfusionMatrixEvaluator",
-    "BinaryFbetaEvaluator",
+    "BinaryFbetaScoreEvaluator",
     "BinaryJaccardEvaluator",
     "BinaryPrecisionEvaluator",
     "BinaryRecallEvaluator",
@@ -49,7 +49,7 @@ from arkas.evaluator.base import (
 from arkas.evaluator.binary_ap import BinaryAveragePrecisionEvaluator
 from arkas.evaluator.binary_classification import BinaryClassificationEvaluator
 from arkas.evaluator.binary_confmat import BinaryConfusionMatrixEvaluator
-from arkas.evaluator.binary_fbeta import BinaryFbetaEvaluator
+from arkas.evaluator.binary_fbeta import BinaryFbetaScoreEvaluator
 from arkas.evaluator.binary_jaccard import BinaryJaccardEvaluator
 from arkas.evaluator.binary_precision import BinaryPrecisionEvaluator
 from arkas.evaluator.binary_recall import BinaryRecallEvaluator
