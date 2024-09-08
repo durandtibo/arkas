@@ -146,7 +146,11 @@ def test_average_precision_evaluator_evaluate_drop_nulls() -> None:
         AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="binary")
         .evaluate(
             pl.DataFrame(
-                {"pred": [2, -1, 0, 3, 1, None, 1, None], "target": [1, 0, 0, 1, 1, 2, None, None]}
+                {
+                    "pred": [2, -1, 0, 3, 1, None, 1, None],
+                    "target": [1, 0, 0, 1, 1, 2, None, None],
+                    "col": [1, 0, 0, 1, 1, None, 7, None],
+                }
             )
         )
         .equal(
@@ -166,7 +170,11 @@ def test_average_precision_evaluator_evaluate_drop_nulls_false() -> None:
         )
         .evaluate(
             pl.DataFrame(
-                {"pred": [2, -1, 0, 3, 1, None, 1, None], "target": [1, 0, 0, 1, 1, 2, None, None]}
+                {
+                    "pred": [2, -1, 0, 3, 1, None, 1, None],
+                    "target": [1, 0, 0, 1, 1, 2, None, None],
+                    "col": [1, 0, 0, 1, 1, None, 7, None],
+                }
             )
         )
         .equal(
