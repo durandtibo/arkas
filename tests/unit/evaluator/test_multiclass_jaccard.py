@@ -26,7 +26,7 @@ def test_multiclass_jaccard_evaluator_str() -> None:
 def test_multiclass_jaccard_evaluator_evaluate() -> None:
     assert (
         MulticlassJaccardEvaluator(y_true="target", y_pred="pred")
-        .evaluate({"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 2, 2, 1])})
+        .evaluate(pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 2, 2, 1]}))
         .equal(
             MulticlassJaccardResult(
                 y_true=np.array([0, 0, 1, 2, 2, 1]), y_pred=np.array([0, 0, 1, 1, 2, 2])
@@ -39,7 +39,7 @@ def test_multiclass_jaccard_evaluator_evaluate_lazy_false() -> None:
     assert (
         MulticlassJaccardEvaluator(y_true="target", y_pred="pred")
         .evaluate(
-            {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])},
+            pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]}),
             lazy=False,
         )
         .equal(
@@ -59,7 +59,7 @@ def test_multiclass_jaccard_evaluator_evaluate_lazy_false() -> None:
 def test_multiclass_jaccard_evaluator_evaluate_missing_keys() -> None:
     assert (
         MulticlassJaccardEvaluator(y_true="target", y_pred="prediction")
-        .evaluate({"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])})
+        .evaluate(pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 2, 2, 1]}))
         .equal(EmptyResult())
     )
 
@@ -68,7 +68,7 @@ def test_multiclass_jaccard_evaluator_evaluate_lazy_false_missing_keys() -> None
     assert (
         MulticlassJaccardEvaluator(y_true="target", y_pred="missing")
         .evaluate(
-            {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])},
+            pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 2, 2, 1]}),
             lazy=False,
         )
         .equal(EmptyResult())
