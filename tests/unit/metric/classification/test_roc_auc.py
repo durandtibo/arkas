@@ -4,21 +4,16 @@ import numpy as np
 import pytest
 from coola import objects_are_allclose, objects_are_equal
 
-from arkas.metric import (
-    binary_roc_auc_metrics,
-    multiclass_roc_auc_metrics,
-    multilabel_roc_auc_metrics,
-    roc_auc_metrics,
-)
+from arkas.metric import binary_roc_auc, multiclass_roc_auc, multilabel_roc_auc, roc_auc
 
-#####################################
-#     Tests for roc_auc_metrics     #
-#####################################
+#############################
+#     Tests for roc_auc     #
+#############################
 
 
-def test_roc_auc_metrics_auto_binary() -> None:
+def test_roc_auc_auto_binary() -> None:
     assert objects_are_equal(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
             label_type="binary",
@@ -27,9 +22,9 @@ def test_roc_auc_metrics_auto_binary() -> None:
     )
 
 
-def test_roc_auc_metrics_binary() -> None:
+def test_roc_auc_binary() -> None:
     assert objects_are_equal(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
             label_type="binary",
@@ -38,9 +33,9 @@ def test_roc_auc_metrics_binary() -> None:
     )
 
 
-def test_roc_auc_metrics_binary_prefix_suffix() -> None:
+def test_roc_auc_binary_prefix_suffix() -> None:
     assert objects_are_equal(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
             label_type="binary",
@@ -51,9 +46,9 @@ def test_roc_auc_metrics_binary_prefix_suffix() -> None:
     )
 
 
-def test_roc_auc_metrics_auto_multiclass() -> None:
+def test_roc_auc_auto_multiclass() -> None:
     assert objects_are_equal(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(
                 [
@@ -76,9 +71,9 @@ def test_roc_auc_metrics_auto_multiclass() -> None:
     )
 
 
-def test_roc_auc_metrics_multiclass() -> None:
+def test_roc_auc_multiclass() -> None:
     assert objects_are_equal(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(
                 [
@@ -102,9 +97,9 @@ def test_roc_auc_metrics_multiclass() -> None:
     )
 
 
-def test_roc_auc_metrics_multiclass_prefix_suffix() -> None:
+def test_roc_auc_multiclass_prefix_suffix() -> None:
     assert objects_are_equal(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(
                 [
@@ -130,9 +125,9 @@ def test_roc_auc_metrics_multiclass_prefix_suffix() -> None:
     )
 
 
-def test_roc_auc_metrics_auto_multilabel() -> None:
+def test_roc_auc_auto_multilabel() -> None:
     assert objects_are_allclose(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
         ),
@@ -146,9 +141,9 @@ def test_roc_auc_metrics_auto_multilabel() -> None:
     )
 
 
-def test_roc_auc_metrics_multilabel() -> None:
+def test_roc_auc_multilabel() -> None:
     assert objects_are_allclose(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
             label_type="multilabel",
@@ -163,9 +158,9 @@ def test_roc_auc_metrics_multilabel() -> None:
     )
 
 
-def test_roc_auc_metrics_multilabel_prefix_suffix() -> None:
+def test_roc_auc_multilabel_prefix_suffix() -> None:
     assert objects_are_equal(
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
             label_type="multilabel",
@@ -182,9 +177,9 @@ def test_roc_auc_metrics_multilabel_prefix_suffix() -> None:
     )
 
 
-def test_roc_auc_metrics_label_type_incorrect() -> None:
+def test_roc_auc_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
-        roc_auc_metrics(
+        roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(
                 [
@@ -200,14 +195,14 @@ def test_roc_auc_metrics_label_type_incorrect() -> None:
         )
 
 
-############################################
-#     Tests for binary_roc_auc_metrics     #
-############################################
+####################################
+#     Tests for binary_roc_auc     #
+####################################
 
 
-def test_binary_roc_auc_metrics_correct() -> None:
+def test_binary_roc_auc_correct() -> None:
     assert objects_are_equal(
-        binary_roc_auc_metrics(
+        binary_roc_auc(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
         ),
@@ -215,9 +210,9 @@ def test_binary_roc_auc_metrics_correct() -> None:
     )
 
 
-def test_binary_roc_auc_metrics_correct_2d() -> None:
+def test_binary_roc_auc_correct_2d() -> None:
     assert objects_are_equal(
-        binary_roc_auc_metrics(
+        binary_roc_auc(
             y_true=np.array([[1, 0, 0], [1, 1, 0]]),
             y_score=np.array([[2, -1, 0], [3, 1, -2]]),
         ),
@@ -225,9 +220,9 @@ def test_binary_roc_auc_metrics_correct_2d() -> None:
     )
 
 
-def test_binary_roc_auc_metrics_incorrect() -> None:
+def test_binary_roc_auc_incorrect() -> None:
     assert objects_are_equal(
-        binary_roc_auc_metrics(
+        binary_roc_auc(
             y_true=np.array([1, 0, 0, 1]),
             y_score=np.array([-1, 1, 0, -2]),
         ),
@@ -235,17 +230,17 @@ def test_binary_roc_auc_metrics_incorrect() -> None:
     )
 
 
-def test_binary_roc_auc_metrics_empty() -> None:
+def test_binary_roc_auc_empty() -> None:
     assert objects_are_equal(
-        binary_roc_auc_metrics(y_true=np.array([]), y_score=np.array([])),
+        binary_roc_auc(y_true=np.array([]), y_score=np.array([])),
         {"count": 0, "roc_auc": float("nan")},
         equal_nan=True,
     )
 
 
-def test_binary_roc_auc_metrics_prefix_suffix() -> None:
+def test_binary_roc_auc_prefix_suffix() -> None:
     assert objects_are_equal(
-        binary_roc_auc_metrics(
+        binary_roc_auc(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
             prefix="prefix_",
@@ -255,52 +250,63 @@ def test_binary_roc_auc_metrics_prefix_suffix() -> None:
     )
 
 
-def test_binary_roc_auc_metrics_incorrect_shape() -> None:
+def test_binary_roc_auc_incorrect_shape() -> None:
     with pytest.raises(RuntimeError, match="'y_true' and 'y_score' have different shapes:"):
-        binary_roc_auc_metrics(
+        binary_roc_auc(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1, 6]),
         )
 
 
-def test_binary_roc_auc_metrics_nans() -> None:
-    assert objects_are_equal(
-        binary_roc_auc_metrics(
+def test_binary_roc_auc_nan() -> None:
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
+        binary_roc_auc(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
+        )
+
+
+def test_binary_roc_auc_ignore_nan() -> None:
+    assert objects_are_equal(
+        binary_roc_auc(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
+            ignore_nan=True,
         ),
         {"count": 5, "roc_auc": 1.0},
     )
 
 
-def test_binary_roc_auc_metrics_y_true_nan() -> None:
+def test_binary_roc_auc_ignore_nan_y_true() -> None:
     assert objects_are_equal(
-        binary_roc_auc_metrics(
+        binary_roc_auc(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1, 0]),
+            ignore_nan=True,
         ),
         {"count": 5, "roc_auc": 1.0},
     )
 
 
-def test_binary_roc_auc_metrics_y_score_nan() -> None:
+def test_binary_roc_auc_ignore_nan_y_score() -> None:
     assert objects_are_equal(
-        binary_roc_auc_metrics(
+        binary_roc_auc(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_score=np.array([2, -1, 0, float("nan"), 1, -3]),
+            ignore_nan=True,
         ),
         {"count": 5, "roc_auc": 1.0},
     )
 
 
-################################################
-#     Tests for multiclass_roc_auc_metrics     #
-################################################
+########################################
+#     Tests for multiclass_roc_auc     #
+########################################
 
 
-def test_multiclass_roc_auc_metrics_correct() -> None:
+def test_multiclass_roc_auc_correct() -> None:
     assert objects_are_equal(
-        multiclass_roc_auc_metrics(
+        multiclass_roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(
                 [
@@ -323,9 +329,9 @@ def test_multiclass_roc_auc_metrics_correct() -> None:
     )
 
 
-def test_multiclass_roc_auc_metrics_incorrect() -> None:
+def test_multiclass_roc_auc_incorrect() -> None:
     assert objects_are_allclose(
-        multiclass_roc_auc_metrics(
+        multiclass_roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(
                 [
@@ -348,9 +354,9 @@ def test_multiclass_roc_auc_metrics_incorrect() -> None:
     )
 
 
-def test_multiclass_roc_auc_metrics_empty_1d() -> None:
+def test_multiclass_roc_auc_empty_1d() -> None:
     assert objects_are_equal(
-        multiclass_roc_auc_metrics(y_true=np.array([]), y_score=np.array([])),
+        multiclass_roc_auc(y_true=np.array([]), y_score=np.array([])),
         {
             "count": 0,
             "macro_roc_auc": float("nan"),
@@ -362,9 +368,9 @@ def test_multiclass_roc_auc_metrics_empty_1d() -> None:
     )
 
 
-def test_multiclass_roc_auc_metrics_empty_2d() -> None:
+def test_multiclass_roc_auc_empty_2d() -> None:
     assert objects_are_equal(
-        multiclass_roc_auc_metrics(y_true=np.ones((0,)), y_score=np.ones((0, 3))),
+        multiclass_roc_auc(y_true=np.ones((0,)), y_score=np.ones((0, 3))),
         {
             "count": 0,
             "macro_roc_auc": float("nan"),
@@ -376,9 +382,9 @@ def test_multiclass_roc_auc_metrics_empty_2d() -> None:
     )
 
 
-def test_multiclass_roc_auc_metrics_prefix_suffix() -> None:
+def test_multiclass_roc_auc_prefix_suffix() -> None:
     assert objects_are_equal(
-        multiclass_roc_auc_metrics(
+        multiclass_roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(
                 [
@@ -403,9 +409,9 @@ def test_multiclass_roc_auc_metrics_prefix_suffix() -> None:
     )
 
 
-def test_multiclass_roc_auc_metrics_nans() -> None:
-    assert objects_are_equal(
-        multiclass_roc_auc_metrics(
+def test_multiclass_roc_auc_nan() -> None:
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
+        multiclass_roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_score=np.array(
                 [
@@ -418,25 +424,44 @@ def test_multiclass_roc_auc_metrics_nans() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
+        )
+
+
+def test_multiclass_roc_auc_nans() -> None:
+    assert objects_are_equal(
+        multiclass_roc_auc(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, float("nan")],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [float("nan"), float("nan"), float("nan")],
+                    [0.7, 0.2, 0.1],
+                ]
+            ),
+            ignore_nan=True,
         ),
         {
+            "roc_auc": np.array([1.0, 1.0, 1.0]),
             "count": 4,
             "macro_roc_auc": 1.0,
             "micro_roc_auc": 1.0,
-            "roc_auc": np.array([1.0, 1.0, 1.0]),
             "weighted_roc_auc": 1.0,
         },
     )
 
 
-def test_multiclass_roc_auc_metrics_y_true_nan() -> None:
+def test_multiclass_roc_auc_ignore_nan_y_true() -> None:
     assert objects_are_equal(
-        multiclass_roc_auc_metrics(
+        multiclass_roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_score=np.array(
                 [
                     [0.7, 0.2, 0.1],
-                    [0.5, 0.3, 0.2],
+                    [0.4, 0.3, 0.3],
                     [0.1, 0.8, 0.1],
                     [0.2, 0.5, 0.3],
                     [0.3, 0.2, 0.5],
@@ -444,20 +469,21 @@ def test_multiclass_roc_auc_metrics_y_true_nan() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
+            ignore_nan=True,
         ),
         {
+            "roc_auc": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_roc_auc": 1.0,
             "micro_roc_auc": 1.0,
-            "roc_auc": np.array([1.0, 1.0, 1.0]),
             "weighted_roc_auc": 1.0,
         },
     )
 
 
-def test_multiclass_roc_auc_metrics_y_score_nan() -> None:
+def test_multiclass_roc_auc_ignore_nan_y_score() -> None:
     assert objects_are_equal(
-        multiclass_roc_auc_metrics(
+        multiclass_roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2, 0]),
             y_score=np.array(
                 [
@@ -470,25 +496,26 @@ def test_multiclass_roc_auc_metrics_y_score_nan() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
+            ignore_nan=True,
         ),
         {
+            "roc_auc": np.array([1.0, 1.0, 1.0]),
             "count": 5,
             "macro_roc_auc": 1.0,
             "micro_roc_auc": 1.0,
-            "roc_auc": np.array([1.0, 1.0, 1.0]),
             "weighted_roc_auc": 1.0,
         },
     )
 
 
-################################################
-#     Tests for multilabel_roc_auc_metrics     #
-################################################
+########################################
+#     Tests for multilabel_roc_auc     #
+########################################
 
 
-def test_multilabel_roc_auc_metrics_1_class_1d() -> None:
+def test_multilabel_roc_auc_1_class_1d() -> None:
     assert objects_are_equal(
-        multilabel_roc_auc_metrics(
+        multilabel_roc_auc(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
         ),
@@ -502,9 +529,9 @@ def test_multilabel_roc_auc_metrics_1_class_1d() -> None:
     )
 
 
-def test_multilabel_roc_auc_metrics_1_class_2d() -> None:
+def test_multilabel_roc_auc_1_class_2d() -> None:
     assert objects_are_equal(
-        multilabel_roc_auc_metrics(
+        multilabel_roc_auc(
             y_true=np.array([[1], [0], [0], [1], [1]]),
             y_score=np.array([[2], [-1], [0], [3], [1]]),
         ),
@@ -518,9 +545,9 @@ def test_multilabel_roc_auc_metrics_1_class_2d() -> None:
     )
 
 
-def test_multilabel_roc_auc_metrics_3_classes() -> None:
+def test_multilabel_roc_auc_3_classes() -> None:
     assert objects_are_allclose(
-        multilabel_roc_auc_metrics(
+        multilabel_roc_auc(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
         ),
@@ -534,9 +561,9 @@ def test_multilabel_roc_auc_metrics_3_classes() -> None:
     )
 
 
-def test_multilabel_roc_auc_metrics_empty_1d() -> None:
+def test_multilabel_roc_auc_empty_1d() -> None:
     assert objects_are_equal(
-        multilabel_roc_auc_metrics(y_true=np.array([]), y_score=np.array([])),
+        multilabel_roc_auc(y_true=np.array([]), y_score=np.array([])),
         {
             "count": 0,
             "macro_roc_auc": float("nan"),
@@ -548,9 +575,9 @@ def test_multilabel_roc_auc_metrics_empty_1d() -> None:
     )
 
 
-def test_multilabel_roc_auc_metrics_empty_2d() -> None:
+def test_multilabel_roc_auc_empty_2d() -> None:
     assert objects_are_equal(
-        multilabel_roc_auc_metrics(y_true=np.ones((0, 3)), y_score=np.ones((0, 3))),
+        multilabel_roc_auc(y_true=np.ones((0, 3)), y_score=np.ones((0, 3))),
         {
             "count": 0,
             "macro_roc_auc": float("nan"),
@@ -562,9 +589,9 @@ def test_multilabel_roc_auc_metrics_empty_2d() -> None:
     )
 
 
-def test_multilabel_roc_auc_metrics_prefix_suffix() -> None:
+def test_multilabel_roc_auc_prefix_suffix() -> None:
     assert objects_are_equal(
-        multilabel_roc_auc_metrics(
+        multilabel_roc_auc(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
             prefix="prefix_",
@@ -576,5 +603,68 @@ def test_multilabel_roc_auc_metrics_prefix_suffix() -> None:
             "prefix_micro_roc_auc_suffix": 1.0,
             "prefix_roc_auc_suffix": np.array([1.0, 1.0, 1.0]),
             "prefix_weighted_roc_auc_suffix": 1.0,
+        },
+    )
+
+
+def test_multilabel_roc_auc_nan() -> None:
+    with pytest.raises(ValueError, match="Input.* contains NaN"):
+        multilabel_roc_auc(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+        )
+
+
+def test_multilabel_roc_auc_nans() -> None:
+    assert objects_are_equal(
+        multilabel_roc_auc(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+            ignore_nan=True,
+        ),
+        {
+            "roc_auc": np.array([1.0, 1.0, 1.0]),
+            "count": 3,
+            "macro_roc_auc": 1.0,
+            "micro_roc_auc": 1.0,
+            "weighted_roc_auc": 1.0,
+        },
+    )
+
+
+def test_multilabel_roc_auc_ignore_nan_y_true() -> None:
+    assert objects_are_equal(
+        multilabel_roc_auc(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+            ignore_nan=True,
+        ),
+        {
+            "roc_auc": np.array([1.0, 1.0, 1.0]),
+            "count": 4,
+            "macro_roc_auc": 1.0,
+            "micro_roc_auc": 1.0,
+            "weighted_roc_auc": 1.0,
+        },
+    )
+
+
+def test_multilabel_roc_auc_ignore_nan_y_score() -> None:
+    assert objects_are_equal(
+        multilabel_roc_auc(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+            ignore_nan=True,
+        ),
+        {
+            "roc_auc": np.array([1.0, 1.0, 1.0]),
+            "count": 4,
+            "macro_roc_auc": 1.0,
+            "micro_roc_auc": 1.0,
+            "weighted_roc_auc": 1.0,
         },
     )

@@ -14,10 +14,10 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.roc_auc import (
-    binary_roc_auc_metrics,
-    multiclass_roc_auc_metrics,
-    multilabel_roc_auc_metrics,
+from arkas.metric.classification.roc_auc import (
+    binary_roc_auc,
+    multiclass_roc_auc,
+    multilabel_roc_auc,
 )
 from arkas.metric.utils import check_same_shape_score
 from arkas.result.base import BaseResult
@@ -115,7 +115,7 @@ class BinaryRocAucResult(BaseRocAucResult):
         super().__init__(y_true=y_true.ravel(), y_score=y_score.ravel())
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return binary_roc_auc_metrics(
+        return binary_roc_auc(
             y_true=self._y_true,
             y_score=self._y_score,
             prefix=prefix,
@@ -183,7 +183,7 @@ class MulticlassRocAucResult(BaseRocAucResult):
         super().__init__(y_true=y_true, y_score=y_score)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multiclass_roc_auc_metrics(
+        return multiclass_roc_auc(
             y_true=self._y_true,
             y_score=self._y_score,
             prefix=prefix,
@@ -236,7 +236,7 @@ class MultilabelRocAucResult(BaseRocAucResult):
         super().__init__(y_true=y_true, y_score=y_score)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return multilabel_roc_auc_metrics(
+        return multilabel_roc_auc(
             y_true=self._y_true,
             y_score=self._y_score,
             prefix=prefix,
