@@ -51,7 +51,7 @@ def test_mapping_evaluator_evaluate() -> None:
                 "recall": BinaryRecallEvaluator(y_true="target", y_pred="pred"),
             }
         )
-        .evaluate({"pred": np.array([1, 0, 0, 1, 1]), "target": np.array([1, 0, 1, 0, 1])})
+        .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}))
         .equal(
             MappingResult(
                 {
@@ -73,7 +73,7 @@ def test_mapping_evaluator_evaluate_lazy_false() -> None:
             "precision": BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
             "recall": BinaryRecallEvaluator(y_true="target", y_pred="pred"),
         }
-    ).evaluate({"pred": np.array([1, 0, 1, 0, 1]), "target": np.array([1, 0, 1, 0, 1])}, lazy=False)
+    ).evaluate(pl.DataFrame({"pred": [1, 0, 1, 0, 1], "target": [1, 0, 1, 0, 1]}), lazy=False)
     assert isinstance(result, Result)
     assert objects_are_equal(
         result.compute_metrics(),
@@ -83,27 +83,3 @@ def test_mapping_evaluator_evaluate_lazy_false() -> None:
         },
     )
     assert len(result.generate_figures()) == 2
-
-
-def test_mapping_evaluator_evaluate_dataframe() -> None:
-    assert (
-        MappingEvaluator(
-            {
-                "precision": BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
-                "recall": BinaryRecallEvaluator(y_true="target", y_pred="pred"),
-            }
-        )
-        .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}))
-        .equal(
-            MappingResult(
-                {
-                    "precision": BinaryPrecisionResult(
-                        y_true=np.array([1, 0, 1, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1])
-                    ),
-                    "recall": BinaryRecallResult(
-                        y_true=np.array([1, 0, 1, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1])
-                    ),
-                }
-            )
-        )
-    )
