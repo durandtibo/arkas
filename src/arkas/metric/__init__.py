@@ -39,6 +39,7 @@ __all__ = [
     "mean_squared_log_error",
     "regression_errors",
     "mean_absolute_percentage_error",
+    "mean_tweedie_deviance",
 ]
 
 from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
@@ -88,4 +89,5 @@ from arkas.metric.regression.abs_error import mean_absolute_error, median_absolu
 from arkas.metric.regression.mape import mean_absolute_percentage_error
 from arkas.metric.regression.mse import mean_squared_error
 from arkas.metric.regression.msle import mean_squared_log_error
+from arkas.metric.regression.tweedie_deviance import mean_tweedie_deviance
 from arkas.metric.regression.universal import regression_errors
