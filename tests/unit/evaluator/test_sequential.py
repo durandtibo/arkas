@@ -51,7 +51,7 @@ def test_sequential_evaluator_evaluate() -> None:
                 BinaryRecallEvaluator(y_true="target", y_pred="pred"),
             ]
         )
-        .evaluate({"pred": np.array([1, 0, 0, 1, 1]), "target": np.array([1, 0, 1, 0, 1])})
+        .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}))
         .equal(
             SequentialResult(
                 [
@@ -73,33 +73,9 @@ def test_sequential_evaluator_evaluate_lazy_false() -> None:
             BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
             BinaryRecallEvaluator(y_true="target", y_pred="pred"),
         ]
-    ).evaluate({"pred": np.array([1, 0, 1, 0, 1]), "target": np.array([1, 0, 1, 0, 1])}, lazy=False)
+    ).evaluate(pl.DataFrame({"pred": [1, 0, 1, 0, 1], "target": [1, 0, 1, 0, 1]}), lazy=False)
     assert isinstance(result, Result)
     assert objects_are_equal(
         result.compute_metrics(), {"count": 5, "precision": 1.0, "recall": 1.0}
     )
     assert len(result.generate_figures()) == 1
-
-
-def test_sequential_evaluator_evaluate_dataframe() -> None:
-    assert (
-        SequentialEvaluator(
-            [
-                BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
-                BinaryRecallEvaluator(y_true="target", y_pred="pred"),
-            ]
-        )
-        .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}))
-        .equal(
-            SequentialResult(
-                [
-                    BinaryPrecisionResult(
-                        y_true=np.array([1, 0, 1, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1])
-                    ),
-                    BinaryRecallResult(
-                        y_true=np.array([1, 0, 1, 0, 1]), y_pred=np.array([1, 0, 0, 1, 1])
-                    ),
-                ]
-            )
-        )
-    )
