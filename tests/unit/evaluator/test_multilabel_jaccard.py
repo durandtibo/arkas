@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import polars as pl
 
 from arkas.evaluator import MultilabelJaccardEvaluator
 from arkas.result import EmptyResult, MultilabelJaccardResult, Result
@@ -26,10 +27,13 @@ def test_multilabel_jaccard_evaluator_evaluate() -> None:
     assert (
         MultilabelJaccardEvaluator(y_true="target", y_pred="pred")
         .evaluate(
-            {
-                "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-                "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            }
+            pl.DataFrame(
+                {
+                    "pred": [[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]],
+                    "target": [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]],
+                },
+                schema={"pred": pl.Array(pl.Int64, 3), "target": pl.Array(pl.Int64, 3)},
+            )
         )
         .equal(
             MultilabelJaccardResult(
@@ -44,10 +48,13 @@ def test_multilabel_jaccard_evaluator_evaluate_lazy_false() -> None:
     assert (
         MultilabelJaccardEvaluator(y_true="target", y_pred="pred")
         .evaluate(
-            {
-                "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-                "target": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-            },
+            pl.DataFrame(
+                {
+                    "pred": [[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]],
+                    "target": [[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]],
+                },
+                schema={"pred": pl.Array(pl.Int64, 3), "target": pl.Array(pl.Int64, 3)},
+            ),
             lazy=False,
         )
         .equal(
@@ -68,10 +75,13 @@ def test_multilabel_jaccard_evaluator_evaluate_missing_keys() -> None:
     assert (
         MultilabelJaccardEvaluator(y_true="target", y_pred="prediction")
         .evaluate(
-            {
-                "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-                "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            }
+            pl.DataFrame(
+                {
+                    "pred": [[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]],
+                    "target": [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]],
+                },
+                schema={"pred": pl.Array(pl.Int64, 3), "target": pl.Array(pl.Int64, 3)},
+            )
         )
         .equal(EmptyResult())
     )
@@ -81,10 +91,13 @@ def test_multilabel_jaccard_evaluator_evaluate_lazy_false_missing_keys() -> None
     assert (
         MultilabelJaccardEvaluator(y_true="target", y_pred="missing")
         .evaluate(
-            {
-                "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-                "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            },
+            pl.DataFrame(
+                {
+                    "pred": [[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]],
+                    "target": [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]],
+                },
+                schema={"pred": pl.Array(pl.Int64, 3), "target": pl.Array(pl.Int64, 3)},
+            ),
             lazy=False,
         )
         .equal(EmptyResult())
