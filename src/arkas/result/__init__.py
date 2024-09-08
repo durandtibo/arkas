@@ -17,6 +17,8 @@ __all__ = [
     "BinaryRocAucResult",
     "EmptyResult",
     "MappingResult",
+    "MeanAbsoluteErrorResult",
+    "MeanSquaredErrorResult",
     "MulticlassAveragePrecisionResult",
     "MulticlassConfusionMatrixResult",
     "MulticlassFbetaResult",
@@ -35,8 +37,6 @@ __all__ = [
     "RecallResult",
     "Result",
     "SequentialResult",
-    "MeanAbsoluteErrorResult",
-    "MeanSquaredErrorResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult

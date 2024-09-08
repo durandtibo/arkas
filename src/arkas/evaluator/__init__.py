@@ -17,6 +17,7 @@ __all__ = [
     "BinaryRecallEvaluator",
     "BinaryRocAucEvaluator",
     "MappingEvaluator",
+    "MeanAbsoluteErrorEvaluator",
     "MulticlassAveragePrecisionEvaluator",
     "MulticlassConfusionMatrixEvaluator",
     "MulticlassFbetaEvaluator",
@@ -34,7 +35,6 @@ __all__ = [
     "SequentialEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
-    "MeanAbsoluteErrorEvaluator",
 ]
 
 from arkas.evaluator.accuracy import AccuracyEvaluator
