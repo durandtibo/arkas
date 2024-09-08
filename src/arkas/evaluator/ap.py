@@ -38,7 +38,6 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import AveragePrecisionEvaluator
     >>> evaluator = AveragePrecisionEvaluator(y_true="target", y_score="pred")
