@@ -3,10 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
+import polars as pl
 from coola import objects_are_equal
+from grizz.ingestor import Ingestor
 from iden.io import PickleSaver, load_pickle
 
-from arkas.data.ingestor import Ingestor
 from arkas.evaluator import AccuracyEvaluator
 from arkas.runner import EvaluationRunner
 
@@ -23,7 +24,9 @@ def test_evaluation_runner_repr(tmp_path: Path) -> None:
     assert repr(
         EvaluationRunner(
             ingestor=Ingestor(
-                data={"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
+                pl.DataFrame(
+                    {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
+                )
             ),
             evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
             saver=PickleSaver(),
@@ -37,7 +40,9 @@ def test_evaluation_runner_str(tmp_path: Path) -> None:
     assert str(
         EvaluationRunner(
             ingestor=Ingestor(
-                data={"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
+                pl.DataFrame(
+                    {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
+                )
             ),
             evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
             saver=PickleSaver(),
@@ -50,7 +55,7 @@ def test_evaluation_runner_evaluate(tmp_path: Path) -> None:
     path = tmp_path.joinpath("metrics.pkl")
     runner = EvaluationRunner(
         ingestor=Ingestor(
-            data={"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
+            pl.DataFrame({"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])})
         ),
         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
         saver=PickleSaver(),
