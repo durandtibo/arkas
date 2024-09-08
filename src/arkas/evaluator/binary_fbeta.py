@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class BinaryFbetaScoreEvaluator(BaseLazyEvaluator):
+class BinaryFbetaScoreEvaluator(BaseLazyEvaluator[BinaryFbetaScoreResult]):
     r"""Implement the F-beta evaluator for binary labels.
 
     Args:
