@@ -33,14 +33,12 @@ class MappingEvaluator(BaseEvaluator):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import (
     ...     MappingEvaluator,
     ...     BinaryPrecisionEvaluator,
     ...     BinaryRecallEvaluator,
     ... )
-    >>> data = {"pred": np.array([1, 0, 0, 1, 1]), "target": np.array([1, 0, 0, 1, 1])}
     >>> evaluator = MappingEvaluator(
     ...     {
     ...         "precision": BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
@@ -49,19 +47,16 @@ class MappingEvaluator(BaseEvaluator):
     ... )
     >>> evaluator
     MappingEvaluator(
-      (precision): BinaryPrecisionEvaluator(y_true=target, y_pred=pred)
-      (recall): BinaryRecallEvaluator(y_true=target, y_pred=pred)
+      (precision): BinaryPrecisionEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
+      (recall): BinaryRecallEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
     )
+    >>> data = pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
     MappingResult(count=2)
     >>> result = evaluator.evaluate(data, lazy=False)
     >>> result
     Result(metrics=2, figures=2)
-    >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    >>> result = evaluator.evaluate(frame)
-    >>> result
-    MappingResult(count=2)
 
     ```
     """
