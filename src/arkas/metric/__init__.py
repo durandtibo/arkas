@@ -12,7 +12,7 @@ __all__ = [
     "binary_jaccard",
     "binary_precision",
     "binary_recall",
-    "binary_roc_auc_metrics",
+    "binary_roc_auc",
     "confusion_matrix",
     "fbeta_score",
     "jaccard",
@@ -22,17 +22,17 @@ __all__ = [
     "multiclass_jaccard",
     "multiclass_precision",
     "multiclass_recall",
-    "multiclass_roc_auc_metrics",
+    "multiclass_roc_auc",
     "multilabel_average_precision",
     "multilabel_confusion_matrix",
     "multilabel_fbeta_score",
     "multilabel_jaccard",
     "multilabel_precision",
     "multilabel_recall",
-    "multilabel_roc_auc_metrics",
+    "multilabel_roc_auc",
     "precision",
     "recall",
-    "roc_auc_metrics",
+    "roc_auc",
     "mean_absolute_error",
     "median_absolute_error",
     "mean_squared_error",
@@ -78,14 +78,14 @@ from arkas.metric.classification.recall import (
     multilabel_recall,
     recall,
 )
+from arkas.metric.classification.roc_auc import (
+    binary_roc_auc,
+    multiclass_roc_auc,
+    multilabel_roc_auc,
+    roc_auc,
+)
 from arkas.metric.regression.abs_error import mean_absolute_error, median_absolute_error
 from arkas.metric.regression.mape import mean_absolute_percentage_error
 from arkas.metric.regression.mse import mean_squared_error
 from arkas.metric.regression.msle import mean_squared_log_error
 from arkas.metric.regression.universal import regression_errors
-from arkas.metric.roc_auc import (
-    binary_roc_auc_metrics,
-    multiclass_roc_auc_metrics,
-    multilabel_roc_auc_metrics,
-    roc_auc_metrics,
-)

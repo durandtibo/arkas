@@ -4,11 +4,10 @@ Operating Characteristic Curve (ROC AUC) metrics."""
 from __future__ import annotations
 
 __all__ = [
-    "binary_roc_auc_metrics",
-    "multiclass_roc_auc_metrics",
-    "multilabel_roc_auc_metrics",
-    "preprocess_score_binary",
-    "roc_auc_metrics",
+    "binary_roc_auc",
+    "multiclass_roc_auc",
+    "multilabel_roc_auc",
+    "roc_auc",
 ]
 
 from typing import Any
@@ -17,16 +16,22 @@ import numpy as np
 from sklearn import metrics
 
 from arkas.metric.classification.ap import find_label_type
-from arkas.metric.utils import check_label_type, preprocess_score_binary
+from arkas.metric.utils import (
+    check_label_type,
+    preprocess_score_binary,
+    preprocess_score_multiclass,
+    preprocess_score_multilabel,
+)
 
 
-def roc_auc_metrics(
+def roc_auc(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics.
@@ -46,6 +51,8 @@ def roc_auc_metrics(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
@@ -55,15 +62,13 @@ def roc_auc_metrics(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import roc_auc_metrics
+    >>> from arkas.metric import roc_auc
     >>> # auto
-    >>> metrics = roc_auc_metrics(
-    ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
-    ... )
+    >>> metrics = roc_auc(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]))
     >>> metrics
     {'count': 5, 'roc_auc': 1.0}
     >>> # binary
-    >>> metrics = roc_auc_metrics(
+    >>> metrics = roc_auc(
     ...     y_true=np.array([1, 0, 0, 1, 1]),
     ...     y_score=np.array([2, -1, 0, 3, 1]),
     ...     label_type="binary",
@@ -71,7 +76,7 @@ def roc_auc_metrics(
     >>> metrics
     {'count': 5, 'roc_auc': 1.0}
     >>> # multiclass
-    >>> metrics = roc_auc_metrics(
+    >>> metrics = roc_auc(
     ...     y_true=np.array([0, 0, 1, 1, 2, 2]),
     ...     y_score=np.array(
     ...         [
@@ -92,7 +97,7 @@ def roc_auc_metrics(
      'roc_auc': array([0.9375, 0.8125, 0.75  ]),
      'weighted_roc_auc': 0.833...}
     >>> # multilabel
-    >>> metrics = roc_auc_metrics(
+    >>> metrics = roc_auc(
     ...     y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ...     y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
     ...     label_type="multilabel",
@@ -110,22 +115,29 @@ def roc_auc_metrics(
     if label_type == "auto":
         label_type = find_label_type(y_true=y_true, y_score=y_score)
     if label_type == "binary":
-        return binary_roc_auc_metrics(
-            y_true=y_true.ravel(), y_score=y_score.ravel(), prefix=prefix, suffix=suffix
+        return binary_roc_auc(
+            y_true=y_true.ravel(),
+            y_score=y_score.ravel(),
+            prefix=prefix,
+            suffix=suffix,
+            ignore_nan=ignore_nan,
         )
     if label_type == "multilabel":
-        return multilabel_roc_auc_metrics(
-            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix
+        return multilabel_roc_auc(
+            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
         )
-    return multiclass_roc_auc_metrics(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
+    return multiclass_roc_auc(
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
+    )
 
 
-def binary_roc_auc_metrics(
+def binary_roc_auc(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for binary labels.
@@ -139,11 +151,13 @@ def binary_roc_auc_metrics(
             be an array of shape ``(n_samples,)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, remove_nan=True)
+    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, remove_nan=ignore_nan)
 
     count = y_true.size
     roc_auc = float("nan")
@@ -152,12 +166,13 @@ def binary_roc_auc_metrics(
     return {f"{prefix}count{suffix}": count, f"{prefix}roc_auc{suffix}": roc_auc}
 
 
-def multiclass_roc_auc_metrics(
+def multiclass_roc_auc(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for multiclass labels.
@@ -171,26 +186,25 @@ def multiclass_roc_auc_metrics(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    if y_true.shape[0] > 0:
-        # Remove NaN values
-        mask = np.logical_not(np.logical_or(np.isnan(y_true), np.isnan(y_score).any(axis=1)))
-        y_true, y_score = y_true[mask], y_score[mask]
-
-    return _multi_roc_auc_metrics(
+    y_true, y_score = preprocess_score_multiclass(y_true, y_score, remove_nan=ignore_nan)
+    return _multi_roc_auc(
         y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
     )
 
 
-def multilabel_roc_auc_metrics(
+def multilabel_roc_auc(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
     prefix: str = "",
     suffix: str = "",
+    ignore_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for multilabel labels.
@@ -204,16 +218,19 @@ def multilabel_roc_auc_metrics(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        ignore_nan: If ``True``, the NaN values are ignored while
+            computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    return _multi_roc_auc_metrics(
+    y_true, y_score = preprocess_score_multilabel(y_true, y_score, remove_nan=ignore_nan)
+    return _multi_roc_auc(
         y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
     )
 
 
-def _multi_roc_auc_metrics(
+def _multi_roc_auc(
     y_true: np.ndarray,
     y_score: np.ndarray,
     *,
@@ -241,14 +258,14 @@ def _multi_roc_auc_metrics(
     """
     n_samples = y_true.shape[0]
     macro, micro, weighted = float("nan"), float("nan"), float("nan")
-    roc_auc = np.array([])
+    scores = np.array([])
     if n_samples > 0:
         macro = metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="macro", **kwargs)
         micro = metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="micro", **kwargs)
         weighted = metrics.roc_auc_score(
             y_true=y_true, y_score=y_score, average="weighted", **kwargs
         )
-        roc_auc = np.asarray(
+        scores = np.asarray(
             metrics.roc_auc_score(y_true=y_true, y_score=y_score, average=None, **kwargs)
         ).ravel()
 
@@ -256,6 +273,6 @@ def _multi_roc_auc_metrics(
         f"{prefix}count{suffix}": n_samples,
         f"{prefix}macro_roc_auc{suffix}": float(macro),
         f"{prefix}micro_roc_auc{suffix}": float(micro),
-        f"{prefix}roc_auc{suffix}": roc_auc,
+        f"{prefix}roc_auc{suffix}": scores,
         f"{prefix}weighted_roc_auc{suffix}": float(weighted),
     }
