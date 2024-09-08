@@ -7,20 +7,18 @@ __all__ = ["BinaryAveragePrecisionEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
-from arkas.evaluator.base import BaseLazyEvaluator
-from arkas.result import BinaryAveragePrecisionResult, EmptyResult
+from arkas.evaluator.lazy import BaseLazyEvaluator
+from arkas.result import BinaryAveragePrecisionResult, Result
 from arkas.utils.array import to_array
-from arkas.utils.data import find_keys, find_missing_keys
 
 if TYPE_CHECKING:
     import polars as pl
 
-    from arkas.result import BaseResult
 
 logger = logging.getLogger(__name__)
 
 
-class BinaryAveragePrecisionEvaluator(BaseLazyEvaluator):
+class BinaryAveragePrecisionEvaluator(BaseLazyEvaluator[BinaryAveragePrecisionResult]):
     r"""Implement the average precision evaluator for binary labels.
 
     Args:
@@ -29,45 +27,52 @@ class BinaryAveragePrecisionEvaluator(BaseLazyEvaluator):
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions.
+        drop_nulls: If ``True``, the rows with null values in
+            ``y_true`` or ``y_pred`` columns are dropped.
 
     Example usage:
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import BinaryAveragePrecisionEvaluator
-    >>> data = {"pred": np.array([2, -1, 0, 3, 1]), "target": np.array([1, 0, 0, 1, 1])}
     >>> evaluator = BinaryAveragePrecisionEvaluator(y_true="target", y_score="pred")
     >>> evaluator
-    BinaryAveragePrecisionEvaluator(y_true=target, y_score=pred)
-    >>> result = evaluator.evaluate(data)
+    BinaryAveragePrecisionEvaluator(y_true=target, y_score=pred, drop_nulls=True)
+    >>> result = evaluator.evaluate(
+    ...     pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
+    ... )
     >>> result
     BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,))
 
     ```
     """
 
-    def __init__(self, y_true: str, y_score: str) -> None:
+    def __init__(self, y_true: str, y_score: str, drop_nulls: bool = True) -> None:
+        super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
         self._y_score = y_score
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score})"
-
-    def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
-        logger.info(
-            f"Evaluating the binary average precision | y_true={self._y_true} | y_score={self._y_score}"
+        return (
+            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score}, "
+            f"drop_nulls={self._drop_nulls})"
         )
-        if missing_keys := find_missing_keys(
-            keys=find_keys(data), queries=[self._y_score, self._y_true]
-        ):
-            logger.warning(
-                "Skipping the binary average precision evaluation because some keys are missing: "
-                f"{sorted(missing_keys)}"
-            )
-            return EmptyResult()
+
+    def evaluate(
+        self, data: pl.DataFrame, lazy: bool = True
+    ) -> BinaryAveragePrecisionResult | Result:
+        logger.info(
+            f"Evaluating the binary average precision | y_true={self._y_true} | "
+            f"y_score={self._y_score} | drop_nulls={self._drop_nulls}"
+        )
+        return self._evaluate(data, lazy)
+
+    def _compute_result(self, data: pl.DataFrame) -> BinaryAveragePrecisionResult:
         return BinaryAveragePrecisionResult(
             y_true=to_array(data[self._y_true]).ravel(),
             y_score=to_array(data[self._y_score]).ravel(),
         )
+
+    def _get_columns(self) -> tuple[str, ...]:
+        return (self._y_true, self._y_score)
