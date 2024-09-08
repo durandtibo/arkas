@@ -32,13 +32,12 @@ class MulticlassPrecisionEvaluator(BaseLazyEvaluator):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import MulticlassPrecisionEvaluator
-    >>> data = {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])}
     >>> evaluator = MulticlassPrecisionEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     MulticlassPrecisionEvaluator(y_true=target, y_pred=pred)
+    >>> data = pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]})
     >>> result = evaluator.evaluate(data)
     >>> result
     MulticlassPrecisionResult(y_true=(6,), y_pred=(6,))

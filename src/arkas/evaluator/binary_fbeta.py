@@ -38,8 +38,9 @@ class BinaryFbetaScoreEvaluator(BaseLazyEvaluator[BinaryFbetaScoreResult]):
     >>> evaluator = BinaryFbetaScoreEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     BinaryFbetaScoreEvaluator(y_true=target, y_pred=pred, betas=(1,), drop_nulls=True)
+    >>> data = pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(
-    ...     pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
+    ...     data=pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     ... )
     >>> result
     BinaryFbetaScoreResult(y_true=(5,), y_pred=(5,), betas=(1,))

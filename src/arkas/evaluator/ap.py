@@ -43,8 +43,8 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
     >>> evaluator = AveragePrecisionEvaluator(y_true="target", y_score="pred")
     >>> evaluator
     AveragePrecisionEvaluator(y_true=target, y_score=pred, label_type=auto, drop_nulls=True)
-    >>> frame = pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
-    >>> result = evaluator.evaluate(frame)
+    >>> data = pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
+    >>> result = evaluator.evaluate(data)
     >>> result
     AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary)
 

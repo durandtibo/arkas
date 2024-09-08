@@ -36,25 +36,25 @@ class MulticlassRocAucEvaluator(BaseLazyEvaluator):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import MulticlassRocAucEvaluator
-    >>> data = {
-    ...     "pred": np.array(
-    ...         [
+    >>> evaluator = MulticlassRocAucEvaluator(y_true="target", y_score="pred")
+    >>> evaluator
+    MulticlassRocAucEvaluator(y_true=target, y_score=pred)
+    >>> data = pl.DataFrame(
+    ...     {
+    ...         "pred": [
     ...             [0.7, 0.2, 0.1],
     ...             [0.4, 0.3, 0.3],
     ...             [0.1, 0.8, 0.1],
     ...             [0.2, 0.5, 0.3],
     ...             [0.3, 0.3, 0.4],
     ...             [0.1, 0.2, 0.7],
-    ...         ]
-    ...     ),
-    ...     "target": np.array([0, 0, 1, 1, 2, 2]),
-    ... }
-    >>> evaluator = MulticlassRocAucEvaluator(y_true="target", y_score="pred")
-    >>> evaluator
-    MulticlassRocAucEvaluator(y_true=target, y_score=pred)
+    ...         ],
+    ...         "target": [0, 0, 1, 1, 2, 2],
+    ...     },
+    ...     schema={"pred": pl.Array(pl.Float64, 3), "target": pl.Int64},
+    ... )
     >>> result = evaluator.evaluate(data)
     >>> result
     MulticlassRocAucResult(y_true=(6,), y_score=(6, 3))
