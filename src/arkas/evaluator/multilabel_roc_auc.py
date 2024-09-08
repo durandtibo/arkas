@@ -8,20 +8,18 @@ __all__ = ["MultilabelRocAucEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
-from arkas.evaluator.base import BaseLazyEvaluator
-from arkas.result import EmptyResult, MultilabelRocAucResult
+from arkas.evaluator.lazy import BaseLazyEvaluator
+from arkas.result import MultilabelRocAucResult, Result
 from arkas.utils.array import to_array
-from arkas.utils.data import find_keys, find_missing_keys
 
 if TYPE_CHECKING:
     import polars as pl
 
-    from arkas.result import BaseResult
 
 logger = logging.getLogger(__name__)
 
 
-class MultilabelRocAucEvaluator(BaseLazyEvaluator):
+class MultilabelRocAucEvaluator(BaseLazyEvaluator[MultilabelRocAucResult]):
     r"""Implement the Area Under the Receiver Operating Characteristic
     Curve (ROC AUC) evaluator for multilabel labels.
 
@@ -31,6 +29,8 @@ class MultilabelRocAucEvaluator(BaseLazyEvaluator):
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions.
+        drop_nulls: If ``True``, the rows with null values in
+            ``y_true`` or ``y_score`` columns are dropped.
 
     Example usage:
 
@@ -40,7 +40,7 @@ class MultilabelRocAucEvaluator(BaseLazyEvaluator):
     >>> from arkas.evaluator import MultilabelRocAucEvaluator
     >>> evaluator = MultilabelRocAucEvaluator(y_true="target", y_score="pred")
     >>> evaluator
-    MultilabelRocAucEvaluator(y_true=target, y_score=pred)
+    MultilabelRocAucEvaluator(y_true=target, y_score=pred, drop_nulls=True)
     >>> data = pl.DataFrame(
     ...     {
     ...         "pred": [[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]],
@@ -55,25 +55,28 @@ class MultilabelRocAucEvaluator(BaseLazyEvaluator):
     ```
     """
 
-    def __init__(self, y_true: str, y_score: str) -> None:
+    def __init__(self, y_true: str, y_score: str, drop_nulls: bool = True) -> None:
+        super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
         self._y_score = y_score
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score})"
-
-    def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
-        logger.info(
-            f"Evaluating the multilabel ROC AUC | y_true={self._y_true} | y_score={self._y_score}"
+        return (
+            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score}, "
+            f"drop_nulls={self._drop_nulls})"
         )
-        if missing_keys := find_missing_keys(
-            keys=find_keys(data), queries=[self._y_score, self._y_true]
-        ):
-            logger.warning(
-                "Skipping the multilabel ROC AUC evaluation because some keys are missing: "
-                f"{sorted(missing_keys)}"
-            )
-            return EmptyResult()
+
+    def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> MultilabelRocAucResult | Result:
+        logger.info(
+            f"Evaluating the multilabel ROC AUC | y_true={self._y_true} | "
+            f"y_score={self._y_score} | drop_nulls={self._drop_nulls}"
+        )
+        return self._evaluate(data, lazy)
+
+    def _compute_result(self, data: pl.DataFrame) -> MultilabelRocAucResult:
         return MultilabelRocAucResult(
             y_true=to_array(data[self._y_true]), y_score=to_array(data[self._y_score])
         )
+
+    def _get_columns(self) -> tuple[str, ...]:
+        return (self._y_true, self._y_score)
