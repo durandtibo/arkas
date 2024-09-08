@@ -34,14 +34,12 @@ class SequentialEvaluator(BaseEvaluator):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import (
     ...     SequentialEvaluator,
     ...     BinaryPrecisionEvaluator,
     ...     BinaryRecallEvaluator,
     ... )
-    >>> data = {"pred": np.array([1, 0, 0, 1, 1]), "target": np.array([1, 0, 0, 1, 1])}
     >>> evaluator = SequentialEvaluator(
     ...     [
     ...         BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
@@ -50,19 +48,16 @@ class SequentialEvaluator(BaseEvaluator):
     ... )
     >>> evaluator
     SequentialEvaluator(
-      (0): BinaryPrecisionEvaluator(y_true=target, y_pred=pred)
-      (1): BinaryRecallEvaluator(y_true=target, y_pred=pred)
+      (0): BinaryPrecisionEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
+      (1): BinaryRecallEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
     )
+    >>> data = pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
     SequentialResult(count=2)
     >>> result = evaluator.evaluate(data, lazy=False)
     >>> result
     Result(metrics=3, figures=1)
-    >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    >>> result = evaluator.evaluate(frame)
-    >>> result
-    SequentialResult(count=2)
 
     ```
     """
