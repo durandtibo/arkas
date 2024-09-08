@@ -96,7 +96,8 @@ def test_average_precision_evaluator_evaluate_multiclass() -> None:
                         [0.1, 0.2, 0.7],
                     ],
                     "target": [0, 0, 1, 1, 2, 2],
-                }
+                },
+                schema={"pred": pl.Array(pl.Float64, 3), "target": pl.Int64},
             )
         )
         .equal(
@@ -127,7 +128,7 @@ def test_average_precision_evaluator_evaluate_multilabel() -> None:
                     "pred": [[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]],
                     "target": [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]],
                 },
-                schema={"pred": pl.List(pl.Int64), "target": pl.List(pl.Int64)},
+                schema={"pred": pl.Array(pl.Int64, 3), "target": pl.Array(pl.Int64, 3)},
             )
         )
         .equal(
