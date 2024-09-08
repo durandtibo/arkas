@@ -33,8 +33,8 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
     >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
-    >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    >>> result = evaluator.evaluate(frame)
+    >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+    >>> result = evaluator.evaluate(data)
     >>> result
     AccuracyResult(y_true=(6,), y_pred=(6,))
 
@@ -81,8 +81,8 @@ class BaseLazyEvaluator(BaseEvaluator):
     >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
-    >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    >>> result = evaluator.evaluate(frame)
+    >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+    >>> result = evaluator.evaluate(data)
     >>> result
     AccuracyResult(y_true=(6,), y_pred=(6,))
 

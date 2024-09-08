@@ -41,9 +41,8 @@ class BinaryRocAucEvaluator(BaseLazyEvaluator[BinaryRocAucResult]):
     >>> evaluator = BinaryRocAucEvaluator(y_true="target", y_score="pred")
     >>> evaluator
     BinaryRocAucEvaluator(y_true=target, y_score=pred, drop_nulls=True)
-    >>> result = evaluator.evaluate(
-    ...     pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
-    ... )
+    >>> data = pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
+    >>> result = evaluator.evaluate(data)
     >>> result
     BinaryRocAucResult(y_true=(5,), y_score=(5,))
 

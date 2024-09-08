@@ -35,19 +35,20 @@ class BinaryClassificationEvaluator(BaseLazyEvaluator):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import BinaryClassificationEvaluator
-    >>> data = {
-    ...     "pred": np.array([1, 0, 0, 1, 1]),
-    ...     "score": np.array([2, -1, 0, 3, 1]),
-    ...     "target": np.array([1, 0, 0, 1, 1]),
-    ... }
     >>> evaluator = BinaryClassificationEvaluator(
     ...     y_true="target", y_pred="pred", y_score="score"
     ... )
     >>> evaluator
     BinaryClassificationEvaluator(y_true=target, y_pred=pred, y_score=score)
+    >>> data = pl.DataFrame(
+    ...     {
+    ...         "pred": [1, 0, 0, 1, 1],
+    ...         "score": [2, -1, 0, 3, 1],
+    ...         "target": [1, 0, 0, 1, 1],
+    ...     }
+    ... )
     >>> result = evaluator.evaluate(data)
     >>> result
     BinaryClassificationResult(y_true=(5,), y_pred=(5,), y_score=(5,), betas=(1,))

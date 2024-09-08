@@ -32,16 +32,18 @@ class MultilabelPrecisionEvaluator(BaseLazyEvaluator):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import MultilabelPrecisionEvaluator
-    >>> data = {
-    ...     "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-    ...     "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-    ... }
     >>> evaluator = MultilabelPrecisionEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     MultilabelPrecisionEvaluator(y_true=target, y_pred=pred)
+    >>> data = pl.DataFrame(
+    ...     {
+    ...         "pred": [[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]],
+    ...         "target": [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]],
+    ...     },
+    ...     schema={"pred": pl.Array(pl.Int64, 3), "target": pl.Array(pl.Int64, 3)},
+    ... )
     >>> result = evaluator.evaluate(data)
     >>> result
     MultilabelPrecisionResult(y_true=(5, 3), y_pred=(5, 3))

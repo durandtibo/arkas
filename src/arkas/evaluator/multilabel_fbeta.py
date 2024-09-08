@@ -35,16 +35,18 @@ class MultilabelFbetaScoreEvaluator(BaseLazyEvaluator):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import MultilabelFbetaScoreEvaluator
-    >>> data = {
-    ...     "pred": np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
-    ...     "target": np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-    ... }
     >>> evaluator = MultilabelFbetaScoreEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     MultilabelFbetaScoreEvaluator(y_true=target, y_pred=pred, betas=(1,))
+    >>> data = pl.DataFrame(
+    ...     {
+    ...         "pred": [[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]],
+    ...         "target": [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]],
+    ...     },
+    ...     schema={"pred": pl.Array(pl.Int64, 3), "target": pl.Array(pl.Int64, 3)},
+    ... )
     >>> result = evaluator.evaluate(data)
     >>> result
     MultilabelFbetaScoreResult(y_true=(5, 3), y_pred=(5, 3), betas=(1,))

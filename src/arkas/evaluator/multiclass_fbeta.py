@@ -35,13 +35,12 @@ class MulticlassFbetaScoreEvaluator(BaseLazyEvaluator):
 
     ```pycon
 
-    >>> import numpy as np
     >>> import polars as pl
     >>> from arkas.evaluator import MulticlassFbetaScoreEvaluator
-    >>> data = {"pred": np.array([0, 0, 1, 1, 2, 2]), "target": np.array([0, 0, 1, 1, 2, 2])}
     >>> evaluator = MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     MulticlassFbetaScoreEvaluator(y_true=target, y_pred=pred, betas=(1,))
+    >>> data = pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]})
     >>> result = evaluator.evaluate(data)
     >>> result
     MulticlassFbetaScoreResult(y_true=(6,), y_pred=(6,), betas=(1,))

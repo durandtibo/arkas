@@ -37,8 +37,8 @@ class BalancedAccuracyEvaluator(BaseLazyEvaluator[BalancedAccuracyResult]):
     >>> evaluator = BalancedAccuracyEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
     BalancedAccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
-    >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    >>> result = evaluator.evaluate(frame)
+    >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+    >>> result = evaluator.evaluate(data)
     >>> result
     BalancedAccuracyResult(y_true=(6,), y_pred=(6,))
 
