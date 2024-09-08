@@ -32,7 +32,7 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
     >>> from arkas.evaluator import AccuracyEvaluator
     >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    AccuracyEvaluator(y_true=target, y_pred=pred)
+    AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
     >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
     >>> result = evaluator.evaluate(frame)
     >>> result
@@ -163,7 +163,7 @@ def setup_evaluator(
     ...     }
     ... )
     >>> evaluator
-    AccuracyEvaluator(y_true=target, y_pred=pred)
+    AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
 
     ```
     """
