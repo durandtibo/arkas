@@ -51,10 +51,16 @@ class AccuracyEvaluator(BaseLazyEvaluator[AccuracyResult]):
         self._y_pred = y_pred
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(y_true={self._y_true}, y_pred={self._y_pred}, drop_nulls={self._drop_nulls})"
+        return (
+            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_pred={self._y_pred}, "
+            f"drop_nulls={self._drop_nulls})"
+        )
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> AccuracyResult | Result:
-        logger.info(f"Evaluating the accuracy | y_true={self._y_true} | y_pred={self._y_pred}")
+        logger.info(
+            f"Evaluating the accuracy | y_true={self._y_true} | y_pred={self._y_pred} | "
+            f"drop_nulls={self._drop_nulls}"
+        )
         return self._evaluate(data, lazy)
 
     def _compute_result(self, data: pl.DataFrame) -> AccuracyResult:
