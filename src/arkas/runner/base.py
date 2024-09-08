@@ -22,20 +22,22 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
     ```pycon
 
     >>> import tempfile
-    >>> import numpy as np
+    >>> import polars as pl
     >>> from pathlib import Path
     >>> from iden.io import PickleSaver
-    >>> from arkas.data.ingestor import Ingestor
+    >>> from grizz.ingestor import Ingestor
     >>> from arkas.evaluator import AccuracyEvaluator
     >>> from arkas.runner import EvaluationRunner
     >>> with tempfile.TemporaryDirectory() as tmpdir:
     ...     path = Path(tmpdir).joinpath("metrics.pkl")
     ...     runner = EvaluationRunner(
     ...         ingestor=Ingestor(
-    ...             data={
-    ...                 "pred": np.array([3, 2, 0, 1, 0]),
-    ...                 "target": np.array([3, 2, 0, 1, 0]),
-    ...             }
+    ...             pl.DataFrame(
+    ...                 {
+    ...                     "pred": [3, 2, 0, 1, 0],
+    ...                     "target": [3, 2, 0, 1, 0],
+    ...                 }
+    ...             )
     ...         ),
     ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
     ...         saver=PickleSaver(),
@@ -45,8 +47,8 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
     ...     runner.run()
     ...
     EvaluationRunner(
-      (ingestor): Ingestor(num_items=2)
-      (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred)
+      (ingestor): Ingestor(shape=(5, 2))
+      (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
     )
@@ -66,20 +68,22 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
         ```pycon
 
         >>> import tempfile
-        >>> import numpy as np
+        >>> import polars as pl
         >>> from pathlib import Path
         >>> from iden.io import PickleSaver
-        >>> from arkas.data.ingestor import Ingestor
+        >>> from grizz.ingestor import Ingestor
         >>> from arkas.evaluator import AccuracyEvaluator
         >>> from arkas.runner import EvaluationRunner
         >>> with tempfile.TemporaryDirectory() as tmpdir:
         ...     path = Path(tmpdir).joinpath("metrics.pkl")
         ...     runner = EvaluationRunner(
         ...         ingestor=Ingestor(
-        ...             data={
-        ...                 "pred": np.array([3, 2, 0, 1, 0]),
-        ...                 "target": np.array([3, 2, 0, 1, 0]),
-        ...             }
+        ...             pl.DataFrame(
+        ...                 {
+        ...                     "pred": [3, 2, 0, 1, 0],
+        ...                     "target": [3, 2, 0, 1, 0],
+        ...                 }
+        ...             )
         ...         ),
         ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
         ...         saver=PickleSaver(),
@@ -139,17 +143,19 @@ def setup_runner(
 
     ```pycon
 
-    >>> import numpy as np
+    >>> import polars as pl
     >>> from arkas.runner import setup_runner
     >>> runner = setup_runner(
     ...     {
     ...         "_target_": "arkas.runner.EvaluationRunner",
     ...         "ingestor": {
-    ...             "_target_": "arkas.data.ingestor.Ingestor",
-    ...             "data": {
-    ...                 "pred": np.array([3, 2, 0, 1, 0]),
-    ...                 "target": np.array([3, 2, 0, 1, 0]),
-    ...             },
+    ...             "_target_": "grizz.ingestor.Ingestor",
+    ...             "frame": pl.DataFrame(
+    ...                 {
+    ...                     "pred": [3, 2, 0, 1, 0],
+    ...                     "target": [3, 2, 0, 1, 0],
+    ...                 }
+    ...             ),
     ...         },
     ...         "evaluator": {
     ...             "_target_": "arkas.evaluator.AccuracyEvaluator",
@@ -162,8 +168,8 @@ def setup_runner(
     ... )
     >>> runner
     EvaluationRunner(
-      (ingestor): Ingestor(num_items=2)
-      (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred)
+      (ingestor): Ingestor(shape=(5, 2))
+      (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
     )

@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import str_indent, str_mapping
 from coola.utils.path import sanitize_path
+from grizz.ingestor import BaseIngestor, setup_ingestor
 from iden.io import BaseSaver, setup_saver
 
-from arkas.data.ingestor import BaseIngestor, setup_ingestor
 from arkas.evaluator import BaseEvaluator, setup_evaluator
 from arkas.runner.base import BaseRunner
 
@@ -35,20 +35,22 @@ class EvaluationRunner(BaseRunner):
     ```pycon
 
     >>> import tempfile
-    >>> import numpy as np
+    >>> import polars as pl
     >>> from pathlib import Path
     >>> from iden.io import PickleSaver
-    >>> from arkas.data.ingestor import Ingestor
+    >>> from grizz.ingestor import Ingestor
     >>> from arkas.evaluator import AccuracyEvaluator
     >>> from arkas.runner import EvaluationRunner
     >>> with tempfile.TemporaryDirectory() as tmpdir:
     ...     path = Path(tmpdir).joinpath("metrics.pkl")
     ...     runner = EvaluationRunner(
     ...         ingestor=Ingestor(
-    ...             data={
-    ...                 "pred": np.array([3, 2, 0, 1, 0]),
-    ...                 "target": np.array([3, 2, 0, 1, 0]),
-    ...             }
+    ...             pl.DataFrame(
+    ...                 {
+    ...                     "pred": [3, 2, 0, 1, 0],
+    ...                     "target": [3, 2, 0, 1, 0],
+    ...                 }
+    ...             )
     ...         ),
     ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
     ...         saver=PickleSaver(),
@@ -58,8 +60,8 @@ class EvaluationRunner(BaseRunner):
     ...     runner.run()
     ...
     EvaluationRunner(
-      (ingestor): Ingestor(num_items=2)
-      (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred)
+      (ingestor): Ingestor(shape=(5, 2))
+      (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
     )
