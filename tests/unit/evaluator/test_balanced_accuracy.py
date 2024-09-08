@@ -59,18 +59,6 @@ def test_balanced_accuracy_evaluator_evaluate_lazy_false_missing_keys() -> None:
     )
 
 
-def test_balanced_accuracy_evaluator_evaluate_dataframe() -> None:
-    assert (
-        BalancedAccuracyEvaluator(y_true="target", y_pred="pred")
-        .evaluate(pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]}))
-        .equal(
-            BalancedAccuracyResult(
-                y_true=np.array([1, 2, 3, 2, 1]), y_pred=np.array([3, 2, 0, 1, 0])
-            )
-        )
-    )
-
-
 def test_balanced_accuracy_evaluator_evaluate_drop_nulls() -> None:
     assert (
         BalancedAccuracyEvaluator(y_true="target", y_pred="pred")

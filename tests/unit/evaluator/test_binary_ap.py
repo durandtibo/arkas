@@ -59,24 +59,16 @@ def test_binary_average_precision_evaluator_evaluate_lazy_false_missing_keys() -
     )
 
 
-def test_binary_average_precision_evaluator_evaluate_dataframe() -> None:
-    assert (
-        BinaryAveragePrecisionEvaluator(y_true="target", y_score="pred")
-        .evaluate(pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 1, 0, 1]}))
-        .equal(
-            BinaryAveragePrecisionResult(
-                y_true=np.array([1, 0, 1, 0, 1]), y_score=np.array([2, -1, 0, 3, 1])
-            )
-        )
-    )
-
-
 def test_binary_average_precision_evaluator_evaluate_drop_nulls() -> None:
     assert (
         BinaryAveragePrecisionEvaluator(y_true="target", y_score="pred")
         .evaluate(
             pl.DataFrame(
-                {"pred": [2, -1, 0, 3, 1, None, 1, None], "target": [1, 0, 0, 1, 1, 2, None, None]}
+                {
+                    "pred": [2, -1, 0, 3, 1, None, 1, None],
+                    "target": [1, 0, 0, 1, 1, 2, None, None],
+                    "col": [1, 0, 0, 1, 1, None, 7, None],
+                }
             )
         )
         .equal(
@@ -93,7 +85,11 @@ def test_binary_average_precision_evaluator_evaluate_drop_nulls_false() -> None:
         BinaryAveragePrecisionEvaluator(y_true="target", y_score="pred", drop_nulls=False)
         .evaluate(
             pl.DataFrame(
-                {"pred": [2, -1, 0, 3, 1, None, 1, None], "target": [1, 0, 0, 1, 1, 2, None, None]}
+                {
+                    "pred": [2, -1, 0, 3, 1, None, 1, None],
+                    "target": [1, 0, 0, 1, 1, 2, None, None],
+                    "col": [1, 0, 0, 1, 1, None, 7, None],
+                }
             )
         )
         .equal(
