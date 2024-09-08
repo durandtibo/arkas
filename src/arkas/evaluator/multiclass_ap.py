@@ -7,22 +7,19 @@ __all__ = ["MulticlassAveragePrecisionEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
-from arkas.evaluator.base import BaseLazyEvaluator
-from arkas.result import EmptyResult, MulticlassAveragePrecisionResult
+from arkas.evaluator.lazy import BaseLazyEvaluator
+from arkas.result import MulticlassAveragePrecisionResult, Result
 from arkas.utils.array import to_array
-from arkas.utils.data import find_keys, find_missing_keys, flat_keys, prepare_array
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
 
     import polars as pl
 
-    from arkas.result import BaseResult
 
 logger = logging.getLogger(__name__)
 
 
-class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator):
+class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator[MulticlassAveragePrecisionResult]):
     r"""Implement the average precision evaluator for multiclass labels.
 
     Args:
@@ -31,6 +28,8 @@ class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator):
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions.
+        drop_nulls: If ``True``, the rows with null values in
+            ``y_true`` or ``y_score`` columns are dropped.
 
     Example usage:
 
@@ -40,7 +39,7 @@ class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator):
     >>> from arkas.evaluator import MulticlassAveragePrecisionEvaluator
     >>> evaluator = MulticlassAveragePrecisionEvaluator(y_true="target", y_score="pred")
     >>> evaluator
-    MulticlassAveragePrecisionEvaluator(y_true=target, y_score=pred)
+    MulticlassAveragePrecisionEvaluator(y_true=target, y_score=pred, drop_nulls=True)
     >>> data = pl.DataFrame(
     ...     {
     ...         "pred": [
@@ -62,26 +61,31 @@ class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator):
     ```
     """
 
-    def __init__(self, y_true: str, y_score: str | Sequence[str]) -> None:
+    def __init__(self, y_true: str, y_score: str, drop_nulls: bool = True) -> None:
+        super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
-        self._y_score = y_score if isinstance(y_score, str) else tuple(y_score)
+        self._y_score = y_score
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score})"
-
-    def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
-        logger.info(
-            f"Evaluating the multiclass average precision | y_true={self._y_true} | y_score={self._y_score}"
+        return (
+            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score}, "
+            f"drop_nulls={self._drop_nulls})"
         )
-        if missing_keys := find_missing_keys(
-            keys=find_keys(data), queries=flat_keys([self._y_true, self._y_score])
-        ):
-            logger.warning(
-                "Skipping the multiclass average precision evaluation because some keys are missing: "
-                f"{sorted(missing_keys)}"
-            )
-            return EmptyResult()
+
+    def evaluate(
+        self, data: pl.DataFrame, lazy: bool = True
+    ) -> MulticlassAveragePrecisionResult | Result:
+        logger.info(
+            f"Evaluating the multiclass average precision | y_true={self._y_true} | "
+            f"y_score={self._y_score} | drop_nulls={self._drop_nulls}"
+        )
+        return self._evaluate(data, lazy)
+
+    def _compute_result(self, data: pl.DataFrame) -> MulticlassAveragePrecisionResult:
         return MulticlassAveragePrecisionResult(
             y_true=to_array(data[self._y_true]).ravel(),
-            y_score=prepare_array(data, keys=self._y_score),
+            y_score=to_array(data[self._y_score]),
         )
+
+    def _get_columns(self) -> tuple[str, ...]:
+        return (self._y_true, self._y_score)
