@@ -2,16 +2,14 @@ r"""Contain the base class to implement an evaluator."""
 
 from __future__ import annotations
 
-__all__ = ["BaseEvaluator", "BaseLazyEvaluator", "is_evaluator_config", "setup_evaluator"]
+__all__ = ["BaseEvaluator", "is_evaluator_config", "setup_evaluator"]
 
 import logging
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import TYPE_CHECKING
 
 from objectory import AbstractFactory
 from objectory.utils import is_object_config
-
-from arkas.result import EmptyResult, Result
 
 if TYPE_CHECKING:
     import polars as pl
@@ -66,44 +64,6 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
         AccuracyResult(y_true=(6,), y_pred=(6,))
 
         ```
-        """
-
-
-class BaseLazyEvaluator(BaseEvaluator):
-    r"""Define the base class to evaluate a DataFrame.
-
-    Example usage:
-
-    ```pycon
-
-    >>> import polars as pl
-    >>> from arkas.evaluator import AccuracyEvaluator
-    >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
-    >>> evaluator
-    AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
-    >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    >>> result = evaluator.evaluate(data)
-    >>> result
-    AccuracyResult(y_true=(6,), y_pred=(6,))
-
-    ```
-    """
-
-    def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BaseResult:
-        out = self._evaluate(data)
-        if lazy or isinstance(out, EmptyResult):
-            return out
-        return Result(metrics=out.compute_metrics(), figures=out.generate_figures())
-
-    @abstractmethod
-    def _evaluate(self, data: pl.DataFrame) -> BaseResult:
-        r"""Evaluate the results.
-
-        Args:
-            data: The data to evaluate.
-
-        Returns:
-            The generated results.
         """
 
 
