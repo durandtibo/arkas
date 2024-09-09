@@ -67,7 +67,7 @@ class BinaryClassificationEvaluator(BaseLazyEvaluator):
             f"y_score={self._y_score})"
         )
 
-    def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
+    def _evaluate(self, data: pl.DataFrame) -> BaseResult:
         logger.info(
             f"Evaluating the binary average precision | y_true={self._y_true} | "
             f"y_pred={self._y_pred} | y_score={self._y_score}"

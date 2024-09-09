@@ -69,7 +69,7 @@ class SequentialEvaluator(BaseEvaluator):
         args = repr_indent(repr_sequence(self._evaluators))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    def evaluate(self, data: dict | pl.DataFrame, lazy: bool = True) -> BaseResult:
+    def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BaseResult:
         out = SequentialResult(
             [evaluator.evaluate(data=data, lazy=lazy) for evaluator in self._evaluators]
         )
