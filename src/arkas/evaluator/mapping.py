@@ -68,7 +68,7 @@ class MappingEvaluator(BaseEvaluator):
         args = repr_indent(repr_mapping(self._evaluators))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    def evaluate(self, data: dict | pl.DataFrame, lazy: bool = True) -> BaseResult:
+    def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BaseResult:
         out = MappingResult(
             {
                 key: evaluator.evaluate(data=data, lazy=lazy)

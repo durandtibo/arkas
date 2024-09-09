@@ -41,7 +41,7 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
     ```
     """
 
-    def evaluate(self, data: dict | pl.DataFrame, lazy: bool = True) -> BaseResult:
+    def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BaseResult:
         r"""Evaluate the result.
 
         Args:
@@ -60,8 +60,8 @@ class BaseEvaluator(ABC, metaclass=AbstractFactory):
         >>> import polars as pl
         >>> from arkas.evaluator import AccuracyEvaluator
         >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
-        >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-        >>> result = evaluator.evaluate(frame)
+        >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+        >>> result = evaluator.evaluate(data)
         >>> result
         AccuracyResult(y_true=(6,), y_pred=(6,))
 
@@ -89,14 +89,14 @@ class BaseLazyEvaluator(BaseEvaluator):
     ```
     """
 
-    def evaluate(self, data: dict | pl.DataFrame, lazy: bool = True) -> BaseResult:
+    def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BaseResult:
         out = self._evaluate(data)
         if lazy or isinstance(out, EmptyResult):
             return out
         return Result(metrics=out.compute_metrics(), figures=out.generate_figures())
 
     @abstractmethod
-    def _evaluate(self, data: dict | pl.DataFrame) -> BaseResult:
+    def _evaluate(self, data: pl.DataFrame) -> BaseResult:
         r"""Evaluate the results.
 
         Args:
