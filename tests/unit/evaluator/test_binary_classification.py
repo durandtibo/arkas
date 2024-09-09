@@ -28,7 +28,7 @@ def test_binary_classification_evaluator_str() -> None:
 def test_binary_classification_evaluator_evaluate() -> None:
     assert (
         BinaryClassificationEvaluator(y_true="target", y_pred="pred")
-        .evaluate({"pred": np.array([1, 0, 0, 1, 1]), "target": np.array([1, 0, 0, 1, 1])})
+        .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]}))
         .equal(
             BinaryClassificationResult(
                 y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
@@ -41,11 +41,9 @@ def test_binary_classification_evaluator_evaluate_with_score() -> None:
     assert (
         BinaryClassificationEvaluator(y_true="target", y_pred="pred", y_score="score")
         .evaluate(
-            {
-                "pred": np.array([1, 0, 0, 1, 1]),
-                "score": np.array([2, -1, 0, 3, 1]),
-                "target": np.array([1, 0, 0, 1, 1]),
-            }
+            pl.DataFrame(
+                {"pred": [1, 0, 0, 1, 1], "score": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]}
+            )
         )
         .equal(
             BinaryClassificationResult(
@@ -61,11 +59,13 @@ def test_binary_classification_evaluator_evaluate_lazy_false() -> None:
     result = BinaryClassificationEvaluator(
         y_true="target", y_pred="pred", y_score="score"
     ).evaluate(
-        {
-            "pred": np.array([1, 0, 0, 1, 1]),
-            "score": np.array([2, -1, 0, 3, 1]),
-            "target": np.array([1, 0, 0, 1, 1]),
-        },
+        pl.DataFrame(
+            {
+                "pred": [1, 0, 0, 1, 1],
+                "score": [2, -1, 0, 3, 1],
+                "target": [1, 0, 0, 1, 1],
+            }
+        ),
         lazy=False,
     )
     assert isinstance(result, Result)
@@ -102,8 +102,12 @@ def test_binary_classification_evaluator_evaluate_lazy_false() -> None:
 
 def test_binary_classification_evaluator_evaluate_missing_keys_pred() -> None:
     assert (
-        BinaryClassificationEvaluator(y_true="target", y_pred="prediction")
-        .evaluate({"pred": np.array([1, 0, 0, 1, 1]), "target": np.array([1, 0, 0, 1, 1])})
+        BinaryClassificationEvaluator(y_true="target", y_pred="missing")
+        .evaluate(
+            pl.DataFrame(
+                {"pred": [1, 0, 0, 1, 1], "score": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]}
+            )
+        )
         .equal(EmptyResult())
     )
 
@@ -111,28 +115,68 @@ def test_binary_classification_evaluator_evaluate_missing_keys_pred() -> None:
 def test_binary_classification_evaluator_evaluate_missing_keys_score() -> None:
     assert (
         BinaryClassificationEvaluator(y_true="target", y_pred="pred", y_score="score")
-        .evaluate({"pred": np.array([1, 0, 0, 1, 1]), "target": np.array([1, 0, 0, 1, 1])})
+        .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]}))
         .equal(EmptyResult())
     )
 
 
 def test_binary_classification_evaluator_evaluate_lazy_false_missing_keys() -> None:
     assert (
-        BinaryClassificationEvaluator(y_true="target", y_pred="prediction")
+        BinaryClassificationEvaluator(y_true="target", y_pred="missing")
         .evaluate(
-            {"pred": np.array([1, 0, 0, 1, 1]), "target": np.array([1, 0, 0, 1, 1])}, lazy=False
+            pl.DataFrame(
+                {"pred": [1, 0, 0, 1, 1], "score": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]}
+            ),
+            lazy=False,
         )
         .equal(EmptyResult())
     )
 
 
-def test_binary_classification_evaluator_evaluate_dataframe() -> None:
+def test_binary_classification_evaluator_evaluate_drop_nulls() -> None:
     assert (
-        BinaryClassificationEvaluator(y_true="target", y_pred="pred")
-        .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]}))
+        BinaryClassificationEvaluator(y_true="target", y_pred="pred", y_score="score")
+        .evaluate(
+            pl.DataFrame(
+                {
+                    "pred": [3, 2, 0, 1, 0, None, 1, 2, None],
+                    "score": [2, -1, 0, 3, 1, 0, None, 1, None],
+                    "target": [1, 2, 3, 2, 1, 2, 1, None, None],
+                    "col": [1, None, 3, 4, 5, None, 7, None, 9],
+                }
+            )
+        )
         .equal(
             BinaryClassificationResult(
-                y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+                y_true=np.array([1, 2, 3, 2, 1]),
+                y_pred=np.array([3, 2, 0, 1, 0]),
+                y_score=np.array([2, -1, 0, 3, 1]),
             )
+        )
+    )
+
+
+def test_binary_classification_evaluator_evaluate_drop_nulls_false() -> None:
+    assert (
+        BinaryClassificationEvaluator(
+            y_true="target", y_pred="pred", y_score="score", drop_nulls=False
+        )
+        .evaluate(
+            pl.DataFrame(
+                {
+                    "pred": [3, 2, 0, 1, 0, None, 1, 2, None],
+                    "score": [2, -1, 0, 3, 1, 0, None, 1, None],
+                    "target": [1, 2, 3, 2, 1, 2, 1, None, None],
+                    "col": [1, None, 3, 4, 5, None, 7, None, 9],
+                }
+            )
+        )
+        .equal(
+            BinaryClassificationResult(
+                y_true=np.array([1.0, 2.0, 3.0, 2.0, 1.0, 2.0, 1.0, float("nan"), float("nan")]),
+                y_pred=np.array([3.0, 2.0, 0.0, 1.0, 0.0, float("nan"), 1.0, 2.0, float("nan")]),
+                y_score=np.array([2.0, -1.0, 0.0, 3.0, 1.0, 0.0, float("nan"), 1.0, float("nan")]),
+            ),
+            equal_nan=True,
         )
     )
