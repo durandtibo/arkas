@@ -33,16 +33,6 @@ jobs:
         run: |
           poetry run python -c "import arkas"
 
-      - name: check arkas.data
-        run: |
-          poetry run python -c "from arkas import data"
-      - name: check arkas.data.ingestor
-        run: |
-          poetry run python -c "from arkas.data import ingestor"
-      - name: check arkas.data.transformer
-        run: |
-          poetry run python -c "from arkas.data import transformer"
-
       - name: check arkas.evaluator
         run: |
           poetry run python -c "from arkas import evaluator"

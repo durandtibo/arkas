@@ -25,7 +25,6 @@ nav:
   - Home: index.md
   - get_started.md
   - Reference:
-      - arkas.data: refs/data.md
       - arkas.evaluator: refs/evaluator.md
       - arkas.metric: refs/metric.md
       - arkas.plot: refs/plot.md
