@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class BinaryConfusionMatrixEvaluator(BaseLazyEvaluator):
+class BinaryConfusionMatrixEvaluator(BaseLazyEvaluator[BinaryConfusionMatrixResult]):
     r"""Implement the confusion matrix evaluator for binary labels.
 
     Args:
