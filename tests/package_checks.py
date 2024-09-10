@@ -4,10 +4,10 @@ import logging
 import tempfile
 from pathlib import Path
 
-import numpy as np
+import polars as pl
+from grizz.ingestor import Ingestor
 from iden.io import PickleSaver
 
-from arkas.data.ingestor import Ingestor
 from arkas.evaluator import AccuracyEvaluator
 from arkas.runner import EvaluationRunner
 from arkas.utils.logging import configure_logging
@@ -19,11 +19,13 @@ def check_evaluator() -> None:
     logger.info("Checking arkas.evaluator package")
 
     ingestor = Ingestor(
-        {
-            "pred": np.array([1, 0, 0, 1, 1]),
-            "score": np.array([2, -1, 0, 3, 1]),
-            "target": np.array([1, 0, 0, 1, 1]),
-        }
+        pl.DataFrame(
+            {
+                "pred": [1, 0, 0, 1, 1],
+                "score": [2, -1, 0, 3, 1],
+                "target": [1, 0, 0, 1, 1],
+            }
+        )
     )
 
     with tempfile.TemporaryDirectory() as tmpdir:
