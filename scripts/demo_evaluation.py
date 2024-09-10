@@ -7,11 +7,12 @@ import logging
 from pathlib import Path
 
 import numpy as np
+import polars as pl
 from coola.nested import to_flat_dict
 from coola.utils import str_mapping
+from grizz.ingestor import Ingestor
 from iden.io import PickleSaver, load_pickle
 
-from arkas.data.ingestor import Ingestor
 from arkas.evaluator import (
     AccuracyEvaluator,
     BalancedAccuracyEvaluator,
@@ -34,11 +35,13 @@ def main() -> None:
     n_samples = 1000
     rng = np.random.default_rng(42)
     ingestor = Ingestor(
-        {
-            "pred": rng.integers(0, 2, (n_samples,)),
-            "score": rng.normal(0, 1, (n_samples,)),
-            "target": rng.integers(0, 2, (n_samples,)),
-        }
+        pl.DataFrame(
+            {
+                "pred": rng.integers(0, 2, (n_samples,)),
+                "score": rng.normal(0, 1, (n_samples,)),
+                "target": rng.integers(0, 2, (n_samples,)),
+            }
+        )
     )
 
     path_metrics = Path.cwd().joinpath("tmp/metrics.pkl")
