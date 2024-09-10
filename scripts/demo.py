@@ -6,8 +6,9 @@ from __future__ import annotations
 import logging
 
 import numpy as np
+import polars as pl
+from grizz.ingestor import Ingestor
 
-from arkas.data.ingestor import Ingestor
 from arkas.evaluator import AccuracyEvaluator
 from arkas.utils.logging import configure_logging
 
@@ -19,10 +20,12 @@ def main() -> None:
     n_samples = 1000
     rng = np.random.default_rng(42)
     ingestor = Ingestor(
-        {
-            "pred": rng.integers(0, 2, (n_samples,)),
-            "target": rng.integers(0, 2, (n_samples,)),
-        }
+        pl.DataFrame(
+            {
+                "pred": rng.integers(0, 2, (n_samples,)),
+                "target": rng.integers(0, 2, (n_samples,)),
+            }
+        )
     )
     logger.info("Ingesting data...")
     data = ingestor.ingest()
