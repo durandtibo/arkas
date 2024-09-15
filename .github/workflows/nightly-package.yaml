@@ -264,7 +264,7 @@ jobs:
       - name: Install arkas
         run: |
           pip install arkas "feu[fire]"
-          python feu install --package=matplotlib --version=${{ matrix.matplotlib-version }}
+          python -m feu install --package=matplotlib --version=${{ matrix.matplotlib-version }}
 
       - name: Run some checks
         run: |
@@ -400,7 +400,7 @@ jobs:
       - name: Install package
         run: |
           pip install arkas "feu[fire]"
-          python feu install --package=scikit-learn --version=${{ matrix.scikit-learn-version }}
+          python -m feu install --package=scikit-learn --version=${{ matrix.scikit-learn-version }}
 
       - name: Run some checks
         run: |
