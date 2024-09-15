@@ -44,6 +44,11 @@ jobs:
 #        run: |
 #          poetry run make integration-test
 
+      - name: Run demo
+        run: |
+          poetry run python -m scripts.demo
+          poetry run python -m scripts.demo_evaluation
+
 
   min:
     runs-on: ${{ matrix.os }}
