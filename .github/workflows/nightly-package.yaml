@@ -145,9 +145,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'coola'
+          package-version: ${{ matrix.coola-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install package
         run: |
-          pip install arkas coola==${{ matrix.coola-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -174,9 +181,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'grizz'
+          package-version: ${{ matrix.grizz-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install package
         run: |
-          pip install arkas grizz==${{ matrix.grizz-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -203,9 +217,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'iden'
+          package-version: ${{ matrix.iden-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install package
         run: |
-          pip install arkas iden==${{ matrix.iden-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -232,9 +253,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'jinja2'
+          package-version: ${{ matrix.jinja2-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install arkas
         run: |
-          pip install arkas jinja2==${{ matrix.jinja2-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -261,10 +289,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'matplotlib'
+          package-version: ${{ matrix.matplotlib-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install arkas
         run: |
-          pip install arkas "feu[fire]"
-          python -m feu install --package=matplotlib --version=${{ matrix.matplotlib-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -327,9 +361,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'objectory'
+          package-version: ${{ matrix.objectory-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install package
         run: |
-          pip install arkas objectory==${{ matrix.objectory-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -356,9 +397,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'polars'
+          package-version: ${{ matrix.polars-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install package
         run: |
-          pip install arkas polars==${{ matrix.polars-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -425,9 +473,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'colorlog'
+          package-version: ${{ matrix.colorlog-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install arkas
         run: |
-          pip install arkas colorlog==${{ matrix.colorlog-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -454,9 +509,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'hya'
+          package-version: ${{ matrix.hya-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install arkas
         run: |
-          pip install arkas hya==${{ matrix.hya-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -483,9 +545,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'markdown'
+          package-version: ${{ matrix.markdown-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install arkas
         run: |
-          pip install arkas markdown==${{ matrix.markdown-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
@@ -512,9 +581,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'tqdm'
+          package-version: ${{ matrix.tqdm-version }}
+          python-version: ${{ matrix.python-version }}
+
       - name: Install arkas
         run: |
-          pip install arkas tqdm==${{ matrix.tqdm-version }}
+          pip install arkas
 
       - name: Run some checks
         run: |
