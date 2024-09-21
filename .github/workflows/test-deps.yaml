@@ -33,9 +33,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install coola
-        run: |
-          poetry run pip install coola==${{ matrix.coola-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'coola'
+          package-version: ${{ matrix.coola-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -75,9 +78,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install grizz
-        run: |
-          poetry run pip install grizz==${{ matrix.grizz-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'grizz'
+          package-version: ${{ matrix.grizz-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -117,9 +123,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install iden
-        run: |
-          poetry run pip install iden==${{ matrix.iden-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'iden'
+          package-version: ${{ matrix.iden-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -159,9 +168,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install jinja2
-        run: |
-          poetry run pip install jinja2==${{ matrix.jinja2-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'jinja2'
+          package-version: ${{ matrix.jinja2-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -201,9 +213,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install matplotlib
-        run: |
-          poetry run python -m feu install --package=matplotlib --version=${{ matrix.matplotlib-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'matplotlib'
+          package-version: ${{ matrix.matplotlib-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -243,17 +258,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Find closest valid version
-        id: python-package
-        uses: durandtibo/python-package-action@v0.2.0
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
         with:
           package-name: 'numpy'
           package-version: ${{ matrix.numpy-version }}
           python-version: ${{ matrix.python-version }}
-
-      - name: Install numpy
-        run: |
-          poetry run pip install numpy==${{ steps.python-package.outputs.closest-valid-version }}
 
       - name: Show installed packages
         run: |
@@ -293,9 +303,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install objectory
-        run: |
-          poetry run pip install objectory==${{ matrix.objectory-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'objectory'
+          package-version: ${{ matrix.objectory-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -335,9 +348,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install polars
-        run: |
-          poetry run pip install polars==${{ matrix.polars-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'polars'
+          package-version: ${{ matrix.polars-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -377,9 +393,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install scikit-learn
-        run: |
-          poetry run python -m feu install --package=scikit-learn --version=${{ matrix.scikit-learn-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'scikit-learn'
+          package-version: ${{ matrix.scikit-learn-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -424,9 +443,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install colorlog
-        run: |
-          poetry run pip install colorlog==${{ matrix.colorlog-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'colorlog'
+          package-version: ${{ matrix.colorlog-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -466,9 +488,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install hya
-        run: |
-          poetry run pip install hya==${{ matrix.hya-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'hya'
+          package-version: ${{ matrix.hya-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -508,9 +533,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install markdown
-        run: |
-          poetry run pip install markdown==${{ matrix.markdown-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'markdown'
+          package-version: ${{ matrix.markdown-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
@@ -550,9 +578,12 @@ jobs:
           poetry run make config-poetry
           poetry run make install
 
-      - name: Install tqdm
-        run: |
-          poetry run pip install tqdm==${{ matrix.tqdm-version }}
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.0
+        with:
+          package-name: 'tqdm'
+          package-version: ${{ matrix.tqdm-version }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
         run: |
