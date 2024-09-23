@@ -150,7 +150,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'coola'
           package-version: ${{ matrix.coola-version }}
@@ -186,7 +186,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'grizz'
           package-version: ${{ matrix.grizz-version }}
@@ -222,7 +222,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'iden'
           package-version: ${{ matrix.iden-version }}
@@ -258,7 +258,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'jinja2'
           package-version: ${{ matrix.jinja2-version }}
@@ -294,7 +294,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'matplotlib'
           package-version: ${{ matrix.matplotlib-version }}
@@ -330,7 +330,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'numpy'
           package-version: ${{ matrix.numpy-version }}
@@ -366,7 +366,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'objectory'
           package-version: ${{ matrix.objectory-version }}
@@ -402,7 +402,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'polars'
           package-version: ${{ matrix.polars-version }}
@@ -438,7 +438,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'scikit-learn'
           package-version: ${{ matrix.scikit-learn-version }}
@@ -478,7 +478,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'colorlog'
           package-version: ${{ matrix.colorlog-version }}
@@ -514,7 +514,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'hya'
           package-version: ${{ matrix.hya-version }}
@@ -550,7 +550,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'markdown'
           package-version: ${{ matrix.markdown-version }}
@@ -586,7 +586,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.0
+        uses: durandtibo/pip-install-package-action@v0.2.1
         with:
           package-name: 'tqdm'
           package-version: ${{ matrix.tqdm-version }}
