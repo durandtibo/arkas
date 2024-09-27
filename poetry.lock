@@ -4007,10 +4007,10 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 type = ["pytest-mypy"]
 
 [extras]
-all = ["colorlog", "hya", "markdown", "tqdm"]
-cli = ["colorlog", "hya"]
+all = ["colorlog", "hya", "markdown", "omegaconf", "tqdm"]
+cli = ["colorlog", "hya", "omegaconf"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "ea77303d1a02db368ed8612bc7e44efa4e68cfb4f8fd64125573cd9852f4f137"
+content-hash = "1870e741e0cac1a7c2640481559dd42538507deb40eda1b48278e1b3e69bb2ef"
