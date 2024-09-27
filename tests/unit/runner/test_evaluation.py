@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import polars as pl
+import pytest
 from coola import objects_are_equal
 from grizz.ingestor import Ingestor
 from iden.io import PickleSaver, load_pickle
@@ -51,7 +52,8 @@ def test_evaluation_runner_str(tmp_path: Path) -> None:
     ).startswith("EvaluationRunner(")
 
 
-def test_evaluation_runner_evaluate(tmp_path: Path) -> None:
+@pytest.mark.parametrize("show_metrics", [True, False])
+def test_evaluation_runner_evaluate(tmp_path: Path, show_metrics: bool) -> None:
     path = tmp_path.joinpath("metrics.pkl")
     runner = EvaluationRunner(
         ingestor=Ingestor(
@@ -60,6 +62,7 @@ def test_evaluation_runner_evaluate(tmp_path: Path) -> None:
         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
         saver=PickleSaver(),
         path=path,
+        show_metrics=show_metrics,
     )
     assert not path.is_file()
     runner.run()

@@ -51,6 +51,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
       (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
+      (show_metrics): True
     )
 
     ```
@@ -172,6 +173,7 @@ def setup_runner(
       (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
+      (show_metrics): True
     )
 
     ```
