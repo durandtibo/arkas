@@ -1096,6 +1096,22 @@ omegaconf = ">=2.1,<3.0"
 all = ["braceexpand (>=0.1.7,<0.2.0)", "numpy (>=1.21,<3.0)", "torch (>=1.11,<2.3)", "torch (>=1.11,<3.0)"]
 
 [[package]]
+name = "hydra-core"
+version = "1.3.2"
+description = "A framework for elegantly configuring complex applications"
+optional = true
+python-versions = "*"
+files = [
+    {file = "hydra-core-1.3.2.tar.gz", hash = "sha256:8a878ed67216997c3e9d88a8e72e7b4767e81af37afb4ea3334b269a4390a824"},
+    {file = "hydra_core-1.3.2-py3-none-any.whl", hash = "sha256:fa0238a9e31df3373b35b0bfb672c34cc92718d21f81311d8996a16de1141d8b"},
+]
+
+[package.dependencies]
+antlr4-python3-runtime = "==4.9.*"
+omegaconf = ">=2.2,<2.4"
+packaging = "*"
+
+[[package]]
 name = "iden"
 version = "0.0.4"
 description = "simple library to manage a dataset of shards to train machine learning models"
@@ -3992,8 +4008,9 @@ type = ["pytest-mypy"]
 
 [extras]
 all = ["colorlog", "hya", "markdown", "tqdm"]
+cli = ["colorlog", "hya"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "01e1156ba72744bc6919f56859f0582489c529014e4073d670a259a53944794c"
+content-hash = "ea77303d1a02db368ed8612bc7e44efa4e68cfb4f8fd64125573cd9852f4f137"

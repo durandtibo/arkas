@@ -12,6 +12,9 @@ __all__ = [
     "is_hya_available",
     "is_markdown_available",
     "markdown_available",
+    "hydra_available",
+    "is_hydra_available",
+    "check_hydra",
 ]
 
 from typing import TYPE_CHECKING, Any
@@ -172,6 +175,82 @@ def hya_available(fn: Callable[..., Any]) -> Callable[..., Any]:
     ```
     """
     return decorator_package_available(fn, is_hya_available)
+
+
+#################
+#     hydra     #
+#################
+
+
+def is_hydra_available() -> bool:
+    r"""Indicate if the ``hydra`` package is installed or not.
+
+    Returns:
+        ``True`` if ``hydra`` is available otherwise
+            ``False``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import is_hydra_available
+    >>> is_hydra_available()
+
+    ```
+    """
+    return package_available("hydra")
+
+
+def check_hydra() -> None:
+    r"""Check if the ``hydra`` package is installed.
+
+    Raises:
+        RuntimeError: if the ``hydra`` package is not
+            installed.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import check_hydra
+    >>> check_hydra()
+
+    ```
+    """
+    if not is_hydra_available():
+        msg = (
+            "'hydra' package is required but not installed. "
+            "You can install 'hydra' package with the command:\n\n"
+            "pip install hydra-core\n"
+        )
+        raise RuntimeError(msg)
+
+
+def hydra_available(fn: Callable[..., Any]) -> Callable[..., Any]:
+    r"""Implement a decorator to execute a function only if ``hydra``
+    package is installed.
+
+    Args:
+        fn: The function to execute.
+
+    Returns:
+        A wrapper around ``fn`` if ``hydra`` package is
+            installed, otherwise ``None``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import hydra_available
+    >>> @hydra_available
+    ... def my_function(n: int = 0) -> int:
+    ...     return 42 + n
+    ...
+    >>> my_function()
+
+    ```
+    """
+    return decorator_package_available(fn, is_hydra_available)
 
 
 ####################
