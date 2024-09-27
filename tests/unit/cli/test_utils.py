@@ -20,16 +20,8 @@ def test_get_original_cwd_no_hydra() -> None:
         assert get_original_cwd() == Path.cwd()
 
 
-def test_get_original_cwd_with_hydra() -> None:
-    with (
-        patch("arkas.utils.imports.is_hydra_available", lambda: True),
-        patch("hydra.core.hydra_config.HydraConfig.initialized", lambda: False),
-    ):
-        assert get_original_cwd() == Path.cwd()
-
-
 @hydra_available
-def test_get_original_cwd_with_hydra_initialized(tmp_path: Path) -> None:
+def test_get_original_cwd_with_hydra(tmp_path: Path) -> None:
     with (
         patch("hydra.core.hydra_config.HydraConfig.initialized", lambda: True),
         patch("hydra.utils.get_original_cwd", lambda: tmp_path.as_posix()),
