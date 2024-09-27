@@ -6,9 +6,12 @@ import pytest
 
 from arkas.utils.imports import (
     check_colorlog,
+    check_hya,
     check_markdown,
     colorlog_available,
+    hya_available,
     is_colorlog_available,
+    is_hya_available,
     is_markdown_available,
     markdown_available,
 )
@@ -66,6 +69,60 @@ def test_colorlog_available_decorator_without_package() -> None:
     with patch("arkas.utils.imports.is_colorlog_available", lambda: False):
 
         @colorlog_available
+        def fn(n: int = 0) -> int:
+            return 42 + n
+
+        assert fn(2) is None
+
+
+###############
+#     hya     #
+###############
+
+
+def test_check_hya_with_package() -> None:
+    with patch("arkas.utils.imports.is_hya_available", lambda: True):
+        check_hya()
+
+
+def test_check_hya_without_package() -> None:
+    with (
+        patch("arkas.utils.imports.is_hya_available", lambda: False),
+        pytest.raises(RuntimeError, match="`hya` package is required but not installed."),
+    ):
+        check_hya()
+
+
+def test_is_hya_available() -> None:
+    assert isinstance(is_hya_available(), bool)
+
+
+def test_hya_available_with_package() -> None:
+    with patch("arkas.utils.imports.is_hya_available", lambda: True):
+        fn = hya_available(my_function)
+        assert fn(2) == 44
+
+
+def test_hya_available_without_package() -> None:
+    with patch("arkas.utils.imports.is_hya_available", lambda: False):
+        fn = hya_available(my_function)
+        assert fn(2) is None
+
+
+def test_hya_available_decorator_with_package() -> None:
+    with patch("arkas.utils.imports.is_hya_available", lambda: True):
+
+        @hya_available
+        def fn(n: int = 0) -> int:
+            return 42 + n
+
+        assert fn(2) == 44
+
+
+def test_hya_available_decorator_without_package() -> None:
+    with patch("arkas.utils.imports.is_hya_available", lambda: False):
+
+        @hya_available
         def fn(n: int = 0) -> int:
             return 42 + n
 
