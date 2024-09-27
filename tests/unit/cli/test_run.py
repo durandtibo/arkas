@@ -1,0 +1,35 @@
+from __future__ import annotations
+
+from typing import Any
+from unittest.mock import patch
+
+from objectory import OBJECT_TARGET
+from omegaconf import OmegaConf
+
+from arkas.cli.run import main, main_cli
+from arkas.runner import BaseRunner
+
+
+class FakeRunner(BaseRunner):
+    r"""Define a fake runner to test the runner instantiation."""
+
+    def run(self) -> Any:
+        pass
+
+
+def test_main() -> None:
+    main({"runner": {OBJECT_TARGET: "FakeRunner"}})
+
+
+def test_main_factory_call() -> None:
+    with patch("arkas.runner.BaseRunner.factory") as factory_mock:
+        main({"runner": {OBJECT_TARGET: "MyRunner", "engine": "ABC"}})
+        factory_mock.assert_called_with(_target_="MyRunner", engine="ABC")
+
+
+def test_main_cli_factory_call() -> None:
+    with patch("arkas.runner.BaseRunner.factory") as factory_mock:
+        main_cli(OmegaConf.create({"runner": {OBJECT_TARGET: "MyRunner", "engine": "ABC"}}))
+        factory_mock.assert_called_with(_target_="MyRunner", engine="ABC")
+    assert OmegaConf.has_resolver("hya.add")
+    assert OmegaConf.has_resolver("hya.mul")
