@@ -26,8 +26,10 @@ else:  # pragma: no cover
 if is_hya_available():
     from hya import register_resolvers
 else:  # pragma: no cover
+
     def register_resolvers() -> None:
         return None
+
 
 if is_omegaconf_available():
     from omegaconf import DictConfig, OmegaConf

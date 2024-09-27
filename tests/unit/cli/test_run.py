@@ -4,11 +4,14 @@ from typing import Any
 from unittest.mock import patch
 
 from objectory import OBJECT_TARGET
-from omegaconf import OmegaConf
 
 from arkas.cli.run import main, main_cli
 from arkas.runner import BaseRunner
 from arkas.testing import omegaconf_available
+from arkas.utils.imports import is_omegaconf_available
+
+if is_omegaconf_available():
+    from omegaconf import OmegaConf
 
 
 class FakeRunner(BaseRunner):
