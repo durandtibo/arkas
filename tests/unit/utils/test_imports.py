@@ -34,7 +34,7 @@ def test_check_colorlog_with_package() -> None:
 def test_check_colorlog_without_package() -> None:
     with (
         patch("arkas.utils.imports.is_colorlog_available", lambda: False),
-        pytest.raises(RuntimeError, match="`colorlog` package is required but not installed."),
+        pytest.raises(RuntimeError, match="'colorlog' package is required but not installed."),
     ):
         check_colorlog()
 
@@ -88,7 +88,7 @@ def test_check_hya_with_package() -> None:
 def test_check_hya_without_package() -> None:
     with (
         patch("arkas.utils.imports.is_hya_available", lambda: False),
-        pytest.raises(RuntimeError, match="`hya` package is required but not installed."),
+        pytest.raises(RuntimeError, match="'hya' package is required but not installed."),
     ):
         check_hya()
 
@@ -142,7 +142,7 @@ def test_check_markdown_with_package() -> None:
 def test_check_markdown_without_package() -> None:
     with (
         patch("arkas.utils.imports.is_markdown_available", lambda: False),
-        pytest.raises(RuntimeError, match="`markdown` package is required but not installed."),
+        pytest.raises(RuntimeError, match="'markdown' package is required but not installed."),
     ):
         check_markdown()
 

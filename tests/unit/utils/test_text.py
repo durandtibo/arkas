@@ -21,7 +21,7 @@ def test_markdown_to_html_no_markdown() -> None:
     with (
         patch("arkas.utils.text.is_markdown_available", lambda: False),
         patch("arkas.utils.imports.is_markdown_available", lambda: False),
-        pytest.raises(RuntimeError, match="`markdown` package is required but not installed."),
+        pytest.raises(RuntimeError, match="'markdown' package is required but not installed."),
     ):
         markdown_to_html("- a\n- b\n- c")
 

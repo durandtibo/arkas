@@ -64,8 +64,8 @@ def check_colorlog() -> None:
     """
     if not is_colorlog_available():
         msg = (
-            "`colorlog` package is required but not installed. "
-            "You can install `colorlog` package with the command:\n\n"
+            "'colorlog' package is required but not installed. "
+            "You can install 'colorlog' package with the command:\n\n"
             "pip install colorlog\n"
         )
         raise RuntimeError(msg)
@@ -140,8 +140,8 @@ def check_hya() -> None:
     """
     if not is_hya_available():
         msg = (
-            "`hya` package is required but not installed. "
-            "You can install `hya` package with the command:\n\n"
+            "'hya' package is required but not installed. "
+            "You can install 'hya' package with the command:\n\n"
             "pip install hya\n"
         )
         raise RuntimeError(msg)
@@ -216,8 +216,8 @@ def check_markdown() -> None:
     """
     if not is_markdown_available():
         msg = (
-            "`markdown` package is required but not installed. "
-            "You can install `markdown` package with the command:\n\n"
+            "'markdown' package is required but not installed. "
+            "You can install 'markdown' package with the command:\n\n"
             "pip install markdown\n"
         )
         raise RuntimeError(msg)
