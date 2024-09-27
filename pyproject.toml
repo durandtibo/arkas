@@ -51,8 +51,8 @@ markdown = { version = ">=3.4,<4.0", optional = true }
 tqdm = { version = ">=4.65,<5.0", optional = true }
 
 [tool.poetry.extras]
-all = ["colorlog", "hya", "hydra", "markdown", "omegaconf", "tqdm"]
-cli = ["colorlog", "hya", "hydra", "omegaconf"]
+all = ["colorlog", "hya", "hydra-core", "markdown", "omegaconf", "tqdm"]
+cli = ["colorlog", "hya", "hydra-core", "omegaconf"]
 
 [tool.poetry.group.docs]
 optional = true
