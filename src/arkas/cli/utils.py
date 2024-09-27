@@ -11,9 +11,13 @@ from unittest.mock import Mock
 from coola.utils.path import sanitize_path
 
 import arkas
-from arkas.utils.imports import is_hydra_available, is_omegaconf_available
+from arkas.utils.imports import (
+    check_omegaconf,
+    is_hydra_available,
+    is_omegaconf_available,
+)
 
-if is_hydra_available():
+if is_hydra_available():  # pragma: no cover
     import hydra
     from hydra.core.hydra_config import HydraConfig
 
@@ -84,6 +88,7 @@ def log_run_info(config: DictConfig) -> None:
 
     ```
     """
+    check_omegaconf()
     logger.info(LOGO)
     logger.info("Original working directory: %s", get_original_cwd())
     logger.info("Current working directory: %s", Path.cwd())
