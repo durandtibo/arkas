@@ -2,13 +2,18 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import patch
-
-import pytest
-from omegaconf import DictConfig, OmegaConf
 
 from arkas.cli.utils import get_original_cwd, log_run_info
 from arkas.testing import hydra_available, omegaconf_available
+from arkas.utils.imports import is_omegaconf_available
+
+if TYPE_CHECKING:
+    import pytest
+
+if is_omegaconf_available():
+    from omegaconf import OmegaConf
 
 ######################################
 #     Tests for get_original_cwd     #
@@ -16,7 +21,7 @@ from arkas.testing import hydra_available, omegaconf_available
 
 
 def test_get_original_cwd_no_hydra() -> None:
-    with patch("arkas.utils.imports.is_hydra_available", lambda: False):
+    with patch("arkas.cli.utils.is_hydra_available", lambda: False):
         assert get_original_cwd() == Path.cwd()
 
 
@@ -34,14 +39,10 @@ def test_get_original_cwd_with_hydra(tmp_path: Path) -> None:
 ##################################
 
 
-@pytest.fixture
-def config() -> DictConfig:
-    return OmegaConf.create({"k": "v", "list": [1, {"a": "1", "b": "2"}]})
-
-
 @omegaconf_available
 @patch("arkas.cli.utils.get_original_cwd", lambda: "/my/path")
-def test_log_run_info(caplog: pytest.LogCaptureFixture, config: DictConfig) -> None:
-    caplog.set_level(logging.INFO)
-    log_run_info(config)
-    assert caplog.messages[-1].startswith("Config:")
+def test_log_run_info(caplog: pytest.LogCaptureFixture) -> None:
+    config = OmegaConf.create({"k": "v", "list": [1, {"a": "1", "b": "2"}]})
+    with caplog.at_level(logging.INFO):
+        log_run_info(config)
+        assert caplog.messages[-1].startswith("Config:")

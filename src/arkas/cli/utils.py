@@ -9,15 +9,18 @@ from pathlib import Path
 from unittest.mock import Mock
 
 from coola.utils.path import sanitize_path
-from omegaconf import DictConfig, OmegaConf
 
 import arkas
-from arkas.utils.imports import is_hydra_available
+from arkas.utils.imports import is_hydra_available, is_omegaconf_available
 
 if is_hydra_available():
     import hydra
+    from hydra.core.hydra_config import HydraConfig
+
+if is_omegaconf_available():
+    from omegaconf import DictConfig, OmegaConf
 else:  # pragma: no cover
-    hydra = Mock()
+    DictConfig = Mock()
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +63,7 @@ def get_original_cwd() -> Path:
 
     ```
     """
-    if is_hydra_available() and hydra.core.hydra_config.HydraConfig.initialized():
+    if is_hydra_available() and HydraConfig.initialized():
         return sanitize_path(hydra.utils.get_original_cwd())
     return Path.cwd()
 
