@@ -8,10 +8,8 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
-from coola.nested import to_flat_dict
-from coola.utils import str_mapping
 from grizz.ingestor import Ingestor
-from iden.io import PickleSaver, load_pickle
+from iden.io import PickleSaver
 
 from arkas.evaluator import (
     AccuracyEvaluator,
@@ -64,9 +62,6 @@ def main() -> None:
     )
     logger.info(f"runner:\n{runner}")
     runner.run()
-
-    metrics = load_pickle(path_metrics)
-    logger.info(f"metrics:\n{str_mapping(to_flat_dict(metrics), sorted_keys=True)}")
 
 
 if __name__ == "__main__":

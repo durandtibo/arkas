@@ -7,10 +7,12 @@ __all__ = ["EvaluationRunner"]
 import logging
 from typing import TYPE_CHECKING, Any
 
+from coola.nested import to_flat_dict
 from coola.utils import str_indent, str_mapping
 from coola.utils.path import sanitize_path
 from grizz.ingestor import BaseIngestor, setup_ingestor
 from iden.io import BaseSaver, setup_saver
+from iden.utils.time import timeblock
 
 from arkas.evaluator import BaseEvaluator, setup_evaluator
 from arkas.runner.base import BaseRunner
@@ -29,6 +31,8 @@ class EvaluationRunner(BaseRunner):
         evaluator: The evaluator or its configuration.
         saver: The metric saver or its configuration.
         path: The path where to save the metrics.
+        show_metrics: If ``True``, the metrics are shown in the
+            logging output.
 
     Example usage:
 
@@ -64,6 +68,7 @@ class EvaluationRunner(BaseRunner):
       (evaluator): AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
+      (show_metrics): True
     )
 
     ```
@@ -75,11 +80,13 @@ class EvaluationRunner(BaseRunner):
         evaluator: BaseEvaluator | dict,
         saver: BaseSaver | dict,
         path: Path | str,
+        show_metrics: bool = True,
     ) -> None:
         self._ingestor = setup_ingestor(ingestor)
         self._evaluator = setup_evaluator(evaluator)
         self._saver = setup_saver(saver)
         self._path = sanitize_path(path)
+        self._show_metrics = bool(show_metrics)
 
     def __repr__(self) -> str:
         args = str_indent(
@@ -89,12 +96,17 @@ class EvaluationRunner(BaseRunner):
                     "evaluator": self._evaluator,
                     "saver": self._saver,
                     "path": self._path,
+                    "show_metrics": self._show_metrics,
                 }
             )
         )
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def run(self) -> Any:
+        with timeblock("=== end of evaluation run | total time: {time} ==="):
+            self._run()
+
+    def _run(self) -> Any:
         logger.info("Ingesting data...")
         data = self._ingestor.ingest()
         logger.info("Evaluating...")
@@ -104,3 +116,6 @@ class EvaluationRunner(BaseRunner):
         metrics = result.compute_metrics()
         logger.info(f"Saving metrics at {self._path}...")
         self._saver.save(metrics, path=self._path, exist_ok=True)
+
+        if self._show_metrics:
+            logger.info(f"metrics:\n{str_mapping(to_flat_dict(metrics), sorted_keys=True)}")
