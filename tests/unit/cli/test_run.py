@@ -8,6 +8,7 @@ from omegaconf import OmegaConf
 
 from arkas.cli.run import main, main_cli
 from arkas.runner import BaseRunner
+from arkas.testing import omegaconf_available
 
 
 class FakeRunner(BaseRunner):
@@ -27,6 +28,7 @@ def test_main_factory_call() -> None:
         factory_mock.assert_called_with(_target_="MyRunner", engine="ABC")
 
 
+@omegaconf_available
 def test_main_cli_factory_call() -> None:
     with patch("arkas.runner.BaseRunner.factory") as factory_mock:
         main_cli(OmegaConf.create({"runner": {OBJECT_TARGET: "MyRunner", "engine": "ABC"}}))

@@ -6,14 +6,34 @@ __all__ = ["main", "main_cli"]
 
 import logging
 from typing import Any
+from unittest.mock import Mock
 
-import hydra
-from hya import register_resolvers
 from iden.utils.time import timeblock
-from omegaconf import DictConfig, OmegaConf
 
 from arkas.cli.utils import log_run_info
 from arkas.runner import setup_runner
+from arkas.utils.imports import (
+    is_hya_available,
+    is_hydra_available,
+    is_omegaconf_available,
+)
+
+if is_hydra_available():
+    import hydra
+else:  # pragma: no cover
+    hydra = Mock()
+
+if is_hya_available():
+    from hya import register_resolvers
+else:  # pragma: no cover
+    def register_resolvers() -> None:
+        return None
+
+if is_omegaconf_available():
+    from omegaconf import DictConfig, OmegaConf
+else:  # pragma: no cover
+    DictConfig = Mock()
+
 
 logger = logging.getLogger(__name__)
 
