@@ -9,6 +9,7 @@ from arkas.utils.imports import (
     check_hya,
     check_hydra,
     check_markdown,
+    check_omegaconf,
     colorlog_available,
     hya_available,
     hydra_available,
@@ -16,7 +17,9 @@ from arkas.utils.imports import (
     is_hya_available,
     is_hydra_available,
     is_markdown_available,
+    is_omegaconf_available,
     markdown_available,
+    omegaconf_available,
 )
 
 
@@ -234,6 +237,60 @@ def test_markdown_available_decorator_without_package() -> None:
     with patch("arkas.utils.imports.is_markdown_available", lambda: False):
 
         @markdown_available
+        def fn(n: int = 0) -> int:
+            return 42 + n
+
+        assert fn(2) is None
+
+
+#####################
+#     omegaconf     #
+#####################
+
+
+def test_check_omegaconf_with_package() -> None:
+    with patch("arkas.utils.imports.is_omegaconf_available", lambda: True):
+        check_omegaconf()
+
+
+def test_check_omegaconf_without_package() -> None:
+    with (
+        patch("arkas.utils.imports.is_omegaconf_available", lambda: False),
+        pytest.raises(RuntimeError, match="'omegaconf' package is required but not installed."),
+    ):
+        check_omegaconf()
+
+
+def test_is_omegaconf_available() -> None:
+    assert isinstance(is_omegaconf_available(), bool)
+
+
+def test_omegaconf_available_with_package() -> None:
+    with patch("arkas.utils.imports.is_omegaconf_available", lambda: True):
+        fn = omegaconf_available(my_function)
+        assert fn(2) == 44
+
+
+def test_omegaconf_available_without_package() -> None:
+    with patch("arkas.utils.imports.is_omegaconf_available", lambda: False):
+        fn = omegaconf_available(my_function)
+        assert fn(2) is None
+
+
+def test_omegaconf_available_decorator_with_package() -> None:
+    with patch("arkas.utils.imports.is_omegaconf_available", lambda: True):
+
+        @omegaconf_available
+        def fn(n: int = 0) -> int:
+            return 42 + n
+
+        assert fn(2) == 44
+
+
+def test_omegaconf_available_decorator_without_package() -> None:
+    with patch("arkas.utils.imports.is_omegaconf_available", lambda: False):
+
+        @omegaconf_available
         def fn(n: int = 0) -> int:
             return 42 + n
 
