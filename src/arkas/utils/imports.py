@@ -4,9 +4,12 @@ from __future__ import annotations
 
 __all__ = [
     "check_colorlog",
+    "check_hya",
     "check_markdown",
     "colorlog_available",
+    "hya_available",
     "is_colorlog_available",
+    "is_hya_available",
     "is_markdown_available",
     "markdown_available",
 ]
@@ -93,6 +96,82 @@ def colorlog_available(fn: Callable[..., Any]) -> Callable[..., Any]:
     ```
     """
     return decorator_package_available(fn, is_colorlog_available)
+
+
+###############
+#     hya     #
+###############
+
+
+def is_hya_available() -> bool:
+    r"""Indicate if the ``hya`` package is installed or not.
+
+    Returns:
+        ``True`` if ``hya`` is available otherwise
+            ``False``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import is_hya_available
+    >>> is_hya_available()
+
+    ```
+    """
+    return package_available("hya")
+
+
+def check_hya() -> None:
+    r"""Check if the ``hya`` package is installed.
+
+    Raises:
+        RuntimeError: if the ``hya`` package is not
+            installed.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import check_hya
+    >>> check_hya()
+
+    ```
+    """
+    if not is_hya_available():
+        msg = (
+            "`hya` package is required but not installed. "
+            "You can install `hya` package with the command:\n\n"
+            "pip install hya\n"
+        )
+        raise RuntimeError(msg)
+
+
+def hya_available(fn: Callable[..., Any]) -> Callable[..., Any]:
+    r"""Implement a decorator to execute a function only if ``hya``
+    package is installed.
+
+    Args:
+        fn: The function to execute.
+
+    Returns:
+        A wrapper around ``fn`` if ``hya`` package is
+            installed, otherwise ``None``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import hya_available
+    >>> @hya_available
+    ... def my_function(n: int = 0) -> int:
+    ...     return 42 + n
+    ...
+    >>> my_function()
+
+    ```
+    """
+    return decorator_package_available(fn, is_hya_available)
 
 
 ####################
