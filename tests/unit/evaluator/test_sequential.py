@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import polars as pl
 from coola import objects_are_equal
+from objectory import OBJECT_TARGET
 
 from arkas.evaluator import (
     BinaryPrecisionEvaluator,
@@ -48,7 +49,11 @@ def test_sequential_evaluator_evaluate() -> None:
         SequentialEvaluator(
             [
                 BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
-                BinaryRecallEvaluator(y_true="target", y_pred="pred"),
+                {
+                    OBJECT_TARGET: "arkas.evaluator.BinaryRecallEvaluator",
+                    "y_true": "target",
+                    "y_pred": "pred",
+                },
             ]
         )
         .evaluate(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}))
