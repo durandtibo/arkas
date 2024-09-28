@@ -34,7 +34,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'coola'
           package-version: ${{ matrix.coola-version }}
@@ -79,7 +79,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'grizz'
           package-version: ${{ matrix.grizz-version }}
@@ -124,7 +124,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'iden'
           package-version: ${{ matrix.iden-version }}
@@ -169,7 +169,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'jinja2'
           package-version: ${{ matrix.jinja2-version }}
@@ -214,7 +214,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'matplotlib'
           package-version: ${{ matrix.matplotlib-version }}
@@ -259,7 +259,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'numpy'
           package-version: ${{ matrix.numpy-version }}
@@ -304,7 +304,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'objectory'
           package-version: ${{ matrix.objectory-version }}
@@ -349,7 +349,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'polars'
           package-version: ${{ matrix.polars-version }}
@@ -374,7 +374,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.12', '3.11', '3.10', '3.9' ]
-        scikit-learn-version: [ 1.5.2, 1.4.2, 1.3.2 ]
+        scikit-learn-version: [ 1.5.2, 1.4.2, 1.3.2, 1.3.0 ]
 
     steps:
       - name: Checkout
@@ -394,7 +394,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'scikit-learn'
           package-version: ${{ matrix.scikit-learn-version }}
@@ -444,7 +444,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'colorlog'
           package-version: ${{ matrix.colorlog-version }}
@@ -489,10 +489,55 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'hya'
           package-version: ${{ matrix.hya-version }}
+          python-version: ${{ matrix.python-version }}
+
+      - name: Show installed packages
+        run: |
+          poetry run poetry show
+          poetry run poetry show --tree
+
+      - name: Run unit tests
+        run: |
+          poetry run make unit-test-cov
+
+
+  hydra-core:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      max-parallel: 8
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.12', '3.11', '3.10', '3.9' ]
+        hydra-core-version: [ 1.3.2, 1.3.1, 1.3.0 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install packages
+        run: |
+          poetry run make config-poetry
+          poetry run make install
+
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.3
+        with:
+          package-name: 'hydra-core'
+          package-version: ${{ matrix.hydra-core-version }}
           python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
@@ -514,7 +559,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.12', '3.11', '3.10', '3.9' ]
-        markdown-version: [ 3.6.0, 3.5.1, 3.4.3 ]
+        markdown-version: [ 3.6.0, 3.5.1, 3.4.3, 3.4.0 ]
 
     steps:
       - name: Checkout
@@ -534,10 +579,55 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'markdown'
           package-version: ${{ matrix.markdown-version }}
+          python-version: ${{ matrix.python-version }}
+
+      - name: Show installed packages
+        run: |
+          poetry run poetry show
+          poetry run poetry show --tree
+
+      - name: Run unit tests
+        run: |
+          poetry run make unit-test-cov
+
+
+  omegaconf:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      max-parallel: 8
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.12', '3.11', '3.10', '3.9' ]
+        omegaconf-version: [ 2.3.0, 2.2.3, 2.1.2 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install packages
+        run: |
+          poetry run make config-poetry
+          poetry run make install
+
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.2.3
+        with:
+          package-name: 'omegaconf'
+          package-version: ${{ matrix.omegaconf-version }}
           python-version: ${{ matrix.python-version }}
 
       - name: Show installed packages
@@ -559,7 +649,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.12', '3.11', '3.10', '3.9' ]
-        tqdm-version: [ 4.66.5, 4.65.2 ]
+        tqdm-version: [ 4.66.5, 4.65.2, 4.65.0 ]
 
     steps:
       - name: Checkout
@@ -579,7 +669,7 @@ jobs:
           poetry run make install
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.2.2
+        uses: durandtibo/pip-install-package-action@v0.2.3
         with:
           package-name: 'tqdm'
           package-version: ${{ matrix.tqdm-version }}
