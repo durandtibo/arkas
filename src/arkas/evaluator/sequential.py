@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from coola.utils import repr_indent, repr_sequence
 
-from arkas.evaluator import BaseEvaluator
+from arkas.evaluator import BaseEvaluator, setup_evaluator
 from arkas.result import EmptyResult, Result, SequentialResult
 
 if TYPE_CHECKING:
@@ -62,8 +62,8 @@ class SequentialEvaluator(BaseEvaluator):
     ```
     """
 
-    def __init__(self, evaluators: Sequence[BaseEvaluator]) -> None:
-        self._evaluators = tuple(evaluators)
+    def __init__(self, evaluators: Sequence[BaseEvaluator | dict]) -> None:
+        self._evaluators = tuple(setup_evaluator(evaluator) for evaluator in evaluators)
 
     def __repr__(self) -> str:
         args = repr_indent(repr_sequence(self._evaluators))
