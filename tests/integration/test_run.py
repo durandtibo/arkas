@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from arkas.testing import hydra_available
+
 if TYPE_CHECKING:
     from pathlib import Path
 
@@ -22,6 +24,7 @@ def run_bash_command(cmd: str) -> None:
     subprocess.run(cmd.split(), check=True)  # noqa: S603
 
 
+@hydra_available
 def test_run_cli_successful(tmp_path: Path) -> None:
     path = tmp_path.joinpath("successful")
     run_bash_command(
@@ -30,6 +33,7 @@ def test_run_cli_successful(tmp_path: Path) -> None:
     assert path.joinpath("metrics.pkl").is_file()
 
 
+@hydra_available
 def test_run_cli_error(tmp_path: Path) -> None:
     path = tmp_path.joinpath("unsuccessful")
     with pytest.raises(subprocess.CalledProcessError):
