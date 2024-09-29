@@ -1,0 +1,7 @@
+_target_: arkas.runner.EvaluationRunner
+ingestor: ${ingestor}
+evaluator: ${evaluator}
+saver:
+  _target_: iden.io.PickleSaver
+path: ${exp_dir}/metrics.pkl
+show_metrics: True
