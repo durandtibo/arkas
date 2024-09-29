@@ -4,8 +4,6 @@ defaults:
   - runner: evaluation
   - _self_
 
-random_seed: 42
-
 ingestor:
   _target_: grizz.ingestor.ParquetIngestor
   path: ${oc.env:PWD}/data/demo/toy_binary_classification.parquet
