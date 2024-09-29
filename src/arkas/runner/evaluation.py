@@ -12,7 +12,6 @@ from coola.utils import str_indent, str_mapping
 from coola.utils.path import sanitize_path
 from grizz.ingestor import BaseIngestor, setup_ingestor
 from iden.io import BaseSaver, setup_saver
-from iden.utils.time import timeblock
 
 from arkas.evaluator import BaseEvaluator, setup_evaluator
 from arkas.runner.base import BaseRunner
@@ -103,10 +102,6 @@ class EvaluationRunner(BaseRunner):
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def run(self) -> Any:
-        with timeblock("=== end of evaluation run | total time: {time} ==="):
-            self._run()
-
-    def _run(self) -> Any:
         logger.info("Ingesting data...")
         data = self._ingestor.ingest()
         logger.info("Evaluating...")
