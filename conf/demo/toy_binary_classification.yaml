@@ -14,8 +14,34 @@ evaluator:
   _target_: arkas.evaluator.SequentialEvaluator
   evaluators:
     - _target_: arkas.evaluator.AccuracyEvaluator
-      y_true: target
-      y_pred: pred
+      y_true: ${y_true}
+      y_pred: ${y_pred}
+    - _target_: arkas.evaluator.BalancedAccuracyEvaluator
+      y_true: ${y_true}
+      y_pred: ${y_pred}
+    - _target_: arkas.evaluator.BinaryAveragePrecisionEvaluator
+      y_true: ${y_true}
+      y_score: ${y_score}
+    - _target_: arkas.evaluator.BinaryConfusionMatrixEvaluator
+      y_true: ${y_true}
+      y_pred: ${y_pred}
+    - _target_: arkas.evaluator.BinaryFbetaScoreEvaluator
+      y_true: ${y_true}
+      y_pred: ${y_pred}
+      betas: [0.5, 1, 2]
+    - _target_: arkas.evaluator.BinaryJaccardEvaluator
+      y_true: ${y_true}
+      y_pred: ${y_pred}
+    - _target_: arkas.evaluator.BinaryPrecisionEvaluator
+      y_true: ${y_true}
+      y_pred: ${y_pred}
+    - _target_: arkas.evaluator.BinaryRecallEvaluator
+      y_true: ${y_true}
+      y_pred: ${y_pred}
+
+y_pred: pred
+y_score: score
+y_true: target
 
 # Specify the path where the logs/artifacts
 exp_dir: ${oc.env:PWD}/outputs/demo/${hydra:job.config_name}
