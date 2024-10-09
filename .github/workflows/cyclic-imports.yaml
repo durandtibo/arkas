@@ -19,41 +19,45 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
 
+      - name: Set environment variable
+        run: |
+          echo $(poetry run poetry env info --path)/bin >> $GITHUB_PATH
+
       - name: Install packages
         run: |
-          poetry run make config-poetry
-          poetry run make install-all
+          make config-poetry
+          make install-all
 
       - name: Show installed packages
         run: |
-          poetry run poetry show
-          poetry run poetry show --tree
+          poetry show
+          poetry show --tree
 
       - name: check arkas
         run: |
-          poetry run python -c "import arkas"
+          python -c "import arkas"
 
       - name: check arkas.evaluator
         run: |
-          poetry run python -c "from arkas import evaluator"
+          python -c "from arkas import evaluator"
       - name: check arkas.metric
         run: |
-          poetry run python -c "from arkas import metric"
+          python -c "from arkas import metric"
       - name: check arkas.plot
         run: |
-          poetry run python -c "from arkas import plot"
+          python -c "from arkas import plot"
       - name: check arkas.reporter
         run: |
-          poetry run python -c "from arkas import reporter"
+          python -c "from arkas import reporter"
       - name: check arkas.result
         run: |
-          poetry run python -c "from arkas import result"
+          python -c "from arkas import result"
       - name: check arkas.runner
         run: |
-          poetry run python -c "from arkas import runner"
+          python -c "from arkas import runner"
       - name: check arkas.section
         run: |
-          poetry run python -c "from arkas import section"
+          python -c "from arkas import section"
       - name: check arkas.utils
         run: |
-          poetry run python -c "from arkas import utils"
+          python -c "from arkas import utils"
