@@ -7,8 +7,8 @@ from objectory import OBJECT_TARGET
 
 from arkas.cli.run import main, main_cli
 from arkas.runner import BaseRunner
-from arkas.testing import omegaconf_available
-from arkas.utils.imports import is_omegaconf_available
+from arkas.testing import hydra_available, omegaconf_available
+from arkas.utils.imports import is_hya_available, is_omegaconf_available
 
 if is_omegaconf_available():
     from omegaconf import OmegaConf
@@ -26,15 +26,17 @@ def test_main() -> None:
 
 
 def test_main_factory_call() -> None:
-    with patch("arkas.runner.BaseRunner.factory") as factory_mock:
-        main({"runner": {OBJECT_TARGET: "MyRunner", "engine": "ABC"}})
-        factory_mock.assert_called_with(_target_="MyRunner", engine="ABC")
+    with patch("arkas.runner.base.BaseRunner.factory") as factory_mock:
+        main({"runner": {OBJECT_TARGET: "FakeRunner", "engine": "ABC"}})
+        factory_mock.assert_called_with(_target_="FakeRunner", engine="ABC")
 
 
+@hydra_available
 @omegaconf_available
 def test_main_cli_factory_call() -> None:
-    with patch("arkas.runner.BaseRunner.factory") as factory_mock:
-        main_cli(OmegaConf.create({"runner": {OBJECT_TARGET: "MyRunner", "engine": "ABC"}}))
-        factory_mock.assert_called_with(_target_="MyRunner", engine="ABC")
-    assert OmegaConf.has_resolver("hya.add")
-    assert OmegaConf.has_resolver("hya.mul")
+    with patch("arkas.runner.base.BaseRunner.factory") as factory_mock:
+        main_cli(OmegaConf.create({"runner": {OBJECT_TARGET: "FakeRunner", "engine": "ABC"}}))
+        factory_mock.assert_called_with(_target_="FakeRunner", engine="ABC")
+    if is_hya_available():
+        assert OmegaConf.has_resolver("hya.add")
+        assert OmegaConf.has_resolver("hya.mul")
