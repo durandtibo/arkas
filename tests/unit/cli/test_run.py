@@ -7,7 +7,7 @@ from objectory import OBJECT_TARGET
 
 from arkas.cli.run import main, main_cli
 from arkas.runner import BaseRunner
-from arkas.testing import omegaconf_available
+from arkas.testing import hydra_available, omegaconf_available
 from arkas.utils.imports import is_omegaconf_available
 
 if is_omegaconf_available():
@@ -31,6 +31,7 @@ def test_main_factory_call() -> None:
         factory_mock.assert_called_with(_target_="FakeRunner", engine="ABC")
 
 
+@hydra_available
 @omegaconf_available
 def test_main_cli_factory_call() -> None:
     with patch("arkas.runner.base.BaseRunner.factory") as factory_mock:
