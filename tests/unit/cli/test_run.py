@@ -26,14 +26,14 @@ def test_main() -> None:
 
 
 def test_main_factory_call() -> None:
-    with patch("arkas.runner.BaseRunner.factory") as factory_mock:
+    with patch("arkas.runner.base.BaseRunner.factory") as factory_mock:
         main({"runner": {OBJECT_TARGET: "FakeRunner", "engine": "ABC"}})
         factory_mock.assert_called_with(_target_="FakeRunner", engine="ABC")
 
 
 @omegaconf_available
 def test_main_cli_factory_call() -> None:
-    with patch("arkas.runner.BaseRunner.factory") as factory_mock:
+    with patch("arkas.runner.base.BaseRunner.factory") as factory_mock:
         main_cli(OmegaConf.create({"runner": {OBJECT_TARGET: "FakeRunner", "engine": "ABC"}}))
         factory_mock.assert_called_with(_target_="FakeRunner", engine="ABC")
     assert OmegaConf.has_resolver("hya.add")
