@@ -855,13 +855,13 @@ devel = ["colorama", "json-spec", "jsonschema", "pylint", "pytest", "pytest-benc
 
 [[package]]
 name = "feu"
-version = "0.2.3"
+version = "0.3.0"
 description = "A light library to help to manage packages"
 optional = false
-python-versions = "<3.13,>=3.9"
+python-versions = "<3.14,>=3.9"
 files = [
-    {file = "feu-0.2.3-py3-none-any.whl", hash = "sha256:af4dca581b0e6c8299ee716e6d9136b3e989342220539543d53b7baad34ba506"},
-    {file = "feu-0.2.3.tar.gz", hash = "sha256:a46b855cce1abcd52e01a0c9e882cca454dbc76c4fd943e56cb47969d37ba2fb"},
+    {file = "feu-0.3.0-py3-none-any.whl", hash = "sha256:fec3f7a289ae0a594541a235a5526363dd48accf00025a8e860f974c498a2a22"},
+    {file = "feu-0.3.0.tar.gz", hash = "sha256:ccaa1a1e9371765fe75878550de296a418ddabf60ba801b69228b6db5e717200"},
 ]
 
 [package.dependencies]
@@ -1080,20 +1080,20 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "hya"
-version = "0.2.3"
+version = "0.2.4"
 description = "A library of custom OmegaConf resolvers"
 optional = true
-python-versions = "<3.13,>=3.9"
+python-versions = "<3.14,>=3.9"
 files = [
-    {file = "hya-0.2.3-py3-none-any.whl", hash = "sha256:c20b31384fc537644005d885919cf4ae7b6d60c90508e91cbe962cb122f8fe89"},
-    {file = "hya-0.2.3.tar.gz", hash = "sha256:b796535c944a68bf274fb9239cbf01dbe513c9822aa14e0c3343f05dac478ddb"},
+    {file = "hya-0.2.4-py3-none-any.whl", hash = "sha256:1ed133c0bceaf845496fad4490253889365078714ca296ae34aa0ad022585d51"},
+    {file = "hya-0.2.4.tar.gz", hash = "sha256:7948d6b7cd0470a35e62f3eb7a0dd52a43d1520fe2d4dab0b19ea6b067d0ae12"},
 ]
 
 [package.dependencies]
-omegaconf = ">=2.1,<3.0"
+omegaconf = ">=2.2,<3.0"
 
 [package.extras]
-all = ["braceexpand (>=0.1.7,<0.2.0)", "numpy (>=1.21,<3.0)", "torch (>=1.11,<2.3)", "torch (>=1.11,<3.0)"]
+all = ["braceexpand (>=0.1.7,<0.2.0)", "numpy (>=1.21,<3.0)", "torch (>=1.9.0,<2.3)", "torch (>=1.9.0,<3.0)"]
 
 [[package]]
 name = "hydra-core"
