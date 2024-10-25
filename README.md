@@ -86,9 +86,9 @@ Please check the [get started page](https://durandtibo.github.io/arkas/get_start
 install only some specific dependencies or other alternatives to install the library.
 The following is the corresponding `arkas` versions and tested dependencies.
 
-| `arkas` | `coola`        | `grizz`        | `iden`         | `matplotlib` | `numpy`       | `objectory`  | `polars`     | `scikit-learn` | `python`      |
-|---------|----------------|----------------|----------------|--------------|---------------|--------------|--------------|----------------|---------------|
-| `main`  | `>=0.8.2,<1.0` | `>=0.0.5,<1.0` | `>=0.0.4,<1.0` | `>=3.6,<4.0` | `>=1.22,<2.0` | `>=0.1,<1.0` | `>=1.0,<2.0` | `>=1.3,<2.0`   | `>=3.9,<3.12` |
+| `arkas` | `coola`        | `grizz`      | `iden`       | `matplotlib` | `numpy`       | `objectory`  | `polars`     | `scikit-learn` | `python`      |
+|---------|----------------|--------------|--------------|--------------|---------------|--------------|--------------|----------------|---------------|
+| `main`  | `>=0.8.2,<1.0` | `>=0.1,<1.0` | `>=0.1,<1.0` | `>=3.6,<4.0` | `>=1.22,<2.0` | `>=0.2,<1.0` | `>=1.0,<2.0` | `>=1.3,<2.0`   | `>=3.9,<3.13` |
 
 | `arkas` | `colorlog`<sup>*</sup> | `hya`<sup>*</sup> | `markdown`<sup>*</sup> | `tqdm`<sup>*</sup> |
 |---------|------------------------|-------------------|------------------------|--------------------|
