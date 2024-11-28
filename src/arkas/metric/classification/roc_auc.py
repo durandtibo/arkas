@@ -31,7 +31,7 @@ def roc_auc(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics.
@@ -51,7 +51,7 @@ def roc_auc(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
@@ -120,14 +120,14 @@ def roc_auc(
             y_score=y_score.ravel(),
             prefix=prefix,
             suffix=suffix,
-            ignore_nan=ignore_nan,
+            drop_nan=drop_nan,
         )
     if label_type == "multilabel":
         return multilabel_roc_auc(
-            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
+            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, drop_nan=drop_nan
         )
     return multiclass_roc_auc(
-        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, drop_nan=drop_nan
     )
 
 
@@ -137,7 +137,7 @@ def binary_roc_auc(
     *,
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for binary labels.
@@ -151,13 +151,13 @@ def binary_roc_auc(
             be an array of shape ``(n_samples,)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, drop_nan=ignore_nan)
+    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, drop_nan=drop_nan)
 
     count = y_true.size
     roc_auc = float("nan")
@@ -172,7 +172,7 @@ def multiclass_roc_auc(
     *,
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for multiclass labels.
@@ -186,13 +186,13 @@ def multiclass_roc_auc(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_multiclass(y_true, y_score, drop_nan=ignore_nan)
+    y_true, y_score = preprocess_score_multiclass(y_true, y_score, drop_nan=drop_nan)
     return _multi_roc_auc(
         y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
     )
@@ -204,7 +204,7 @@ def multilabel_roc_auc(
     *,
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for multilabel labels.
@@ -218,13 +218,13 @@ def multilabel_roc_auc(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_multilabel(y_true, y_score, drop_nan=ignore_nan)
+    y_true, y_score = preprocess_score_multilabel(y_true, y_score, drop_nan=drop_nan)
     return _multi_roc_auc(
         y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
     )

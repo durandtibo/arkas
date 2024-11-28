@@ -24,7 +24,7 @@ def spearmanr(
     alternative: str = "two-sided",
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the Spearman correlation coefficient and p-value for
     testing non-correlation.
@@ -39,7 +39,7 @@ def spearmanr(
             - 'greater': the correlation is positive (greater than zero)
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
@@ -61,7 +61,7 @@ def spearmanr(
     """
     check_scipy()
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=ignore_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
     )
 
     count = y_true.size

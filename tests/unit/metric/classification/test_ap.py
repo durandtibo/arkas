@@ -51,13 +51,13 @@ def test_average_precision_binary_prefix_suffix() -> None:
     )
 
 
-def test_average_precision_binary_ignore_nan() -> None:
+def test_average_precision_binary_drop_nan() -> None:
     assert objects_are_equal(
         average_precision(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
             label_type="binary",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "average_precision": 1.0},
     )
@@ -142,7 +142,7 @@ def test_average_precision_multiclass_prefix_suffix() -> None:
     )
 
 
-def test_average_precision_multiclass_ignore_nan() -> None:
+def test_average_precision_multiclass_drop_nan() -> None:
     assert objects_are_equal(
         average_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
@@ -158,7 +158,7 @@ def test_average_precision_multiclass_ignore_nan() -> None:
                 ]
             ),
             label_type="multiclass",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "average_precision": np.array([1.0, 1.0, 1.0]),
@@ -222,7 +222,7 @@ def test_average_precision_multilabel_prefix_suffix() -> None:
     )
 
 
-def test_average_precision_multilabel_ignore_nan() -> None:
+def test_average_precision_multilabel_drop_nan() -> None:
     assert objects_are_allclose(
         average_precision(
             y_true=np.array(
@@ -232,7 +232,7 @@ def test_average_precision_multilabel_ignore_nan() -> None:
                 [[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5], [float("nan"), 0, 1]]
             ),
             label_type="multilabel",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "average_precision": np.array([1.0, 1.0, 1.0]),
@@ -336,34 +336,34 @@ def test_binary_average_precision_nan() -> None:
         )
 
 
-def test_binary_average_precision_ignore_nan() -> None:
+def test_binary_average_precision_drop_nan() -> None:
     assert objects_are_equal(
         binary_average_precision(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "average_precision": 1.0},
     )
 
 
-def test_binary_average_precision_ignore_nan_y_true() -> None:
+def test_binary_average_precision_drop_nan_y_true() -> None:
     assert objects_are_equal(
         binary_average_precision(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1, 0]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "average_precision": 1.0},
     )
 
 
-def test_binary_average_precision_ignore_nan_y_score() -> None:
+def test_binary_average_precision_drop_nan_y_score() -> None:
     assert objects_are_equal(
         binary_average_precision(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_score=np.array([2, -1, 0, float("nan"), 1, -3]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "average_precision": 1.0},
     )
@@ -537,7 +537,7 @@ def test_multiclass_average_precision_nans() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "average_precision": np.array([1.0, 1.0, 1.0]),
@@ -549,7 +549,7 @@ def test_multiclass_average_precision_nans() -> None:
     )
 
 
-def test_multiclass_average_precision_ignore_nan_y_true() -> None:
+def test_multiclass_average_precision_drop_nan_y_true() -> None:
     assert objects_are_equal(
         multiclass_average_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
@@ -564,7 +564,7 @@ def test_multiclass_average_precision_ignore_nan_y_true() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "average_precision": np.array([1.0, 1.0, 1.0]),
@@ -576,7 +576,7 @@ def test_multiclass_average_precision_ignore_nan_y_true() -> None:
     )
 
 
-def test_multiclass_average_precision_ignore_nan_y_score() -> None:
+def test_multiclass_average_precision_drop_nan_y_score() -> None:
     assert objects_are_equal(
         multiclass_average_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, 0]),
@@ -591,7 +591,7 @@ def test_multiclass_average_precision_ignore_nan_y_score() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "average_precision": np.array([1.0, 1.0, 1.0]),
@@ -719,7 +719,7 @@ def test_multilabel_average_precision_nans() -> None:
             y_score=np.array(
                 [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
             ),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "average_precision": np.array([1.0, 1.0, 1.0]),
@@ -731,12 +731,12 @@ def test_multilabel_average_precision_nans() -> None:
     )
 
 
-def test_multilabel_average_precision_ignore_nan_y_true() -> None:
+def test_multilabel_average_precision_drop_nan_y_true() -> None:
     assert objects_are_equal(
         multilabel_average_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "average_precision": np.array([1.0, 1.0, 1.0]),
@@ -748,12 +748,12 @@ def test_multilabel_average_precision_ignore_nan_y_true() -> None:
     )
 
 
-def test_multilabel_average_precision_ignore_nan_y_score() -> None:
+def test_multilabel_average_precision_drop_nan_y_score() -> None:
     assert objects_are_equal(
         multilabel_average_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "average_precision": np.array([1.0, 1.0, 1.0]),

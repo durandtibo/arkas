@@ -86,34 +86,34 @@ def test_accuracy_nan() -> None:
         )
 
 
-def test_accuracy_ignore_nan() -> None:
+def test_accuracy_drop_nan() -> None:
     assert objects_are_equal(
         accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_ignore_nan_y_true() -> None:
+def test_accuracy_drop_nan_y_true() -> None:
     assert objects_are_equal(
         accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_ignore_nan_y_pred() -> None:
+def test_accuracy_drop_nan_y_pred() -> None:
     assert objects_are_equal(
         accuracy(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
@@ -194,34 +194,34 @@ def test_balanced_accuracy_nan() -> None:
         )
 
 
-def test_balanced_accuracy_ignore_nan() -> None:
+def test_balanced_accuracy_drop_nan() -> None:
     assert objects_are_equal(
         balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
 
 
-def test_balanced_accuracy_ignore_nan_y_true() -> None:
+def test_balanced_accuracy_drop_nan_y_true() -> None:
     assert objects_are_equal(
         balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
 
 
-def test_balanced_accuracy_ignore_nan_y_pred() -> None:
+def test_balanced_accuracy_drop_nan_y_pred() -> None:
     assert objects_are_equal(
         balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
