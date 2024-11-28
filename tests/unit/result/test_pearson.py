@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from coola import objects_are_equal
+from coola import objects_are_allclose
 
 from arkas.result import PearsonCorrelationResult
 
@@ -12,7 +12,7 @@ from arkas.result import PearsonCorrelationResult
 
 
 def test_pearson_correlation_result_y_true() -> None:
-    assert objects_are_equal(
+    assert objects_are_allclose(
         PearsonCorrelationResult(
             y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([5, 4, 3, 2, 1])
         ).y_true,
@@ -21,7 +21,7 @@ def test_pearson_correlation_result_y_true() -> None:
 
 
 def test_pearson_correlation_result_y_true_2d() -> None:
-    assert objects_are_equal(
+    assert objects_are_allclose(
         PearsonCorrelationResult(
             y_true=np.array([[1, 2, 3], [4, 5, 6]]), y_pred=np.array([[6, 5, 4], [3, 2, 1]])
         ).y_true,
@@ -30,7 +30,7 @@ def test_pearson_correlation_result_y_true_2d() -> None:
 
 
 def test_pearson_correlation_result_y_pred() -> None:
-    assert objects_are_equal(
+    assert objects_are_allclose(
         PearsonCorrelationResult(
             y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([5, 4, 3, 2, 1])
         ).y_pred,
@@ -39,7 +39,7 @@ def test_pearson_correlation_result_y_pred() -> None:
 
 
 def test_pearson_correlation_result_y_pred_2d() -> None:
-    assert objects_are_equal(
+    assert objects_are_allclose(
         PearsonCorrelationResult(
             y_true=np.array([[1, 2, 3], [4, 5, 6]]), y_pred=np.array([[6, 5, 4], [3, 2, 1]])
         ).y_pred,
@@ -147,7 +147,7 @@ def test_pearson_correlation_result_compute_metrics_positive_correlation() -> No
     result = PearsonCorrelationResult(
         y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
     )
-    assert objects_are_equal(
+    assert objects_are_allclose(
         result.compute_metrics(), {"count": 5, "pearson_coeff": 1.0, "pearson_pvalue": 0.0}
     )
 
@@ -156,14 +156,14 @@ def test_pearson_correlation_result_compute_metrics_negative_correlation() -> No
     result = PearsonCorrelationResult(
         y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([5, 4, 3, 2, 1])
     )
-    assert objects_are_equal(
+    assert objects_are_allclose(
         result.compute_metrics(), {"count": 5, "pearson_coeff": -1.0, "pearson_pvalue": 0.0}
     )
 
 
 def test_pearson_correlation_result_compute_metrics_empty() -> None:
     result = PearsonCorrelationResult(y_true=np.array([]), y_pred=np.array([]))
-    assert objects_are_equal(
+    assert objects_are_allclose(
         result.compute_metrics(),
         {"count": 0, "pearson_coeff": float("nan"), "pearson_pvalue": float("nan")},
         equal_nan=True,
@@ -174,7 +174,7 @@ def test_pearson_correlation_result_compute_metrics_alternative_less() -> None:
     result = PearsonCorrelationResult(
         y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]), alternative="less"
     )
-    assert objects_are_equal(
+    assert objects_are_allclose(
         result.compute_metrics(), {"count": 5, "pearson_coeff": 1.0, "pearson_pvalue": 1.0}
     )
 
@@ -184,7 +184,7 @@ def test_pearson_correlation_result_compute_metrics_prefix_suffix() -> None:
         y_true=np.array([1, 2, 3, 4, 5]),
         y_pred=np.array([1, 2, 3, 4, 5]),
     )
-    assert objects_are_equal(
+    assert objects_are_allclose(
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {
             "prefix_count_suffix": 5,
@@ -198,16 +198,16 @@ def test_pearson_correlation_result_generate_figures() -> None:
     result = PearsonCorrelationResult(
         y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
     )
-    assert objects_are_equal(result.generate_figures(), {})
+    assert objects_are_allclose(result.generate_figures(), {})
 
 
 def test_pearson_correlation_result_generate_figures_empty() -> None:
     result = PearsonCorrelationResult(y_true=np.array([]), y_pred=np.array([]))
-    assert objects_are_equal(result.generate_figures(), {})
+    assert objects_are_allclose(result.generate_figures(), {})
 
 
 def test_pearson_correlation_result_generate_figures_prefix_suffix() -> None:
     result = PearsonCorrelationResult(
         y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
     )
-    assert objects_are_equal(result.generate_figures(prefix="prefix_", suffix="_suffix"), {})
+    assert objects_are_allclose(result.generate_figures(prefix="prefix_", suffix="_suffix"), {})
