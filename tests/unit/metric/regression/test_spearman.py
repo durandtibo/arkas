@@ -113,36 +113,36 @@ def test_spearmanr_nan() -> None:
 
 
 @scipy_available
-def test_spearmanr_ignore_nan() -> None:
+def test_spearmanr_drop_nan() -> None:
     assert objects_are_allclose(
         spearmanr(
             y_true=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 4, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
     )
 
 
 @scipy_available
-def test_spearmanr_ignore_nan_y_true() -> None:
+def test_spearmanr_drop_nan_y_true() -> None:
     assert objects_are_allclose(
         spearmanr(
             y_true=np.array([1, 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, 5, 0]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
     )
 
 
 @scipy_available
-def test_spearmanr_ignore_nan_y_pred() -> None:
+def test_spearmanr_drop_nan_y_pred() -> None:
     assert objects_are_allclose(
         spearmanr(
             y_true=np.array([1, 2, 3, 4, 5, 0]),
             y_pred=np.array([1, 2, 3, 4, 5, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
     )

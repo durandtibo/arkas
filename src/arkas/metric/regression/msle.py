@@ -21,7 +21,7 @@ def mean_squared_log_error(
     *,
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the mean squared logarithmic error (MSLE).
 
@@ -30,7 +30,7 @@ def mean_squared_log_error(
         y_pred: The predicted values.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
@@ -50,7 +50,7 @@ def mean_squared_log_error(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=ignore_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
     )
 
     count = y_true.size

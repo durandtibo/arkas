@@ -62,34 +62,34 @@ def test_mean_squared_log_error_nan() -> None:
         )
 
 
-def test_mean_squared_log_error_ignore_nan() -> None:
+def test_mean_squared_log_error_drop_nan() -> None:
     assert objects_are_equal(
         mean_squared_log_error(
             y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 3, "mean_squared_log_error": 0.0},
     )
 
 
-def test_mean_squared_log_error_ignore_nan_y_true() -> None:
+def test_mean_squared_log_error_drop_nan_y_true() -> None:
     assert objects_are_equal(
         mean_squared_log_error(
             y_true=np.array([1, 2, 3, 4, 5, float("nan")]),
             y_pred=np.array([1, 2, 3, 4, 5, 0]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "mean_squared_log_error": 0.0},
     )
 
 
-def test_mean_squared_log_error_ignore_nan_y_pred() -> None:
+def test_mean_squared_log_error_drop_nan_y_pred() -> None:
     assert objects_are_equal(
         mean_squared_log_error(
             y_true=np.array([1, 2, 3, 4, 5, 0]),
             y_pred=np.array([1, 2, 3, 4, 5, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "mean_squared_log_error": 0.0},
     )

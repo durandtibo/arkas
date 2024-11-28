@@ -57,13 +57,13 @@ def test_fbeta_score_binary_prefix_suffix() -> None:
     )
 
 
-def test_fbeta_score_binary_ignore_nan() -> None:
+def test_fbeta_score_binary_drop_nan() -> None:
     assert objects_are_equal(
         fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
             label_type="binary",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "f1": 1.0},
     )
@@ -147,13 +147,13 @@ def test_fbeta_score_multiclass_prefix_suffix() -> None:
     )
 
 
-def test_fbeta_score_multiclass_ignore_nan() -> None:
+def test_fbeta_score_multiclass_drop_nan() -> None:
     assert objects_are_equal(
         fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             label_type="multiclass",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "count": 6,
@@ -244,7 +244,7 @@ def test_fbeta_score_multilabel_prefix_suffix() -> None:
     )
 
 
-def test_fbeta_score_multilabel_ignore_nan() -> None:
+def test_fbeta_score_multilabel_drop_nan() -> None:
     assert objects_are_allclose(
         fbeta_score(
             y_true=np.array(
@@ -254,7 +254,7 @@ def test_fbeta_score_multilabel_ignore_nan() -> None:
                 [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [0, 1, float("nan")]]
             ),
             label_type="multilabel",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "count": 5,
@@ -360,34 +360,34 @@ def test_binary_fbeta_score_nan() -> None:
         )
 
 
-def test_binary_fbeta_score_ignore_nan() -> None:
+def test_binary_fbeta_score_drop_nan() -> None:
     assert objects_are_equal(
         binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, float("nan"), 1]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 4, "f1": 1.0},
     )
 
 
-def test_binary_fbeta_score_ignore_nan_y_true() -> None:
+def test_binary_fbeta_score_drop_nan_y_true() -> None:
     assert objects_are_equal(
         binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 1]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "f1": 1.0},
     )
 
 
-def test_binary_fbeta_score_ignore_nan_y_pred() -> None:
+def test_binary_fbeta_score_drop_nan_y_pred() -> None:
     assert objects_are_equal(
         binary_fbeta_score(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, float("nan"), 0]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {"count": 5, "f1": 1.0},
     )
@@ -520,12 +520,12 @@ def test_multiclass_fbeta_score_nan() -> None:
         )
 
 
-def test_multiclass_fbeta_score_ignore_nan() -> None:
+def test_multiclass_fbeta_score_drop_nan() -> None:
     assert objects_are_equal(
         multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, float("nan"), 2]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "count": 5,
@@ -537,12 +537,12 @@ def test_multiclass_fbeta_score_ignore_nan() -> None:
     )
 
 
-def test_multiclass_fbeta_score_ignore_nan_y_true() -> None:
+def test_multiclass_fbeta_score_drop_nan_y_true() -> None:
     assert objects_are_equal(
         multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_pred=np.array([0, 0, 1, 1, 2, 2, 2]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "count": 6,
@@ -554,12 +554,12 @@ def test_multiclass_fbeta_score_ignore_nan_y_true() -> None:
     )
 
 
-def test_multiclass_fbeta_score_ignore_nan_y_pred() -> None:
+def test_multiclass_fbeta_score_drop_nan_y_pred() -> None:
     assert objects_are_equal(
         multiclass_fbeta_score(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, float("nan"), 2, 2]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "count": 6,
@@ -703,12 +703,12 @@ def test_multilabel_fbeta_score_nan() -> None:
         )
 
 
-def test_multilabel_fbeta_score_ignore_nan() -> None:
+def test_multilabel_fbeta_score_drop_nan() -> None:
     assert objects_are_allclose(
         multilabel_fbeta_score(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "count": 3,
@@ -720,12 +720,12 @@ def test_multilabel_fbeta_score_ignore_nan() -> None:
     )
 
 
-def test_multilabel_fbeta_score_ignore_nan_y_true() -> None:
+def test_multilabel_fbeta_score_drop_nan_y_true() -> None:
     assert objects_are_allclose(
         multilabel_fbeta_score(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "count": 4,
@@ -737,12 +737,12 @@ def test_multilabel_fbeta_score_ignore_nan_y_true() -> None:
     )
 
 
-def test_multilabel_fbeta_score_ignore_nan_y_pred() -> None:
+def test_multilabel_fbeta_score_drop_nan_y_pred() -> None:
     assert objects_are_allclose(
         multilabel_fbeta_score(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "count": 4,
