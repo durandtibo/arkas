@@ -52,7 +52,7 @@ scipy = { version = ">=1.10,<2.0", optional = true }
 tqdm = { version = ">=4.65,<5.0", optional = true }
 
 [tool.poetry.extras]
-all = ["colorlog", "hya", "hydra-core", "markdown", "omegaconf", "tqdm"]
+all = ["colorlog", "hya", "hydra-core", "markdown", "omegaconf", "scipy", "tqdm"]
 cli = ["colorlog", "hya", "hydra-core", "omegaconf"]
 
 [tool.poetry.group.docs]
