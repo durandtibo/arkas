@@ -1,4 +1,4 @@
-r"""Implement the Pearson correlation coefficient."""
+r"""Implement the Pearson correlation metrics."""
 
 from __future__ import annotations
 
