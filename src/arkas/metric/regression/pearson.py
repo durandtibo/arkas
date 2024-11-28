@@ -1,9 +1,8 @@
-r"""Implement the Pearson correlation coefficient and p-value for
-testing non-correlation."""
+r"""Implement the Pearson correlation coefficient."""
 
 from __future__ import annotations
 
-__all__ = ["pearson_correlation"]
+__all__ = ["pearsonr"]
 
 
 from typing import TYPE_CHECKING
@@ -12,16 +11,17 @@ from arkas.metric.utils import preprocess_pred
 from arkas.utils.imports import check_scipy, is_scipy_available
 
 if is_scipy_available():
-    from scipy.stats import pearsonr
+    from scipy import stats
 
 if TYPE_CHECKING:
     import numpy as np
 
 
-def pearson_correlation(
+def pearsonr(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
+    alternative: str = "two-sided",
     prefix: str = "",
     suffix: str = "",
     ignore_nan: bool = False,
@@ -32,6 +32,11 @@ def pearson_correlation(
     Args:
         y_true: The ground truth target values.
         y_pred: The predicted values.
+        alternative: The alternative hypothesis. Default is 'two-sided'.
+            The following options are available:
+            - 'two-sided': the correlation is nonzero
+            - 'less': the correlation is negative (less than zero)
+            - 'greater': the correlation is positive (greater than zero)
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
         ignore_nan: If ``True``, the NaN values are ignored while
@@ -45,8 +50,11 @@ def pearson_correlation(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import pearson_correlation
-    >>> pearson_correlation(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]))
+    >>> from arkas.metric import pearsonr
+    >>> pearsonr(
+    ...     y_true=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+    ...     y_pred=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+    ... )
     {'count': 5, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0}
 
     ```
@@ -59,7 +67,7 @@ def pearson_correlation(
     count = y_true.size
     coeff, pvalue = float("nan"), float("nan")
     if count > 0:
-        result = pearsonr(x=y_true, y=y_pred)
+        result = stats.pearsonr(x=y_true, y=y_pred, alternative=alternative)
         coeff, pvalue = float(result.statistic), float(result.pvalue)
     return {
         f"{prefix}count{suffix}": count,
