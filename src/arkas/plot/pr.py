@@ -44,5 +44,5 @@ def binary_precision_recall_curve(
 
     ```
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=True)
+    y_true, y_pred = preprocess_pred(y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=True)
     PrecisionRecallDisplay.from_predictions(y_true=y_true, y_pred=y_pred, ax=ax, **kwargs)

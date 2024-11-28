@@ -61,7 +61,7 @@ def spearmanr(
     """
     check_scipy()
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=ignore_nan
     )
 
     count = y_true.size

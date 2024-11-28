@@ -143,7 +143,7 @@ def binary_precision(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=ignore_nan
     )
 
     count, score = y_true.size, float("nan")
@@ -193,7 +193,7 @@ def multiclass_precision(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=ignore_nan
     )
 
     per_class = np.array([])
@@ -262,7 +262,7 @@ def multilabel_precision(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=ignore_nan)
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, drop_nan=ignore_nan)
 
     per_class = np.array([])
     macro, micro, weighted = float("nan"), float("nan"), float("nan")

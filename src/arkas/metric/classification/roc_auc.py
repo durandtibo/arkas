@@ -157,7 +157,7 @@ def binary_roc_auc(
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, remove_nan=ignore_nan)
+    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, drop_nan=ignore_nan)
 
     count = y_true.size
     roc_auc = float("nan")
@@ -192,7 +192,7 @@ def multiclass_roc_auc(
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_multiclass(y_true, y_score, remove_nan=ignore_nan)
+    y_true, y_score = preprocess_score_multiclass(y_true, y_score, drop_nan=ignore_nan)
     return _multi_roc_auc(
         y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
     )
@@ -224,7 +224,7 @@ def multilabel_roc_auc(
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_multilabel(y_true, y_score, remove_nan=ignore_nan)
+    y_true, y_score = preprocess_score_multilabel(y_true, y_score, drop_nan=ignore_nan)
     return _multi_roc_auc(
         y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
     )
