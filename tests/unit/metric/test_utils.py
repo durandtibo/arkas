@@ -6,6 +6,7 @@ from coola import objects_are_equal
 
 from arkas.metric.utils import (
     check_label_type,
+    check_nan_pred,
     check_same_shape_pred,
     check_same_shape_score,
     multi_isnan,
@@ -29,6 +30,30 @@ def test_check_label_type_valid(label_type: str) -> None:
 def test_check_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
         check_label_type("incorrect")
+
+
+####################################
+#     Tests for check_nan_pred     #
+####################################
+
+
+def test_check_nan_pred_no_nan() -> None:
+    check_nan_pred(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1]))
+
+
+def test_check_nan_pred_y_true_nan() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' contains at least one NaN value"):
+        check_nan_pred(y_true=np.array([1, 0, 0, 1, np.nan]), y_pred=np.array([0, 1, 0, 1, 1]))
+
+
+def test_check_nan_pred_y_pred_nan() -> None:
+    with pytest.raises(RuntimeError, match="'y_pred' contains at least one NaN value"):
+        check_nan_pred(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, np.nan, 1]))
+
+
+def test_check_nan_pred_both_nan() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' contains at least one NaN value"):
+        check_nan_pred(y_true=np.array([1, 0, 0, 1, np.nan]), y_pred=np.array([0, 1, np.nan, 1, 1]))
 
 
 ###########################################

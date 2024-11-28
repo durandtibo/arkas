@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __all__ = [
     "check_label_type",
+    "check_nan_pred",
     "check_same_shape_pred",
     "check_same_shape_score",
     "multi_isnan",
@@ -20,6 +21,10 @@ import numpy as np
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+NAN_POLICY_OMIT: str = "omit"
+NAN_POLICY_PROPAGATE: str = "propagate"
+NAN_POLICY_RAISE: str = "raise"
 
 
 def check_label_type(label_type: str) -> None:
@@ -47,6 +52,37 @@ def check_label_type(label_type: str) -> None:
             f"Incorrect 'label_type': {label_type}. The supported label types are: "
             f"'binary', 'multiclass', 'multilabel', and 'auto'"
         )
+        raise RuntimeError(msg)
+
+
+def check_nan_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
+    r"""Check if any array elements in ``y_true`` or ``y_pred`` arrays is
+    a NaN value.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_pred: The predicted labels.
+
+    Raises:
+        RuntimeError: ``'y_true'`` or ``'y_pred'`` has a NaN value.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import check_nan_pred
+    >>> y_true = np.array([1, 0, 0, 1])
+    >>> y_pred = np.array([0, 1, 0, 1])
+    >>> check_nan_pred(y_true, y_pred)
+
+    ```
+    """
+    if np.any(np.isnan(y_true)):
+        msg = "'y_true' contains at least one NaN value"
+        raise RuntimeError(msg)
+    if np.any(np.isnan(y_pred)):
+        msg = "'y_pred' contains at least one NaN value"
         raise RuntimeError(msg)
 
 
