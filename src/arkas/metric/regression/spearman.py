@@ -1,4 +1,4 @@
-r"""Implement the Spearman correlation coefficient."""
+r"""Implement the Spearman correlation metrics."""
 
 from __future__ import annotations
 
