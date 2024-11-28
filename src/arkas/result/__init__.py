@@ -38,6 +38,7 @@ __all__ = [
     "RecallResult",
     "Result",
     "SequentialResult",
+    "SpearmanCorrelationResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -86,4 +87,5 @@ from arkas.result.roc_auc import (
     MultilabelRocAucResult,
 )
 from arkas.result.sequential import SequentialResult
+from arkas.result.spearman import SpearmanCorrelationResult
 from arkas.result.vanilla import EmptyResult, Result

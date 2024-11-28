@@ -51,10 +51,7 @@ def pearsonr(
 
     >>> import numpy as np
     >>> from arkas.metric import pearsonr
-    >>> pearsonr(
-    ...     y_true=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    ...     y_pred=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    ... )
+    >>> pearsonr(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]))
     {'count': 5, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0}
 
     ```
