@@ -311,7 +311,7 @@ def _binary_fbeta_score(
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, remove_nan=ignore_nan)
+    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, drop_nan=ignore_nan)
 
     count, fbeta = y_true.size, float("nan")
     if count > 0:
@@ -344,7 +344,7 @@ def _multiclass_fbeta_score(
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, remove_nan=ignore_nan)
+    y_true, y_pred = preprocess_pred(y_true=y_true, y_pred=y_pred, drop_nan=ignore_nan)
 
     fbeta = np.array([])
     macro, micro, weighted = float("nan"), float("nan"), float("nan")
@@ -398,7 +398,7 @@ def _multilabel_fbeta_score(
     Returns:
         The computed metrics.
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=ignore_nan)
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, drop_nan=ignore_nan)
 
     fbeta = np.array([])
     macro, micro, weighted = float("nan"), float("nan"), float("nan")
