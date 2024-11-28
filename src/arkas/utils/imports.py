@@ -8,6 +8,7 @@ __all__ = [
     "check_hydra",
     "check_markdown",
     "check_omegaconf",
+    "check_scipy",
     "colorlog_available",
     "hya_available",
     "hydra_available",
@@ -16,11 +17,10 @@ __all__ = [
     "is_hydra_available",
     "is_markdown_available",
     "is_omegaconf_available",
+    "is_scipy_available",
     "markdown_available",
     "omegaconf_available",
-    "is_scipy_available",
     "scipy_available",
-    "check_scipy",
 ]
 
 from typing import TYPE_CHECKING, Any
