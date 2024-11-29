@@ -24,10 +24,6 @@ import numpy as np
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-NAN_POLICY_OMIT: str = "omit"
-NAN_POLICY_PROPAGATE: str = "propagate"
-NAN_POLICY_RAISE: str = "raise"
-
 
 def check_label_type(label_type: str) -> None:
     r"""Check if the label type value is valid or not.
@@ -38,7 +34,7 @@ def check_label_type(label_type: str) -> None:
             ``'multilabel'``, and ``'auto'``.
 
     Raises:
-        RuntimeError: if an invalid value is passed to ``label_type``.
+        ValueError: if an invalid value is passed to ``label_type``.
 
     Example usage:
 
@@ -54,7 +50,7 @@ def check_label_type(label_type: str) -> None:
             f"Incorrect 'label_type': {label_type}. The supported label types are: "
             f"'binary', 'multiclass', 'multilabel', and 'auto'"
         )
-        raise RuntimeError(msg)
+        raise ValueError(msg)
 
 
 def check_nan_policy(nan_policy: str) -> None:
@@ -190,7 +186,7 @@ def contains_nan(arr: np.ndarray, nan_policy: str = "propagate") -> bool:
     """
     check_nan_policy(nan_policy)
     isnan = np.any(np.isnan(arr))
-    if isnan and nan_policy == NAN_POLICY_RAISE:
+    if isnan and nan_policy == "raise":
         msg = "The input array contains at least one NaN value"
         raise ValueError(msg)
     return isnan

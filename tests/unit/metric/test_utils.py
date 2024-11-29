@@ -32,7 +32,7 @@ def test_check_label_type_valid(label_type: str) -> None:
 
 
 def test_check_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         check_label_type("incorrect")
 
 

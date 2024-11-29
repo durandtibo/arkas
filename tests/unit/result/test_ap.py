@@ -89,7 +89,7 @@ def test_average_precision_result_incorrect_shape() -> None:
 
 
 def test_average_precision_result_incorrect_label_type() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         AveragePrecisionResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([1, 0, 0, 1, 1]),
