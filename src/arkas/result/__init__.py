@@ -17,7 +17,7 @@ __all__ = [
     "BinaryRocAucResult",
     "EmptyResult",
     "EnergyDistanceResult",
-    "JensenShannonDivergenceResult",
+    "JSDivResult",
     "KLDivResult",
     "MappingResult",
     "MeanAbsoluteErrorResult",
@@ -70,7 +70,7 @@ from arkas.result.jaccard import (
     MulticlassJaccardResult,
     MultilabelJaccardResult,
 )
-from arkas.result.js import JensenShannonDivergenceResult
+from arkas.result.js import JSDivResult
 from arkas.result.kl import KLDivResult
 from arkas.result.mae import MeanAbsoluteErrorResult
 from arkas.result.mapping import MappingResult

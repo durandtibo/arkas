@@ -3,7 +3,7 @@ distributions result."""
 
 from __future__ import annotations
 
-__all__ = ["JensenShannonDivergenceResult"]
+__all__ = ["JSDivResult"]
 
 from typing import TYPE_CHECKING, Any
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-class JensenShannonDivergenceResult(BaseResult):
+class JSDivResult(BaseResult):
     r"""Implement the Jensen-Shannon (JS) divergence between two 1D
     distributions result.
 
@@ -30,12 +30,10 @@ class JensenShannonDivergenceResult(BaseResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import JensenShannonDivergenceResult
-    >>> result = JensenShannonDivergenceResult(
-    ...     p=np.array([0.1, 0.6, 0.1, 0.2]), q=np.array([0.2, 0.5, 0.2, 0.1])
-    ... )
+    >>> from arkas.result import JSDivResult
+    >>> result = JSDivResult(p=np.array([0.1, 0.6, 0.1, 0.2]), q=np.array([0.2, 0.5, 0.2, 0.1]))
     >>> result
-    JensenShannonDivergenceResult(p=(4,), q=(4,))
+    JSDivResult(p=(4,), q=(4,))
     >>> result.compute_metrics()
     {'size': 4, 'js_div': 0.027...}
 
