@@ -8,7 +8,7 @@ __all__ = ["spearmanr"]
 from typing import TYPE_CHECKING
 
 from arkas.metric.utils import contains_nan, preprocess_same_shape_arrays
-from arkas.utils.imports import is_scipy_available
+from arkas.utils.imports import check_scipy, is_scipy_available
 
 if is_scipy_available():
     from scipy import stats
@@ -60,6 +60,7 @@ def spearmanr(
 
     ```
     """
+    check_scipy()
     x, y = preprocess_same_shape_arrays(
         arrays=[x.ravel(), y.ravel()], drop_nan=nan_policy == "omit"
     )
