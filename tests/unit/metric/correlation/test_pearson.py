@@ -100,45 +100,58 @@ def test_pearsonr_prefix_suffix() -> None:
 
 
 @scipy_available
-def test_pearsonr_nan() -> None:
-    with pytest.raises(ValueError, match="array must not contain infs or NaNs"):
-        pearsonr(
-            x=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
-            y=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
-        )
-
-
-@scipy_available
-def test_pearsonr_drop_nan() -> None:
+def test_pearsonr_nan_omit() -> None:
     assert objects_are_allclose(
         pearsonr(
             x=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
             y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"count": 4, "pearson_coeff": 1.0, "pearson_pvalue": 0.0},
     )
 
 
 @scipy_available
-def test_pearsonr_drop_nan_x() -> None:
+def test_pearsonr_omit_x() -> None:
     assert objects_are_allclose(
         pearsonr(
             x=np.array([1, 2, 3, 4, 5, float("nan")]),
             y=np.array([1, 2, 3, 4, 5, 0]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"count": 5, "pearson_coeff": 1.0, "pearson_pvalue": 0.0},
     )
 
 
 @scipy_available
-def test_pearsonr_drop_nan_y() -> None:
+def test_pearsonr_omit_y() -> None:
     assert objects_are_allclose(
         pearsonr(
             x=np.array([1, 2, 3, 4, 5, 0]),
             y=np.array([1, 2, 3, 4, 5, float("nan")]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"count": 5, "pearson_coeff": 1.0, "pearson_pvalue": 0.0},
     )
+
+
+@scipy_available
+def test_pearsonr_nan_propagate() -> None:
+    assert objects_are_allclose(
+        pearsonr(
+            x=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
+            y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
+        ),
+        {"count": 7, "pearson_coeff": float("nan"), "pearson_pvalue": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
+def test_pearsonr_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
+        pearsonr(
+            x=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
+            y=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+            nan_policy="raise",
+        )
