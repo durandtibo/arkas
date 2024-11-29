@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 from coola import objects_are_allclose
 
 from arkas.metric import spearmanr
@@ -99,48 +100,58 @@ def test_spearmanr_prefix_suffix() -> None:
 
 
 @scipy_available
-def test_spearmanr_nan() -> None:
-    assert objects_are_allclose(
-        spearmanr(
-            x=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
-            y=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
-        ),
-        {"count": 6, "spearman_coeff": float("nan"), "spearman_pvalue": float("nan")},
-        equal_nan=True,
-    )
-
-
-@scipy_available
-def test_spearmanr_drop_nan() -> None:
+def test_spearmanr_nan_omit() -> None:
     assert objects_are_allclose(
         spearmanr(
             x=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
             y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"count": 4, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
     )
 
 
 @scipy_available
-def test_spearmanr_drop_nan_y_true() -> None:
+def test_spearmanr_omit_x() -> None:
     assert objects_are_allclose(
         spearmanr(
             x=np.array([1, 2, 3, 4, 5, float("nan")]),
             y=np.array([1, 2, 3, 4, 5, 0]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"count": 5, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
     )
 
 
 @scipy_available
-def test_spearmanr_drop_nan_y_pred() -> None:
+def test_spearmanr_omit_y() -> None:
     assert objects_are_allclose(
         spearmanr(
             x=np.array([1, 2, 3, 4, 5, 0]),
             y=np.array([1, 2, 3, 4, 5, float("nan")]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"count": 5, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
     )
+
+
+@scipy_available
+def test_spearmanr_nan_propagate() -> None:
+    assert objects_are_allclose(
+        spearmanr(
+            x=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
+            y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
+        ),
+        {"count": 7, "spearman_coeff": float("nan"), "spearman_pvalue": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
+def test_spearmanr_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
+        spearmanr(
+            x=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
+            y=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+            nan_policy="raise",
+        )
