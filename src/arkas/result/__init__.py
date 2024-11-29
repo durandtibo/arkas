@@ -40,6 +40,7 @@ __all__ = [
     "Result",
     "SequentialResult",
     "SpearmanCorrelationResult",
+    "WassersteinDistanceResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -91,3 +92,4 @@ from arkas.result.roc_auc import (
 from arkas.result.sequential import SequentialResult
 from arkas.result.spearman import SpearmanCorrelationResult
 from arkas.result.vanilla import EmptyResult, Result
+from arkas.result.wasserstein import WassersteinDistanceResult
