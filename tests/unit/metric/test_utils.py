@@ -8,6 +8,7 @@ from arkas.metric.utils import (
     check_label_type,
     check_nan_policy,
     check_nan_pred,
+    check_same_shape,
     check_same_shape_pred,
     check_same_shape_score,
     contains_nan,
@@ -75,6 +76,37 @@ def test_check_nan_pred_both_nan() -> None:
         check_nan_pred(y_true=np.array([1, 0, 0, 1, np.nan]), y_pred=np.array([0, 1, np.nan, 1, 1]))
 
 
+######################################
+#     Tests for check_same_shape     #
+######################################
+
+
+def test_check_same_shape_1_array() -> None:
+    check_same_shape([np.array([1, 0, 0, 1, 1])])
+
+
+def test_check_same_shape_2_arrays_correct() -> None:
+    check_same_shape([np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4, 5])])
+
+
+def test_check_same_shape_2_arrays_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="arrays have different shapes"):
+        check_same_shape([np.array([1, 0, 0, 1, 1]), np.array([1, 0, 0, 1])])
+
+
+def test_check_same_shape_3_arrays_correct() -> None:
+    check_same_shape(
+        [np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4, 5]), np.array([5, 4, 3, 2, 1])]
+    )
+
+
+def test_check_same_shape_3_arrays_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="arrays have different shapes"):
+        check_same_shape(
+            [np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4]), np.array([6, 5, 4, 3, 2, 1])]
+        )
+
+
 ###########################################
 #     Tests for check_same_shape_pred     #
 ###########################################
@@ -140,8 +172,13 @@ def test_contains_nan_propagate() -> None:
 
 
 def test_contains_nan_raise() -> None:
-    with pytest.raises(ValueError, match="The input array contains at least one NaN value"):
+    with pytest.raises(ValueError, match="input array contains at least one NaN value"):
         contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="raise")
+
+
+def test_contains_nan_raise_name() -> None:
+    with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
+        contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="raise", name="'x'")
 
 
 #################################

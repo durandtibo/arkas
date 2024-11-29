@@ -6,6 +6,7 @@ __all__ = [
     "check_label_type",
     "check_nan_policy",
     "check_nan_pred",
+    "check_same_shape",
     "check_same_shape_pred",
     "check_same_shape_score",
     "contains_nan",
@@ -22,7 +23,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable, Sequence
 
 
 def check_label_type(label_type: str) -> None:
@@ -111,6 +112,31 @@ def check_nan_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
         raise RuntimeError(msg)
 
 
+def check_same_shape(arrays: Iterable[np.ndarray]) -> None:
+    r"""Check if arrays have the same shape.
+
+    Args:
+        arrays: The arrays to check.
+
+    Raises:
+        RuntimeError: if the arrays have different shapes.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import check_same_shape
+    >>> check_same_shape([np.array([1, 0, 0, 1]), np.array([0, 1, 0, 1])])
+
+    ```
+    """
+    shapes = {arr.shape for arr in arrays}
+    if len(shapes) > 1:
+        msg = f"arrays have different shapes: {shapes}"
+        raise RuntimeError(msg)
+
+
 def check_same_shape_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
     r"""Check if ``y_true`` and ``y_pred`` arrays have the same shape.
 
@@ -169,13 +195,15 @@ def check_same_shape_score(y_true: np.ndarray, y_score: np.ndarray) -> None:
         raise RuntimeError(msg)
 
 
-def contains_nan(arr: np.ndarray, nan_policy: str = "propagate") -> bool:
+def contains_nan(arr: np.ndarray, nan_policy: str = "propagate", name: str = "input array") -> bool:
     r"""Indicate if the given array contains at least one NaN value.
 
     Args:
         arr: The array to check.
         nan_policy: The NaN policy. The valid values are ``'omit'``,
             ``'propagate'``, or ``'raise'``.
+        name: An optional name to be more precise about the array when
+            the exception is raised.
 
     Returns:
         ``True`` if the array contains at least one NaN value.
@@ -187,7 +215,7 @@ def contains_nan(arr: np.ndarray, nan_policy: str = "propagate") -> bool:
     check_nan_policy(nan_policy)
     isnan = np.any(np.isnan(arr))
     if isnan and nan_policy == "raise":
-        msg = "The input array contains at least one NaN value"
+        msg = f"{name} contains at least one NaN value"
         raise ValueError(msg)
     return isnan
 
