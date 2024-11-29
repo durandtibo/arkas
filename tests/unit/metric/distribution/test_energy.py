@@ -21,7 +21,7 @@ def test_energy_distance_same() -> None:
 
 
 @scipy_available
-def test_energy_distance_perfect_positive_correlation_2d() -> None:
+def test_energy_distance_perfect_same_2d() -> None:
     assert objects_are_allclose(
         energy_distance(
             u_values=np.array([[1, 2, 3], [4, 5, 6]]), v_values=np.array([[1, 2, 3], [4, 5, 6]])
