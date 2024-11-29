@@ -18,6 +18,7 @@ __all__ = [
     "EmptyResult",
     "EnergyDistanceResult",
     "JensenShannonDivergenceResult",
+    "KLDivResult",
     "MappingResult",
     "MeanAbsoluteErrorResult",
     "MeanSquaredErrorResult",
@@ -70,6 +71,7 @@ from arkas.result.jaccard import (
     MultilabelJaccardResult,
 )
 from arkas.result.js import JensenShannonDivergenceResult
+from arkas.result.kl import KLDivResult
 from arkas.result.mae import MeanAbsoluteErrorResult
 from arkas.result.mapping import MappingResult
 from arkas.result.mse import MeanSquaredErrorResult
