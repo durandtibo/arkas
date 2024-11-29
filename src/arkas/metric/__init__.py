@@ -17,6 +17,7 @@ __all__ = [
     "energy_distance",
     "fbeta_score",
     "jaccard",
+    "kl_div",
     "mean_absolute_error",
     "mean_absolute_percentage_error",
     "mean_squared_error",
@@ -90,6 +91,7 @@ from arkas.metric.classification.roc_auc import (
     roc_auc,
 )
 from arkas.metric.distribution.energy import energy_distance
+from arkas.metric.distribution.kl import kl_div
 from arkas.metric.distribution.wasserstein import wasserstein_distance
 from arkas.metric.regression.abs_error import mean_absolute_error, median_absolute_error
 from arkas.metric.regression.mape import mean_absolute_percentage_error
