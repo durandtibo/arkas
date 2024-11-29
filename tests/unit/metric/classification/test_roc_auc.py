@@ -178,7 +178,7 @@ def test_roc_auc_multilabel_prefix_suffix() -> None:
 
 
 def test_roc_auc_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         roc_auc(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(

@@ -197,7 +197,7 @@ def test_recall_multilabel_drop_nan() -> None:
 
 
 def test_recall_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         recall(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),

@@ -245,7 +245,7 @@ def test_average_precision_multilabel_drop_nan() -> None:
 
 
 def test_average_precision_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         average_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_score=np.array(

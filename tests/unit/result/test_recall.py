@@ -67,7 +67,7 @@ def test_recall_result_label_type() -> None:
 
 
 def test_recall_result_incorrect_label_type() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         RecallResult(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),

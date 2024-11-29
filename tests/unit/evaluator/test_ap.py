@@ -25,7 +25,7 @@ def test_average_precision_evaluator_str() -> None:
 
 
 def test_average_precision_evaluator_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         AveragePrecisionEvaluator(y_true="target", y_score="pred", label_type="incorrect")
 
 
