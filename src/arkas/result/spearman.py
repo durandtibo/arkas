@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 
 from arkas.metric.correlation.spearman import spearmanr
-from arkas.metric.utils import check_same_shape_pred
+from arkas.metric.utils import check_same_shape
 from arkas.result.base import BaseResult
 
 if TYPE_CHECKING:
@@ -20,8 +20,8 @@ class SpearmanCorrelationResult(BaseResult):
     r"""Implement the Spearman correlation result.
 
     Args:
-        y_true: The ground truth target values.
-        y_pred: The predicted values.
+        x: The first input array.
+        y: The second input array.
         alternative: The alternative hypothesis. Default is 'two-sided'.
             The following options are available:
             - 'two-sided': the correlation is nonzero
@@ -35,39 +35,37 @@ class SpearmanCorrelationResult(BaseResult):
     >>> import numpy as np
     >>> from arkas.result import SpearmanCorrelationResult
     >>> result = SpearmanCorrelationResult(
-    ...     y_true=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
-    ...     y_pred=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+    ...     x=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
+    ...     y=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
     ... )
     >>> result
-    SpearmanCorrelationResult(y_true=(9,), y_pred=(9,), alternative=two-sided)
+    SpearmanCorrelationResult(x=(9,), y=(9,), alternative=two-sided)
     >>> result.compute_metrics()
     {'count': 9, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0}
 
     ```
     """
 
-    def __init__(
-        self, y_true: np.ndarray, y_pred: np.ndarray, alternative: str = "two-sided"
-    ) -> None:
-        self._y_true = y_true.ravel()
-        self._y_pred = y_pred.ravel()
+    def __init__(self, x: np.ndarray, y: np.ndarray, alternative: str = "two-sided") -> None:
+        self._x = x.ravel()
+        self._y = y.ravel()
         self._alternative = alternative
 
-        check_same_shape_pred(y_true=self._y_true, y_pred=self._y_pred)
+        check_same_shape([self._x, self._y])
 
     def __repr__(self) -> str:
         return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_pred={self._y_pred.shape}, alternative={self._alternative})"
+            f"{self.__class__.__qualname__}(x={self._x.shape}, "
+            f"y={self._y.shape}, alternative={self._alternative})"
         )
 
     @property
-    def y_true(self) -> np.ndarray:
-        return self._y_true
+    def x(self) -> np.ndarray:
+        return self._x
 
     @property
-    def y_pred(self) -> np.ndarray:
-        return self._y_pred
+    def y(self) -> np.ndarray:
+        return self._y
 
     @property
     def alternative(self) -> str:
@@ -75,8 +73,8 @@ class SpearmanCorrelationResult(BaseResult):
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return spearmanr(
-            y_true=self._y_true,
-            y_pred=self._y_pred,
+            x=self._x,
+            y=self._y,
             alternative=self._alternative,
             prefix=prefix,
             suffix=suffix,
@@ -86,8 +84,8 @@ class SpearmanCorrelationResult(BaseResult):
         if not isinstance(other, self.__class__):
             return False
         return (
-            objects_are_equal(self.y_true, other.y_true, equal_nan=equal_nan)
-            and objects_are_equal(self.y_pred, other.y_pred, equal_nan=equal_nan)
+            objects_are_equal(self.x, other.x, equal_nan=equal_nan)
+            and objects_are_equal(self.y, other.y, equal_nan=equal_nan)
             and self.alternative == other.alternative
         )
 
