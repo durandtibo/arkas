@@ -6,9 +6,11 @@ from coola import objects_are_equal
 
 from arkas.metric.utils import (
     check_label_type,
+    check_nan_policy,
     check_nan_pred,
     check_same_shape_pred,
     check_same_shape_score,
+    contains_nan,
     multi_isnan,
     preprocess_pred,
     preprocess_pred_multilabel,
@@ -16,6 +18,8 @@ from arkas.metric.utils import (
     preprocess_score_multiclass,
     preprocess_score_multilabel,
 )
+
+NAN_POLICIES = ["omit", "propagate", "raise"]
 
 ######################################
 #     Tests for check_label_type     #
@@ -30,6 +34,21 @@ def test_check_label_type_valid(label_type: str) -> None:
 def test_check_label_type_incorrect() -> None:
     with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
         check_label_type("incorrect")
+
+
+######################################
+#     Tests for check_nan_policy     #
+######################################
+
+
+@pytest.mark.parametrize("nan_policy", NAN_POLICIES)
+def test_check_nan_policy_valid(nan_policy: str) -> None:
+    check_nan_policy(nan_policy)
+
+
+def test_check_nan_policy_incorrect() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        check_nan_policy("incorrect")
 
 
 ####################################
@@ -100,6 +119,29 @@ def test_check_same_shape_score_incorrect_shapes() -> None:
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([0, 1, 0, 1, 1, 0]),
         )
+
+
+##################################
+#     Tests for contains_nan     #
+##################################
+
+
+@pytest.mark.parametrize("nan_policy", NAN_POLICIES)
+def test_contains_nan_no_nan(nan_policy: str) -> None:
+    assert not contains_nan(np.array([1, 2, 3, 4, 5]), nan_policy=nan_policy)
+
+
+def test_contains_nan_omit() -> None:
+    assert contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="omit")
+
+
+def test_contains_nan_propagate() -> None:
+    assert contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="propagate")
+
+
+def test_contains_nan_raise() -> None:
+    with pytest.raises(ValueError, match="The input array contains at least one NaN value"):
+        contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="raise")
 
 
 #################################
