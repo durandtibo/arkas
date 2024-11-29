@@ -13,6 +13,7 @@ __all__ = [
     "multi_isnan",
     "preprocess_pred",
     "preprocess_pred_multilabel",
+    "preprocess_same_shape_arrays",
     "preprocess_score_binary",
     "preprocess_score_multiclass",
     "preprocess_score_multilabel",
@@ -362,6 +363,47 @@ def preprocess_pred_multilabel(
 
     mask = np.logical_not(np.logical_or(np.isnan(y_true).any(axis=1), np.isnan(y_pred).any(axis=1)))
     return y_true[mask], y_pred[mask]
+
+
+def preprocess_same_shape_arrays(
+    arrays: Sequence[np.ndarray], drop_nan: bool = False
+) -> tuple[np.ndarray, ...]:
+    r"""Preprocess a sequence of same shape arrays.
+
+    Args:
+        arrays: The arrays to preprocess.
+        drop_nan: If ``True``, the NaN values are removed,
+            otherwise they are kept.
+
+    Returns:
+        A tuple with the preprocessed ``y_true`` and ``y_pred``
+            arrays.
+
+    Raises:
+        RuntimeError: if the arrays have different shapes.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import preprocess_same_shape_arrays
+    >>> arrays = [
+    ...     np.array([1, 0, 0, 1, 1, float("nan")]),
+    ...     np.array([0, 1, 0, 1, float("nan"), 1]),
+    ... ]
+    >>> preprocess_same_shape_arrays(arrays)
+    (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
+    >>> preprocess_same_shape_arrays(arrays, drop_nan=True)
+    (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
+
+    ```
+    """
+    check_same_shape(arrays)
+    if not drop_nan:
+        return tuple(arrays)
+    mask = np.logical_not(multi_isnan(arrays))
+    return tuple(arr[mask] for arr in arrays)
 
 
 def preprocess_score_binary(

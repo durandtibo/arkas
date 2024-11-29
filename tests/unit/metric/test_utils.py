@@ -15,6 +15,7 @@ from arkas.metric.utils import (
     multi_isnan,
     preprocess_pred,
     preprocess_pred_multilabel,
+    preprocess_same_shape_arrays,
     preprocess_score_binary,
     preprocess_score_multiclass,
     preprocess_score_multilabel,
@@ -467,6 +468,86 @@ def test_preprocess_pred_multilabel_incorrect_ndim_y_true() -> None:
         RuntimeError, match="'y_true' must be a 1d or 2d array but received an array of shape"
     ):
         preprocess_pred_multilabel(y_true=np.ones((5, 3, 1)), y_pred=np.ones((5, 3)))
+
+
+##################################################
+#     Tests for preprocess_same_shape_arrays     #
+##################################################
+
+
+def test_preprocess_same_shape_arrays_keep_nan_1_array() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays([np.array([1, 0, 0, 1, float("nan")])]),
+        (np.array([1.0, 0.0, 0.0, 1.0, float("nan")]),),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_same_shape_arrays_keep_nan_2_arrays() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays(
+            [np.array([1, 0, 0, 1, float("nan")]), np.array([1, 2, 3, float("nan"), 5])]
+        ),
+        (
+            np.array([1.0, 0.0, 0.0, 1.0, float("nan")]),
+            np.array([1.0, 2.0, 3.0, float("nan"), 5.0]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_same_shape_arrays_keep_nan_3_arrays() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays(
+            [
+                np.array([1, 0, 0, 1, float("nan")]),
+                np.array([1, 2, 3, float("nan"), 5]),
+                np.array([float("nan"), 4, 3, 2, 1]),
+            ]
+        ),
+        (
+            np.array([1.0, 0.0, 0.0, 1.0, float("nan")]),
+            np.array([1.0, 2.0, 3.0, float("nan"), 5.0]),
+            np.array([float("nan"), 4.0, 3.0, 2.0, 1.0]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_same_shape_arrays_drop_nan_1_array() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays([np.array([1, 0, 0, 1, float("nan")])], drop_nan=True),
+        (np.array([1.0, 0.0, 0.0, 1.0]),),
+    )
+
+
+def test_preprocess_same_shape_arrays_drop_nan_2_arrays() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays(
+            [np.array([1, 0, 0, 1, float("nan")]), np.array([1, 2, 3, float("nan"), 5])],
+            drop_nan=True,
+        ),
+        (np.array([1.0, 0.0, 0.0]), np.array([1.0, 2.0, 3.0])),
+    )
+
+
+def test_preprocess_same_shape_arrays_drop_nan_3_arrays() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays(
+            [
+                np.array([1, 0, 0, 1, float("nan")]),
+                np.array([1, 2, 3, float("nan"), 5]),
+                np.array([float("nan"), 4, 3, 2, 1]),
+            ],
+            drop_nan=True,
+        ),
+        (np.array([0.0, 0.0]), np.array([2.0, 3.0]), np.array([4.0, 3.0])),
+    )
+
+
+def test_preprocess_same_shape_arrays_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="arrays have different shapes"):
+        preprocess_same_shape_arrays([np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4])])
 
 
 #############################################
