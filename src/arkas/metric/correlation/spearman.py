@@ -7,7 +7,7 @@ __all__ = ["spearmanr"]
 
 from typing import TYPE_CHECKING
 
-from arkas.metric.utils import preprocess_pred
+from arkas.metric.utils import contains_nan, preprocess_same_shape_arrays
 from arkas.utils.imports import check_scipy, is_scipy_available
 
 if is_scipy_available():
@@ -24,7 +24,7 @@ def spearmanr(
     alternative: str = "two-sided",
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float]:
     r"""Return the Spearman correlation coefficient and p-value for
     testing non-correlation.
@@ -39,8 +39,9 @@ def spearmanr(
             - 'greater': the correlation is positive (greater than zero)
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -60,11 +61,15 @@ def spearmanr(
     ```
     """
     check_scipy()
-    x, y = preprocess_pred(y_true=x.ravel(), y_pred=y.ravel(), drop_nan=drop_nan)
+    x, y = preprocess_same_shape_arrays(
+        arrays=[x.ravel(), y.ravel()], drop_nan=nan_policy == "omit"
+    )
+    x_nan = contains_nan(arr=x, nan_policy=nan_policy, name="'x'")
+    y_nan = contains_nan(arr=y, nan_policy=nan_policy, name="'x'")
 
     count = x.size
     coeff, pvalue = float("nan"), float("nan")
-    if count > 0:
+    if count > 0 and not x_nan and not y_nan:
         result = stats.spearmanr(x, y, alternative=alternative)
         coeff, pvalue = float(result.statistic), float(result.pvalue)
     return {
