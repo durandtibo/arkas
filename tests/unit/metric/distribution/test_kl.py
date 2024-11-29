@@ -22,8 +22,8 @@ def test_js_div_same() -> None:
 @scipy_available
 def test_js_div_different() -> None:
     assert objects_are_allclose(
-        js_div(p=np.array([0.1, 0.6, 0.1, 0.2]), q=np.array([0.2, 0.5, 0.2, 0.1])),
-        {"size": 4, "js_div": 0.027760723665117268},
+        js_div(p=np.array([0.10, 0.40, 0.50]), q=np.array([0.80, 0.15, 0.05])),
+        {"size": 3, "js_div": 0.29126084062606405},
     )
 
 
@@ -65,8 +65,8 @@ def test_kl_div_same() -> None:
 @scipy_available
 def test_kl_div_different() -> None:
     assert objects_are_allclose(
-        kl_div(p=np.array([0.1, 0.6, 0.1, 0.2]), q=np.array([0.2, 0.5, 0.2, 0.1])),
-        {"size": 4, "kl_pq": 0.10939293407637275, "kl_qp": 0.1167833757710063},
+        kl_div(p=np.array([0.10, 0.40, 0.50]), q=np.array([0.80, 0.15, 0.05])),
+        {"size": 3, "kl_pq": 1.3356800935337299, "kl_qp": 1.4012995907424075},
     )
 
 
