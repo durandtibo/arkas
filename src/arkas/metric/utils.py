@@ -4,9 +4,11 @@ from __future__ import annotations
 
 __all__ = [
     "check_label_type",
+    "check_nan_policy",
     "check_nan_pred",
     "check_same_shape_pred",
     "check_same_shape_score",
+    "contains_nan",
     "multi_isnan",
     "preprocess_pred",
     "preprocess_pred_multilabel",
@@ -55,6 +57,33 @@ def check_label_type(label_type: str) -> None:
         raise RuntimeError(msg)
 
 
+def check_nan_policy(nan_policy: str) -> None:
+    r"""Check the NaN policy.
+
+    Args:
+        nan_policy: The NaN policy.
+
+    Raises:
+        ValueError: if ``nan_policy`` is not ``'omit'``,
+            ``'propagate'``, or ``'raise'``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.metric.utils import check_nan_policy
+    >>> check_nan_policy(nan_policy="omit")
+
+    ```
+    """
+    if nan_policy not in {"omit", "propagate", "raise"}:
+        msg = (
+            f"Incorrect 'nan_policy': {nan_policy}. The valid values are: "
+            f"'omit', 'propagate', 'raise'"
+        )
+        raise ValueError(msg)
+
+
 def check_nan_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
     r"""Check if any array elements in ``y_true`` or ``y_pred`` arrays is
     a NaN value.
@@ -78,10 +107,10 @@ def check_nan_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
 
     ```
     """
-    if np.any(np.isnan(y_true)):
+    if np.isnan(y_true).any():
         msg = "'y_true' contains at least one NaN value"
         raise RuntimeError(msg)
-    if np.any(np.isnan(y_pred)):
+    if np.isnan(y_pred).any():
         msg = "'y_pred' contains at least one NaN value"
         raise RuntimeError(msg)
 
@@ -142,6 +171,29 @@ def check_same_shape_score(y_true: np.ndarray, y_score: np.ndarray) -> None:
     if y_true.shape != y_score.shape:
         msg = f"'y_true' and 'y_score' have different shapes: {y_true.shape} vs {y_score.shape}"
         raise RuntimeError(msg)
+
+
+def contains_nan(arr: np.ndarray, nan_policy: str = "propagate") -> bool:
+    r"""Indicate if the given array contains at least one NaN value.
+
+    Args:
+        arr: The array to check.
+        nan_policy: The NaN policy. The valid values are ``'omit'``,
+            ``'propagate'``, or ``'raise'``.
+
+    Returns:
+        ``True`` if the array contains at least one NaN value.
+
+    Raises:
+        ValueError: if the array contains at least one NaN value and
+            ``nan_policy`` is ``'raise'``.
+    """
+    check_nan_policy(nan_policy)
+    isnan = np.any(np.isnan(arr))
+    if isnan and nan_policy == NAN_POLICY_RAISE:
+        msg = "The input array contains at least one NaN value"
+        raise ValueError(msg)
+    return isnan
 
 
 def multi_isnan(arrays: Sequence[np.ndarray]) -> np.ndarray:
