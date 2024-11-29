@@ -78,13 +78,13 @@ def test_confusion_matrix_binary_prefix_suffix() -> None:
     )
 
 
-def test_confusion_matrix_binary_ignore_nan() -> None:
+def test_confusion_matrix_binary_drop_nan() -> None:
     assert objects_are_equal(
         confusion_matrix(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
             label_type="binary",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[2, 0], [0, 3]]),
@@ -131,13 +131,13 @@ def test_confusion_matrix_multiclass_prefix_suffix() -> None:
     )
 
 
-def test_confusion_matrix_multiclass_ignore_nan() -> None:
+def test_confusion_matrix_multiclass_drop_nan() -> None:
     assert objects_are_equal(
         confusion_matrix(
             y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
             y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
             label_type="multiclass",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
@@ -191,7 +191,7 @@ def test_confusion_matrix_multilabel_prefix_suffix() -> None:
     )
 
 
-def test_confusion_matrix_multilabel_ignore_nan() -> None:
+def test_confusion_matrix_multilabel_drop_nan() -> None:
     assert objects_are_equal(
         confusion_matrix(
             y_true=np.array(
@@ -201,7 +201,7 @@ def test_confusion_matrix_multilabel_ignore_nan() -> None:
                 [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
             ),
             label_type="multilabel",
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[[2, 0], [0, 3]], [[3, 0], [0, 2]], [[2, 0], [0, 3]]]),
@@ -211,7 +211,7 @@ def test_confusion_matrix_multilabel_ignore_nan() -> None:
 
 
 def test_confusion_matrix_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         confusion_matrix(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
@@ -330,12 +330,12 @@ def test_binary_confusion_matrix_nan() -> None:
         )
 
 
-def test_binary_confusion_matrix_ignore_nan() -> None:
+def test_binary_confusion_matrix_drop_nan() -> None:
     assert objects_are_equal(
         binary_confusion_matrix(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[2, 0], [0, 3]]),
@@ -352,12 +352,12 @@ def test_binary_confusion_matrix_ignore_nan() -> None:
     )
 
 
-def test_binary_confusion_matrix_ignore_nan_y_true() -> None:
+def test_binary_confusion_matrix_drop_nan_y_true() -> None:
     assert objects_are_equal(
         binary_confusion_matrix(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 1]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[2, 0], [0, 3]]),
@@ -374,12 +374,12 @@ def test_binary_confusion_matrix_ignore_nan_y_true() -> None:
     )
 
 
-def test_binary_confusion_matrix_ignore_nan_y_pred() -> None:
+def test_binary_confusion_matrix_drop_nan_y_pred() -> None:
     assert objects_are_equal(
         binary_confusion_matrix(
             y_true=np.array([1, 0, 0, 1, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[2, 0], [0, 3]]),
@@ -470,12 +470,12 @@ def test_multiclass_confusion_matrix_nan() -> None:
         )
 
 
-def test_multiclass_confusion_matrix_ignore_nan() -> None:
+def test_multiclass_confusion_matrix_drop_nan() -> None:
     assert objects_are_equal(
         multiclass_confusion_matrix(
             y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
             y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
@@ -484,12 +484,12 @@ def test_multiclass_confusion_matrix_ignore_nan() -> None:
     )
 
 
-def test_multiclass_confusion_matrix_ignore_nan_y_true() -> None:
+def test_multiclass_confusion_matrix_drop_nan_y_true() -> None:
     assert objects_are_equal(
         multiclass_confusion_matrix(
             y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
             y_pred=np.array([0, 1, 1, 2, 2, 2, 1]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
@@ -498,12 +498,12 @@ def test_multiclass_confusion_matrix_ignore_nan_y_true() -> None:
     )
 
 
-def test_multiclass_confusion_matrix_ignore_nan_y_pred() -> None:
+def test_multiclass_confusion_matrix_drop_nan_y_pred() -> None:
     assert objects_are_equal(
         multiclass_confusion_matrix(
             y_true=np.array([0, 1, 1, 2, 2, 2, 1]),
             y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
@@ -615,12 +615,12 @@ def test_multilabel_confusion_matrix_nan() -> None:
         )
 
 
-def test_multilabel_confusion_matrix_ignore_nan() -> None:
+def test_multilabel_confusion_matrix_drop_nan() -> None:
     assert objects_are_allclose(
         multilabel_confusion_matrix(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [float("nan"), 0, 1]]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[[2, 0], [0, 1]], [[1, 0], [0, 2]], [[2, 0], [0, 1]]]),
@@ -629,12 +629,12 @@ def test_multilabel_confusion_matrix_ignore_nan() -> None:
     )
 
 
-def test_multilabel_confusion_matrix_ignore_nan_y_true() -> None:
+def test_multilabel_confusion_matrix_drop_nan_y_true() -> None:
     assert objects_are_allclose(
         multilabel_confusion_matrix(
             y_true=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[[2, 0], [0, 2]], [[2, 0], [0, 2]], [[2, 0], [0, 2]]]),
@@ -643,12 +643,12 @@ def test_multilabel_confusion_matrix_ignore_nan_y_true() -> None:
     )
 
 
-def test_multilabel_confusion_matrix_ignore_nan_y_pred() -> None:
+def test_multilabel_confusion_matrix_drop_nan_y_pred() -> None:
     assert objects_are_allclose(
         multilabel_confusion_matrix(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, float("nan")], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
-            ignore_nan=True,
+            drop_nan=True,
         ),
         {
             "confusion_matrix": np.array([[[2, 0], [0, 2]], [[2, 0], [0, 2]], [[2, 0], [0, 2]]]),

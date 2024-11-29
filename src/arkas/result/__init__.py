@@ -33,10 +33,12 @@ __all__ = [
     "MultilabelPrecisionResult",
     "MultilabelRecallResult",
     "MultilabelRocAucResult",
+    "PearsonCorrelationResult",
     "PrecisionResult",
     "RecallResult",
     "Result",
     "SequentialResult",
+    "SpearmanCorrelationResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -66,6 +68,7 @@ from arkas.result.jaccard import (
 from arkas.result.mae import MeanAbsoluteErrorResult
 from arkas.result.mapping import MappingResult
 from arkas.result.mse import MeanSquaredErrorResult
+from arkas.result.pearson import PearsonCorrelationResult
 from arkas.result.precision import (
     BinaryPrecisionResult,
     MulticlassPrecisionResult,
@@ -84,4 +87,5 @@ from arkas.result.roc_auc import (
     MultilabelRocAucResult,
 )
 from arkas.result.sequential import SequentialResult
+from arkas.result.spearman import SpearmanCorrelationResult
 from arkas.result.vanilla import EmptyResult, Result

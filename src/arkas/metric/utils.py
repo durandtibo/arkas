@@ -4,11 +4,16 @@ from __future__ import annotations
 
 __all__ = [
     "check_label_type",
+    "check_nan_policy",
+    "check_nan_pred",
+    "check_same_shape",
     "check_same_shape_pred",
     "check_same_shape_score",
+    "contains_nan",
     "multi_isnan",
     "preprocess_pred",
     "preprocess_pred_multilabel",
+    "preprocess_same_shape_arrays",
     "preprocess_score_binary",
     "preprocess_score_multiclass",
     "preprocess_score_multilabel",
@@ -19,7 +24,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable, Sequence
 
 
 def check_label_type(label_type: str) -> None:
@@ -31,7 +36,7 @@ def check_label_type(label_type: str) -> None:
             ``'multilabel'``, and ``'auto'``.
 
     Raises:
-        RuntimeError: if an invalid value is passed to ``label_type``.
+        ValueError: if an invalid value is passed to ``label_type``.
 
     Example usage:
 
@@ -47,6 +52,89 @@ def check_label_type(label_type: str) -> None:
             f"Incorrect 'label_type': {label_type}. The supported label types are: "
             f"'binary', 'multiclass', 'multilabel', and 'auto'"
         )
+        raise ValueError(msg)
+
+
+def check_nan_policy(nan_policy: str) -> None:
+    r"""Check the NaN policy.
+
+    Args:
+        nan_policy: The NaN policy.
+
+    Raises:
+        ValueError: if ``nan_policy`` is not ``'omit'``,
+            ``'propagate'``, or ``'raise'``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.metric.utils import check_nan_policy
+    >>> check_nan_policy(nan_policy="omit")
+
+    ```
+    """
+    if nan_policy not in {"omit", "propagate", "raise"}:
+        msg = (
+            f"Incorrect 'nan_policy': {nan_policy}. The valid values are: "
+            f"'omit', 'propagate', 'raise'"
+        )
+        raise ValueError(msg)
+
+
+def check_nan_pred(y_true: np.ndarray, y_pred: np.ndarray) -> None:
+    r"""Check if any array elements in ``y_true`` or ``y_pred`` arrays is
+    a NaN value.
+
+    Args:
+        y_true: The ground truth target labels.
+        y_pred: The predicted labels.
+
+    Raises:
+        RuntimeError: ``'y_true'`` or ``'y_pred'`` has a NaN value.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import check_nan_pred
+    >>> y_true = np.array([1, 0, 0, 1])
+    >>> y_pred = np.array([0, 1, 0, 1])
+    >>> check_nan_pred(y_true, y_pred)
+
+    ```
+    """
+    if np.isnan(y_true).any():
+        msg = "'y_true' contains at least one NaN value"
+        raise RuntimeError(msg)
+    if np.isnan(y_pred).any():
+        msg = "'y_pred' contains at least one NaN value"
+        raise RuntimeError(msg)
+
+
+def check_same_shape(arrays: Iterable[np.ndarray]) -> None:
+    r"""Check if arrays have the same shape.
+
+    Args:
+        arrays: The arrays to check.
+
+    Raises:
+        RuntimeError: if the arrays have different shapes.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import check_same_shape
+    >>> check_same_shape([np.array([1, 0, 0, 1]), np.array([0, 1, 0, 1])])
+
+    ```
+    """
+    shapes = {arr.shape for arr in arrays}
+    if len(shapes) > 1:
+        msg = f"arrays have different shapes: {shapes}"
         raise RuntimeError(msg)
 
 
@@ -108,6 +196,31 @@ def check_same_shape_score(y_true: np.ndarray, y_score: np.ndarray) -> None:
         raise RuntimeError(msg)
 
 
+def contains_nan(arr: np.ndarray, nan_policy: str = "propagate", name: str = "input array") -> bool:
+    r"""Indicate if the given array contains at least one NaN value.
+
+    Args:
+        arr: The array to check.
+        nan_policy: The NaN policy. The valid values are ``'omit'``,
+            ``'propagate'``, or ``'raise'``.
+        name: An optional name to be more precise about the array when
+            the exception is raised.
+
+    Returns:
+        ``True`` if the array contains at least one NaN value.
+
+    Raises:
+        ValueError: if the array contains at least one NaN value and
+            ``nan_policy`` is ``'raise'``.
+    """
+    check_nan_policy(nan_policy)
+    isnan = np.any(np.isnan(arr))
+    if isnan and nan_policy == "raise":
+        msg = f"{name} contains at least one NaN value"
+        raise ValueError(msg)
+    return isnan
+
+
 def multi_isnan(arrays: Sequence[np.ndarray]) -> np.ndarray:
     r"""Test element-wise for NaN for all input arrays and return result
     as a boolean array.
@@ -144,14 +257,14 @@ def multi_isnan(arrays: Sequence[np.ndarray]) -> np.ndarray:
 
 
 def preprocess_pred(
-    y_true: np.ndarray, y_pred: np.ndarray, remove_nan: bool = False
+    y_true: np.ndarray, y_pred: np.ndarray, drop_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_pred`` arrays.
 
     Args:
         y_true: The ground truth target labels.
         y_pred: The predicted labels.
-        remove_nan: If ``True``, the NaN values are removed,
+        drop_nan: If ``True``, the NaN values are removed,
             otherwise they are kept.
 
     Returns:
@@ -173,27 +286,27 @@ def preprocess_pred(
     >>> y_pred = np.array([0, 1, 0, 1, float("nan"), 1])
     >>> preprocess_pred(y_true, y_pred)
     (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
-    >>> preprocess_pred(y_true, y_pred, remove_nan=True)
+    >>> preprocess_pred(y_true, y_pred, drop_nan=True)
     (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
 
     ```
     """
     check_same_shape_pred(y_true, y_pred)
-    if not remove_nan:
+    if not drop_nan:
         return y_true, y_pred
     mask = np.logical_not(multi_isnan([y_true, y_pred]))
     return y_true[mask], y_pred[mask]
 
 
 def preprocess_pred_multilabel(
-    y_true: np.ndarray, y_pred: np.ndarray, remove_nan: bool = False
+    y_true: np.ndarray, y_pred: np.ndarray, drop_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_pred`` arrays.
 
     Args:
         y_true: The ground truth target labels.
         y_pred: The predicted labels.
-        remove_nan: If ``True``, the NaN values are removed,
+        drop_nan: If ``True``, the NaN values are removed,
             otherwise they are kept.
 
     Returns:
@@ -224,7 +337,7 @@ def preprocess_pred_multilabel(
             [ 0.,  1.,  0.],
             [ 1.,  0.,  1.],
             [ 1.,  0., nan]]))
-    >>> preprocess_pred_multilabel(y_true, y_pred, remove_nan=True)
+    >>> preprocess_pred_multilabel(y_true, y_pred, drop_nan=True)
     (array([[0., 1., 0.],
             [0., 1., 0.],
             [1., 0., 1.]]),
@@ -245,15 +358,56 @@ def preprocess_pred_multilabel(
     if y_pred.ndim == 1:
         y_pred = y_pred.reshape((-1, 1))
     check_same_shape_pred(y_true, y_pred)
-    if not remove_nan:
+    if not drop_nan:
         return y_true, y_pred
 
     mask = np.logical_not(np.logical_or(np.isnan(y_true).any(axis=1), np.isnan(y_pred).any(axis=1)))
     return y_true[mask], y_pred[mask]
 
 
+def preprocess_same_shape_arrays(
+    arrays: Sequence[np.ndarray], drop_nan: bool = False
+) -> tuple[np.ndarray, ...]:
+    r"""Preprocess a sequence of same shape arrays.
+
+    Args:
+        arrays: The arrays to preprocess.
+        drop_nan: If ``True``, the NaN values are removed,
+            otherwise they are kept.
+
+    Returns:
+        A tuple with the preprocessed ``y_true`` and ``y_pred``
+            arrays.
+
+    Raises:
+        RuntimeError: if the arrays have different shapes.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import preprocess_same_shape_arrays
+    >>> arrays = [
+    ...     np.array([1, 0, 0, 1, 1, float("nan")]),
+    ...     np.array([0, 1, 0, 1, float("nan"), 1]),
+    ... ]
+    >>> preprocess_same_shape_arrays(arrays)
+    (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
+    >>> preprocess_same_shape_arrays(arrays, drop_nan=True)
+    (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
+
+    ```
+    """
+    check_same_shape(arrays)
+    if not drop_nan:
+        return tuple(arrays)
+    mask = np.logical_not(multi_isnan(arrays))
+    return tuple(arr[mask] for arr in arrays)
+
+
 def preprocess_score_binary(
-    y_true: np.ndarray, y_score: np.ndarray, remove_nan: bool = False
+    y_true: np.ndarray, y_score: np.ndarray, drop_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_score`` arrays for the binary
     classification case.
@@ -263,7 +417,7 @@ def preprocess_score_binary(
             array of shape ``(n_samples, *)``.
         y_score: The predicted labels. This input must be an
             array of shape ``(n_samples, *)``.
-        remove_nan: If ``True``, the NaN values are removed,
+        drop_nan: If ``True``, the NaN values are removed,
             otherwise they are kept.
 
     Returns:
@@ -280,7 +434,7 @@ def preprocess_score_binary(
     >>> y_score = np.array([0, 1, 0, 1, float("nan"), 1])
     >>> preprocess_score_binary(y_true, y_score)
     (array([ 1.,  0.,  0.,  1.,  1., nan]), array([ 0.,  1.,  0.,  1., nan,  1.]))
-    >>> preprocess_score_binary(y_true, y_score, remove_nan=True)
+    >>> preprocess_score_binary(y_true, y_score, drop_nan=True)
     (array([1., 0., 0., 1.]), array([0., 1., 0., 1.]))
 
     ```
@@ -290,7 +444,7 @@ def preprocess_score_binary(
         return y_true, y_score
 
     check_same_shape_score(y_true, y_score)
-    if not remove_nan:
+    if not drop_nan:
         return y_true, y_score
 
     # Remove NaN values
@@ -299,7 +453,7 @@ def preprocess_score_binary(
 
 
 def preprocess_score_multiclass(
-    y_true: np.ndarray, y_score: np.ndarray, remove_nan: bool = False
+    y_true: np.ndarray, y_score: np.ndarray, drop_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_score`` arrays for the multiclass
     classification case.
@@ -309,7 +463,7 @@ def preprocess_score_multiclass(
             array of shape ``(n_samples,)`` or ``(n_samples, 1)``.
         y_score: The predicted labels. This input must be an
             array of shape ``(n_samples, n_classes)``.
-        remove_nan: If ``True``, the NaN values are removed,
+        drop_nan: If ``True``, the NaN values are removed,
             otherwise they are kept.
 
     Returns:
@@ -341,7 +495,7 @@ def preprocess_score_multiclass(
             [0.2, 0.3, 0.5],
             [0.4, 0.4, 0.2],
             [0.1, 0.2, 0.7]]))
-    >>> preprocess_score_multiclass(y_true, y_score, remove_nan=True)
+    >>> preprocess_score_multiclass(y_true, y_score, drop_nan=True)
     (array([0., 0., 1., 2.]),
      array([[0.7, 0.2, 0.1],
             [0.4, 0.3, 0.3],
@@ -371,7 +525,7 @@ def preprocess_score_multiclass(
         msg = f"'y_score' must be a 2d array but received an array of shape: {y_score.shape}"
         raise RuntimeError(msg)
 
-    if not remove_nan:
+    if not drop_nan:
         return y_true, y_score
 
     # Remove NaN values
@@ -380,7 +534,7 @@ def preprocess_score_multiclass(
 
 
 def preprocess_score_multilabel(
-    y_true: np.ndarray, y_score: np.ndarray, remove_nan: bool = False
+    y_true: np.ndarray, y_score: np.ndarray, drop_nan: bool = False
 ) -> tuple[np.ndarray, np.ndarray]:
     r"""Preprocess ``y_true`` and ``y_score`` arrays for the multilabel
     classification case.
@@ -392,7 +546,7 @@ def preprocess_score_multilabel(
         y_score: The predicted labels. This input must be an
             array of shape ``(n_samples, n_classes)`` or
             ``(n_samples,)``.
-        remove_nan: If ``True``, the NaN values are removed,
+        drop_nan: If ``True``, the NaN values are removed,
             otherwise they are kept.
 
     Returns:
@@ -420,7 +574,7 @@ def preprocess_score_multilabel(
             [ 0.,  2.,  3.],
             [ 3., -2., -4.],
             [ 1., nan, -5.]]))
-    >>> preprocess_score_multilabel(y_true, y_score, remove_nan=True)
+    >>> preprocess_score_multilabel(y_true, y_score, drop_nan=True)
     (array([[0., 1., 0.],
             [0., 1., 0.],
             [1., 0., 1.]]),
@@ -442,7 +596,7 @@ def preprocess_score_multilabel(
         y_score = y_score.reshape((-1, 1))
     check_same_shape_score(y_true, y_score)
 
-    if not remove_nan:
+    if not drop_nan:
         return y_true, y_score
 
     # Remove NaN values

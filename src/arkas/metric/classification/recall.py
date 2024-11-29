@@ -28,7 +28,7 @@ def recall(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics.
 
@@ -44,7 +44,7 @@ def recall(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
@@ -96,14 +96,14 @@ def recall(
         label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
         return binary_recall(
-            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
         )
     if label_type == "multilabel":
         return multilabel_recall(
-            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
         )
     return multiclass_recall(
-        y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, ignore_nan=ignore_nan
+        y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
     )
 
 
@@ -113,7 +113,7 @@ def binary_recall(
     *,
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float]:
     r"""Return the recall metrics for binary labels.
 
@@ -124,7 +124,7 @@ def binary_recall(
             be an array of shape ``(n_samples,)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
@@ -142,7 +142,7 @@ def binary_recall(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
     )
 
     count, score = y_true.size, float("nan")
@@ -157,7 +157,7 @@ def multiclass_recall(
     *,
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics for multiclass labels.
 
@@ -168,7 +168,7 @@ def multiclass_recall(
             be an array of shape ``(n_samples,)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
@@ -192,7 +192,7 @@ def multiclass_recall(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), remove_nan=ignore_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
     )
 
     per_class = np.array([])
@@ -226,7 +226,7 @@ def multilabel_recall(
     *,
     prefix: str = "",
     suffix: str = "",
-    ignore_nan: bool = False,
+    drop_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics for multilabel labels.
 
@@ -237,7 +237,7 @@ def multilabel_recall(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        ignore_nan: If ``True``, the NaN values are ignored while
+        drop_nan: If ``True``, the NaN values are ignored while
             computing the metrics, otherwise an exception is raised.
 
     Returns:
@@ -261,7 +261,7 @@ def multilabel_recall(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, remove_nan=ignore_nan)
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, drop_nan=drop_nan)
 
     per_class = np.array([])
     macro, micro, weighted = float("nan"), float("nan"), float("nan")

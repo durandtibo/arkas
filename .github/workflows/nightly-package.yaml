@@ -150,7 +150,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'coola'
           package-version: ${{ matrix.coola-version }}
@@ -170,7 +170,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        grizz-version: [ 0.1.0 ]
+        grizz-version: [ 0.1.1, 0.1.0 ]
 
     steps:
       - name: Checkout
@@ -186,7 +186,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'grizz'
           package-version: ${{ matrix.grizz-version }}
@@ -222,7 +222,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'iden'
           package-version: ${{ matrix.iden-version }}
@@ -258,7 +258,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'jinja2'
           package-version: ${{ matrix.jinja2-version }}
@@ -294,7 +294,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'matplotlib'
           package-version: ${{ matrix.matplotlib-version }}
@@ -314,7 +314,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        numpy-version: [ 2.1.1, 2.0.2, 1.26.4, 1.25.2, 1.24.3, 1.23.5 ]
+        numpy-version: [ 2.1.3, 2.0.2, 1.26.4, 1.25.2, 1.24.3, 1.23.5 ]
 
     steps:
       - name: Checkout
@@ -330,7 +330,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'numpy'
           package-version: ${{ matrix.numpy-version }}
@@ -366,7 +366,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'objectory'
           package-version: ${{ matrix.objectory-version }}
@@ -387,6 +387,8 @@ jobs:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
         polars-version: [
+          1.15.0,
+          1.14.0,
           1.12.0,
           1.11.0,
           1.10.0,
@@ -416,7 +418,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'polars'
           package-version: ${{ matrix.polars-version }}
@@ -452,7 +454,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'scikit-learn'
           package-version: ${{ matrix.scikit-learn-version }}
@@ -476,7 +478,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        colorlog-version: [ '6.8', '6.7' ]
+        colorlog-version: [ 6.9.0, 6.7.0 ]
 
     steps:
       - name: Checkout
@@ -492,7 +494,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'colorlog'
           package-version: ${{ matrix.colorlog-version }}
@@ -528,7 +530,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'hya'
           package-version: ${{ matrix.hya-version }}
@@ -564,7 +566,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'hydra-core'
           package-version: ${{ matrix.hydra-core-version }}
@@ -584,7 +586,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        markdown-version: [ 3.6.0, 3.5.1, 3.4.3, 3.4.0 ]
+        markdown-version: [ 3.7.0, 3.6.0, 3.5.1, 3.4.3, 3.4.0 ]
 
     steps:
       - name: Checkout
@@ -600,7 +602,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'markdown'
           package-version: ${{ matrix.markdown-version }}
@@ -636,10 +638,46 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'omegaconf'
           package-version: ${{ matrix.omegaconf-version }}
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run some checks
+        run: |
+          python tests/package_checks.py
+
+
+  scipy:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      max-parallel: 8
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
+        scipy-version: [ 1.14.1, 1.13.1, 1.12.0, 1.11.4, 1.10.1 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install arkas
+        run: |
+          pip install arkas
+
+      - name: Install valid package version
+        uses: durandtibo/pip-install-package-action@v0.3.1
+        with:
+          package-name: 'scipy'
+          package-version: ${{ matrix.scipy-version }}
           python-version: ${{ matrix.python-version }}
 
       - name: Run some checks
@@ -656,7 +694,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        tqdm-version: [ 4.67.0, 4.66.5, 4.65.2, 4.65.0 ]
+        tqdm-version: [ 4.67.1, 4.66.5, 4.65.2, 4.65.0 ]
 
     steps:
       - name: Checkout
@@ -672,7 +710,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.0
+        uses: durandtibo/pip-install-package-action@v0.3.1
         with:
           package-name: 'tqdm'
           package-version: ${{ matrix.tqdm-version }}

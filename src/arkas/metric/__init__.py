@@ -14,6 +14,7 @@ __all__ = [
     "binary_recall",
     "binary_roc_auc",
     "confusion_matrix",
+    "energy_distance",
     "fbeta_score",
     "jaccard",
     "mean_absolute_error",
@@ -36,10 +37,13 @@ __all__ = [
     "multilabel_precision",
     "multilabel_recall",
     "multilabel_roc_auc",
+    "pearsonr",
     "precision",
     "recall",
     "regression_errors",
     "roc_auc",
+    "spearmanr",
+    "wasserstein_distance",
 ]
 
 from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
@@ -85,9 +89,13 @@ from arkas.metric.classification.roc_auc import (
     multilabel_roc_auc,
     roc_auc,
 )
+from arkas.metric.distribution.energy import energy_distance
+from arkas.metric.distribution.wasserstein import wasserstein_distance
 from arkas.metric.regression.abs_error import mean_absolute_error, median_absolute_error
 from arkas.metric.regression.mape import mean_absolute_percentage_error
 from arkas.metric.regression.mse import mean_squared_error
 from arkas.metric.regression.msle import mean_squared_log_error
+from arkas.metric.regression.pearson import pearsonr
+from arkas.metric.regression.spearman import spearmanr
 from arkas.metric.regression.tweedie_deviance import mean_tweedie_deviance
 from arkas.metric.regression.universal import regression_errors

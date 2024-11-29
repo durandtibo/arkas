@@ -6,15 +6,22 @@ from coola import objects_are_equal
 
 from arkas.metric.utils import (
     check_label_type,
+    check_nan_policy,
+    check_nan_pred,
+    check_same_shape,
     check_same_shape_pred,
     check_same_shape_score,
+    contains_nan,
     multi_isnan,
     preprocess_pred,
     preprocess_pred_multilabel,
+    preprocess_same_shape_arrays,
     preprocess_score_binary,
     preprocess_score_multiclass,
     preprocess_score_multilabel,
 )
+
+NAN_POLICIES = ["omit", "propagate", "raise"]
 
 ######################################
 #     Tests for check_label_type     #
@@ -27,8 +34,78 @@ def test_check_label_type_valid(label_type: str) -> None:
 
 
 def test_check_label_type_incorrect() -> None:
-    with pytest.raises(RuntimeError, match="Incorrect 'label_type': incorrect"):
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
         check_label_type("incorrect")
+
+
+######################################
+#     Tests for check_nan_policy     #
+######################################
+
+
+@pytest.mark.parametrize("nan_policy", NAN_POLICIES)
+def test_check_nan_policy_valid(nan_policy: str) -> None:
+    check_nan_policy(nan_policy)
+
+
+def test_check_nan_policy_incorrect() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        check_nan_policy("incorrect")
+
+
+####################################
+#     Tests for check_nan_pred     #
+####################################
+
+
+def test_check_nan_pred_no_nan() -> None:
+    check_nan_pred(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, 1, 1]))
+
+
+def test_check_nan_pred_y_true_nan() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' contains at least one NaN value"):
+        check_nan_pred(y_true=np.array([1, 0, 0, 1, np.nan]), y_pred=np.array([0, 1, 0, 1, 1]))
+
+
+def test_check_nan_pred_y_pred_nan() -> None:
+    with pytest.raises(RuntimeError, match="'y_pred' contains at least one NaN value"):
+        check_nan_pred(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([0, 1, 0, np.nan, 1]))
+
+
+def test_check_nan_pred_both_nan() -> None:
+    with pytest.raises(RuntimeError, match="'y_true' contains at least one NaN value"):
+        check_nan_pred(y_true=np.array([1, 0, 0, 1, np.nan]), y_pred=np.array([0, 1, np.nan, 1, 1]))
+
+
+######################################
+#     Tests for check_same_shape     #
+######################################
+
+
+def test_check_same_shape_1_array() -> None:
+    check_same_shape([np.array([1, 0, 0, 1, 1])])
+
+
+def test_check_same_shape_2_arrays_correct() -> None:
+    check_same_shape([np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4, 5])])
+
+
+def test_check_same_shape_2_arrays_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="arrays have different shapes"):
+        check_same_shape([np.array([1, 0, 0, 1, 1]), np.array([1, 0, 0, 1])])
+
+
+def test_check_same_shape_3_arrays_correct() -> None:
+    check_same_shape(
+        [np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4, 5]), np.array([5, 4, 3, 2, 1])]
+    )
+
+
+def test_check_same_shape_3_arrays_incorrect() -> None:
+    with pytest.raises(RuntimeError, match="arrays have different shapes"):
+        check_same_shape(
+            [np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4]), np.array([6, 5, 4, 3, 2, 1])]
+        )
 
 
 ###########################################
@@ -75,6 +152,34 @@ def test_check_same_shape_score_incorrect_shapes() -> None:
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([0, 1, 0, 1, 1, 0]),
         )
+
+
+##################################
+#     Tests for contains_nan     #
+##################################
+
+
+@pytest.mark.parametrize("nan_policy", NAN_POLICIES)
+def test_contains_nan_no_nan(nan_policy: str) -> None:
+    assert not contains_nan(np.array([1, 2, 3, 4, 5]), nan_policy=nan_policy)
+
+
+def test_contains_nan_omit() -> None:
+    assert contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="omit")
+
+
+def test_contains_nan_propagate() -> None:
+    assert contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="propagate")
+
+
+def test_contains_nan_raise() -> None:
+    with pytest.raises(ValueError, match="input array contains at least one NaN value"):
+        contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="raise")
+
+
+def test_contains_nan_raise_name() -> None:
+    with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
+        contains_nan(np.array([1, 2, 3, 4, np.nan]), nan_policy="raise", name="'x'")
 
 
 #################################
@@ -145,12 +250,12 @@ def test_preprocess_pred_keep_nan() -> None:
     )
 
 
-def test_preprocess_pred_remove_nan() -> None:
+def test_preprocess_pred_drop_nan() -> None:
     assert objects_are_equal(
         preprocess_pred(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
             y_pred=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0])),
     )
@@ -161,7 +266,7 @@ def test_preprocess_pred_remove_y_true_nan() -> None:
         preprocess_pred(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
             y_pred=np.array([0.0, 1.0, 0.0, 1.0, 1.0, 1.0]),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
@@ -172,7 +277,7 @@ def test_preprocess_pred_remove_y_pred_nan() -> None:
         preprocess_pred(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, 0.0]),
             y_pred=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0, 0.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
@@ -254,7 +359,7 @@ def test_preprocess_pred_multilabel_keep_nan() -> None:
     )
 
 
-def test_preprocess_pred_multilabel_remove_nan() -> None:
+def test_preprocess_pred_multilabel_drop_nan() -> None:
     assert objects_are_equal(
         preprocess_pred_multilabel(
             y_true=np.array(
@@ -275,7 +380,7 @@ def test_preprocess_pred_multilabel_remove_nan() -> None:
                     [0.0, 1.0, float("nan")],
                 ]
             ),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
@@ -305,7 +410,7 @@ def test_preprocess_pred_multilabel_remove_y_true_nan() -> None:
                     [0.0, 1.0, 0.0],
                 ]
             ),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, 1.0]]),
@@ -335,7 +440,7 @@ def test_preprocess_pred_multilabel_remove_y_pred_nan() -> None:
                     [0.0, 1.0, float("nan")],
                 ]
             ),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([[1.0, 0.0, 1.0], [0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
@@ -363,6 +468,86 @@ def test_preprocess_pred_multilabel_incorrect_ndim_y_true() -> None:
         RuntimeError, match="'y_true' must be a 1d or 2d array but received an array of shape"
     ):
         preprocess_pred_multilabel(y_true=np.ones((5, 3, 1)), y_pred=np.ones((5, 3)))
+
+
+##################################################
+#     Tests for preprocess_same_shape_arrays     #
+##################################################
+
+
+def test_preprocess_same_shape_arrays_keep_nan_1_array() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays([np.array([1, 0, 0, 1, float("nan")])]),
+        (np.array([1.0, 0.0, 0.0, 1.0, float("nan")]),),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_same_shape_arrays_keep_nan_2_arrays() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays(
+            [np.array([1, 0, 0, 1, float("nan")]), np.array([1, 2, 3, float("nan"), 5])]
+        ),
+        (
+            np.array([1.0, 0.0, 0.0, 1.0, float("nan")]),
+            np.array([1.0, 2.0, 3.0, float("nan"), 5.0]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_same_shape_arrays_keep_nan_3_arrays() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays(
+            [
+                np.array([1, 0, 0, 1, float("nan")]),
+                np.array([1, 2, 3, float("nan"), 5]),
+                np.array([float("nan"), 4, 3, 2, 1]),
+            ]
+        ),
+        (
+            np.array([1.0, 0.0, 0.0, 1.0, float("nan")]),
+            np.array([1.0, 2.0, 3.0, float("nan"), 5.0]),
+            np.array([float("nan"), 4.0, 3.0, 2.0, 1.0]),
+        ),
+        equal_nan=True,
+    )
+
+
+def test_preprocess_same_shape_arrays_drop_nan_1_array() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays([np.array([1, 0, 0, 1, float("nan")])], drop_nan=True),
+        (np.array([1.0, 0.0, 0.0, 1.0]),),
+    )
+
+
+def test_preprocess_same_shape_arrays_drop_nan_2_arrays() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays(
+            [np.array([1, 0, 0, 1, float("nan")]), np.array([1, 2, 3, float("nan"), 5])],
+            drop_nan=True,
+        ),
+        (np.array([1.0, 0.0, 0.0]), np.array([1.0, 2.0, 3.0])),
+    )
+
+
+def test_preprocess_same_shape_arrays_drop_nan_3_arrays() -> None:
+    assert objects_are_equal(
+        preprocess_same_shape_arrays(
+            [
+                np.array([1, 0, 0, 1, float("nan")]),
+                np.array([1, 2, 3, float("nan"), 5]),
+                np.array([float("nan"), 4, 3, 2, 1]),
+            ],
+            drop_nan=True,
+        ),
+        (np.array([0.0, 0.0]), np.array([2.0, 3.0]), np.array([4.0, 3.0])),
+    )
+
+
+def test_preprocess_same_shape_arrays_incorrect_shapes() -> None:
+    with pytest.raises(RuntimeError, match="arrays have different shapes"):
+        preprocess_same_shape_arrays([np.array([1, 0, 0, 1, 1]), np.array([1, 2, 3, 4])])
 
 
 #############################################
@@ -402,12 +587,12 @@ def test_preprocess_score_binary_keep_nan() -> None:
     )
 
 
-def test_preprocess_score_binary_remove_nan() -> None:
+def test_preprocess_score_binary_drop_nan() -> None:
     assert objects_are_equal(
         preprocess_score_binary(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
             y_score=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0])),
     )
@@ -418,7 +603,7 @@ def test_preprocess_score_binary_remove_y_true_nan() -> None:
         preprocess_score_binary(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, float("nan")]),
             y_score=np.array([0.0, 1.0, 0.0, 1.0, 1.0, 1.0]),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0, 1.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
@@ -429,7 +614,7 @@ def test_preprocess_score_binary_remove_y_score_nan() -> None:
         preprocess_score_binary(
             y_true=np.array([1.0, 0.0, 0.0, 1.0, 1.0, 0.0]),
             y_score=np.array([0.0, 1.0, 0.0, 1.0, float("nan"), 1.0]),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (np.array([1.0, 0.0, 0.0, 1.0, 0.0]), np.array([0.0, 1.0, 0.0, 1.0, 1.0])),
     )
@@ -541,7 +726,7 @@ def test_preprocess_score_multiclass_keep_nan() -> None:
     )
 
 
-def test_preprocess_score_multiclass_remove_nan() -> None:
+def test_preprocess_score_multiclass_drop_nan() -> None:
     assert objects_are_equal(
         preprocess_score_multiclass(
             y_true=np.array([0, 0, 1, 1, 2, float("nan")]),
@@ -555,7 +740,7 @@ def test_preprocess_score_multiclass_remove_nan() -> None:
                     [0.1, 0.2, 0.7],
                 ]
             ),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([0.0, 0.0, 1.0, 2.0]),
@@ -585,7 +770,7 @@ def test_preprocess_score_multiclass_remove_y_true_nan() -> None:
                     [0.1, 0.2, 0.7],
                 ]
             ),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([0.0, 0.0, 1.0, 1.0, 2.0]),
@@ -616,7 +801,7 @@ def test_preprocess_score_multiclass_remove_y_score_nan() -> None:
                     [0.1, 0.2, 0.7],
                 ]
             ),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([0, 0, 1, 2, 2]),
@@ -714,14 +899,14 @@ def test_preprocess_score_multilabel_keep_nan() -> None:
     )
 
 
-def test_preprocess_score_multilabel_remove_nan() -> None:
+def test_preprocess_score_multilabel_drop_nan() -> None:
     assert objects_are_equal(
         preprocess_score_multilabel(
             y_true=np.array([[1, float("nan"), 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array(
                 [[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, float("nan"), -5]]
             ),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0]]),
@@ -735,7 +920,7 @@ def test_preprocess_score_multilabel_remove_y_true_nan() -> None:
         preprocess_score_multilabel(
             y_true=np.array([[1, float("nan"), 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array([[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, -3, -5]]),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([[0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 1.0], [1.0, 0.0, 1.0]]),
@@ -751,7 +936,7 @@ def test_preprocess_score_multilabel_remove_y_score_nan() -> None:
             y_score=np.array(
                 [[2, -1, -1], [-1, 1, 2], [0, 2, 3], [3, -2, -4], [1, float("nan"), -5]]
             ),
-            remove_nan=True,
+            drop_nan=True,
         ),
         (
             np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1]]),
