@@ -16,6 +16,7 @@ __all__ = [
     "BinaryRecallResult",
     "BinaryRocAucResult",
     "EmptyResult",
+    "EnergyDistanceResult",
     "MappingResult",
     "MeanAbsoluteErrorResult",
     "MeanSquaredErrorResult",
@@ -55,6 +56,7 @@ from arkas.result.confmat import (
     MulticlassConfusionMatrixResult,
     MultilabelConfusionMatrixResult,
 )
+from arkas.result.energy import EnergyDistanceResult
 from arkas.result.fbeta import (
     BinaryFbetaScoreResult,
     MulticlassFbetaScoreResult,
