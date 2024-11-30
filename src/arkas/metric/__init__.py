@@ -39,6 +39,7 @@ __all__ = [
     "multilabel_precision",
     "multilabel_recall",
     "multilabel_roc_auc",
+    "ndcg",
     "pearsonr",
     "precision",
     "recall",
@@ -73,6 +74,7 @@ from arkas.metric.classification.jaccard import (
     multiclass_jaccard,
     multilabel_jaccard,
 )
+from arkas.metric.classification.ndcg import ndcg
 from arkas.metric.classification.precision import (
     binary_precision,
     multiclass_precision,
