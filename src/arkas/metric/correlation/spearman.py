@@ -65,7 +65,7 @@ def spearmanr(
         arrays=[x.ravel(), y.ravel()], drop_nan=nan_policy == "omit"
     )
     x_nan = contains_nan(arr=x, nan_policy=nan_policy, name="'x'")
-    y_nan = contains_nan(arr=y, nan_policy=nan_policy, name="'x'")
+    y_nan = contains_nan(arr=y, nan_policy=nan_policy, name="'y'")
 
     count = x.size
     coeff, pvalue = float("nan"), float("nan")

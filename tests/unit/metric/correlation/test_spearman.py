@@ -155,3 +155,23 @@ def test_spearmanr_nan_raise() -> None:
             y=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
             nan_policy="raise",
         )
+
+
+@scipy_available
+def test_spearmanr_nan_raise_x() -> None:
+    with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
+        spearmanr(
+            x=np.array([float("nan"), 2, 3, 4, 5]),
+            y=np.array([1, 2, 3, 4, 5]),
+            nan_policy="raise",
+        )
+
+
+@scipy_available
+def test_spearmanr_nan_raise_y() -> None:
+    with pytest.raises(ValueError, match="'y' contains at least one NaN value"):
+        spearmanr(
+            x=np.array([1, 2, 3, 4, 5]),
+            y=np.array([1, 2, 3, 4, float("nan")]),
+            nan_policy="raise",
+        )

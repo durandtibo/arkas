@@ -35,7 +35,7 @@ def fbeta_score(
     suffix: str = "",
     drop_nan: bool = False,
 ) -> dict[str, float | np.ndarray]:
-    r"""Return the fbeta metrics.
+    r"""Return the F-beta metrics.
 
     Args:
         y_true: The ground truth target labels. This input must
