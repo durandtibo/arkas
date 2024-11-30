@@ -5,6 +5,7 @@ import pytest
 from coola import objects_are_equal
 
 from arkas.metric.utils import (
+    check_array_ndim,
     check_label_type,
     check_nan_policy,
     check_nan_pred,
@@ -22,6 +23,27 @@ from arkas.metric.utils import (
 )
 
 NAN_POLICIES = ["omit", "propagate", "raise"]
+
+
+######################################
+#     Tests for check_array_ndim     #
+######################################
+
+
+@pytest.mark.parametrize("shape", [(2,), (1,), (3,)])
+def test_check_array_ndim_1(shape: tuple[int, ...]) -> None:
+    check_array_ndim(arr=np.ones(shape), ndim=1)
+
+
+@pytest.mark.parametrize("shape", [(2, 3), (1, 1), (3, 2)])
+def test_check_array_ndim_2(shape: tuple[int, ...]) -> None:
+    check_array_ndim(arr=np.ones(shape), ndim=2)
+
+
+def test_check_array_ndim_incorrect() -> None:
+    with pytest.raises(ValueError, match="Incorrect number of array dimensions"):
+        check_array_ndim(np.ones((2, 3)), ndim=3)
+
 
 ######################################
 #     Tests for check_label_type     #
