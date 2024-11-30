@@ -3,6 +3,7 @@ r"""Contain utility functions to compute metrics."""
 from __future__ import annotations
 
 __all__ = [
+    "check_array_ndim",
     "check_label_type",
     "check_nan_policy",
     "check_nan_pred",
@@ -25,6 +26,32 @@ import numpy as np
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
+
+
+def check_array_ndim(arr: np.ndarray, ndim: int) -> None:
+    r"""Check if the number of array dimensions is matching the target
+    number of dimensions.
+
+    Args:
+        arr: The array to check.
+        ndim: The targeted number of array dimensions.
+
+    Raises:
+        ValueError: if the number of array dimensions does not match.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import numpy as np
+    >>> from arkas.metric.utils import check_array_ndim
+    >>> check_array_ndim(np.ones((2, 3)), ndim=2)
+
+    ```
+    """
+    if arr.ndim != ndim:
+        msg = f"Incorrect number of array dimensions: {arr.ndim} (expected: {ndim})"
+        raise ValueError(msg)
 
 
 def check_label_type(label_type: str) -> None:
