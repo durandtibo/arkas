@@ -18,6 +18,7 @@ from sklearn import metrics
 from arkas.metric.classification.ap import find_label_type
 from arkas.metric.utils import (
     check_label_type,
+    contains_nan,
     preprocess_score_binary,
     preprocess_score_multiclass,
     preprocess_score_multilabel,
@@ -31,7 +32,7 @@ def roc_auc(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics.
@@ -51,8 +52,9 @@ def roc_auc(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -120,14 +122,22 @@ def roc_auc(
             y_score=y_score.ravel(),
             prefix=prefix,
             suffix=suffix,
-            drop_nan=drop_nan,
+            nan_policy=nan_policy,
         )
     if label_type == "multilabel":
         return multilabel_roc_auc(
-            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+            y_true=y_true,
+            y_score=y_score,
+            prefix=prefix,
+            suffix=suffix,
+            nan_policy=nan_policy,
         )
     return multiclass_roc_auc(
-        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+        y_true=y_true,
+        y_score=y_score,
+        prefix=prefix,
+        suffix=suffix,
+        nan_policy=nan_policy,
     )
 
 
@@ -137,7 +147,7 @@ def binary_roc_auc(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for binary labels.
@@ -151,17 +161,22 @@ def binary_roc_auc(
             be an array of shape ``(n_samples,)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_binary(y_true=y_true, y_score=y_score, drop_nan=drop_nan)
+    y_true, y_score = preprocess_score_binary(
+        y_true=y_true, y_score=y_score, drop_nan=nan_policy == "omit"
+    )
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_score_nan = contains_nan(arr=y_score, nan_policy=nan_policy, name="'y_score'")
 
     count = y_true.size
     roc_auc = float("nan")
-    if count > 0:
+    if count > 0 and not y_true_nan and not y_score_nan:
         roc_auc = float(metrics.roc_auc_score(y_true=y_true, y_score=y_score))
     return {f"{prefix}count{suffix}": count, f"{prefix}roc_auc{suffix}": roc_auc}
 
@@ -172,7 +187,7 @@ def multiclass_roc_auc(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for multiclass labels.
@@ -186,15 +201,21 @@ def multiclass_roc_auc(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_multiclass(y_true, y_score, drop_nan=drop_nan)
+    y_true, y_score = preprocess_score_multiclass(y_true, y_score, drop_nan=nan_policy == "omit")
     return _multi_roc_auc(
-        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
+        y_true=y_true,
+        y_score=y_score,
+        prefix=prefix,
+        suffix=suffix,
+        nan_policy=nan_policy,
+        multi_class="ovr",
     )
 
 
@@ -204,7 +225,7 @@ def multilabel_roc_auc(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
     (ROC AUC) metrics for multilabel labels.
@@ -218,15 +239,21 @@ def multilabel_roc_auc(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
     """
-    y_true, y_score = preprocess_score_multilabel(y_true, y_score, drop_nan=drop_nan)
+    y_true, y_score = preprocess_score_multilabel(y_true, y_score, drop_nan=nan_policy == "omit")
     return _multi_roc_auc(
-        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, multi_class="ovr"
+        y_true=y_true,
+        y_score=y_score,
+        prefix=prefix,
+        suffix=suffix,
+        nan_policy=nan_policy,
+        multi_class="ovr",
     )
 
 
@@ -236,6 +263,7 @@ def _multi_roc_auc(
     *,
     prefix: str = "",
     suffix: str = "",
+    nan_policy: str = "propagate",
     **kwargs: Any,
 ) -> dict[str, float | np.ndarray]:
     r"""Return the Area Under the Receiver Operating Characteristic Curve
@@ -250,16 +278,22 @@ def _multi_roc_auc(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
         kwargs: Keyword arguments that are passed to
             ``sklearn.metrics.roc_auc_score``.
 
     Returns:
         The computed metrics.
     """
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_score_nan = contains_nan(arr=y_score, nan_policy=nan_policy, name="'y_score'")
+
     n_samples = y_true.shape[0]
     macro, micro, weighted = float("nan"), float("nan"), float("nan")
     scores = np.array([])
-    if n_samples > 0:
+    if n_samples > 0 and not y_true_nan and not y_score_nan:
         macro = metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="macro", **kwargs)
         micro = metrics.roc_auc_score(y_true=y_true, y_score=y_score, average="micro", **kwargs)
         weighted = metrics.roc_auc_score(
