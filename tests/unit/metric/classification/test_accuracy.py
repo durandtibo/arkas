@@ -52,8 +52,8 @@ def test_accuracy_empty() -> None:
         {
             "accuracy": float("nan"),
             "count": 0,
-            "count_correct": 0,
-            "count_incorrect": 0,
+            "count_correct": float("nan"),
+            "count_incorrect": float("nan"),
             "error": float("nan"),
         },
         equal_nan=True,
@@ -78,45 +78,118 @@ def test_accuracy_prefix_suffix() -> None:
     )
 
 
-def test_accuracy_nan() -> None:
-    with pytest.raises(ValueError, match="Input.* contains NaN"):
-        accuracy(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-        )
-
-
-def test_accuracy_drop_nan() -> None:
+def test_accuracy_nan_omit() -> None:
     assert objects_are_equal(
         accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_drop_nan_y_true() -> None:
+def test_accuracy_nan_omit_y_true() -> None:
     assert objects_are_equal(
         accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
 
 
-def test_accuracy_drop_nan_y_pred() -> None:
+def test_accuracy_nan_omit_y_pred() -> None:
     assert objects_are_equal(
         accuracy(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
     )
+
+
+def test_accuracy_nan_propagate() -> None:
+    assert objects_are_equal(
+        accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            nan_policy="propagate",
+        ),
+        {
+            "accuracy": float("nan"),
+            "count": 6,
+            "count_correct": float("nan"),
+            "count_incorrect": float("nan"),
+            "error": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_accuracy_nan_propagate_y_true() -> None:
+    assert objects_are_equal(
+        accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, 0]),
+            nan_policy="propagate",
+        ),
+        {
+            "accuracy": float("nan"),
+            "count": 6,
+            "count_correct": float("nan"),
+            "count_incorrect": float("nan"),
+            "error": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_accuracy_nan_propagate_y_pred() -> None:
+    assert objects_are_equal(
+        accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, 0]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            nan_policy="propagate",
+        ),
+        {
+            "accuracy": float("nan"),
+            "count": 6,
+            "count_correct": float("nan"),
+            "count_incorrect": float("nan"),
+            "error": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_accuracy_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            nan_policy="raise",
+        )
+
+
+def test_accuracy_nan_raise_y_true() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, 0]),
+            nan_policy="raise",
+        )
+
+
+def test_accuracy_nan_raise_y_pred() -> None:
+    with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
+        accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, 0]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            nan_policy="raise",
+        )
 
 
 #######################################
@@ -186,42 +259,97 @@ def test_balanced_accuracy_prefix_suffix() -> None:
     )
 
 
-def test_balanced_accuracy_nan() -> None:
-    with pytest.raises(ValueError, match="Input.* contains NaN"):
-        balanced_accuracy(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-        )
-
-
-def test_balanced_accuracy_drop_nan() -> None:
+def test_balanced_accuracy_nan_omit() -> None:
     assert objects_are_equal(
         balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
 
 
-def test_balanced_accuracy_drop_nan_y_true() -> None:
+def test_balanced_accuracy_nan_omit_y_true() -> None:
     assert objects_are_equal(
         balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
 
 
-def test_balanced_accuracy_drop_nan_y_pred() -> None:
+def test_balanced_accuracy_nan_omit_y_pred() -> None:
     assert objects_are_equal(
         balanced_accuracy(
             y_true=np.array([1, 0, 0, 1, 1, 0]),
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {"balanced_accuracy": 1.0, "count": 5},
     )
+
+
+def test_balanced_accuracy_nan_propagate() -> None:
+    assert objects_are_equal(
+        balanced_accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            nan_policy="propagate",
+        ),
+        {"balanced_accuracy": float("nan"), "count": 6},
+        equal_nan=True,
+    )
+
+
+def test_balanced_accuracy_nan_propagate_y_true() -> None:
+    assert objects_are_equal(
+        balanced_accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, 0]),
+            nan_policy="propagate",
+        ),
+        {"balanced_accuracy": float("nan"), "count": 6},
+        equal_nan=True,
+    )
+
+
+def test_balanced_accuracy_nan_propagate_y_pred() -> None:
+    assert objects_are_equal(
+        balanced_accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, 0]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            nan_policy="propagate",
+        ),
+        {"balanced_accuracy": float("nan"), "count": 6},
+        equal_nan=True,
+    )
+
+
+def test_balanced_accuracy_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        balanced_accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            nan_policy="raise",
+        )
+
+
+def test_balanced_accuracy_nan_raise_y_true() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        balanced_accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, 0]),
+            nan_policy="raise",
+        )
+
+
+def test_balanced_accuracy_nan_raise_y_pred() -> None:
+    with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
+        balanced_accuracy(
+            y_true=np.array([1, 0, 0, 1, 1, 0]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            nan_policy="raise",
+        )

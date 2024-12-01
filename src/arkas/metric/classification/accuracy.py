@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 from sklearn import metrics
 
-from arkas.metric.utils import preprocess_pred
+from arkas.metric.utils import contains_nan, preprocess_pred
 
 if TYPE_CHECKING:
     import numpy as np
@@ -21,7 +21,7 @@ def accuracy(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float]:
     r"""Return the accuracy metrics.
 
@@ -30,8 +30,9 @@ def accuracy(
         y_pred: The predicted labels.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -48,16 +49,20 @@ def accuracy(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=nan_policy == "omit"
     )
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_pred_nan = contains_nan(arr=y_pred, nan_policy=nan_policy, name="'y_pred'")
 
     count = y_true.size
-    count_correct = int(metrics.accuracy_score(y_true=y_true, y_pred=y_pred, normalize=False))
-    acc = float(count_correct / count) if count > 0 else float("nan")
+    acc, correct = float("nan"), float("nan")
+    if count > 0 and not y_true_nan and not y_pred_nan:
+        correct = int(metrics.accuracy_score(y_true=y_true, y_pred=y_pred, normalize=False))
+        acc = float(correct / count)
     return {
         f"{prefix}accuracy{suffix}": acc,
-        f"{prefix}count_correct{suffix}": count_correct,
-        f"{prefix}count_incorrect{suffix}": count - count_correct,
+        f"{prefix}count_correct{suffix}": correct,
+        f"{prefix}count_incorrect{suffix}": count - correct,
         f"{prefix}count{suffix}": count,
         f"{prefix}error{suffix}": 1.0 - acc,
     }
@@ -69,7 +74,7 @@ def balanced_accuracy(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float]:
     r"""Return the accuracy metrics.
 
@@ -78,8 +83,9 @@ def balanced_accuracy(
         y_pred: The predicted labels.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -96,11 +102,13 @@ def balanced_accuracy(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=nan_policy == "omit"
     )
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_pred_nan = contains_nan(arr=y_pred, nan_policy=nan_policy, name="'y_pred'")
 
     count = y_true.size
     acc = float("nan")
-    if count > 0:
+    if count > 0 and not y_true_nan and not y_pred_nan:
         acc = float(metrics.balanced_accuracy_score(y_true=y_true, y_pred=y_pred))
     return {f"{prefix}balanced_accuracy{suffix}": acc, f"{prefix}count{suffix}": count}

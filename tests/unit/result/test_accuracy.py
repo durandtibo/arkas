@@ -128,8 +128,8 @@ def test_accuracy_result_compute_metrics_empty() -> None:
         {
             "accuracy": float("nan"),
             "count": 0,
-            "count_correct": 0,
-            "count_incorrect": 0,
+            "count_correct": float("nan"),
+            "count_incorrect": float("nan"),
             "error": float("nan"),
         },
         equal_nan=True,
