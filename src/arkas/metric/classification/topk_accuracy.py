@@ -105,8 +105,8 @@ def binary_top_k_accuracy(
     suffix: str = "",
     nan_policy: str = "propagate",
 ) -> dict[str, float]:
-    r"""Return the Area Under the Receiver Operating Characteristic Curve
-    (ROC AUC) metrics for binary labels.
+    r"""Return the Area Under the Top-k Accuracy classification metrics
+    for binary labels.
 
     Args:
         y_true: The ground truth target labels. This input must
@@ -148,8 +148,8 @@ def multiclass_top_k_accuracy(
     suffix: str = "",
     nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
-    r"""Return the Area Under the Receiver Operating Characteristic Curve
-    (ROC AUC) metrics for multiclass labels.
+    r"""Return the Area Under the Top-k Accuracy classification metrics
+    for multiclass labels.
 
     Args:
         y_true: The ground truth target labels. This input must
@@ -189,8 +189,8 @@ def _top_k_accuracy(
     suffix: str = "",
     nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
-    r"""Return the Area Under the Receiver Operating Characteristic Curve
-    (ROC AUC) metrics for multiclass labels.
+    r"""Return the Area Under the Top-k Accuracy classification metrics
+    for multiclass labels.
 
     Args:
         y_true: The ground truth target labels. This input must
