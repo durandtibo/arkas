@@ -45,6 +45,9 @@ def test_pearsonr_perfect_no_correlation() -> None:
 
 
 @scipy_available
+@pytest.mark.filterwarnings(
+    "ignore:An input array is constant; the correlation coefficient is not defined."
+)
 def test_pearsonr_constant() -> None:
     assert objects_are_allclose(
         pearsonr(x=np.array([1, 1, 1, 1, 1]), y=np.array([1, 1, 1, 1, 1])),
