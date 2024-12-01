@@ -13,6 +13,7 @@ __all__ = [
     "binary_precision",
     "binary_recall",
     "binary_roc_auc",
+    "binary_top_k_accuracy",
     "confusion_matrix",
     "energy_distance",
     "fbeta_score",
@@ -32,6 +33,7 @@ __all__ = [
     "multiclass_precision",
     "multiclass_recall",
     "multiclass_roc_auc",
+    "multiclass_top_k_accuracy",
     "multilabel_average_precision",
     "multilabel_confusion_matrix",
     "multilabel_fbeta_score",
@@ -46,6 +48,7 @@ __all__ = [
     "regression_errors",
     "roc_auc",
     "spearmanr",
+    "top_k_accuracy",
     "wasserstein_distance",
 ]
 
@@ -92,6 +95,11 @@ from arkas.metric.classification.roc_auc import (
     multiclass_roc_auc,
     multilabel_roc_auc,
     roc_auc,
+)
+from arkas.metric.classification.topk_accuracy import (
+    binary_top_k_accuracy,
+    multiclass_top_k_accuracy,
+    top_k_accuracy,
 )
 from arkas.metric.correlation.pearson import pearsonr
 from arkas.metric.correlation.spearman import spearmanr
