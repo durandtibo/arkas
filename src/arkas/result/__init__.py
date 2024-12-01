@@ -38,6 +38,7 @@ __all__ = [
     "MultilabelRocAucResult",
     "PearsonCorrelationResult",
     "PrecisionResult",
+    "R2ScoreResult",
     "RecallResult",
     "Result",
     "SequentialResult",
@@ -82,6 +83,7 @@ from arkas.result.precision import (
     MultilabelPrecisionResult,
     PrecisionResult,
 )
+from arkas.result.r2 import R2ScoreResult
 from arkas.result.recall import (
     BinaryRecallResult,
     MulticlassRecallResult,
