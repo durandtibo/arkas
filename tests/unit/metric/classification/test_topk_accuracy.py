@@ -17,19 +17,23 @@ from arkas.metric import (
 
 def test_top_k_accuracy_empty() -> None:
     assert objects_are_equal(
-        top_k_accuracy(y_true=np.array([]), y_score=np.array([]), k=[1, 2]),
-        {"count": 0, "top_1_accuracy": float("nan"), "top_2_accuracy": float("nan")},
+        top_k_accuracy(y_true=np.array([]), y_score=np.array([]), k=[1]),
+        {"count": 0, "top_1_accuracy": float("nan")},
         equal_nan=True,
     )
 
 
 def test_top_k_accuracy_binary_correct() -> None:
     assert objects_are_equal(
-        top_k_accuracy(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])),
-        {"count": 5, "top_2_accuracy": 1.0},
+        top_k_accuracy(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]), k=[1]),
+        {"count": 5, "top_1_accuracy": 1.0},
     )
 
 
+@pytest.mark.filterwarnings(
+    r"ignore:'k' \(2\) greater than or equal to 'n_classes' \(2\) will result in a perfect score "
+    r"and is therefore meaningless."
+)
 def test_top_k_accuracy_binary_k() -> None:
     assert objects_are_equal(
         top_k_accuracy(
@@ -41,8 +45,8 @@ def test_top_k_accuracy_binary_k() -> None:
 
 def test_top_k_accuracy_binary_incorrect() -> None:
     assert objects_are_equal(
-        top_k_accuracy(y_true=np.array([1, 0, 0, 1]), y_score=np.array([0, 1, 1, 0]), k=[1, 2]),
-        {"count": 4, "top_1_accuracy": 0.0, "top_2_accuracy": 1.0},
+        top_k_accuracy(y_true=np.array([1, 0, 0, 1]), y_score=np.array([0, 1, 1, 0]), k=[1]),
+        {"count": 4, "top_1_accuracy": 0.0},
     )
 
 
@@ -51,15 +55,11 @@ def test_top_k_accuracy_binary_prefix_suffix() -> None:
         top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
-            k=[1, 2],
+            k=[1],
             prefix="prefix_",
             suffix="_suffix",
         ),
-        {
-            "prefix_count_suffix": 5,
-            "prefix_top_1_accuracy_suffix": 1.0,
-            "prefix_top_2_accuracy_suffix": 1.0,
-        },
+        {"prefix_count_suffix": 5, "prefix_top_1_accuracy_suffix": 1.0},
     )
 
 
@@ -78,9 +78,9 @@ def test_top_k_accuracy_multiclass_k() -> None:
         top_k_accuracy(
             y_true=np.array([0, 1, 2, 2]),
             y_score=np.array([[0.5, 0.2, 0.2], [0.3, 0.4, 0.2], [0.2, 0.4, 0.3], [0.7, 0.2, 0.1]]),
-            k=[1, 2, 3],
+            k=[1, 2],
         ),
-        {"count": 4, "top_1_accuracy": 0.5, "top_2_accuracy": 0.75, "top_3_accuracy": 1.0},
+        {"count": 4, "top_1_accuracy": 0.5, "top_2_accuracy": 0.75},
     )
 
 
@@ -89,7 +89,7 @@ def test_top_k_accuracy_multiclass_prefix_suffix() -> None:
         top_k_accuracy(
             y_true=np.array([0, 1, 2, 2]),
             y_score=np.array([[0.5, 0.2, 0.2], [0.3, 0.4, 0.2], [0.2, 0.4, 0.3], [0.7, 0.2, 0.1]]),
-            k=[1, 2, 3],
+            k=[1, 2],
             prefix="prefix_",
             suffix="_suffix",
         ),
@@ -97,7 +97,6 @@ def test_top_k_accuracy_multiclass_prefix_suffix() -> None:
             "prefix_count_suffix": 4,
             "prefix_top_1_accuracy_suffix": 0.5,
             "prefix_top_2_accuracy_suffix": 0.75,
-            "prefix_top_3_accuracy_suffix": 1.0,
         },
     )
 
@@ -107,9 +106,10 @@ def test_top_k_accuracy_binary_nan_omit() -> None:
         top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, float("nan")]),
             y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            k=[1],
             nan_policy="omit",
         ),
-        {"count": 3, "top_2_accuracy": 1.0},
+        {"count": 3, "top_1_accuracy": 1.0},
     )
 
 
@@ -183,20 +183,24 @@ def test_top_k_accuracy_multiclass_nan_raise() -> None:
 
 def test_binary_top_k_accuracy_correct() -> None:
     assert objects_are_equal(
-        binary_top_k_accuracy(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])),
-        {"count": 5, "top_2_accuracy": 1.0},
+        binary_top_k_accuracy(
+            y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]), k=[1]
+        ),
+        {"count": 5, "top_1_accuracy": 1.0},
     )
 
 
 def test_binary_top_k_accuracy_incorrect() -> None:
     assert objects_are_equal(
-        binary_top_k_accuracy(
-            y_true=np.array([1, 0, 0, 1]), y_score=np.array([0, 1, 1, 0]), k=[1, 2]
-        ),
-        {"count": 4, "top_1_accuracy": 0.0, "top_2_accuracy": 1.0},
+        binary_top_k_accuracy(y_true=np.array([1, 0, 0, 1]), y_score=np.array([0, 1, 1, 0]), k=[1]),
+        {"count": 4, "top_1_accuracy": 0.0},
     )
 
 
+@pytest.mark.filterwarnings(
+    r"ignore:'k' \(2\) greater than or equal to 'n_classes' \(2\) will result in a perfect score "
+    r"and is therefore meaningless."
+)
 def test_binary_top_k_accuracy_k() -> None:
     assert objects_are_equal(
         binary_top_k_accuracy(
@@ -211,15 +215,11 @@ def test_binary_top_k_accuracy_prefix_suffix() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([2, -1, 0, 3, 1]),
-            k=[1, 2],
+            k=[1],
             prefix="prefix_",
             suffix="_suffix",
         ),
-        {
-            "prefix_count_suffix": 5,
-            "prefix_top_1_accuracy_suffix": 1.0,
-            "prefix_top_2_accuracy_suffix": 1.0,
-        },
+        {"prefix_count_suffix": 5, "prefix_top_1_accuracy_suffix": 1.0},
     )
 
 
@@ -228,9 +228,10 @@ def test_binary_top_k_accuracy_nan_omit() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, float("nan")]),
             y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            k=[1],
             nan_policy="omit",
         ),
-        {"count": 3, "top_2_accuracy": 1.0},
+        {"count": 3, "top_1_accuracy": 1.0},
     )
 
 
@@ -239,9 +240,10 @@ def test_binary_top_k_accuracy_nan_omit_y_true() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1]),
+            k=[1],
             nan_policy="omit",
         ),
-        {"count": 4, "top_2_accuracy": 1.0},
+        {"count": 4, "top_1_accuracy": 1.0},
     )
 
 
@@ -250,9 +252,10 @@ def test_binary_top_k_accuracy_nan_omit_y_score() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            k=[1],
             nan_policy="omit",
         ),
-        {"count": 4, "top_2_accuracy": 1.0},
+        {"count": 4, "top_1_accuracy": 1.0},
     )
 
 
@@ -261,8 +264,9 @@ def test_binary_top_k_accuracy_nan_propagate() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, float("nan")]),
             y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            k=[1],
         ),
-        {"count": 5, "top_2_accuracy": float("nan")},
+        {"count": 5, "top_1_accuracy": float("nan")},
         equal_nan=True,
     )
 
@@ -272,8 +276,9 @@ def test_binary_top_k_accuracy_nan_propagate_y_true() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1]),
+            k=[1],
         ),
-        {"count": 5, "top_2_accuracy": float("nan")},
+        {"count": 5, "top_1_accuracy": float("nan")},
         equal_nan=True,
     )
 
@@ -283,8 +288,9 @@ def test_binary_top_k_accuracy_nan_propagate_y_score() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            k=[1],
         ),
-        {"count": 5, "top_2_accuracy": float("nan")},
+        {"count": 5, "top_1_accuracy": float("nan")},
         equal_nan=True,
     )
 
@@ -294,6 +300,7 @@ def test_binary_top_k_accuracy_nan_raise() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, float("nan")]),
             y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            k=[1],
             nan_policy="raise",
         )
 
@@ -303,6 +310,7 @@ def test_binary_top_k_accuracy_nan_raise_y_true() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, float("nan")]),
             y_score=np.array([2, -1, 0, 3, 1]),
+            k=[1],
             nan_policy="raise",
         )
 
@@ -312,6 +320,7 @@ def test_binary_top_k_accuracy_nan_raise_y_score() -> None:
         binary_top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            k=[1],
             nan_policy="raise",
         )
 
@@ -336,9 +345,9 @@ def test_multiclass_top_k_accuracy_k() -> None:
         multiclass_top_k_accuracy(
             y_true=np.array([0, 1, 2, 2]),
             y_score=np.array([[0.5, 0.2, 0.2], [0.3, 0.4, 0.2], [0.2, 0.4, 0.3], [0.7, 0.2, 0.1]]),
-            k=[1, 2, 3],
+            k=[1, 2],
         ),
-        {"count": 4, "top_1_accuracy": 0.5, "top_2_accuracy": 0.75, "top_3_accuracy": 1.0},
+        {"count": 4, "top_1_accuracy": 0.5, "top_2_accuracy": 0.75},
     )
 
 
@@ -347,7 +356,7 @@ def test_multiclass_top_k_accuracy_prefix_suffix() -> None:
         multiclass_top_k_accuracy(
             y_true=np.array([0, 1, 2, 2]),
             y_score=np.array([[0.5, 0.2, 0.2], [0.3, 0.4, 0.2], [0.2, 0.4, 0.3], [0.7, 0.2, 0.1]]),
-            k=[1, 2, 3],
+            k=[1, 2],
             prefix="prefix_",
             suffix="_suffix",
         ),
@@ -355,7 +364,6 @@ def test_multiclass_top_k_accuracy_prefix_suffix() -> None:
             "prefix_count_suffix": 4,
             "prefix_top_1_accuracy_suffix": 0.5,
             "prefix_top_2_accuracy_suffix": 0.75,
-            "prefix_top_3_accuracy_suffix": 1.0,
         },
     )
 
