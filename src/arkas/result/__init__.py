@@ -40,6 +40,7 @@ __all__ = [
     "PrecisionResult",
     "R2ScoreResult",
     "RecallResult",
+    "RegressionErrorResult",
     "Result",
     "SequentialResult",
     "SpearmanCorrelationResult",
@@ -90,6 +91,7 @@ from arkas.result.recall import (
     MultilabelRecallResult,
     RecallResult,
 )
+from arkas.result.regression import RegressionErrorResult
 from arkas.result.roc_auc import (
     BinaryRocAucResult,
     MulticlassRocAucResult,
