@@ -111,6 +111,32 @@ def test_ndcg_nan_propagate() -> None:
 
 
 @scipy_available
+def test_ndcg_nan_propagate_y_true() -> None:
+    assert objects_are_allclose(
+        ndcg(
+            y_true=np.array([[1, 0, 0], [1, 2, 0], [1, 1, 2], [0, 0, float("nan")]]),
+            y_score=np.array([[2.0, 1.0, 0.0], [0.0, 1.0, -1.0], [0.0, 0.0, 1.0], [1.0, 2.0, 3.0]]),
+        ),
+        {"count": 4, "ndcg": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
+def test_ndcg_nan_propagate_y_score() -> None:
+    assert objects_are_allclose(
+        ndcg(
+            y_true=np.array([[1, 0, 0], [1, 2, 0], [1, 1, 2], [0, 0, 1]]),
+            y_score=np.array(
+                [[float("nan"), 1.0, 0.0], [0.0, 1.0, -1.0], [0.0, 0.0, 1.0], [1.0, 2.0, 3.0]]
+            ),
+        ),
+        {"count": 4, "ndcg": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
 def test_ndcg_nan_raise() -> None:
     with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
         ndcg(
