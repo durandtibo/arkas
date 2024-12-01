@@ -13,10 +13,13 @@ __all__ = [
     "binary_precision",
     "binary_recall",
     "binary_roc_auc",
+    "binary_top_k_accuracy",
     "confusion_matrix",
     "energy_distance",
     "fbeta_score",
     "jaccard",
+    "js_div",
+    "kl_div",
     "mean_absolute_error",
     "mean_absolute_percentage_error",
     "mean_squared_error",
@@ -30,6 +33,7 @@ __all__ = [
     "multiclass_precision",
     "multiclass_recall",
     "multiclass_roc_auc",
+    "multiclass_top_k_accuracy",
     "multilabel_average_precision",
     "multilabel_confusion_matrix",
     "multilabel_fbeta_score",
@@ -37,12 +41,15 @@ __all__ = [
     "multilabel_precision",
     "multilabel_recall",
     "multilabel_roc_auc",
+    "ndcg",
     "pearsonr",
     "precision",
+    "r2_score",
     "recall",
     "regression_errors",
     "roc_auc",
     "spearmanr",
+    "top_k_accuracy",
     "wasserstein_distance",
 ]
 
@@ -71,6 +78,7 @@ from arkas.metric.classification.jaccard import (
     multiclass_jaccard,
     multilabel_jaccard,
 )
+from arkas.metric.classification.ndcg import ndcg
 from arkas.metric.classification.precision import (
     binary_precision,
     multiclass_precision,
@@ -89,13 +97,21 @@ from arkas.metric.classification.roc_auc import (
     multilabel_roc_auc,
     roc_auc,
 )
+from arkas.metric.classification.topk_accuracy import (
+    binary_top_k_accuracy,
+    multiclass_top_k_accuracy,
+    top_k_accuracy,
+)
+from arkas.metric.correlation.pearson import pearsonr
+from arkas.metric.correlation.spearman import spearmanr
 from arkas.metric.distribution.energy import energy_distance
+from arkas.metric.distribution.js import js_div
+from arkas.metric.distribution.kl import kl_div
 from arkas.metric.distribution.wasserstein import wasserstein_distance
 from arkas.metric.regression.abs_error import mean_absolute_error, median_absolute_error
 from arkas.metric.regression.mape import mean_absolute_percentage_error
 from arkas.metric.regression.mse import mean_squared_error
 from arkas.metric.regression.msle import mean_squared_log_error
-from arkas.metric.regression.pearson import pearsonr
-from arkas.metric.regression.spearman import spearmanr
+from arkas.metric.regression.r2 import r2_score
 from arkas.metric.regression.tweedie_deviance import mean_tweedie_deviance
 from arkas.metric.regression.universal import regression_errors

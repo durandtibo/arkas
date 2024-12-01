@@ -111,10 +111,54 @@ def test_wasserstein_distance_nan_propagate() -> None:
 
 
 @scipy_available
+def test_wasserstein_distance_nan_propagate_u_values() -> None:
+    assert objects_are_allclose(
+        wasserstein_distance(
+            u_values=np.array([float("nan"), 2, 3, 4, 5, 6]),
+            v_values=np.array([1, 2, 3, 4, 5, 6]),
+        ),
+        {"count": 6, "wasserstein_distance": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
+def test_wasserstein_distance_nan_propagate_v_values() -> None:
+    assert objects_are_allclose(
+        wasserstein_distance(
+            u_values=np.array([1, 2, 3, 4, 5, 6]),
+            v_values=np.array([1, 2, 3, 4, 5, float("nan")]),
+        ),
+        {"count": 6, "wasserstein_distance": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
 def test_wasserstein_distance_nan_raise() -> None:
     with pytest.raises(ValueError, match="'u_values' contains at least one NaN value"):
         wasserstein_distance(
             u_values=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
             v_values=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+            nan_policy="raise",
+        )
+
+
+@scipy_available
+def test_wasserstein_distance_nan_raise_u_values() -> None:
+    with pytest.raises(ValueError, match="'u_values' contains at least one NaN value"):
+        wasserstein_distance(
+            u_values=np.array([float("nan"), 2, 3, 4, 5]),
+            v_values=np.array([1, 2, 3, 4, 5]),
+            nan_policy="raise",
+        )
+
+
+@scipy_available
+def test_wasserstein_distance_nan_raise_v_values() -> None:
+    with pytest.raises(ValueError, match="'v_values' contains at least one NaN value"):
+        wasserstein_distance(
+            u_values=np.array([1, 2, 3, 4, 5]),
+            v_values=np.array([1, 2, 3, 4, float("nan")]),
             nan_policy="raise",
         )

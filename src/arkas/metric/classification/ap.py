@@ -1,4 +1,4 @@
-r"""Implement the average precision result."""
+r"""Implement the average precision metrics."""
 
 from __future__ import annotations
 

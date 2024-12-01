@@ -1,8 +1,9 @@
-r"""Implement the mean squared error metrics."""
+r"""Implement the R^2 (coefficient of determination) regression score
+metrics."""
 
 from __future__ import annotations
 
-__all__ = ["mean_squared_error"]
+__all__ = ["r2_score"]
 
 
 from typing import TYPE_CHECKING
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-def mean_squared_error(
+def r2_score(
     y_true: np.ndarray,
     y_pred: np.ndarray,
     *,
@@ -23,7 +24,8 @@ def mean_squared_error(
     suffix: str = "",
     nan_policy: str = "propagate",
 ) -> dict[str, float]:
-    r"""Return the mean squared error (MSE).
+    r"""Return the R^2 (coefficient of determination) regression score
+    metrics.
 
     Args:
         y_true: The ground truth target values.
@@ -42,9 +44,9 @@ def mean_squared_error(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import mean_squared_error
-    >>> mean_squared_error(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]))
-    {'count': 5, 'mean_squared_error': 0.0}
+    >>> from arkas.metric import r2_score
+    >>> r2_score(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]))
+    {'count': 5, 'r2_score': 1.0}
 
     ```
     """
@@ -57,8 +59,8 @@ def mean_squared_error(
     count = y_true.size
     error = float("nan")
     if count > 0 and not y_true_nan and not y_pred_nan:
-        error = float(metrics.mean_squared_error(y_true=y_true, y_pred=y_pred))
+        error = float(metrics.r2_score(y_true=y_true, y_pred=y_pred))
     return {
         f"{prefix}count{suffix}": count,
-        f"{prefix}mean_squared_error{suffix}": error,
+        f"{prefix}r2_score{suffix}": error,
     }

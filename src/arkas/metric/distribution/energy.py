@@ -55,7 +55,7 @@ def energy_distance(
         arrays=[u_values.ravel(), v_values.ravel()], drop_nan=nan_policy == "omit"
     )
     u_nan = contains_nan(arr=u_values, nan_policy=nan_policy, name="'u_values'")
-    v_nan = contains_nan(arr=v_values, nan_policy=nan_policy, name="'u_values'")
+    v_nan = contains_nan(arr=v_values, nan_policy=nan_policy, name="'v_values'")
 
     count = u_values.size
     dist = float("nan")

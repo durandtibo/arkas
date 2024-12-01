@@ -16,6 +16,9 @@ __all__ = [
     "BinaryRecallResult",
     "BinaryRocAucResult",
     "EmptyResult",
+    "EnergyDistanceResult",
+    "JSDivResult",
+    "KLDivResult",
     "MappingResult",
     "MeanAbsoluteErrorResult",
     "MeanSquaredErrorResult",
@@ -35,10 +38,13 @@ __all__ = [
     "MultilabelRocAucResult",
     "PearsonCorrelationResult",
     "PrecisionResult",
+    "R2ScoreResult",
     "RecallResult",
+    "RegressionErrorResult",
     "Result",
     "SequentialResult",
     "SpearmanCorrelationResult",
+    "WassersteinDistanceResult",
 ]
 
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
@@ -55,6 +61,7 @@ from arkas.result.confmat import (
     MulticlassConfusionMatrixResult,
     MultilabelConfusionMatrixResult,
 )
+from arkas.result.energy import EnergyDistanceResult
 from arkas.result.fbeta import (
     BinaryFbetaScoreResult,
     MulticlassFbetaScoreResult,
@@ -65,6 +72,8 @@ from arkas.result.jaccard import (
     MulticlassJaccardResult,
     MultilabelJaccardResult,
 )
+from arkas.result.js import JSDivResult
+from arkas.result.kl import KLDivResult
 from arkas.result.mae import MeanAbsoluteErrorResult
 from arkas.result.mapping import MappingResult
 from arkas.result.mse import MeanSquaredErrorResult
@@ -75,12 +84,14 @@ from arkas.result.precision import (
     MultilabelPrecisionResult,
     PrecisionResult,
 )
+from arkas.result.r2 import R2ScoreResult
 from arkas.result.recall import (
     BinaryRecallResult,
     MulticlassRecallResult,
     MultilabelRecallResult,
     RecallResult,
 )
+from arkas.result.regression import RegressionErrorResult
 from arkas.result.roc_auc import (
     BinaryRocAucResult,
     MulticlassRocAucResult,
@@ -89,3 +100,4 @@ from arkas.result.roc_auc import (
 from arkas.result.sequential import SequentialResult
 from arkas.result.spearman import SpearmanCorrelationResult
 from arkas.result.vanilla import EmptyResult, Result
+from arkas.result.wasserstein import WassersteinDistanceResult
