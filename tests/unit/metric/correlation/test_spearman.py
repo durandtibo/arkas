@@ -148,6 +148,32 @@ def test_spearmanr_nan_propagate() -> None:
 
 
 @scipy_available
+def test_spearmanr_propagate_x() -> None:
+    assert objects_are_allclose(
+        spearmanr(
+            x=np.array([1, 2, 3, 4, 5, float("nan")]),
+            y=np.array([1, 2, 3, 4, 5, 0]),
+            nan_policy="propagate",
+        ),
+        {"count": 6, "spearman_coeff": float("nan"), "spearman_pvalue": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
+def test_spearmanr_propagate_y() -> None:
+    assert objects_are_allclose(
+        spearmanr(
+            x=np.array([1, 2, 3, 4, 5, 0]),
+            y=np.array([1, 2, 3, 4, 5, float("nan")]),
+            nan_policy="propagate",
+        ),
+        {"count": 6, "spearman_coeff": float("nan"), "spearman_pvalue": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
 def test_spearmanr_nan_raise() -> None:
     with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
         spearmanr(
