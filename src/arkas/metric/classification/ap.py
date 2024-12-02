@@ -16,6 +16,7 @@ from sklearn import metrics
 
 from arkas.metric.utils import (
     check_label_type,
+    contains_nan,
     preprocess_score_binary,
     preprocess_score_multiclass,
     preprocess_score_multilabel,
@@ -29,7 +30,7 @@ def average_precision(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics.
 
@@ -48,8 +49,9 @@ def average_precision(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -115,14 +117,14 @@ def average_precision(
         label_type = find_label_type(y_true=y_true, y_score=y_score)
     if label_type == "binary":
         return binary_average_precision(
-            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, nan_policy=nan_policy
         )
     if label_type == "multilabel":
         return multilabel_average_precision(
-            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+            y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, nan_policy=nan_policy
         )
     return multiclass_average_precision(
-        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, nan_policy=nan_policy
     )
 
 
@@ -132,7 +134,7 @@ def binary_average_precision(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float]:
     r"""Return the average precision metrics for binary labels.
 
@@ -145,8 +147,9 @@ def binary_average_precision(
             be an array of shape ``(n_samples, *)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -165,10 +168,15 @@ def binary_average_precision(
 
     ```
     """
-    y_true, y_score = preprocess_score_binary(y_true.ravel(), y_score.ravel(), drop_nan=drop_nan)
+    y_true, y_score = preprocess_score_binary(
+        y_true=y_true, y_score=y_score, drop_nan=nan_policy == "omit"
+    )
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_score_nan = contains_nan(arr=y_score, nan_policy=nan_policy, name="'y_score'")
+
     count = y_true.size
     ap = float("nan")
-    if count > 0:
+    if count > 0 and not y_true_nan and not y_score_nan:
         ap = float(metrics.average_precision_score(y_true=y_true, y_score=y_score))
     return {f"{prefix}average_precision{suffix}": ap, f"{prefix}count{suffix}": count}
 
@@ -179,7 +187,7 @@ def multiclass_average_precision(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics for multiclass labels.
 
@@ -192,8 +200,9 @@ def multiclass_average_precision(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -226,8 +235,10 @@ def multiclass_average_precision(
 
     ```
     """
-    y_true, y_score = preprocess_score_multiclass(y_true, y_score, drop_nan=drop_nan)
-    return _average_precision(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
+    y_true, y_score = preprocess_score_multiclass(y_true, y_score, drop_nan=nan_policy == "omit")
+    return _average_precision(
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, nan_policy=nan_policy
+    )
 
 
 def multilabel_average_precision(
@@ -236,7 +247,7 @@ def multilabel_average_precision(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics for multilabel labels.
 
@@ -249,8 +260,9 @@ def multilabel_average_precision(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -274,8 +286,10 @@ def multilabel_average_precision(
 
     ```
     """
-    y_true, y_score = preprocess_score_multilabel(y_true, y_score, drop_nan=drop_nan)
-    return _average_precision(y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix)
+    y_true, y_score = preprocess_score_multilabel(y_true, y_score, drop_nan=nan_policy == "omit")
+    return _average_precision(
+        y_true=y_true, y_score=y_score, prefix=prefix, suffix=suffix, nan_policy=nan_policy
+    )
 
 
 def _average_precision(
@@ -284,6 +298,7 @@ def _average_precision(
     *,
     prefix: str = "",
     suffix: str = "",
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the average precision metrics for multilabel or multiclass
     labels.
@@ -297,14 +312,20 @@ def _average_precision(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
     """
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_score_nan = contains_nan(arr=y_score, nan_policy=nan_policy, name="'y_score'")
+
     n_samples = y_true.shape[0]
     macro, micro, weighted = float("nan"), float("nan"), float("nan")
     ap = np.array([])
-    if n_samples > 0:
+    if n_samples > 0 and not y_true_nan and not y_score_nan:
         macro = metrics.average_precision_score(y_true=y_true, y_score=y_score, average="macro")
         micro = metrics.average_precision_score(y_true=y_true, y_score=y_score, average="micro")
         weighted = metrics.average_precision_score(
