@@ -113,7 +113,7 @@ def test_top_k_accuracy_binary_nan_omit() -> None:
     )
 
 
-def test_top_k_accuracy_nan_propagate() -> None:
+def test_top_k_accuracy_binary_nan_propagate() -> None:
     assert objects_are_equal(
         top_k_accuracy(
             y_true=np.array([1, 0, 0, 1, float("nan")]),
