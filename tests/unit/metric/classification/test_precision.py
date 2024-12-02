@@ -71,6 +71,16 @@ def test_precision_binary_nan_propagate() -> None:
     )
 
 
+def test_precision_binary_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        precision(
+            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+            y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+            label_type="binary",
+            nan_policy="raise",
+        )
+
+
 def test_precision_auto_multiclass() -> None:
     assert objects_are_equal(
         precision(
@@ -158,6 +168,16 @@ def test_precision_multiclass_nan_propagate() -> None:
         },
         equal_nan=True,
     )
+
+
+def test_precision_multiclass_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            label_type="multiclass",
+            nan_policy="raise",
+        )
 
 
 def test_precision_auto_multilabel() -> None:
@@ -255,6 +275,20 @@ def test_precision_multilabel_nan_propagate() -> None:
         },
         equal_nan=True,
     )
+
+
+def test_precision_multilabel_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        precision(
+            y_true=np.array(
+                [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+            ),
+            y_pred=np.array(
+                [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+            ),
+            label_type="multilabel",
+            nan_policy="raise",
+        )
 
 
 def test_precision_label_type_incorrect() -> None:
