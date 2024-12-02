@@ -379,7 +379,7 @@ def test_binary_precision_omit_y_true() -> None:
     )
 
 
-def test_binary_precision_omit_y_score() -> None:
+def test_binary_precision_omit_y_pred() -> None:
     assert objects_are_allclose(
         binary_precision(
             y_true=np.array([1, 0, 0, 1, 1, 1]),
@@ -412,7 +412,7 @@ def test_binary_precision_nan_propagate_y_true() -> None:
     )
 
 
-def test_binary_precision_nan_propagate_y_score() -> None:
+def test_binary_precision_nan_propagate_y_pred() -> None:
     assert objects_are_allclose(
         binary_precision(
             y_true=np.array([1, 0, 0, 1, 1, 1]),
@@ -441,7 +441,7 @@ def test_binary_precision_nan_raise_y_true() -> None:
         )
 
 
-def test_binary_precision_nan_raise_y_score() -> None:
+def test_binary_precision_nan_raise_y_pred() -> None:
     with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
         binary_precision(
             y_true=np.array([1, 0, 0, 1, 1, 1]),
@@ -569,7 +569,7 @@ def test_multiclass_precision_omit_y_true() -> None:
     )
 
 
-def test_multiclass_precision_omit_y_score() -> None:
+def test_multiclass_precision_omit_y_pred() -> None:
     assert objects_are_allclose(
         multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
@@ -620,7 +620,7 @@ def test_multiclass_precision_nan_propagate_y_true() -> None:
     )
 
 
-def test_multiclass_precision_nan_propagate_y_score() -> None:
+def test_multiclass_precision_nan_propagate_y_pred() -> None:
     assert objects_are_allclose(
         multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
@@ -655,7 +655,7 @@ def test_multiclass_precision_nan_raise_y_true() -> None:
         )
 
 
-def test_multiclass_precision_nan_raise_y_score() -> None:
+def test_multiclass_precision_nan_raise_y_pred() -> None:
     with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
         multiclass_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
@@ -797,7 +797,7 @@ def test_multilabel_precision_omit_y_true() -> None:
     )
 
 
-def test_multilabel_precision_omit_y_score() -> None:
+def test_multilabel_precision_omit_y_pred() -> None:
     assert objects_are_allclose(
         multilabel_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
@@ -848,7 +848,7 @@ def test_multilabel_precision_nan_propagate_y_true() -> None:
     )
 
 
-def test_multilabel_precision_nan_propagate_y_score() -> None:
+def test_multilabel_precision_nan_propagate_y_pred() -> None:
     assert objects_are_allclose(
         multilabel_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
@@ -883,7 +883,7 @@ def test_multilabel_precision_nan_raise_y_true() -> None:
         )
 
 
-def test_multilabel_precision_nan_raise_y_score() -> None:
+def test_multilabel_precision_nan_raise_y_pred() -> None:
     with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
         multilabel_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),

@@ -368,7 +368,7 @@ def test_binary_jaccard_omit_y_true() -> None:
     )
 
 
-def test_binary_jaccard_omit_y_score() -> None:
+def test_binary_jaccard_omit_y_pred() -> None:
     assert objects_are_allclose(
         binary_jaccard(
             y_true=np.array([1, 0, 0, 1, 1, 1]),
@@ -401,7 +401,7 @@ def test_binary_jaccard_nan_propagate_y_true() -> None:
     )
 
 
-def test_binary_jaccard_nan_propagate_y_score() -> None:
+def test_binary_jaccard_nan_propagate_y_pred() -> None:
     assert objects_are_allclose(
         binary_jaccard(
             y_true=np.array([1, 0, 0, 1, 1, 1]),
@@ -430,7 +430,7 @@ def test_binary_jaccard_nan_raise_y_true() -> None:
         )
 
 
-def test_binary_jaccard_nan_raise_y_score() -> None:
+def test_binary_jaccard_nan_raise_y_pred() -> None:
     with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
         binary_jaccard(
             y_true=np.array([1, 0, 0, 1, 1, 1]),
@@ -526,7 +526,7 @@ def test_multiclass_jaccard_omit_y_true() -> None:
     )
 
 
-def test_multiclass_jaccard_omit_y_score() -> None:
+def test_multiclass_jaccard_omit_y_pred() -> None:
     assert objects_are_allclose(
         multiclass_jaccard(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
@@ -577,7 +577,7 @@ def test_multiclass_jaccard_nan_propagate_y_true() -> None:
     )
 
 
-def test_multiclass_jaccard_nan_propagate_y_score() -> None:
+def test_multiclass_jaccard_nan_propagate_y_pred() -> None:
     assert objects_are_allclose(
         multiclass_jaccard(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
@@ -612,7 +612,7 @@ def test_multiclass_jaccard_nan_raise_y_true() -> None:
         )
 
 
-def test_multiclass_jaccard_nan_raise_y_score() -> None:
+def test_multiclass_jaccard_nan_raise_y_pred() -> None:
     with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
         multiclass_jaccard(
             y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
@@ -754,7 +754,7 @@ def test_multilabel_jaccard_omit_y_true() -> None:
     )
 
 
-def test_multilabel_jaccard_omit_y_score() -> None:
+def test_multilabel_jaccard_omit_y_pred() -> None:
     assert objects_are_allclose(
         multilabel_jaccard(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
@@ -805,7 +805,7 @@ def test_multilabel_jaccard_nan_propagate_y_true() -> None:
     )
 
 
-def test_multilabel_jaccard_nan_propagate_y_score() -> None:
+def test_multilabel_jaccard_nan_propagate_y_pred() -> None:
     assert objects_are_allclose(
         multilabel_jaccard(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
@@ -840,7 +840,7 @@ def test_multilabel_jaccard_nan_raise_y_true() -> None:
         )
 
 
-def test_multilabel_jaccard_nan_raise_y_score() -> None:
+def test_multilabel_jaccard_nan_raise_y_pred() -> None:
     with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
         multilabel_jaccard(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
