@@ -49,7 +49,7 @@ class AccuracySection(BaseSection):
     ... )
     >>> section
     AccuracySection(
-      (result): AccuracyResult(y_true=(5,), y_pred=(5,))
+      (result): AccuracyResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
     )
     >>> section.generate_html_body()
 
