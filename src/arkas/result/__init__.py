@@ -42,6 +42,7 @@ __all__ = [
     "RecallResult",
     "RegressionErrorResult",
     "Result",
+    "RootMeanSquaredErrorResult",
     "SequentialResult",
     "SpearmanCorrelationResult",
     "WassersteinDistanceResult",
@@ -92,6 +93,7 @@ from arkas.result.recall import (
     RecallResult,
 )
 from arkas.result.regression import RegressionErrorResult
+from arkas.result.rmse import RootMeanSquaredErrorResult
 from arkas.result.roc_auc import (
     BinaryRocAucResult,
     MulticlassRocAucResult,
