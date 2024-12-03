@@ -48,6 +48,33 @@ def test_accuracy_result_y_pred_incorrect_shape() -> None:
         AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1, 0]))
 
 
+def test_accuracy_result_nan_policy() -> None:
+    assert (
+        AccuracyResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]), nan_policy="omit"
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_accuracy_result_nan_policy_default() -> None:
+    assert (
+        AccuracyResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_accuracy_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        AccuracyResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_accuracy_result_repr() -> None:
     assert repr(
         AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
@@ -76,6 +103,16 @@ def test_accuracy_result_equal_false_different_y_pred() -> None:
     assert not AccuracyResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ).equal(AccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])))
+
+
+def test_accuracy_result_equal_false_different_nan_policy() -> None:
+    assert not AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        AccuracyResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), nan_policy="omit"
+        )
+    )
 
 
 def test_accuracy_result_equal_false_different_type() -> None:
@@ -134,6 +171,46 @@ def test_accuracy_result_compute_metrics_empty() -> None:
         },
         equal_nan=True,
     )
+
+
+def test_accuracy_result_compute_metrics_nan_omit() -> None:
+    result = AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"accuracy": 1.0, "count": 5, "count_correct": 5, "count_incorrect": 0, "error": 0.0},
+    )
+
+
+def test_accuracy_result_compute_metrics_nan_propagate() -> None:
+    result = AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "accuracy": float("nan"),
+            "count": 6,
+            "count_correct": float("nan"),
+            "count_incorrect": float("nan"),
+            "error": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_accuracy_result_compute_metrics_nan_raise() -> None:
+    result = AccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_accuracy_result_compute_metrics_prefix_suffix() -> None:
@@ -224,6 +301,33 @@ def test_balanced_accuracy_result_y_pred_incorrect_shape() -> None:
         )
 
 
+def test_balanced_accuracy_result_nan_policy() -> None:
+    assert (
+        BalancedAccuracyResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]), nan_policy="omit"
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_balanced_accuracy_result_nan_policy_default() -> None:
+    assert (
+        BalancedAccuracyResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_balanced_accuracy_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        BalancedAccuracyResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_balanced_accuracy_result_repr() -> None:
     assert repr(
         BalancedAccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
@@ -257,6 +361,16 @@ def test_balanced_accuracy_result_equal_false_different_y_pred() -> None:
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ).equal(
         BalancedAccuracyResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0]))
+    )
+
+
+def test_balanced_accuracy_result_equal_false_different_nan_policy() -> None:
+    assert not BalancedAccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BalancedAccuracyResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), nan_policy="omit"
+        )
     )
 
 
@@ -322,6 +436,40 @@ def test_balanced_accuracy_result_compute_metrics_prefix_suffix() -> None:
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {"prefix_balanced_accuracy_suffix": 1.0, "prefix_count_suffix": 5},
     )
+
+
+def test_balanced_accuracy_result_compute_metrics_nan_omit() -> None:
+    result = BalancedAccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"balanced_accuracy": 1.0, "count": 5},
+    )
+
+
+def test_balanced_accuracy_result_compute_metrics_nan_propagate() -> None:
+    result = BalancedAccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"balanced_accuracy": float("nan"), "count": 6},
+        equal_nan=True,
+    )
+
+
+def test_balanced_accuracy_result_compute_metrics_nan_raise() -> None:
+    result = BalancedAccuracyResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_balanced_accuracy_result_compute_metrics_binary() -> None:
