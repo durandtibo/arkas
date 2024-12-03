@@ -129,6 +129,18 @@ def test_wasserstein_distance_result_equal_false_different_v_values() -> None:
     )
 
 
+def test_wasserstein_distance_result_equal_false_different_nan_policy() -> None:
+    assert not WassersteinDistanceResult(
+        u_values=np.array([1, 2, 3, 4, 5]), v_values=np.array([1, 2, 3, 4, 5])
+    ).equal(
+        WassersteinDistanceResult(
+            u_values=np.array([1, 2, 3, 4, 5]),
+            v_values=np.array([1, 2, 3, 4, 5]),
+            nan_policy="omit",
+        )
+    )
+
+
 def test_wasserstein_distance_result_equal_false_different_type() -> None:
     assert not WassersteinDistanceResult(
         u_values=np.array([1, 2, 3, 4, 5]), v_values=np.array([1, 2, 3, 4, 5])
