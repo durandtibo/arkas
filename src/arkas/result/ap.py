@@ -22,7 +22,11 @@ from arkas.metric.classification.ap import (
     multiclass_average_precision,
     multilabel_average_precision,
 )
-from arkas.metric.utils import check_label_type, check_same_shape_score
+from arkas.metric.utils import (
+    check_label_type,
+    check_nan_policy,
+    check_same_shape_score,
+)
 from arkas.result.base import BaseResult
 
 if TYPE_CHECKING:
@@ -60,6 +64,9 @@ class AveragePrecisionResult(BaseResult):
             ``'multilabel'``, ``y_true`` values  must be ``0`` and
             ``1``. If ``'auto'``, it tries to automatically find the
             label type from the arrays' shape.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -74,7 +81,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="binary",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary)
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary, nan_policy=propagate)
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
     >>> # multilabel
@@ -84,7 +91,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="multilabel",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), label_type=multilabel)
+    AveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), label_type=multilabel, nan_policy=propagate)
     >>> result.compute_metrics()
     {'average_precision': array([1. , 1. , 0.477...]),
      'count': 5,
@@ -107,7 +114,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="multiclass",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(6,), y_score=(6, 3), label_type=multiclass)
+    AveragePrecisionResult(y_true=(6,), y_score=(6, 3), label_type=multiclass, nan_policy=propagate)
     >>> result.compute_metrics()
     {'average_precision': array([0.833..., 0.75 , 0.75 ]),
      'count': 6,
@@ -120,14 +127,20 @@ class AveragePrecisionResult(BaseResult):
     ...     y_score=np.array([2, -1, 0, 3, 1]),
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary)
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary, nan_policy=propagate)
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
 
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray, label_type: str = "auto") -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        label_type: str = "auto",
+        nan_policy: str = "propagate",
+    ) -> None:
         self._y_true = y_true
         self._y_score = y_score.astype(np.float64)
         self._label_type = (
@@ -136,11 +149,19 @@ class AveragePrecisionResult(BaseResult):
 
         self._check_inputs()
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_score={self._y_score.shape}, label_type={self._label_type})"
+            f"y_score={self._y_score.shape}, label_type={self._label_type}, "
+            f"nan_policy={self._nan_policy})"
         )
+
+    @property
+    def nan_policy(self) -> str:
+        return self._nan_policy
 
     @property
     def label_type(self) -> str:
@@ -161,6 +182,7 @@ class AveragePrecisionResult(BaseResult):
             label_type=self._label_type,
             prefix=prefix,
             suffix=suffix,
+            nan_policy=self._nan_policy,
         )
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
@@ -170,6 +192,7 @@ class AveragePrecisionResult(BaseResult):
             objects_are_equal(self.y_true, other.y_true, equal_nan=equal_nan)
             and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
             and self.label_type == other.label_type
+            and self.nan_policy == other.nan_policy
         )
 
     def generate_figures(
@@ -208,6 +231,9 @@ class BaseAveragePrecisionResult(BaseResult):
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -219,22 +245,34 @@ class BaseAveragePrecisionResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,))
+    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,), nan_policy=propagate)
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
 
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        nan_policy: str = "propagate",
+    ) -> None:
         self._y_true = y_true
         self._y_score = y_score
+
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_score={self._y_score.shape})"
+            f"y_score={self._y_score.shape}, nan_policy={self._nan_policy})"
         )
+
+    @property
+    def nan_policy(self) -> str:
+        return self._nan_policy
 
     @property
     def y_true(self) -> np.ndarray:
@@ -247,9 +285,11 @@ class BaseAveragePrecisionResult(BaseResult):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(
-            self.y_true, other.y_true, equal_nan=equal_nan
-        ) and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
+        return (
+            objects_are_equal(self.y_true, other.y_true, equal_nan=equal_nan)
+            and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
+            and self.nan_policy == other.nan_policy
+        )
 
 
 class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
@@ -263,6 +303,9 @@ class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
             be an array of shape ``(n_samples, *)``.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -274,16 +317,21 @@ class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ... )
     >>> result
-    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,))
+    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,), nan_policy=propagate)
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
 
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        nan_policy: str = "propagate",
+    ) -> None:
         check_same_shape_score(y_true, y_score)
-        super().__init__(y_true=y_true.ravel(), y_score=y_score.ravel())
+        super().__init__(y_true=y_true.ravel(), y_score=y_score.ravel(), nan_policy=nan_policy)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return binary_average_precision(
@@ -291,6 +339,7 @@ class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
             y_score=self._y_score,
             prefix=prefix,
             suffix=suffix,
+            nan_policy=self._nan_policy,
         )
 
     def generate_figures(
@@ -310,6 +359,9 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
             be an array of shape ``(n_samples, n_classes)``.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -331,7 +383,7 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
     ...     ),
     ... )
     >>> result
-    MulticlassAveragePrecisionResult(y_true=(6,), y_score=(6, 3))
+    MulticlassAveragePrecisionResult(y_true=(6,), y_score=(6, 3), nan_policy=propagate)
     >>> result.compute_metrics()
     {'average_precision': array([1., 1., 1.]),
      'count': 6,
@@ -342,7 +394,12 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        nan_policy: str = "propagate",
+    ) -> None:
         y_true = y_true.ravel()
         if y_true.shape[0] != y_score.shape[0]:
             msg = (
@@ -350,7 +407,7 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
                 f"{y_score.shape}"
             )
             raise RuntimeError(msg)
-        super().__init__(y_true=y_true, y_score=y_score)
+        super().__init__(y_true=y_true, y_score=y_score, nan_policy=nan_policy)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return multiclass_average_precision(
@@ -358,6 +415,7 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
             y_score=self._y_score,
             prefix=prefix,
             suffix=suffix,
+            nan_policy=self._nan_policy,
         )
 
     def generate_figures(
@@ -377,6 +435,9 @@ class MultilabelAveragePrecisionResult(BaseAveragePrecisionResult):
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
             be an array of shape ``(n_samples, n_classes)``.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -389,7 +450,7 @@ class MultilabelAveragePrecisionResult(BaseAveragePrecisionResult):
     ...     y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
     ... )
     >>> result
-    MultilabelAveragePrecisionResult(y_true=(5, 3), y_score=(5, 3))
+    MultilabelAveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), nan_policy=propagate)
     >>> result.compute_metrics()
     {'average_precision': array([1., 1., 1.]),
      'count': 5,
@@ -400,9 +461,14 @@ class MultilabelAveragePrecisionResult(BaseAveragePrecisionResult):
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        nan_policy: str = "propagate",
+    ) -> None:
         check_same_shape_score(y_true, y_score)
-        super().__init__(y_true=y_true, y_score=y_score)
+        super().__init__(y_true=y_true, y_score=y_score, nan_policy=nan_policy)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return multilabel_average_precision(
@@ -410,6 +476,7 @@ class MultilabelAveragePrecisionResult(BaseAveragePrecisionResult):
             y_score=self._y_score,
             prefix=prefix,
             suffix=suffix,
+            nan_policy=self._nan_policy,
         )
 
     def generate_figures(
