@@ -40,7 +40,7 @@ class MeanAbsoluteErrorEvaluator(BaseLazyEvaluator[MeanAbsoluteErrorResult]):
     >>> data = pl.DataFrame({"pred": [1, 2, 3, 4, 5], "target": [1, 2, 3, 4, 5]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    MeanAbsoluteErrorResult(y_true=(5,), y_pred=(5,))
+    MeanAbsoluteErrorResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
 
     ```
     """
