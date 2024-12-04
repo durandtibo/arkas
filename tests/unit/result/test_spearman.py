@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from coola import objects_are_allclose
+from coola import objects_are_allclose, objects_are_equal
 
 from arkas.result import SpearmanCorrelationResult
 
@@ -66,6 +66,35 @@ def test_spearman_correlation_result_alternative_default() -> None:
     )
 
 
+def test_spearman_correlation_result_nan_policy() -> None:
+    assert (
+        SpearmanCorrelationResult(
+            x=np.array([1, 2, 3, 4, 5]),
+            y=np.array([5, 4, 3, 2, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_spearman_correlation_result_nan_policy_default() -> None:
+    assert (
+        SpearmanCorrelationResult(
+            x=np.array([1, 2, 3, 4, 5]), y=np.array([5, 4, 3, 2, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_spearman_correlation_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        SpearmanCorrelationResult(
+            x=np.array([1, 2, 3, 4, 5]),
+            y=np.array([5, 4, 3, 2, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_spearman_correlation_result_repr() -> None:
     assert repr(
         SpearmanCorrelationResult(x=np.array([1, 2, 3, 4, 5]), y=np.array([1, 2, 3, 4, 5]))
@@ -100,6 +129,18 @@ def test_spearman_correlation_result_equal_false_different_alternative() -> None
     assert not SpearmanCorrelationResult(
         x=np.array([1, 2, 3, 4, 5]), y=np.array([5, 4, 3, 2, 1]), alternative="less"
     ).equal(SpearmanCorrelationResult(x=np.array([1, 2, 3, 4, 5]), y=np.array([5, 4, 3, 2, 1])))
+
+
+def test_spearman_correlation_result_equal_false_different_nan_policy() -> None:
+    assert not SpearmanCorrelationResult(
+        x=np.array([1, 2, 3, 4, 5]), y=np.array([1, 2, 3, 4, 5])
+    ).equal(
+        SpearmanCorrelationResult(
+            x=np.array([1, 2, 3, 4, 5]),
+            y=np.array([1, 2, 3, 4, 5]),
+            nan_policy="omit",
+        )
+    )
 
 
 def test_spearman_correlation_result_equal_false_different_type() -> None:
@@ -174,6 +215,40 @@ def test_spearman_correlation_result_compute_metrics_prefix_suffix() -> None:
             "prefix_spearman_pvalue_suffix": 0.0,
         },
     )
+
+
+def test_spearman_correlation_result_compute_metrics_nan_omit() -> None:
+    result = SpearmanCorrelationResult(
+        x=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
+        y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 4, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
+    )
+
+
+def test_spearman_correlation_result_compute_metrics_nan_propagate() -> None:
+    result = SpearmanCorrelationResult(
+        x=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
+        y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 7, "spearman_coeff": float("nan"), "spearman_pvalue": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_spearman_correlation_result_compute_metrics_nan_raise() -> None:
+    result = SpearmanCorrelationResult(
+        x=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
+        y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_spearman_correlation_result_generate_figures() -> None:
