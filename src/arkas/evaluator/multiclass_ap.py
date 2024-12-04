@@ -56,7 +56,7 @@ class MulticlassAveragePrecisionEvaluator(BaseLazyEvaluator[MulticlassAveragePre
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    MulticlassAveragePrecisionResult(y_true=(6,), y_score=(6, 3))
+    MulticlassAveragePrecisionResult(y_true=(6,), y_score=(6, 3), nan_policy=propagate)
 
     ```
     """
