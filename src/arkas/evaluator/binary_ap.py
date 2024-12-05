@@ -42,7 +42,7 @@ class BinaryAveragePrecisionEvaluator(BaseLazyEvaluator[BinaryAveragePrecisionRe
     >>> data = pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,))
+    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,), nan_policy=propagate)
 
     ```
     """

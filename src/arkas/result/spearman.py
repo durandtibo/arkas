@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 
 from arkas.metric.correlation.spearman import spearmanr
-from arkas.metric.utils import check_same_shape
+from arkas.metric.utils import check_nan_policy, check_same_shape
 from arkas.result.base import BaseResult
 
 if TYPE_CHECKING:
@@ -27,6 +27,9 @@ class SpearmanCorrelationResult(BaseResult):
             - 'two-sided': the correlation is nonzero
             - 'less': the correlation is negative (less than zero)
             - 'greater': the correlation is positive (greater than zero)
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -39,25 +42,39 @@ class SpearmanCorrelationResult(BaseResult):
     ...     y=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
     ... )
     >>> result
-    SpearmanCorrelationResult(x=(9,), y=(9,), alternative=two-sided)
+    SpearmanCorrelationResult(x=(9,), y=(9,), alternative=two-sided, nan_policy=propagate)
     >>> result.compute_metrics()
     {'count': 9, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0}
 
     ```
     """
 
-    def __init__(self, x: np.ndarray, y: np.ndarray, alternative: str = "two-sided") -> None:
+    def __init__(
+        self,
+        x: np.ndarray,
+        y: np.ndarray,
+        alternative: str = "two-sided",
+        nan_policy: str = "propagate",
+    ) -> None:
         self._x = x.ravel()
         self._y = y.ravel()
         self._alternative = alternative
 
         check_same_shape([self._x, self._y])
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__qualname__}(x={self._x.shape}, "
-            f"y={self._y.shape}, alternative={self._alternative})"
+            f"y={self._y.shape}, alternative={self._alternative}, "
+            f"nan_policy={self._nan_policy})"
         )
+
+    @property
+    def nan_policy(self) -> str:
+        return self._nan_policy
 
     @property
     def x(self) -> np.ndarray:
@@ -78,6 +95,7 @@ class SpearmanCorrelationResult(BaseResult):
             alternative=self._alternative,
             prefix=prefix,
             suffix=suffix,
+            nan_policy=self._nan_policy,
         )
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
@@ -87,6 +105,7 @@ class SpearmanCorrelationResult(BaseResult):
             objects_are_equal(self.x, other.x, equal_nan=equal_nan)
             and objects_are_equal(self.y, other.y, equal_nan=equal_nan)
             and self.alternative == other.alternative
+            and self.nan_policy == other.nan_policy
         )
 
     def generate_figures(

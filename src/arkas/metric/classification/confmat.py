@@ -16,6 +16,7 @@ from sklearn import metrics
 from arkas.metric.classification.precision import find_label_type
 from arkas.metric.utils import (
     check_label_type,
+    contains_nan,
     preprocess_pred,
     preprocess_pred_multilabel,
 )
@@ -28,7 +29,7 @@ def confusion_matrix(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the confusion matrix metrics.
 
@@ -41,8 +42,9 @@ def confusion_matrix(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -94,14 +96,14 @@ def confusion_matrix(
         label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
         return binary_confusion_matrix(
-            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, nan_policy=nan_policy
         )
     if label_type == "multilabel":
         return multilabel_confusion_matrix(
-            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, nan_policy=nan_policy
         )
     return multiclass_confusion_matrix(
-        y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+        y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, nan_policy=nan_policy
     )
 
 
@@ -111,7 +113,7 @@ def binary_confusion_matrix(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the confusion matrix metrics for binary labels.
 
@@ -120,8 +122,9 @@ def binary_confusion_matrix(
         y_pred: The predicted labels.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -149,11 +152,15 @@ def binary_confusion_matrix(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=nan_policy == "omit"
     )
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_pred_nan = contains_nan(arr=y_pred, nan_policy=nan_policy, name="'y_pred'")
 
     count = y_true.size
-    if count > 0:
+    if y_true_nan or y_pred_nan:
+        confmat = np.array([[np.nan, np.nan], [np.nan, np.nan]])
+    elif count > 0:
         confmat = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred)
     else:
         confmat = np.zeros((2, 2), dtype=np.int64)
@@ -180,7 +187,7 @@ def multiclass_confusion_matrix(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the confusion matrix metrics for multiclass labels.
 
@@ -189,8 +196,9 @@ def multiclass_confusion_matrix(
         y_pred: The predicted labels.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -209,10 +217,16 @@ def multiclass_confusion_matrix(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=nan_policy == "omit"
     )
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_pred_nan = contains_nan(arr=y_pred, nan_policy=nan_policy, name="'y_pred'")
+    if y_true_nan or y_pred_nan:
+        confmat = np.zeros((0, 0), dtype=np.int64)
+    else:
+        confmat = metrics.confusion_matrix(y_true=y_true, y_pred=y_pred)
     return {
-        f"{prefix}confusion_matrix{suffix}": metrics.confusion_matrix(y_true=y_true, y_pred=y_pred),
+        f"{prefix}confusion_matrix{suffix}": confmat,
         f"{prefix}count{suffix}": y_true.size,
     }
 
@@ -223,7 +237,7 @@ def multilabel_confusion_matrix(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the confusion matrix metrics for multilabel labels.
 
@@ -232,8 +246,9 @@ def multilabel_confusion_matrix(
         y_pred: The predicted labels.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -255,9 +270,12 @@ def multilabel_confusion_matrix(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, drop_nan=drop_nan)
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, drop_nan=nan_policy == "omit")
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_pred_nan = contains_nan(arr=y_pred, nan_policy=nan_policy, name="'y_pred'")
+
     count = y_true.shape[0]
-    if count > 0:
+    if count > 0 and not y_true_nan and not y_pred_nan:
         if y_true.shape[1] > 1:
             confmat = metrics.multilabel_confusion_matrix(y_true=y_true, y_pred=y_pred)
         else:

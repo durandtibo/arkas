@@ -51,16 +51,38 @@ def test_average_precision_binary_prefix_suffix() -> None:
     )
 
 
-def test_average_precision_binary_drop_nan() -> None:
+def test_average_precision_binary_nan_omit() -> None:
     assert objects_are_equal(
         average_precision(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
             label_type="binary",
-            drop_nan=True,
+            nan_policy="omit",
         ),
-        {"count": 5, "average_precision": 1.0},
+        {"count": 3, "average_precision": 1.0},
     )
+
+
+def test_average_precision_binary_nan_propagate() -> None:
+    assert objects_are_equal(
+        average_precision(
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            label_type="binary",
+        ),
+        {"count": 5, "average_precision": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_average_precision_binary_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        average_precision(
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            label_type="binary",
+            nan_policy="raise",
+        )
 
 
 def test_average_precision_auto_multiclass() -> None:
@@ -142,32 +164,80 @@ def test_average_precision_multiclass_prefix_suffix() -> None:
     )
 
 
-def test_average_precision_multiclass_drop_nan() -> None:
+def test_roc_multiclass_auc_nan_omit() -> None:
     assert objects_are_equal(
         average_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_score=np.array(
                 [
                     [0.7, 0.2, 0.1],
-                    [0.4, 0.3, 0.3],
+                    [0.4, 0.3, float("nan")],
                     [0.1, 0.8, 0.1],
                     [0.2, 0.5, 0.3],
                     [0.3, 0.2, 0.5],
-                    [0.1, 0.2, 0.7],
-                    [0.1, float("nan"), 0.7],
+                    [float("nan"), float("nan"), float("nan")],
+                    [0.7, 0.2, 0.1],
                 ]
             ),
             label_type="multiclass",
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
-            "count": 6,
+            "count": 4,
             "macro_average_precision": 1.0,
             "micro_average_precision": 1.0,
+            "average_precision": np.array([1.0, 1.0, 1.0]),
             "weighted_average_precision": 1.0,
         },
     )
+
+
+def test_average_precision_multiclass_nan_propagate() -> None:
+    assert objects_are_equal(
+        average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, float("nan")],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [float("nan"), float("nan"), float("nan")],
+                    [0.7, 0.2, 0.1],
+                ]
+            ),
+            label_type="multiclass",
+        ),
+        {
+            "count": 7,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "average_precision": np.array([]),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_roc_multiclass_auc_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, float("nan")],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [float("nan"), float("nan"), float("nan")],
+                    [0.7, 0.2, 0.1],
+                ]
+            ),
+            label_type="multiclass",
+            nan_policy="raise",
+        )
 
 
 def test_average_precision_auto_multilabel() -> None:
@@ -222,26 +292,56 @@ def test_average_precision_multilabel_prefix_suffix() -> None:
     )
 
 
-def test_average_precision_multilabel_drop_nan() -> None:
-    assert objects_are_allclose(
+def test_average_precision_multilabel_nan_omit() -> None:
+    assert objects_are_equal(
         average_precision(
-            y_true=np.array(
-                [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
-            ),
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
             y_score=np.array(
-                [[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5], [float("nan"), 0, 1]]
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
             ),
             label_type="multilabel",
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
-            "count": 5,
+            "count": 3,
             "macro_average_precision": 1.0,
             "micro_average_precision": 1.0,
+            "average_precision": np.array([1.0, 1.0, 1.0]),
             "weighted_average_precision": 1.0,
         },
     )
+
+
+def test_average_precision_multilabel_nan_propagate() -> None:
+    assert objects_are_equal(
+        average_precision(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+            label_type="multilabel",
+        ),
+        {
+            "count": 5,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "average_precision": np.array([]),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_roc_multilabel_auc_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        average_precision(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+            label_type="multilabel",
+            nan_policy="raise",
+        )
 
 
 def test_average_precision_label_type_incorrect() -> None:
@@ -328,45 +428,97 @@ def test_binary_average_precision_incorrect_shape() -> None:
         )
 
 
-def test_binary_average_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input.* contains NaN"):
+def test_binary_average_precision_nan_omit() -> None:
+    assert objects_are_equal(
         binary_average_precision(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            nan_policy="omit",
+        ),
+        {"count": 3, "average_precision": 1.0},
+    )
+
+
+def test_binary_average_precision_nan_omit_y_true() -> None:
+    assert objects_are_equal(
+        binary_average_precision(
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+            nan_policy="omit",
+        ),
+        {"count": 4, "average_precision": 1.0},
+    )
+
+
+def test_binary_average_precision_nan_omit_y_score() -> None:
+    assert objects_are_equal(
+        binary_average_precision(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            nan_policy="omit",
+        ),
+        {"count": 4, "average_precision": 1.0},
+    )
+
+
+def test_binary_average_precision_nan_propagate() -> None:
+    assert objects_are_equal(
+        binary_average_precision(
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
+        ),
+        {"count": 5, "average_precision": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_binary_average_precision_nan_propagate_y_true() -> None:
+    assert objects_are_equal(
+        binary_average_precision(
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+        ),
+        {"count": 5, "average_precision": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_binary_average_precision_nan_propagate_y_score() -> None:
+    assert objects_are_equal(
+        binary_average_precision(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
+        ),
+        {"count": 5, "average_precision": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_binary_average_precision_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        binary_average_precision(
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            nan_policy="raise",
         )
 
 
-def test_binary_average_precision_drop_nan() -> None:
-    assert objects_are_equal(
+def test_binary_average_precision_nan_raise_y_true() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
         binary_average_precision(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
-            drop_nan=True,
-        ),
-        {"count": 5, "average_precision": 1.0},
-    )
+            y_true=np.array([1, 0, 0, 1, float("nan")]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+            nan_policy="raise",
+        )
 
 
-def test_binary_average_precision_drop_nan_y_true() -> None:
-    assert objects_are_equal(
+def test_binary_average_precision_nan_raise_y_score() -> None:
+    with pytest.raises(ValueError, match="'y_score' contains at least one NaN value"):
         binary_average_precision(
-            y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
-            y_score=np.array([2, -1, 0, 3, 1, 0]),
-            drop_nan=True,
-        ),
-        {"count": 5, "average_precision": 1.0},
-    )
-
-
-def test_binary_average_precision_drop_nan_y_score() -> None:
-    assert objects_are_equal(
-        binary_average_precision(
-            y_true=np.array([1, 0, 0, 1, 1, 0]),
-            y_score=np.array([2, -1, 0, float("nan"), 1, -3]),
-            drop_nan=True,
-        ),
-        {"count": 5, "average_precision": 1.0},
-    )
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([float("nan"), -1, 0, 3, 1]),
+            nan_policy="raise",
+        )
 
 
 ##################################################
@@ -504,25 +656,7 @@ def test_multiclass_average_precision_prefix_suffix() -> None:
     )
 
 
-def test_multiclass_average_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input.* contains NaN"):
-        multiclass_average_precision(
-            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
-            y_score=np.array(
-                [
-                    [0.7, 0.2, 0.1],
-                    [0.4, 0.3, float("nan")],
-                    [0.1, 0.8, 0.1],
-                    [0.2, 0.5, 0.3],
-                    [0.3, 0.2, 0.5],
-                    [float("nan"), float("nan"), float("nan")],
-                    [0.7, 0.2, 0.1],
-                ]
-            ),
-        )
-
-
-def test_multiclass_average_precision_nans() -> None:
+def test_multiclass_average_precision_nan_omit() -> None:
     assert objects_are_equal(
         multiclass_average_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
@@ -537,26 +671,26 @@ def test_multiclass_average_precision_nans() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
             "count": 4,
             "macro_average_precision": 1.0,
             "micro_average_precision": 1.0,
+            "average_precision": np.array([1.0, 1.0, 1.0]),
             "weighted_average_precision": 1.0,
         },
     )
 
 
-def test_multiclass_average_precision_drop_nan_y_true() -> None:
+def test_multiclass_average_precision_nan_omit_y_true() -> None:
     assert objects_are_equal(
         multiclass_average_precision(
             y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_score=np.array(
                 [
                     [0.7, 0.2, 0.1],
-                    [0.4, 0.3, 0.2],
+                    [0.4, 0.3, 0.3],
                     [0.1, 0.8, 0.1],
                     [0.2, 0.5, 0.3],
                     [0.3, 0.2, 0.5],
@@ -564,22 +698,49 @@ def test_multiclass_average_precision_drop_nan_y_true() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
             "count": 6,
             "macro_average_precision": 1.0,
             "micro_average_precision": 1.0,
+            "average_precision": np.array([1.0, 1.0, 1.0]),
             "weighted_average_precision": 1.0,
         },
     )
 
 
-def test_multiclass_average_precision_drop_nan_y_score() -> None:
+def test_multiclass_average_precision_nan_omit_y_score() -> None:
     assert objects_are_equal(
         multiclass_average_precision(
-            y_true=np.array([0, 0, 1, 1, 2, 2, 0]),
+            y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, float("nan")],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [float("nan"), float("nan"), float("nan")],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+            nan_policy="omit",
+        ),
+        {
+            "count": 5,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "average_precision": np.array([1.0, 1.0, 1.0]),
+            "weighted_average_precision": 1.0,
+        },
+    )
+
+
+def test_multiclass_average_precision_nan_propagate() -> None:
+    assert objects_are_equal(
+        multiclass_average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
             y_score=np.array(
                 [
                     [0.7, 0.2, 0.1],
@@ -591,16 +752,127 @@ def test_multiclass_average_precision_drop_nan_y_score() -> None:
                     [0.7, 0.2, 0.1],
                 ]
             ),
-            drop_nan=True,
         ),
         {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
-            "count": 5,
-            "macro_average_precision": 1.0,
-            "micro_average_precision": 1.0,
-            "weighted_average_precision": 1.0,
+            "count": 7,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "average_precision": np.array([]),
+            "weighted_average_precision": float("nan"),
         },
+        equal_nan=True,
     )
+
+
+def test_multiclass_average_precision_nan_propagate_y_true() -> None:
+    assert objects_are_equal(
+        multiclass_average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                    [0.7, 0.2, 0.1],
+                ]
+            ),
+        ),
+        {
+            "count": 7,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "average_precision": np.array([]),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_average_precision_nan_propagate_y_score() -> None:
+    assert objects_are_equal(
+        multiclass_average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, float("nan")],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [float("nan"), float("nan"), float("nan")],
+                    [0.7, 0.2, 0.1],
+                ]
+            ),
+        ),
+        {
+            "count": 7,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "average_precision": np.array([]),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_average_precision_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        multiclass_average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, float("nan")],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [float("nan"), float("nan"), float("nan")],
+                    [0.7, 0.2, 0.1],
+                ]
+            ),
+            nan_policy="raise",
+        )
+
+
+def test_multiclass_average_precision_nan_raise_y_true() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        multiclass_average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                    [0.7, 0.2, 0.1],
+                ]
+            ),
+            nan_policy="raise",
+        )
+
+
+def test_multiclass_average_precision_nan_raise_y_score() -> None:
+    with pytest.raises(ValueError, match="'y_score' contains at least one NaN value"):
+        multiclass_average_precision(
+            y_true=np.array([0, 0, 1, 1, 2, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, float("nan")],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [float("nan"), float("nan"), float("nan")],
+                    [0.7, 0.2, 0.1],
+                ]
+            ),
+            nan_policy="raise",
+        )
 
 
 ##################################################
@@ -702,67 +974,145 @@ def test_multilabel_average_precision_prefix_suffix() -> None:
     )
 
 
-def test_multilabel_average_precision_nan() -> None:
-    with pytest.raises(ValueError, match="Input.* contains NaN"):
-        multilabel_average_precision(
-            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
-            y_score=np.array(
-                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
-            ),
-        )
-
-
-def test_multilabel_average_precision_nans() -> None:
+def test_multilabel_average_precision_nan_omit() -> None:
     assert objects_are_equal(
         multilabel_average_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
             y_score=np.array(
                 [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
             ),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
             "count": 3,
             "macro_average_precision": 1.0,
             "micro_average_precision": 1.0,
+            "average_precision": np.array([1.0, 1.0, 1.0]),
             "weighted_average_precision": 1.0,
         },
     )
 
 
-def test_multilabel_average_precision_drop_nan_y_true() -> None:
+def test_multilabel_average_precision_nan_omit_y_true() -> None:
     assert objects_are_equal(
         multilabel_average_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
-            drop_nan=True,
+            nan_policy="omit",
         ),
         {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
             "count": 4,
             "macro_average_precision": 1.0,
             "micro_average_precision": 1.0,
+            "average_precision": np.array([1.0, 1.0, 1.0]),
             "weighted_average_precision": 1.0,
         },
     )
 
 
-def test_multilabel_average_precision_drop_nan_y_score() -> None:
+def test_multilabel_average_precision_nan_omit_y_score() -> None:
+    assert objects_are_equal(
+        multilabel_average_precision(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+            nan_policy="omit",
+        ),
+        {
+            "count": 4,
+            "macro_average_precision": 1.0,
+            "micro_average_precision": 1.0,
+            "average_precision": np.array([1.0, 1.0, 1.0]),
+            "weighted_average_precision": 1.0,
+        },
+    )
+
+
+def test_multilabel_average_precision_nan_propagate() -> None:
+    assert objects_are_equal(
+        multilabel_average_precision(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+        ),
+        {
+            "count": 5,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "average_precision": np.array([]),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_average_precision_nan_propagate_y_true() -> None:
     assert objects_are_equal(
         multilabel_average_precision(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
-            drop_nan=True,
         ),
         {
-            "average_precision": np.array([1.0, 1.0, 1.0]),
-            "count": 4,
-            "macro_average_precision": 1.0,
-            "micro_average_precision": 1.0,
-            "weighted_average_precision": 1.0,
+            "count": 5,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "average_precision": np.array([]),
+            "weighted_average_precision": float("nan"),
         },
+        equal_nan=True,
     )
+
+
+def test_multilabel_average_precision_nan_propagate_y_score() -> None:
+    assert objects_are_equal(
+        multilabel_average_precision(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+        ),
+        {
+            "count": 5,
+            "macro_average_precision": float("nan"),
+            "micro_average_precision": float("nan"),
+            "average_precision": np.array([]),
+            "weighted_average_precision": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_average_precision_nan_raise() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        multilabel_average_precision(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+            nan_policy="raise",
+        )
+
+
+def test_multilabel_average_precision_nan_raise_y_true() -> None:
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        multilabel_average_precision(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+            nan_policy="raise",
+        )
+
+
+def test_multilabel_average_precision_nan_raise_y_score() -> None:
+    with pytest.raises(ValueError, match="'y_score' contains at least one NaN value"):
+        multilabel_average_precision(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array(
+                [[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]
+            ),
+            nan_policy="raise",
+        )
 
 
 #####################################

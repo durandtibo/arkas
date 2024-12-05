@@ -16,6 +16,7 @@ from sklearn import metrics
 from arkas.metric.classification.precision import find_label_type
 from arkas.metric.utils import (
     check_label_type,
+    contains_nan,
     preprocess_pred,
     preprocess_pred_multilabel,
 )
@@ -28,7 +29,7 @@ def recall(
     label_type: str = "auto",
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics.
 
@@ -44,8 +45,9 @@ def recall(
             ``y_true`` values  must be ``0`` and ``1``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -96,14 +98,14 @@ def recall(
         label_type = find_label_type(y_true=y_true, y_pred=y_pred)
     if label_type == "binary":
         return binary_recall(
-            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, nan_policy=nan_policy
         )
     if label_type == "multilabel":
         return multilabel_recall(
-            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+            y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, nan_policy=nan_policy
         )
     return multiclass_recall(
-        y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, drop_nan=drop_nan
+        y_true=y_true, y_pred=y_pred, prefix=prefix, suffix=suffix, nan_policy=nan_policy
     )
 
 
@@ -113,7 +115,7 @@ def binary_recall(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float]:
     r"""Return the recall metrics for binary labels.
 
@@ -124,8 +126,9 @@ def binary_recall(
             be an array of shape ``(n_samples,)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -142,11 +145,13 @@ def binary_recall(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=nan_policy == "omit"
     )
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_pred_nan = contains_nan(arr=y_pred, nan_policy=nan_policy, name="'y_pred'")
 
     count, score = y_true.size, float("nan")
-    if count > 0:
+    if count > 0 and not y_true_nan and not y_pred_nan:
         score = float(metrics.recall_score(y_true=y_true, y_pred=y_pred))
     return {f"{prefix}count{suffix}": count, f"{prefix}recall{suffix}": score}
 
@@ -157,7 +162,7 @@ def multiclass_recall(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics for multiclass labels.
 
@@ -168,8 +173,9 @@ def multiclass_recall(
             be an array of shape ``(n_samples,)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -192,13 +198,15 @@ def multiclass_recall(
     ```
     """
     y_true, y_pred = preprocess_pred(
-        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=drop_nan
+        y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=nan_policy == "omit"
     )
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_pred_nan = contains_nan(arr=y_pred, nan_policy=nan_policy, name="'y_pred'")
 
     per_class = np.array([])
     macro, micro, weighted = float("nan"), float("nan"), float("nan")
     n_samples = y_true.shape[0]
-    if n_samples > 0:
+    if n_samples > 0 and not y_true_nan and not y_pred_nan:
         macro = metrics.recall_score(
             y_true=y_true, y_pred=y_pred, average="macro", zero_division=0.0
         )
@@ -226,7 +234,7 @@ def multilabel_recall(
     *,
     prefix: str = "",
     suffix: str = "",
-    drop_nan: bool = False,
+    nan_policy: str = "propagate",
 ) -> dict[str, float | np.ndarray]:
     r"""Return the recall metrics for multilabel labels.
 
@@ -237,8 +245,9 @@ def multilabel_recall(
             be an array of shape ``(n_samples, n_classes)``.
         prefix: The key prefix in the returned dictionary.
         suffix: The key suffix in the returned dictionary.
-        drop_nan: If ``True``, the NaN values are ignored while
-            computing the metrics, otherwise an exception is raised.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Returns:
         The computed metrics.
@@ -261,12 +270,14 @@ def multilabel_recall(
 
     ```
     """
-    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, drop_nan=drop_nan)
+    y_true, y_pred = preprocess_pred_multilabel(y_true, y_pred, drop_nan=nan_policy == "omit")
+    y_true_nan = contains_nan(arr=y_true, nan_policy=nan_policy, name="'y_true'")
+    y_pred_nan = contains_nan(arr=y_pred, nan_policy=nan_policy, name="'y_pred'")
 
     per_class = np.array([])
     macro, micro, weighted = float("nan"), float("nan"), float("nan")
     n_samples = y_true.shape[0]
-    if n_samples > 0:
+    if n_samples > 0 and not y_true_nan and not y_pred_nan:
         per_class = np.array(
             metrics.recall_score(
                 y_true=y_true,

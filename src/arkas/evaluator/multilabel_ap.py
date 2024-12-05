@@ -48,7 +48,7 @@ class MultilabelAveragePrecisionEvaluator(BaseLazyEvaluator[MultilabelAveragePre
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    MultilabelAveragePrecisionResult(y_true=(5, 3), y_score=(5, 3))
+    MultilabelAveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), nan_policy=propagate)
 
     ```
     """

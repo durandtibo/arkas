@@ -54,6 +54,35 @@ def test_mean_squared_error_result_y_pred_incorrect_shape() -> None:
         )
 
 
+def test_mean_squared_error_result_nan_policy() -> None:
+    assert (
+        MeanSquaredErrorResult(
+            y_true=np.array([1, 2, 3, 4, 5]),
+            y_pred=np.array([5, 4, 3, 2, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_mean_squared_error_result_nan_policy_default() -> None:
+    assert (
+        MeanSquaredErrorResult(
+            y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([5, 4, 3, 2, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_mean_squared_error_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MeanSquaredErrorResult(
+            y_true=np.array([1, 2, 3, 4, 5]),
+            y_pred=np.array([5, 4, 3, 2, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_mean_squared_error_result_repr() -> None:
     assert repr(
         MeanSquaredErrorResult(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]))
@@ -87,6 +116,18 @@ def test_mean_squared_error_result_equal_false_different_y_pred() -> None:
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ).equal(
         MeanSquaredErrorResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0]))
+    )
+
+
+def test_mean_squared_error_result_equal_false_different_nan_policy() -> None:
+    assert not MeanSquaredErrorResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        MeanSquaredErrorResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            nan_policy="omit",
+        )
     )
 
 
@@ -146,6 +187,40 @@ def test_mean_squared_error_result_compute_metrics_prefix_suffix() -> None:
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {"prefix_count_suffix": 5, "prefix_mean_squared_error_suffix": 0.0},
     )
+
+
+def test_mean_squared_error_result_compute_metrics_nan_omit() -> None:
+    result = MeanSquaredErrorResult(
+        y_true=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
+        y_pred=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 4, "mean_squared_error": 0.0},
+    )
+
+
+def test_mean_squared_error_result_compute_metrics_nan_propagate() -> None:
+    result = MeanSquaredErrorResult(
+        y_true=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
+        y_pred=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 7, "mean_squared_error": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_mean_squared_error_result_compute_metrics_nan_raise() -> None:
+    result = MeanSquaredErrorResult(
+        y_true=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
+        y_pred=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_mean_squared_error_result_generate_figures() -> None:

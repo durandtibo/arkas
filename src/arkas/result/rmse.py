@@ -1,15 +1,14 @@
-r"""Implement the R^2 (coefficient of determination) regression score
-result."""
+r"""Implement the root mean squared error (RMSE) result."""
 
 from __future__ import annotations
 
-__all__ = ["R2ScoreResult"]
+__all__ = ["RootMeanSquaredErrorResult"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.regression.r2 import r2_score
+from arkas.metric.regression.rmse import root_mean_squared_error
 from arkas.metric.utils import check_nan_policy, check_same_shape_pred
 from arkas.result.base import BaseResult
 
@@ -17,9 +16,8 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-class R2ScoreResult(BaseResult):
-    r"""Implement the R^2 (coefficient of determination) regression score
-    result.
+class RootMeanSquaredErrorResult(BaseResult):
+    r"""Implement the mean squared error (MSE) result.
 
     Args:
         y_true: The ground truth target values.
@@ -33,26 +31,24 @@ class R2ScoreResult(BaseResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import R2ScoreResult
-    >>> result = R2ScoreResult(
+    >>> from arkas.result import RootMeanSquaredErrorResult
+    >>> result = RootMeanSquaredErrorResult(
     ...     y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
     ... )
     >>> result
-    R2ScoreResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    RootMeanSquaredErrorResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
     >>> result.compute_metrics()
-    {'count': 5, 'r2_score': 1.0}
+    {'count': 5, 'root_mean_squared_error': 0.0}
 
     ```
     """
 
     def __init__(
-        self,
-        y_true: np.ndarray,
-        y_pred: np.ndarray,
-        nan_policy: str = "propagate",
+        self, y_true: np.ndarray, y_pred: np.ndarray, nan_policy: str = "propagate"
     ) -> None:
         self._y_true = y_true.ravel()
         self._y_pred = y_pred.ravel()
+
         check_same_shape_pred(y_true=self._y_true, y_pred=self._y_pred)
 
         check_nan_policy(nan_policy)
@@ -77,7 +73,7 @@ class R2ScoreResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return r2_score(
+        return root_mean_squared_error(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
