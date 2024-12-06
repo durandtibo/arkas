@@ -40,7 +40,7 @@ class MulticlassRecallEvaluator(BaseLazyEvaluator[MulticlassRecallResult]):
     >>> data = pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    MulticlassRecallResult(y_true=(6,), y_pred=(6,))
+    MulticlassRecallResult(y_true=(6,), y_pred=(6,), nan_policy=propagate)
 
     ```
     """
