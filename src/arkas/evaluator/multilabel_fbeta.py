@@ -49,7 +49,7 @@ class MultilabelFbetaScoreEvaluator(BaseLazyEvaluator[MultilabelFbetaScoreResult
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    MultilabelFbetaScoreResult(y_true=(5, 3), y_pred=(5, 3), betas=(1,))
+    MultilabelFbetaScoreResult(y_true=(5, 3), y_pred=(5, 3), betas=(1,), nan_policy=propagate)
 
     ```
     """
