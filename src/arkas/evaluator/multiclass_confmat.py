@@ -40,7 +40,7 @@ class MulticlassConfusionMatrixEvaluator(BaseLazyEvaluator[MulticlassConfusionMa
     >>> data = pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    MulticlassConfusionMatrixResult(y_true=(6,), y_pred=(6,))
+    MulticlassConfusionMatrixResult(y_true=(6,), y_pred=(6,), nan_policy=propagate)
 
     ```
     """
