@@ -49,7 +49,7 @@ class BinaryPrecisionSection(BaseSection):
     ... )
     >>> section
     BinaryPrecisionSection(
-      (result): BinaryPrecisionResult(y_true=(5,), y_pred=(5,))
+      (result): BinaryPrecisionResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
     )
     >>> section.generate_html_body()
 
