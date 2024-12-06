@@ -75,6 +75,33 @@ def test_recall_result_incorrect_label_type() -> None:
         )
 
 
+def test_recall_result_nan_policy() -> None:
+    assert (
+        RecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_recall_result_nan_policy_default() -> None:
+    assert (
+        RecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])).nan_policy
+        == "propagate"
+    )
+
+
+def test_recall_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        RecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_recall_result_repr() -> None:
     assert repr(
         RecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
@@ -113,6 +140,18 @@ def test_recall_result_equal_false_different_label_type() -> None:
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 0]),
             label_type="multiclass",
+        )
+    )
+
+
+def test_recall_result_equal_false_different_nan_policy() -> None:
+    assert not RecallResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        RecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            nan_policy="omit",
         )
     )
 
@@ -158,6 +197,40 @@ def test_recall_result_compute_metrics_binary_prefix_suffix() -> None:
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {"prefix_count_suffix": 5, "prefix_recall_suffix": 1.0},
     )
+
+
+def test_recall_result_compute_metrics_binary_nan_omit() -> None:
+    result = RecallResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 5, "recall": 1.0},
+    )
+
+
+def test_recall_result_compute_metrics_binary_nan_propagate() -> None:
+    result = RecallResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 6, "recall": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_recall_result_compute_metrics_binary_nan_raise() -> None:
+    result = RecallResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_recall_result_compute_metrics_multiclass_correct() -> None:
@@ -218,6 +291,52 @@ def test_recall_result_compute_metrics_multiclass_prefix_suffix() -> None:
             "prefix_weighted_recall_suffix": 1.0,
         },
     )
+
+
+def test_recall_result_compute_metrics_multiclass_nan_omit() -> None:
+    result = RecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_recall": 1.0,
+            "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
+            "weighted_recall": 1.0,
+        },
+    )
+
+
+def test_recall_result_compute_metrics_multiclass_nan_propagate() -> None:
+    result = RecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 7,
+            "macro_recall": float("nan"),
+            "micro_recall": float("nan"),
+            "recall": np.array([]),
+            "weighted_recall": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_recall_result_compute_metrics_multiclass_nan_raise() -> None:
+    result = RecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_recall_result_compute_metrics_multilabel_1_class() -> None:
@@ -300,6 +419,64 @@ def test_recall_result_compute_metrics_multilabel_prefix_suffix() -> None:
     )
 
 
+def test_recall_result_compute_metrics_multilabel_nan_omit() -> None:
+    result = RecallResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 5,
+            "macro_recall": 1.0,
+            "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
+            "weighted_recall": 1.0,
+        },
+    )
+
+
+def test_recall_result_compute_metrics_multilabel_nan_propagate() -> None:
+    result = RecallResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_recall": float("nan"),
+            "micro_recall": float("nan"),
+            "recall": np.array([]),
+            "weighted_recall": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_recall_result_compute_metrics_multilabel_nan_raise() -> None:
+    result = RecallResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
+
+
 def test_recall_result_generate_figures() -> None:
     result = RecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
     assert objects_are_equal(result.generate_figures(), {})
@@ -356,6 +533,35 @@ def test_binary_recall_result_incorrect_shape() -> None:
         BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1, 0]))
 
 
+def test_binary_recall_result_nan_policy() -> None:
+    assert (
+        BinaryRecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_binary_recall_result_nan_policy_default() -> None:
+    assert (
+        BinaryRecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_binary_recall_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        BinaryRecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_binary_recall_result_repr() -> None:
     assert repr(
         BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
@@ -384,6 +590,18 @@ def test_binary_recall_result_equal_false_different_y_pred() -> None:
     assert not BinaryRecallResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
     ).equal(BinaryRecallResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])))
+
+
+def test_binary_recall_result_equal_false_different_nan_policy() -> None:
+    assert not BinaryRecallResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+    ).equal(
+        BinaryRecallResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="omit",
+        )
+    )
 
 
 def test_binary_recall_result_equal_false_different_type() -> None:
@@ -427,6 +645,40 @@ def test_binary_recall_result_compute_metrics_prefix_suffix() -> None:
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {"prefix_count_suffix": 5, "prefix_recall_suffix": 1.0},
     )
+
+
+def test_binary_recall_result_compute_metrics_nan_omit() -> None:
+    result = BinaryRecallResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 5, "recall": 1.0},
+    )
+
+
+def test_binary_recall_result_compute_metrics_nan_propagate() -> None:
+    result = BinaryRecallResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 6, "recall": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_binary_recall_result_compute_metrics_nan_raise() -> None:
+    result = BinaryRecallResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_binary_recall_result_generate_figures() -> None:
@@ -498,6 +750,35 @@ def test_multiclass_recall_result_incorrect_shape() -> None:
         )
 
 
+def test_multiclass_recall_result_nan_policy() -> None:
+    assert (
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multiclass_recall_result_nan_policy_default() -> None:
+    assert (
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multiclass_recall_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_multiclass_recall_result_repr() -> None:
     assert repr(
         MulticlassRecallResult(
@@ -540,6 +821,18 @@ def test_multiclass_recall_result_equal_false_different_y_pred() -> None:
     ).equal(
         MulticlassRecallResult(
             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
+        )
+    )
+
+
+def test_multiclass_recall_result_equal_false_different_nan_policy() -> None:
+    assert not MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassRecallResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="omit",
         )
     )
 
@@ -626,6 +919,52 @@ def test_multiclass_recall_result_compute_metrics_prefix_suffix() -> None:
     )
 
 
+def test_multiclass_recall_result_compute_metrics_multiclass_nan_omit() -> None:
+    result = MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_recall": 1.0,
+            "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
+            "weighted_recall": 1.0,
+        },
+    )
+
+
+def test_multiclass_recall_result_compute_metrics_multiclass_nan_propagate() -> None:
+    result = MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 7,
+            "macro_recall": float("nan"),
+            "micro_recall": float("nan"),
+            "recall": np.array([]),
+            "weighted_recall": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_recall_result_compute_metrics_multiclass_nan_raise() -> None:
+    result = MulticlassRecallResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_pred=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
+
+
 def test_multiclass_recall_result_generate_figures() -> None:
     result = MulticlassRecallResult(
         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
@@ -668,6 +1007,36 @@ def test_multilabel_recall_result_incorrect_shape() -> None:
         MultilabelRecallResult(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0], [1, 1, 1]]),
+        )
+
+
+def test_multilabel_recall_result_nan_policy() -> None:
+    assert (
+        MultilabelRecallResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multilabel_recall_result_nan_policy_default() -> None:
+    assert (
+        MultilabelRecallResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multilabel_recall_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MultilabelRecallResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="incorrect",
         )
 
 
@@ -721,6 +1090,19 @@ def test_multilabel_recall_result_equal_false_different_y_pred() -> None:
         MultilabelRecallResult(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 1, 1]]),
+        )
+    )
+
+
+def test_multilabel_recall_result_equal_false_different_nan_policy() -> None:
+    assert not MultilabelRecallResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(
+        MultilabelRecallResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="omit",
         )
     )
 
@@ -823,6 +1205,64 @@ def test_multilabel_recall_result_compute_metrics_prefix_suffix() -> None:
             "prefix_weighted_recall_suffix": 1.0,
         },
     )
+
+
+def test_multilabel_recall_result_compute_metrics_nan_omit() -> None:
+    result = MultilabelRecallResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 5,
+            "macro_recall": 1.0,
+            "micro_recall": 1.0,
+            "recall": np.array([1.0, 1.0, 1.0]),
+            "weighted_recall": 1.0,
+        },
+    )
+
+
+def test_multilabel_recall_result_compute_metrics_nan_propagate() -> None:
+    result = MultilabelRecallResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_recall": float("nan"),
+            "micro_recall": float("nan"),
+            "recall": np.array([]),
+            "weighted_recall": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_recall_result_compute_metrics_nan_raise() -> None:
+    result = MultilabelRecallResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_multilabel_recall_result_generate_figures() -> None:
