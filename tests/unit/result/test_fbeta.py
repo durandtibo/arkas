@@ -76,6 +76,35 @@ def test_binary_fbeta_score_result_betas_default() -> None:
     )
 
 
+def test_binary_fbeta_score_result_nan_policy() -> None:
+    assert (
+        BinaryFbetaScoreResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_binary_fbeta_score_result_nan_policy_default() -> None:
+    assert (
+        BinaryFbetaScoreResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_binary_fbeta_score_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        BinaryFbetaScoreResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_binary_fbeta_score_result_repr() -> None:
     assert repr(
         BinaryFbetaScoreResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
@@ -118,6 +147,18 @@ def test_binary_fbeta_score_result_equal_false_different_betas() -> None:
     ).equal(
         BinaryFbetaScoreResult(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]), betas=[0.5, 1, 2]
+        )
+    )
+
+
+def test_binary_fbeta_score_result_equal_false_different_nan_policy() -> None:
+    assert not BinaryFbetaScoreResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BinaryFbetaScoreResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            nan_policy="omit",
         )
     )
 
@@ -178,6 +219,37 @@ def test_binary_fbeta_score_result_compute_metrics_prefix_suffix() -> None:
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {"prefix_count_suffix": 5, "prefix_f1_suffix": 1.0},
     )
+
+
+def test_binary_fbeta_score_result_compute_metrics_binary_nan_omit() -> None:
+    result = BinaryFbetaScoreResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(result.compute_metrics(), {"count": 5, "f1": 1.0})
+
+
+def test_binary_fbeta_score_result_compute_metrics_binary_nan_propagate() -> None:
+    result = BinaryFbetaScoreResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 6, "f1": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_binary_fbeta_score_result_compute_metrics_binary_nan_raise() -> None:
+    result = BinaryFbetaScoreResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_binary_fbeta_score_result_generate_figures() -> None:
@@ -267,6 +339,35 @@ def test_multiclass_fbeta_score_result_betas_default() -> None:
     )
 
 
+def test_multiclass_fbeta_score_result_nan_policy() -> None:
+    assert (
+        MulticlassFbetaScoreResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multiclass_fbeta_score_result_nan_policy_default() -> None:
+    assert (
+        MulticlassFbetaScoreResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multiclass_fbeta_score_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MulticlassFbetaScoreResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_multiclass_fbeta_score_result_repr() -> None:
     assert repr(
         MulticlassFbetaScoreResult(
@@ -321,6 +422,18 @@ def test_multiclass_fbeta_score_result_equal_false_different_betas() -> None:
             y_true=np.array([0, 0, 1, 1, 2, 2]),
             y_pred=np.array([0, 0, 1, 1, 2, 1]),
             betas=[0.5, 1, 2],
+        )
+    )
+
+
+def test_multiclass_fbeta_score_result_equal_false_different_nan_policy() -> None:
+    assert not MulticlassFbetaScoreResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassFbetaScoreResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="omit",
         )
     )
 
@@ -434,6 +547,52 @@ def test_multiclass_fbeta_score_result_compute_metrics_prefix_suffix() -> None:
     )
 
 
+def test_multiclass_fbeta_score_result_compute_metrics_multiclass_nan_omit() -> None:
+    result = MulticlassFbetaScoreResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multiclass_fbeta_score_result_compute_metrics_multiclass_nan_propagate() -> None:
+    result = MulticlassFbetaScoreResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 7,
+            "macro_f1": float("nan"),
+            "micro_f1": float("nan"),
+            "f1": np.array([]),
+            "weighted_f1": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_fbeta_score_result_compute_metrics_multiclass_nan_raise() -> None:
+    result = MulticlassFbetaScoreResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
+
+
 def test_multiclass_fbeta_score_result_generate_figures() -> None:
     result = MulticlassFbetaScoreResult(
         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
@@ -500,6 +659,36 @@ def test_multilabel_fbeta_score_result_betas_default() -> None:
     )
 
 
+def test_multilabel_fbeta_score_result_nan_policy() -> None:
+    assert (
+        MultilabelFbetaScoreResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multilabel_fbeta_score_result_nan_policy_default() -> None:
+    assert (
+        MultilabelFbetaScoreResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multilabel_fbeta_score_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MultilabelFbetaScoreResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="incorrect",
+        )
+
+
 def test_multilabel_fbeta_score_result_repr() -> None:
     assert repr(
         MultilabelFbetaScoreResult(
@@ -563,6 +752,19 @@ def test_multilabel_fbeta_score_result_equal_false_different_betas() -> None:
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
             betas=[0.5, 1, 2],
+        )
+    )
+
+
+def test_multilabel_fbeta_score_result_equal_false_different_nan_policy() -> None:
+    assert not MultilabelFbetaScoreResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(
+        MultilabelFbetaScoreResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="omit",
         )
     )
 
@@ -691,6 +893,64 @@ def test_multilabel_fbeta_score_result_compute_metrics_prefix_suffix() -> None:
             "prefix_weighted_f1_suffix": 1.0,
         },
     )
+
+
+def test_multilabel_fbeta_score_result_compute_metrics_nan_omit() -> None:
+    result = MultilabelFbetaScoreResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 5,
+            "macro_f1": 1.0,
+            "micro_f1": 1.0,
+            "f1": np.array([1.0, 1.0, 1.0]),
+            "weighted_f1": 1.0,
+        },
+    )
+
+
+def test_multilabel_fbeta_score_result_compute_metrics_nan_propagate() -> None:
+    result = MultilabelFbetaScoreResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_f1": float("nan"),
+            "micro_f1": float("nan"),
+            "f1": np.array([]),
+            "weighted_f1": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_fbeta_score_result_compute_metrics_nan_raise() -> None:
+    result = MultilabelFbetaScoreResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_multilabel_fbeta_score_result_generate_figures() -> None:
