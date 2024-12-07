@@ -57,7 +57,7 @@ class MulticlassRocAucEvaluator(BaseLazyEvaluator[MulticlassRocAucResult]):
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    MulticlassRocAucResult(y_true=(6,), y_score=(6, 3))
+    MulticlassRocAucResult(y_true=(6,), y_score=(6, 3), nan_policy=propagate)
 
     ```
     """
