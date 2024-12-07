@@ -69,6 +69,33 @@ def test_binary_classification_result_y_score_incorrect_shape() -> None:
         )
 
 
+def test_binary_classification_result_nan_policy() -> None:
+    assert (
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]), nan_policy="omit"
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_binary_classification_result_nan_policy_default() -> None:
+    assert (
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_binary_classification_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_binary_classification_result_repr() -> None:
     assert repr(
         BinaryClassificationResult(
@@ -153,6 +180,16 @@ def test_binary_classification_result_equal_false_betas() -> None:
     ).equal(
         BinaryClassificationResult(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), betas=[1, 2]
+        )
+    )
+
+
+def test_binary_classification_result_equal_false_different_nan_policy() -> None:
+    assert not BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BinaryClassificationResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), nan_policy="omit"
         )
     )
 
@@ -361,6 +398,89 @@ def test_binary_classification_result_compute_metrics_prefix_suffix() -> None:
             "prefix_true_positive_rate_suffix": 1.0,
         },
     )
+
+
+def test_binary_classification_result_compute_metrics_nan_omit() -> None:
+    result = BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "accuracy": 1.0,
+            "average_precision": 1.0,
+            "balanced_accuracy": 1.0,
+            "confusion_matrix": np.array([[2, 0], [0, 3]]),
+            "count": 5,
+            "count_correct": 5,
+            "count_incorrect": 0,
+            "error": 0.0,
+            "f1": 1.0,
+            "false_negative": 0,
+            "false_negative_rate": 0.0,
+            "false_positive": 0,
+            "false_positive_rate": 0.0,
+            "jaccard": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "roc_auc": 1.0,
+            "true_negative": 2,
+            "true_negative_rate": 1.0,
+            "true_positive": 3,
+            "true_positive_rate": 1.0,
+        },
+    )
+
+
+def test_binary_classification_result_compute_metrics_nan_propagate() -> None:
+    result = BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
+    )
+    assert objects_are_equal(
+        dict(sorted(result.compute_metrics().items())),
+        {
+            "accuracy": float("nan"),
+            "average_precision": float("nan"),
+            "balanced_accuracy": float("nan"),
+            "confusion_matrix": np.array(
+                [[float("nan"), float("nan")], [float("nan"), float("nan")]]
+            ),
+            "count": 6,
+            "count_correct": float("nan"),
+            "count_incorrect": float("nan"),
+            "error": float("nan"),
+            "f1": float("nan"),
+            "false_negative": float("nan"),
+            "false_negative_rate": float("nan"),
+            "false_positive": float("nan"),
+            "false_positive_rate": float("nan"),
+            "jaccard": float("nan"),
+            "precision": float("nan"),
+            "recall": float("nan"),
+            "roc_auc": float("nan"),
+            "true_negative": float("nan"),
+            "true_negative_rate": float("nan"),
+            "true_positive": float("nan"),
+            "true_positive_rate": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_binary_classification_result_compute_metrics_nan_raise() -> None:
+    result = BinaryClassificationResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_binary_classification_result_generate_figures() -> None:
