@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
+from arkas.metric.utils import check_nan_policy
 from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
 from arkas.result.ap import BinaryAveragePrecisionResult
 from arkas.result.base import BaseResult
@@ -40,6 +41,9 @@ class BinaryClassificationResult(BaseResult):
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions.
         betas: The betas used to compute the F-beta scores.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -53,7 +57,7 @@ class BinaryClassificationResult(BaseResult):
     ...     y_score=np.array([2, -1, 0, 3, 1]),
     ... )
     >>> result
-    BinaryClassificationResult(y_true=(5,), y_pred=(5,), y_score=(5,), betas=(1,))
+    BinaryClassificationResult(y_true=(5,), y_pred=(5,), y_score=(5,), betas=(1,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'accuracy': 1.0,
      'count_correct': 5,
@@ -86,26 +90,49 @@ class BinaryClassificationResult(BaseResult):
         y_pred: np.ndarray,
         y_score: np.ndarray | None = None,
         betas: Sequence[float] = (1,),
+        nan_policy: str = "propagate",
     ) -> None:
         self._y_true = y_true.ravel()
         self._y_pred = y_pred.ravel()
         self._y_score = None if y_score is None else y_score.ravel()
         self._betas = tuple(betas)
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
         results = [
-            AccuracyResult(y_true=self._y_true, y_pred=self._y_pred),
-            BalancedAccuracyResult(y_true=self._y_true, y_pred=self._y_pred),
-            BinaryConfusionMatrixResult(y_true=self._y_true, y_pred=self._y_pred),
-            BinaryFbetaScoreResult(y_true=self._y_true, y_pred=self._y_pred, betas=self._betas),
-            BinaryJaccardResult(y_true=self._y_true, y_pred=self._y_pred),
-            BinaryPrecisionResult(y_true=self._y_true, y_pred=self._y_pred),
-            BinaryRecallResult(y_true=self._y_true, y_pred=self._y_pred),
+            AccuracyResult(y_true=self._y_true, y_pred=self._y_pred, nan_policy=self._nan_policy),
+            BalancedAccuracyResult(
+                y_true=self._y_true, y_pred=self._y_pred, nan_policy=self._nan_policy
+            ),
+            BinaryConfusionMatrixResult(
+                y_true=self._y_true, y_pred=self._y_pred, nan_policy=self._nan_policy
+            ),
+            BinaryFbetaScoreResult(
+                y_true=self._y_true,
+                y_pred=self._y_pred,
+                betas=self._betas,
+                nan_policy=self._nan_policy,
+            ),
+            BinaryJaccardResult(
+                y_true=self._y_true, y_pred=self._y_pred, nan_policy=self._nan_policy
+            ),
+            BinaryPrecisionResult(
+                y_true=self._y_true, y_pred=self._y_pred, nan_policy=self._nan_policy
+            ),
+            BinaryRecallResult(
+                y_true=self._y_true, y_pred=self._y_pred, nan_policy=self._nan_policy
+            ),
         ]
         if self._y_score is not None:
             results.extend(
                 [
-                    BinaryAveragePrecisionResult(y_true=self._y_true, y_score=self._y_score),
-                    BinaryRocAucResult(y_true=self._y_true, y_score=self._y_score),
+                    BinaryAveragePrecisionResult(
+                        y_true=self._y_true, y_score=self._y_score, nan_policy=self._nan_policy
+                    ),
+                    BinaryRocAucResult(
+                        y_true=self._y_true, y_score=self._y_score, nan_policy=self._nan_policy
+                    ),
                 ]
             )
         self._results = SequentialResult(results)
@@ -117,9 +144,14 @@ class BinaryClassificationResult(BaseResult):
                 "y_pred": self._y_pred.shape,
                 "y_score": self._y_score.shape if self._y_score is not None else None,
                 "betas": self._betas,
+                "nan_policy": self._nan_policy,
             }
         )
         return f"{self.__class__.__qualname__}({args})"
+
+    @property
+    def nan_policy(self) -> str:
+        return self._nan_policy
 
     @property
     def y_true(self) -> np.ndarray:
@@ -144,6 +176,7 @@ class BinaryClassificationResult(BaseResult):
             and objects_are_equal(self.y_pred, other.y_pred, equal_nan=equal_nan)
             and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
             and objects_are_equal(self._betas, other._betas, equal_nan=equal_nan)
+            and self.nan_policy == other.nan_policy
         )
 
     def generate_figures(self, prefix: str = "", suffix: str = "") -> dict[str, float]:

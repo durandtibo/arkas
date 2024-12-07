@@ -51,7 +51,7 @@ class BinaryClassificationEvaluator(BaseLazyEvaluator[BinaryClassificationResult
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    BinaryClassificationResult(y_true=(5,), y_pred=(5,), y_score=(5,), betas=(1,))
+    BinaryClassificationResult(y_true=(5,), y_pred=(5,), y_score=(5,), betas=(1,), nan_policy='propagate')
 
     ```
     """
