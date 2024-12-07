@@ -52,6 +52,33 @@ def test_regression_error_result_y_pred_incorrect_shape() -> None:
         RegressionErrorResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1, 0]))
 
 
+def test_regression_error_result_nan_policy() -> None:
+    assert (
+        RegressionErrorResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]), nan_policy="omit"
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_regression_error_result_nan_policy_default() -> None:
+    assert (
+        RegressionErrorResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_regression_error_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        RegressionErrorResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_regression_error_result_repr() -> None:
     assert repr(
         RegressionErrorResult(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]))
@@ -85,6 +112,16 @@ def test_regression_error_result_equal_false_different_y_pred() -> None:
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ).equal(
         RegressionErrorResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0]))
+    )
+
+
+def test_regression_error_result_equal_false_different_nan_policy() -> None:
+    assert not RegressionErrorResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        RegressionErrorResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), nan_policy="omit"
+        )
     )
 
 
@@ -170,6 +207,50 @@ def test_regression_error_result_compute_metrics_prefix_suffix() -> None:
             "prefix_mean_squared_error_suffix": 0.0,
         },
     )
+
+
+def test_regression_error_result_compute_metrics_nan_omit() -> None:
+    result = RegressionErrorResult(
+        y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
+        y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 3,
+            "mean_absolute_error": 0.0,
+            "median_absolute_error": 0.0,
+            "mean_squared_error": 0.0,
+        },
+    )
+
+
+def test_regression_error_result_compute_metrics_nan_propagate() -> None:
+    result = RegressionErrorResult(
+        y_true=np.array([float("nan"), 2, 3, 4, 5, float("nan")]),
+        y_pred=np.array([1, 2, 3, 4, float("nan"), float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "mean_absolute_error": float("nan"),
+            "median_absolute_error": float("nan"),
+            "mean_squared_error": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_regression_error_result_compute_metrics_nan_raise() -> None:
+    result = RegressionErrorResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_regression_error_result_generate_figures() -> None:
