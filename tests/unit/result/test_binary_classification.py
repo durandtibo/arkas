@@ -442,7 +442,7 @@ def test_binary_classification_result_compute_metrics_nan_propagate() -> None:
         y_score=np.array([2, -1, 0, 3, 1, float("nan")]),
     )
     assert objects_are_equal(
-        result.compute_metrics(),
+        dict(sorted(result.compute_metrics().items())),
         {
             "accuracy": float("nan"),
             "average_precision": float("nan"),
@@ -450,15 +450,15 @@ def test_binary_classification_result_compute_metrics_nan_propagate() -> None:
             "confusion_matrix": np.array(
                 [[float("nan"), float("nan")], [float("nan"), float("nan")]]
             ),
-            "count": float("nan"),
-            "count_correct": 6,
+            "count": 6,
+            "count_correct": float("nan"),
             "count_incorrect": float("nan"),
             "error": float("nan"),
             "f1": float("nan"),
             "false_negative": float("nan"),
             "false_negative_rate": float("nan"),
             "false_positive": float("nan"),
-            "false_positive_rate": 0.0,
+            "false_positive_rate": float("nan"),
             "jaccard": float("nan"),
             "precision": float("nan"),
             "recall": float("nan"),
@@ -468,6 +468,7 @@ def test_binary_classification_result_compute_metrics_nan_propagate() -> None:
             "true_positive": float("nan"),
             "true_positive_rate": float("nan"),
         },
+        equal_nan=True,
     )
 
 
