@@ -51,7 +51,7 @@ def root_mean_squared_error(
     ```
 
     Note:
-        ``root_mean_squared_error`` was added in sklearn 1.4.0
+        Require ``sklearn>=1.4.0``
     """
     y_true, y_pred = preprocess_pred(
         y_true=y_true.ravel(), y_pred=y_pred.ravel(), drop_nan=nan_policy == "omit"

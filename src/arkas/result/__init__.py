@@ -22,6 +22,7 @@ __all__ = [
     "MappingResult",
     "MeanAbsoluteErrorResult",
     "MeanSquaredErrorResult",
+    "MeanSquaredLogErrorResult",
     "MulticlassAveragePrecisionResult",
     "MulticlassConfusionMatrixResult",
     "MulticlassFbetaScoreResult",
@@ -78,6 +79,7 @@ from arkas.result.kl import KLDivResult
 from arkas.result.mae import MeanAbsoluteErrorResult
 from arkas.result.mapping import MappingResult
 from arkas.result.mse import MeanSquaredErrorResult
+from arkas.result.msle import MeanSquaredLogErrorResult
 from arkas.result.pearson import PearsonCorrelationResult
 from arkas.result.precision import (
     BinaryPrecisionResult,
