@@ -3,13 +3,13 @@ distributions result."""
 
 from __future__ import annotations
 
-__all__ = ["JSDivResult"]
+__all__ = ["JensenShannonDivergenceResult"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric import js_div
+from arkas.metric import jensen_shannon_divergence
 from arkas.metric.utils import check_same_shape
 from arkas.result.base import BaseResult
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-class JSDivResult(BaseResult):
+class JensenShannonDivergenceResult(BaseResult):
     r"""Implement the Jensen-Shannon (JS) divergence between two 1D
     distributions result.
 
@@ -30,12 +30,14 @@ class JSDivResult(BaseResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import JSDivResult
-    >>> result = JSDivResult(p=np.array([0.1, 0.6, 0.1, 0.2]), q=np.array([0.2, 0.5, 0.2, 0.1]))
+    >>> from arkas.result import JensenShannonDivergenceResult
+    >>> result = JensenShannonDivergenceResult(
+    ...     p=np.array([0.1, 0.6, 0.1, 0.2]), q=np.array([0.2, 0.5, 0.2, 0.1])
+    ... )
     >>> result
-    JSDivResult(p=(4,), q=(4,))
+    JensenShannonDivergenceResult(p=(4,), q=(4,))
     >>> result.compute_metrics()
-    {'size': 4, 'js_div': 0.027...}
+    {'size': 4, 'jensen_shannon_divergence': 0.027...}
 
     ```
     """
@@ -58,7 +60,7 @@ class JSDivResult(BaseResult):
         return self._q
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return js_div(p=self._p, q=self._q, prefix=prefix, suffix=suffix)
+        return jensen_shannon_divergence(p=self._p, q=self._q, prefix=prefix, suffix=suffix)
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
