@@ -1,4 +1,4 @@
-r"""Contain the mean squared error (MSLE) evaluator."""
+r"""Contain the mean squared logarithmic error (MSLE) evaluator."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class MeanSquaredLogErrorEvaluator(BaseLazyEvaluator[MeanSquaredLogErrorResult]):
-    r"""Implement the mean squared error (MSLE) evaluator.
+    r"""Implement the mean squared logarithmic error (MSLE) evaluator.
 
     Args:
         y_true: The key or column name of the ground truth target
