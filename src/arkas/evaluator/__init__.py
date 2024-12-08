@@ -34,6 +34,7 @@ __all__ = [
     "MultilabelPrecisionEvaluator",
     "MultilabelRecallEvaluator",
     "MultilabelRocAucEvaluator",
+    "PearsonCorrelationEvaluator",
     "R2ScoreEvaluator",
     "RootMeanSquaredErrorEvaluator",
     "SequentialEvaluator",
@@ -72,6 +73,7 @@ from arkas.evaluator.multilabel_jaccard import MultilabelJaccardEvaluator
 from arkas.evaluator.multilabel_precision import MultilabelPrecisionEvaluator
 from arkas.evaluator.multilabel_recall import MultilabelRecallEvaluator
 from arkas.evaluator.multilabel_roc_auc import MultilabelRocAucEvaluator
+from arkas.evaluator.pearson import PearsonCorrelationEvaluator
 from arkas.evaluator.r2 import R2ScoreEvaluator
 from arkas.evaluator.rmse import RootMeanSquaredErrorEvaluator
 from arkas.evaluator.sequential import SequentialEvaluator
