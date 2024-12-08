@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from coola import objects_are_allclose, objects_are_equal
+from coola import objects_are_allclose
 
 from arkas.result import SpearmanCorrelationResult
 
@@ -223,7 +223,7 @@ def test_spearman_correlation_result_compute_metrics_nan_omit() -> None:
         y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
         nan_policy="omit",
     )
-    assert objects_are_equal(
+    assert objects_are_allclose(
         result.compute_metrics(),
         {"count": 4, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
     )
@@ -234,7 +234,7 @@ def test_spearman_correlation_result_compute_metrics_nan_propagate() -> None:
         x=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
         y=np.array([1, 2, 3, 4, 5, float("nan"), float("nan")]),
     )
-    assert objects_are_equal(
+    assert objects_are_allclose(
         result.compute_metrics(),
         {"count": 7, "spearman_coeff": float("nan"), "spearman_pvalue": float("nan")},
         equal_nan=True,
