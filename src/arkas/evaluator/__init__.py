@@ -38,6 +38,7 @@ __all__ = [
     "R2ScoreEvaluator",
     "RootMeanSquaredErrorEvaluator",
     "SequentialEvaluator",
+    "SpearmanCorrelationEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
 ]
@@ -77,3 +78,4 @@ from arkas.evaluator.pearson import PearsonCorrelationEvaluator
 from arkas.evaluator.r2 import R2ScoreEvaluator
 from arkas.evaluator.rmse import RootMeanSquaredErrorEvaluator
 from arkas.evaluator.sequential import SequentialEvaluator
+from arkas.evaluator.spearman import SpearmanCorrelationEvaluator

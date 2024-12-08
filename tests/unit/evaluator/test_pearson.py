@@ -6,7 +6,6 @@ import pytest
 
 from arkas.evaluator import PearsonCorrelationEvaluator
 from arkas.result import EmptyResult, PearsonCorrelationResult, Result
-from tests.conftest import sklearn_greater_equal_1_4
 
 #################################################
 #     Tests for PearsonCorrelationEvaluator     #
@@ -33,7 +32,6 @@ def test_pearson_correlation_evaluator_evaluate() -> None:
     )
 
 
-@sklearn_greater_equal_1_4
 def test_pearson_correlation_evaluator_evaluate_lazy_false() -> None:
     assert (
         PearsonCorrelationEvaluator(x="target", y="pred")

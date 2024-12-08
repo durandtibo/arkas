@@ -6,7 +6,6 @@ import pytest
 
 from arkas.evaluator import R2ScoreEvaluator
 from arkas.result import EmptyResult, R2ScoreResult, Result
-from tests.conftest import sklearn_greater_equal_1_4
 
 ######################################
 #     Tests for R2ScoreEvaluator     #
@@ -29,7 +28,6 @@ def test_r2_score_evaluator_evaluate() -> None:
     )
 
 
-@sklearn_greater_equal_1_4
 def test_r2_score_evaluator_evaluate_lazy_false() -> None:
     assert (
         R2ScoreEvaluator(y_true="target", y_pred="pred")
