@@ -24,6 +24,7 @@ __all__ = [
     "MeanAbsolutePercentageErrorResult",
     "MeanSquaredErrorResult",
     "MeanSquaredLogErrorResult",
+    "MedianAbsoluteErrorResult",
     "MulticlassAveragePrecisionResult",
     "MulticlassConfusionMatrixResult",
     "MulticlassFbetaScoreResult",
@@ -77,7 +78,7 @@ from arkas.result.jaccard import (
 )
 from arkas.result.jensen_shannon import JensenShannonDivergenceResult
 from arkas.result.kl import KLDivResult
-from arkas.result.mae import MeanAbsoluteErrorResult
+from arkas.result.mae import MeanAbsoluteErrorResult, MedianAbsoluteErrorResult
 from arkas.result.mape import MeanAbsolutePercentageErrorResult
 from arkas.result.mapping import MappingResult
 from arkas.result.mse import MeanSquaredErrorResult
