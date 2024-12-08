@@ -39,7 +39,7 @@ class BaseLazyEvaluator(BaseEvaluator, Generic[T]):
     >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    AccuracyResult(y_true=(6,), y_pred=(6,), nan_policy=propagate)
+    AccuracyResult(y_true=(6,), y_pred=(6,), nan_policy='propagate')
 
     ```
     """

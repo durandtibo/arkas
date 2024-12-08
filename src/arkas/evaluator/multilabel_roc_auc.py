@@ -50,7 +50,7 @@ class MultilabelRocAucEvaluator(BaseLazyEvaluator[MultilabelRocAucResult]):
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    MultilabelRocAucResult(y_true=(5, 3), y_score=(5, 3), nan_policy=propagate)
+    MultilabelRocAucResult(y_true=(5, 3), y_score=(5, 3), nan_policy='propagate')
 
     ```
     """

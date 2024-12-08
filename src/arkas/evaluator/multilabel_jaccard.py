@@ -46,7 +46,7 @@ class MultilabelJaccardEvaluator(BaseLazyEvaluator[MultilabelJaccardResult]):
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    MultilabelJaccardResult(y_true=(5, 3), y_pred=(5, 3), nan_policy=propagate)
+    MultilabelJaccardResult(y_true=(5, 3), y_pred=(5, 3), nan_policy='propagate')
 
     ```
     """

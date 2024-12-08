@@ -13,6 +13,7 @@ __all__ = [
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric.classification.roc_auc import (
     binary_roc_auc,
@@ -50,7 +51,7 @@ class BaseRocAucResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryRocAucResult(y_true=(5,), y_score=(5,), nan_policy=propagate)
+    BinaryRocAucResult(y_true=(5,), y_score=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'roc_auc': 1.0}
 
@@ -70,10 +71,14 @@ class BaseRocAucResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_score={self._y_score.shape}, nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_score": self._y_score.shape,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:
@@ -123,7 +128,7 @@ class BinaryRocAucResult(BaseRocAucResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ... )
     >>> result
-    BinaryRocAucResult(y_true=(5,), y_score=(5,), nan_policy=propagate)
+    BinaryRocAucResult(y_true=(5,), y_score=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'roc_auc': 1.0}
 
@@ -190,7 +195,7 @@ class MulticlassRocAucResult(BaseRocAucResult):
     ...     ),
     ... )
     >>> result
-    MulticlassRocAucResult(y_true=(6,), y_score=(6, 3), nan_policy=propagate)
+    MulticlassRocAucResult(y_true=(6,), y_score=(6, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 6,
      'macro_roc_auc': 1.0,
@@ -258,7 +263,7 @@ class MultilabelRocAucResult(BaseRocAucResult):
     ...     y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
     ... )
     >>> result
-    MultilabelRocAucResult(y_true=(5, 3), y_score=(5, 3), nan_policy=propagate)
+    MultilabelRocAucResult(y_true=(5, 3), y_score=(5, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5,
      'macro_roc_auc': 1.0,

@@ -41,7 +41,7 @@ class BinaryJaccardEvaluator(BaseLazyEvaluator[BinaryJaccardResult]):
     >>> data = pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    BinaryJaccardResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryJaccardResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
 
     ```
     """

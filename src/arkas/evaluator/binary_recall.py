@@ -40,7 +40,7 @@ class BinaryRecallEvaluator(BaseLazyEvaluator[BinaryRecallResult]):
     >>> data = pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    BinaryRecallResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryRecallResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
 
     ```
     """

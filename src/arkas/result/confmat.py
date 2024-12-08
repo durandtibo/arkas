@@ -12,6 +12,7 @@ __all__ = [
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric.classification.confmat import (
     binary_confusion_matrix,
@@ -46,7 +47,7 @@ class BaseConfusionMatrixResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryConfusionMatrixResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryConfusionMatrixResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'confusion_matrix': array([[2, 0], [0, 3]]),
      'count': 5,
@@ -75,10 +76,14 @@ class BaseConfusionMatrixResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_pred={self._y_pred.shape}, nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_pred": self._y_pred.shape,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:
@@ -125,7 +130,7 @@ class BinaryConfusionMatrixResult(BaseConfusionMatrixResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryConfusionMatrixResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryConfusionMatrixResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'confusion_matrix': array([[2, 0], [0, 3]]),
      'count': 5,
@@ -190,7 +195,7 @@ class MulticlassConfusionMatrixResult(BaseConfusionMatrixResult):
     ...     y_pred=np.array([0, 1, 1, 2, 2, 2]),
     ... )
     >>> result
-    MulticlassConfusionMatrixResult(y_true=(6,), y_pred=(6,), nan_policy=propagate)
+    MulticlassConfusionMatrixResult(y_true=(6,), y_pred=(6,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'confusion_matrix': array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]), 'count': 6}
 
@@ -246,7 +251,7 @@ class MultilabelConfusionMatrixResult(BaseConfusionMatrixResult):
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )
     >>> result
-    MultilabelConfusionMatrixResult(y_true=(5, 3), y_pred=(5, 3), nan_policy=propagate)
+    MultilabelConfusionMatrixResult(y_true=(5, 3), y_pred=(5, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'confusion_matrix': array([[[2, 0], [0, 3]],
                                 [[3, 0], [0, 2]],

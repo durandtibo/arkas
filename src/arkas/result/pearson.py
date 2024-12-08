@@ -7,6 +7,7 @@ __all__ = ["PearsonCorrelationResult"]
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric.correlation.pearson import pearsonr
 from arkas.metric.utils import check_nan_policy, check_same_shape
@@ -41,7 +42,7 @@ class PearsonCorrelationResult(BaseResult):
     ...     x=np.array([1, 2, 3, 4, 5]), y=np.array([1, 2, 3, 4, 5])
     ... )
     >>> result
-    PearsonCorrelationResult(x=(5,), y=(5,), alternative=two-sided, nan_policy=propagate)
+    PearsonCorrelationResult(x=(5,), y=(5,), alternative='two-sided', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0}
 
@@ -65,11 +66,15 @@ class PearsonCorrelationResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(x={self._x.shape}, "
-            f"y={self._y.shape}, alternative={self._alternative}, "
-            f"nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "x": self._x.shape,
+                "y": self._y.shape,
+                "alternative": self._alternative,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:

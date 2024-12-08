@@ -13,6 +13,7 @@ __all__ = [
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric.classification.precision import (
     binary_precision,
@@ -70,7 +71,7 @@ class PrecisionResult(BaseResult):
     ...     label_type="binary",
     ... )
     >>> result
-    PrecisionResult(y_true=(5,), y_pred=(5,), label_type=binary, nan_policy=propagate)
+    PrecisionResult(y_true=(5,), y_pred=(5,), label_type='binary', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'precision': 1.0}
     >>> # multilabel
@@ -80,7 +81,7 @@ class PrecisionResult(BaseResult):
     ...     label_type="multilabel",
     ... )
     >>> result
-    PrecisionResult(y_true=(5, 3), y_pred=(5, 3), label_type=multilabel, nan_policy=propagate)
+    PrecisionResult(y_true=(5, 3), y_pred=(5, 3), label_type='multilabel', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5,
      'macro_precision': 0.666...,
@@ -94,7 +95,7 @@ class PrecisionResult(BaseResult):
     ...     label_type="multiclass",
     ... )
     >>> result
-    PrecisionResult(y_true=(6,), y_pred=(6,), label_type=multiclass, nan_policy=propagate)
+    PrecisionResult(y_true=(6,), y_pred=(6,), label_type='multiclass', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 6,
      'macro_precision': 1.0,
@@ -106,7 +107,7 @@ class PrecisionResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    PrecisionResult(y_true=(5,), y_pred=(5,), label_type=binary, nan_policy=propagate)
+    PrecisionResult(y_true=(5,), y_pred=(5,), label_type='binary', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'precision': 1.0}
 
@@ -131,11 +132,15 @@ class PrecisionResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_pred={self._y_pred.shape}, label_type={self._label_type}, "
-            f"nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_pred": self._y_pred.shape,
+                "label_type": self._label_type,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:
@@ -214,7 +219,7 @@ class BasePrecisionResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryPrecisionResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryPrecisionResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'precision': 1.0}
 
@@ -234,10 +239,14 @@ class BasePrecisionResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_pred={self._y_pred.shape}, nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_pred": self._y_pred.shape,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:
@@ -284,7 +293,7 @@ class BinaryPrecisionResult(BasePrecisionResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryPrecisionResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryPrecisionResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'precision': 1.0}
 
@@ -344,7 +353,7 @@ class MulticlassPrecisionResult(BasePrecisionResult):
     ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ... )
     >>> result
-    MulticlassPrecisionResult(y_true=(6,), y_pred=(6,), nan_policy=propagate)
+    MulticlassPrecisionResult(y_true=(6,), y_pred=(6,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 6,
      'macro_precision': 1.0,
@@ -404,7 +413,7 @@ class MultilabelPrecisionResult(BasePrecisionResult):
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )
     >>> result
-    MultilabelPrecisionResult(y_true=(5, 3), y_pred=(5, 3), nan_policy=propagate)
+    MultilabelPrecisionResult(y_true=(5, 3), y_pred=(5, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5,
      'macro_precision': 1.0,

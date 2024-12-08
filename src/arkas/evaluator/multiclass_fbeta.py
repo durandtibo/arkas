@@ -43,7 +43,7 @@ class MulticlassFbetaScoreEvaluator(BaseLazyEvaluator[MulticlassFbetaScoreResult
     >>> data = pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    MulticlassFbetaScoreResult(y_true=(6,), y_pred=(6,), betas=(1,), nan_policy=propagate)
+    MulticlassFbetaScoreResult(y_true=(6,), y_pred=(6,), betas=(1,), nan_policy='propagate')
 
     ```
     """

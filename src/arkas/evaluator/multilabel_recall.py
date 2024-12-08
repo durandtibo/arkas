@@ -46,7 +46,7 @@ class MultilabelRecallEvaluator(BaseLazyEvaluator[MultilabelRecallResult]):
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    MultilabelRecallResult(y_true=(5, 3), y_pred=(5, 3), nan_policy=propagate)
+    MultilabelRecallResult(y_true=(5, 3), y_pred=(5, 3), nan_policy='propagate')
 
     ```
     """
