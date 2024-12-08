@@ -18,6 +18,7 @@ __all__ = [
     "BinaryRocAucEvaluator",
     "MappingEvaluator",
     "MeanAbsoluteErrorEvaluator",
+    "MeanAbsolutePercentageErrorEvaluator",
     "MeanSquaredErrorEvaluator",
     "MeanSquaredLogErrorEvaluator",
     "MulticlassAveragePrecisionEvaluator",
@@ -57,6 +58,7 @@ from arkas.evaluator.binary_recall import BinaryRecallEvaluator
 from arkas.evaluator.binary_roc_auc import BinaryRocAucEvaluator
 from arkas.evaluator.lazy import BaseLazyEvaluator
 from arkas.evaluator.mae import MeanAbsoluteErrorEvaluator
+from arkas.evaluator.mape import MeanAbsolutePercentageErrorEvaluator
 from arkas.evaluator.mapping import MappingEvaluator
 from arkas.evaluator.mse import MeanSquaredErrorEvaluator
 from arkas.evaluator.msle import MeanSquaredLogErrorEvaluator
