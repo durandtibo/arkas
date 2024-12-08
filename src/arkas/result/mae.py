@@ -49,7 +49,6 @@ class MeanAbsoluteErrorResult(BaseResult):
     ) -> None:
         self._y_true = y_true.ravel()
         self._y_pred = y_pred.ravel()
-
         check_same_shape_pred(y_true=self._y_true, y_pred=self._y_pred)
 
         check_nan_policy(nan_policy)
@@ -133,7 +132,6 @@ class MedianAbsoluteErrorResult(BaseResult):
     ) -> None:
         self._y_true = y_true.ravel()
         self._y_pred = y_pred.ravel()
-
         check_same_shape_pred(y_true=self._y_true, y_pred=self._y_pred)
 
         check_nan_policy(nan_policy)
