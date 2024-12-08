@@ -1,14 +1,14 @@
-r"""Implement the mean squared error (MSE) result."""
+r"""Implement the mean squared logarithmic error (MSLE) result."""
 
 from __future__ import annotations
 
-__all__ = ["MeanSquaredErrorResult"]
+__all__ = ["MeanSquaredLogErrorResult"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.metric.regression.mse import mean_squared_error
+from arkas.metric.regression.msle import mean_squared_log_error
 from arkas.metric.utils import check_nan_policy, check_same_shape_pred
 from arkas.result.base import BaseResult
 
@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-class MeanSquaredErrorResult(BaseResult):
-    r"""Implement the mean squared error (MSE) result.
+class MeanSquaredLogErrorResult(BaseResult):
+    r"""Implement the mean squared logarithmic error (MSLE) result.
 
     Args:
         y_true: The ground truth target values.
@@ -31,14 +31,14 @@ class MeanSquaredErrorResult(BaseResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import MeanSquaredErrorResult
-    >>> result = MeanSquaredErrorResult(
+    >>> from arkas.result import MeanSquaredLogErrorResult
+    >>> result = MeanSquaredLogErrorResult(
     ...     y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
     ... )
     >>> result
-    MeanSquaredErrorResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    MeanSquaredLogErrorResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
     >>> result.compute_metrics()
-    {'count': 5, 'mean_squared_error': 0.0}
+    {'count': 5, 'mean_squared_log_error': 0.0}
 
     ```
     """
@@ -73,7 +73,7 @@ class MeanSquaredErrorResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return mean_squared_error(
+        return mean_squared_log_error(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
