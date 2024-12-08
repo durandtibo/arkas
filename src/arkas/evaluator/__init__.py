@@ -19,6 +19,7 @@ __all__ = [
     "MappingEvaluator",
     "MeanAbsoluteErrorEvaluator",
     "MeanSquaredErrorEvaluator",
+    "MeanSquaredLogErrorEvaluator",
     "MulticlassAveragePrecisionEvaluator",
     "MulticlassConfusionMatrixEvaluator",
     "MulticlassFbetaScoreEvaluator",
@@ -55,6 +56,7 @@ from arkas.evaluator.lazy import BaseLazyEvaluator
 from arkas.evaluator.mae import MeanAbsoluteErrorEvaluator
 from arkas.evaluator.mapping import MappingEvaluator
 from arkas.evaluator.mse import MeanSquaredErrorEvaluator
+from arkas.evaluator.msle import MeanSquaredLogErrorEvaluator
 from arkas.evaluator.multiclass_ap import MulticlassAveragePrecisionEvaluator
 from arkas.evaluator.multiclass_confmat import MulticlassConfusionMatrixEvaluator
 from arkas.evaluator.multiclass_fbeta import MulticlassFbetaScoreEvaluator
