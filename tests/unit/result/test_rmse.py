@@ -5,6 +5,7 @@ import pytest
 from coola import objects_are_allclose, objects_are_equal
 
 from arkas.result import RootMeanSquaredErrorResult
+from tests.conftest import sklearn_greater_equal_1_4
 
 ################################################
 #     Tests for RootMeanSquaredErrorResult     #
@@ -168,6 +169,7 @@ def test_root_mean_squared_error_result_equal_nan_false() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_result_compute_metrics_correct() -> None:
     result = RootMeanSquaredErrorResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
@@ -175,6 +177,7 @@ def test_root_mean_squared_error_result_compute_metrics_correct() -> None:
     assert objects_are_equal(result.compute_metrics(), {"count": 5, "root_mean_squared_error": 0.0})
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_result_compute_metrics_incorrect() -> None:
     result = RootMeanSquaredErrorResult(
         y_true=np.array([1, 2, 3, 4]), y_pred=np.array([3, 5, 4, 5])
@@ -184,6 +187,7 @@ def test_root_mean_squared_error_result_compute_metrics_incorrect() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_result_compute_metrics_empty() -> None:
     result = RootMeanSquaredErrorResult(y_true=np.array([]), y_pred=np.array([]))
     assert objects_are_equal(
@@ -193,6 +197,7 @@ def test_root_mean_squared_error_result_compute_metrics_empty() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_result_compute_metrics_prefix_suffix() -> None:
     result = RootMeanSquaredErrorResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
@@ -203,6 +208,7 @@ def test_root_mean_squared_error_result_compute_metrics_prefix_suffix() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_result_compute_metrics_nan_omit() -> None:
     result = RootMeanSquaredErrorResult(
         y_true=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),
@@ -215,6 +221,7 @@ def test_root_mean_squared_error_result_compute_metrics_nan_omit() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_result_compute_metrics_nan_propagate() -> None:
     result = RootMeanSquaredErrorResult(
         y_true=np.array([float("nan"), 2, 3, 4, 5, 6, float("nan")]),

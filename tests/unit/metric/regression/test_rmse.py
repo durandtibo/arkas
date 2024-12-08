@@ -5,12 +5,14 @@ import pytest
 from coola import objects_are_allclose, objects_are_equal
 
 from arkas.metric import root_mean_squared_error
+from tests.conftest import sklearn_greater_equal_1_4
 
 #############################################
 #     Tests for root_mean_squared_error     #
 #############################################
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_correct() -> None:
     assert objects_are_equal(
         root_mean_squared_error(y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])),
@@ -18,6 +20,7 @@ def test_root_mean_squared_error_correct() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_correct_2d() -> None:
     assert objects_are_equal(
         root_mean_squared_error(
@@ -27,6 +30,7 @@ def test_root_mean_squared_error_correct_2d() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_incorrect() -> None:
     assert objects_are_allclose(
         root_mean_squared_error(y_true=np.array([1, 2, 3, 4]), y_pred=np.array([3, 5, 4, 5])),
@@ -34,6 +38,7 @@ def test_root_mean_squared_error_incorrect() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_empty() -> None:
     assert objects_are_equal(
         root_mean_squared_error(y_true=np.array([]), y_pred=np.array([])),
@@ -42,6 +47,7 @@ def test_root_mean_squared_error_empty() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_prefix_suffix() -> None:
     assert objects_are_equal(
         root_mean_squared_error(
@@ -54,6 +60,7 @@ def test_root_mean_squared_error_prefix_suffix() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_nan_omit() -> None:
     assert objects_are_equal(
         root_mean_squared_error(
@@ -65,6 +72,7 @@ def test_root_mean_squared_error_nan_omit() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_nan_omit_y_true() -> None:
     assert objects_are_equal(
         root_mean_squared_error(
@@ -76,6 +84,7 @@ def test_root_mean_squared_error_nan_omit_y_true() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_nan_omit_y_pred() -> None:
     assert objects_are_equal(
         root_mean_squared_error(
@@ -87,6 +96,7 @@ def test_root_mean_squared_error_nan_omit_y_pred() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_nan_propagate() -> None:
     assert objects_are_equal(
         root_mean_squared_error(
@@ -99,6 +109,7 @@ def test_root_mean_squared_error_nan_propagate() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_nan_propagate_y_true() -> None:
     assert objects_are_equal(
         root_mean_squared_error(
@@ -111,6 +122,7 @@ def test_root_mean_squared_error_nan_propagate_y_true() -> None:
     )
 
 
+@sklearn_greater_equal_1_4
 def test_root_mean_squared_error_nan_propagate_y_pred() -> None:
     assert objects_are_equal(
         root_mean_squared_error(
