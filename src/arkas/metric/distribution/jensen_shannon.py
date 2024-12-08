@@ -3,7 +3,7 @@ distributions."""
 
 from __future__ import annotations
 
-__all__ = ["js_div"]
+__all__ = ["jensen_shannon_divergence"]
 
 
 from typing import TYPE_CHECKING
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-def js_div(
+def jensen_shannon_divergence(
     p: np.ndarray,
     q: np.ndarray,
     *,
@@ -43,9 +43,11 @@ def js_div(
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.metric import js_div
-    >>> js_div(p=np.array([0.1, 0.6, 0.1, 0.2]), q=np.array([0.2, 0.5, 0.2, 0.1]))
-    {'size': 4, 'js_div': 0.027...}
+    >>> from arkas.metric import jensen_shannon_divergence
+    >>> jensen_shannon_divergence(
+    ...     p=np.array([0.1, 0.6, 0.1, 0.2]), q=np.array([0.2, 0.5, 0.2, 0.1])
+    ... )
+    {'size': 4, 'jensen_shannon_divergence': 0.027...}
 
     ```
     """
@@ -57,4 +59,4 @@ def js_div(
     if size > 0:
         m = 0.5 * (p + q)
         div = 0.5 * (_kl_divergence(p, m) + _kl_divergence(q, m))
-    return {f"{prefix}size{suffix}": size, f"{prefix}js_div{suffix}": div}
+    return {f"{prefix}size{suffix}": size, f"{prefix}jensen_shannon_divergence{suffix}": div}
