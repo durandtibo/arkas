@@ -13,6 +13,7 @@ __all__ = [
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric import recall
 from arkas.metric.classification.recall import (
@@ -70,7 +71,7 @@ class RecallResult(BaseResult):
     ...     label_type="binary",
     ... )
     >>> result
-    RecallResult(y_true=(5,), y_pred=(5,), label_type=binary, nan_policy=propagate)
+    RecallResult(y_true=(5,), y_pred=(5,), label_type='binary', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'recall': 1.0}
     >>> # multilabel
@@ -80,7 +81,7 @@ class RecallResult(BaseResult):
     ...     label_type="multilabel",
     ... )
     >>> result
-    RecallResult(y_true=(5, 3), y_pred=(5, 3), label_type=multilabel, nan_policy=propagate)
+    RecallResult(y_true=(5, 3), y_pred=(5, 3), label_type='multilabel', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5,
      'macro_recall': 0.666...,
@@ -94,7 +95,7 @@ class RecallResult(BaseResult):
     ...     label_type="multiclass",
     ... )
     >>> result
-    RecallResult(y_true=(6,), y_pred=(6,), label_type=multiclass, nan_policy=propagate)
+    RecallResult(y_true=(6,), y_pred=(6,), label_type='multiclass', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 6,
      'macro_recall': 1.0,
@@ -106,7 +107,7 @@ class RecallResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    RecallResult(y_true=(5,), y_pred=(5,), label_type=binary, nan_policy=propagate)
+    RecallResult(y_true=(5,), y_pred=(5,), label_type='binary', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'recall': 1.0}
 
@@ -131,11 +132,15 @@ class RecallResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_pred={self._y_pred.shape}, label_type={self._label_type}, "
-            f"nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_pred": self._y_pred.shape,
+                "label_type": self._label_type,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:
@@ -214,7 +219,7 @@ class BaseRecallResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryRecallResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryRecallResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'recall': 1.0}
 
@@ -234,10 +239,14 @@ class BaseRecallResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_pred={self._y_pred.shape}, nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_pred": self._y_pred.shape,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:
@@ -284,7 +293,7 @@ class BinaryRecallResult(BaseRecallResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryRecallResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryRecallResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'recall': 1.0}
 
@@ -344,7 +353,7 @@ class MulticlassRecallResult(BaseRecallResult):
     ...     y_pred=np.array([0, 0, 1, 1, 2, 2]),
     ... )
     >>> result
-    MulticlassRecallResult(y_true=(6,), y_pred=(6,), nan_policy=propagate)
+    MulticlassRecallResult(y_true=(6,), y_pred=(6,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 6,
      'macro_recall': 1.0,
@@ -404,7 +413,7 @@ class MultilabelRecallResult(BaseRecallResult):
     ...     y_pred=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
     ... )
     >>> result
-    MultilabelRecallResult(y_true=(5, 3), y_pred=(5, 3), nan_policy=propagate)
+    MultilabelRecallResult(y_true=(5, 3), y_pred=(5, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5,
      'macro_recall': 1.0,

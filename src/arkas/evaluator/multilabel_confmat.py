@@ -46,7 +46,7 @@ class MultilabelConfusionMatrixEvaluator(BaseLazyEvaluator[MultilabelConfusionMa
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    MultilabelConfusionMatrixResult(y_true=(5, 3), y_pred=(5, 3), nan_policy=propagate)
+    MultilabelConfusionMatrixResult(y_true=(5, 3), y_pred=(5, 3), nan_policy='propagate')
 
     ```
     """

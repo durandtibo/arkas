@@ -40,7 +40,7 @@ class BinaryConfusionMatrixEvaluator(BaseLazyEvaluator[BinaryConfusionMatrixResu
     >>> data = pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    BinaryConfusionMatrixResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    BinaryConfusionMatrixResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
 
     ```
     """

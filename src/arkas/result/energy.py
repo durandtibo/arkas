@@ -8,6 +8,7 @@ __all__ = ["EnergyDistanceResult"]
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric import energy_distance
 from arkas.metric.utils import check_nan_policy, check_same_shape
@@ -38,7 +39,7 @@ class EnergyDistanceResult(BaseResult):
     ...     u_values=np.array([1, 2, 3, 4, 5]), v_values=np.array([1, 2, 3, 4, 5])
     ... )
     >>> result
-    EnergyDistanceResult(u_values=(5,), v_values=(5,), nan_policy=propagate)
+    EnergyDistanceResult(u_values=(5,), v_values=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'energy_distance': 0.0}
 
@@ -56,10 +57,14 @@ class EnergyDistanceResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(u_values={self._u_values.shape}, "
-            f"v_values={self._v_values.shape}, nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "u_values": self._u_values.shape,
+                "v_values": self._v_values.shape,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:

@@ -7,6 +7,7 @@ __all__ = ["SpearmanCorrelationResult"]
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric.correlation.spearman import spearmanr
 from arkas.metric.utils import check_nan_policy, check_same_shape
@@ -42,7 +43,7 @@ class SpearmanCorrelationResult(BaseResult):
     ...     y=np.array([1, 2, 3, 4, 5, 6, 7, 8, 9]),
     ... )
     >>> result
-    SpearmanCorrelationResult(x=(9,), y=(9,), alternative=two-sided, nan_policy=propagate)
+    SpearmanCorrelationResult(x=(9,), y=(9,), alternative='two-sided', nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 9, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0}
 
@@ -66,11 +67,15 @@ class SpearmanCorrelationResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(x={self._x.shape}, "
-            f"y={self._y.shape}, alternative={self._alternative}, "
-            f"nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "x": self._x.shape,
+                "y": self._y.shape,
+                "alternative": self._alternative,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:

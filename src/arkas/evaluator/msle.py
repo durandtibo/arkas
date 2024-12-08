@@ -46,7 +46,7 @@ class MeanSquaredLogErrorEvaluator(BaseLazyEvaluator[MeanSquaredLogErrorResult])
     >>> data = pl.DataFrame({"pred": [1, 2, 3, 4, 5], "target": [1, 2, 3, 4, 5]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    MeanSquaredLogErrorResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    MeanSquaredLogErrorResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
 
     ```
     """

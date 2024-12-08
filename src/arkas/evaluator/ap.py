@@ -46,7 +46,7 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
     >>> data = pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary, nan_policy=propagate)
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type='binary', nan_policy='propagate')
 
     ```
     """

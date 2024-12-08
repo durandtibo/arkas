@@ -41,7 +41,7 @@ class MulticlassPrecisionEvaluator(BaseLazyEvaluator[MulticlassPrecisionResult])
     >>> data = pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    MulticlassPrecisionResult(y_true=(6,), y_pred=(6,), nan_policy=propagate)
+    MulticlassPrecisionResult(y_true=(6,), y_pred=(6,), nan_policy='propagate')
 
     ```
     """
