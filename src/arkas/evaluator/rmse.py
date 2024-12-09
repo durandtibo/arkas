@@ -80,7 +80,7 @@ class RootMeanSquaredErrorEvaluator(BaseLazyEvaluator[RootMeanSquaredErrorResult
         self, data: pl.DataFrame, lazy: bool = True
     ) -> RootMeanSquaredErrorResult | Result:
         logger.info(
-            f"Evaluating the root mean squared error | y_true={self._y_true} | "
+            f"Evaluating the root mean squared error (RMSE) | y_true={self._y_true} | "
             f"y_pred={self._y_pred} | drop_nulls={self._drop_nulls} | "
             f"nan_policy={self._nan_policy}"
         )

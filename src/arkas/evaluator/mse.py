@@ -78,7 +78,7 @@ class MeanSquaredErrorEvaluator(BaseLazyEvaluator[MeanSquaredErrorResult]):
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> MeanSquaredErrorResult | Result:
         logger.info(
-            f"Evaluating the mean squared error | y_true={self._y_true} | "
+            f"Evaluating the mean squared error (MSE) | y_true={self._y_true} | "
             f"y_pred={self._y_pred} | drop_nulls={self._drop_nulls} | "
             f"nan_policy={self._nan_policy}"
         )
