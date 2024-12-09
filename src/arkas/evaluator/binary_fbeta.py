@@ -64,8 +64,8 @@ class BinaryFbetaScoreEvaluator(BaseLazyEvaluator[BinaryFbetaScoreResult]):
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BinaryFbetaScoreResult | Result:
         logger.info(
-            f"Evaluating the accuracy | y_true={self._y_true} | y_pred={self._y_pred} | "
-            f"drop_nulls={self._drop_nulls}"
+            f"Evaluating the F-beta score | y_true={self._y_true} | y_pred={self._y_pred} | "
+            f"betas={self._betas} | drop_nulls={self._drop_nulls}"
         )
         return self._evaluate(data, lazy)
 

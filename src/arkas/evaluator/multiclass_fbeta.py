@@ -67,7 +67,7 @@ class MulticlassFbetaScoreEvaluator(BaseLazyEvaluator[MulticlassFbetaScoreResult
     ) -> MulticlassFbetaScoreResult | Result:
         logger.info(
             f"Evaluating the multiclass F-beta score | y_true={self._y_true} | "
-            f"y_pred={self._y_pred} | drop_nulls={self._drop_nulls}"
+            f"y_pred={self._y_pred} | betas={self._betas} | drop_nulls={self._drop_nulls}"
         )
         return self._evaluate(data, lazy)
 
