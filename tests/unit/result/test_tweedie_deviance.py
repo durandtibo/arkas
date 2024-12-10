@@ -212,7 +212,7 @@ def test_mean_tweedie_deviance_result_compute_metrics_correct() -> None:
 
 def test_mean_tweedie_deviance_result_compute_metrics_correct_powers() -> None:
     result = MeanTweedieDevianceResult(
-        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1]), powers=[0, 1, 2]
+        y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5]), powers=[0, 1, 2]
     )
     assert objects_are_equal(
         result.compute_metrics(),

@@ -98,6 +98,7 @@ class MeanTweedieDevianceResult(BaseResult):
             y_pred=self._y_pred,
             prefix=prefix,
             suffix=suffix,
+            powers=self._powers,
             nan_policy=self._nan_policy,
         )
 
