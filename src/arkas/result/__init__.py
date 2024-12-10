@@ -78,9 +78,10 @@ from arkas.result.jaccard import (
 )
 from arkas.result.jensen_shannon import JensenShannonDivergenceResult
 from arkas.result.kl import KLDivResult
-from arkas.result.mae import MeanAbsoluteErrorResult, MedianAbsoluteErrorResult
+from arkas.result.mae import MeanAbsoluteErrorResult
 from arkas.result.mape import MeanAbsolutePercentageErrorResult
 from arkas.result.mapping import MappingResult
+from arkas.result.median_error import MedianAbsoluteErrorResult
 from arkas.result.mse import MeanSquaredErrorResult
 from arkas.result.msle import MeanSquaredLogErrorResult
 from arkas.result.pearson import PearsonCorrelationResult
