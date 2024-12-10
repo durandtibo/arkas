@@ -1,15 +1,15 @@
-r"""Implement the mean absolute error result."""
+r"""Implement the median absolute error result."""
 
 from __future__ import annotations
 
-__all__ = ["MeanAbsoluteErrorResult"]
+__all__ = ["MedianAbsoluteErrorResult"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
-from arkas.metric.regression.abs_error import mean_absolute_error
+from arkas.metric.regression.abs_error import median_absolute_error
 from arkas.metric.utils import check_nan_policy, check_same_shape_pred
 from arkas.result.base import BaseResult
 
@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-class MeanAbsoluteErrorResult(BaseResult):
-    r"""Implement the mean absolute error (MAE) result.
+class MedianAbsoluteErrorResult(BaseResult):
+    r"""Implement the median absolute error (MAE) result.
 
     Args:
         y_true: The ground truth target values.
@@ -32,14 +32,14 @@ class MeanAbsoluteErrorResult(BaseResult):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.result import MeanAbsoluteErrorResult
-    >>> result = MeanAbsoluteErrorResult(
+    >>> from arkas.result import MedianAbsoluteErrorResult
+    >>> result = MedianAbsoluteErrorResult(
     ...     y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
     ... )
     >>> result
-    MeanAbsoluteErrorResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
+    MedianAbsoluteErrorResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
-    {'count': 5, 'mean_absolute_error': 0.0}
+    {'count': 5, 'median_absolute_error': 0.0}
 
     ```
     """
@@ -77,7 +77,7 @@ class MeanAbsoluteErrorResult(BaseResult):
         return self._y_pred
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return mean_absolute_error(
+        return median_absolute_error(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
