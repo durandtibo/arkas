@@ -24,6 +24,7 @@ __all__ = [
     "MeanAbsolutePercentageErrorResult",
     "MeanSquaredErrorResult",
     "MeanSquaredLogErrorResult",
+    "MeanTweedieDevianceResult",
     "MedianAbsoluteErrorResult",
     "MulticlassAveragePrecisionResult",
     "MulticlassConfusionMatrixResult",
@@ -107,5 +108,6 @@ from arkas.result.roc_auc import (
 )
 from arkas.result.sequential import SequentialResult
 from arkas.result.spearman import SpearmanCorrelationResult
+from arkas.result.tweedie_deviance import MeanTweedieDevianceResult
 from arkas.result.vanilla import EmptyResult, Result
 from arkas.result.wasserstein import WassersteinDistanceResult
