@@ -22,6 +22,7 @@ __all__ = [
     "MeanAbsolutePercentageErrorEvaluator",
     "MeanSquaredErrorEvaluator",
     "MeanSquaredLogErrorEvaluator",
+    "MeanTweedieDevianceEvaluator",
     "MedianAbsoluteErrorEvaluator",
     "MulticlassAveragePrecisionEvaluator",
     "MulticlassConfusionMatrixEvaluator",
@@ -85,3 +86,4 @@ from arkas.evaluator.r2 import R2ScoreEvaluator
 from arkas.evaluator.rmse import RootMeanSquaredErrorEvaluator
 from arkas.evaluator.sequential import SequentialEvaluator
 from arkas.evaluator.spearman import SpearmanCorrelationEvaluator
+from arkas.evaluator.tweedie_deviance import MeanTweedieDevianceEvaluator
