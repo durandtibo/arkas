@@ -44,11 +44,11 @@ class MeanTweedieDevianceEvaluator(BaseLazyEvaluator[MeanTweedieDevianceResult])
     >>> from arkas.evaluator import MeanTweedieDevianceEvaluator
     >>> evaluator = MeanTweedieDevianceEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    MeanTweedieDevianceEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
+    MeanTweedieDevianceEvaluator(y_true='target', y_pred='pred', powers=(0,), drop_nulls=True, nan_policy='propagate')
     >>> data = pl.DataFrame({"pred": [1, 2, 3, 4, 5], "target": [1, 2, 3, 4, 5]})
     >>> result = evaluator.evaluate(data)
     >>> result
-    MeanTweedieDevianceResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
+    MeanTweedieDevianceResult(y_true=(5,), y_pred=(5,), powers=(0,), nan_policy='propagate')
 
     ```
     """

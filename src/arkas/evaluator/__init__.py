@@ -43,6 +43,7 @@ __all__ = [
     "RootMeanSquaredErrorEvaluator",
     "SequentialEvaluator",
     "SpearmanCorrelationEvaluator",
+    "WassersteinDistanceEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
 ]
@@ -87,3 +88,4 @@ from arkas.evaluator.rmse import RootMeanSquaredErrorEvaluator
 from arkas.evaluator.sequential import SequentialEvaluator
 from arkas.evaluator.spearman import SpearmanCorrelationEvaluator
 from arkas.evaluator.tweedie_deviance import MeanTweedieDevianceEvaluator
+from arkas.evaluator.wasserstein import WassersteinDistanceEvaluator
