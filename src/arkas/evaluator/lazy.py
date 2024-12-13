@@ -35,7 +35,7 @@ class BaseLazyEvaluator(BaseEvaluator, Generic[T]):
     >>> from arkas.evaluator import AccuracyEvaluator
     >>> evaluator = AccuracyEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    AccuracyEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
+    AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
     >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
