@@ -28,6 +28,9 @@ class BinaryFbetaScoreEvaluator(BaseLazyEvaluator[BinaryFbetaScoreResult]):
             labels.
         y_pred: The key or column name of the predicted labels.
         betas: The betas used to compute the F-beta scores.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 

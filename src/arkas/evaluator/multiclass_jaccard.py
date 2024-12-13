@@ -28,6 +28,9 @@ class MulticlassJaccardEvaluator(BaseLazyEvaluator[MulticlassJaccardResult]):
         y_pred: The key or column name of the predicted labels.
         drop_nulls: If ``True``, the rows with null values in
             ``y_true`` or ``y_pred`` columns are dropped.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
