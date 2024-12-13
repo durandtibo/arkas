@@ -7,8 +7,10 @@ __all__ = ["AveragePrecisionEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
+from coola.utils.format import repr_mapping_line
+
 from arkas.evaluator.lazy import BaseLazyEvaluator
-from arkas.metric.utils import check_label_type
+from arkas.metric.utils import check_label_type, check_nan_policy
 from arkas.result import AveragePrecisionResult, Result
 from arkas.utils.array import to_array
 
@@ -33,6 +35,9 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
             shape.
         drop_nulls: If ``True``, the rows with null values in
             ``y_true`` or ``y_score`` columns are dropped.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -42,7 +47,7 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
     >>> from arkas.evaluator import AveragePrecisionEvaluator
     >>> evaluator = AveragePrecisionEvaluator(y_true="target", y_score="pred")
     >>> evaluator
-    AveragePrecisionEvaluator(y_true=target, y_score=pred, label_type=auto, drop_nulls=True)
+    AveragePrecisionEvaluator(y_true='target', y_score='pred', label_type='auto', drop_nulls=True, nan_policy='propagate')
     >>> data = pl.DataFrame({"pred": [2, -1, 0, 3, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)
     >>> result
@@ -52,26 +57,40 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
     """
 
     def __init__(
-        self, y_true: str, y_score: str, label_type: str = "auto", drop_nulls: bool = True
+        self,
+        y_true: str,
+        y_score: str,
+        label_type: str = "auto",
+        drop_nulls: bool = True,
+        nan_policy: str = "propagate",
     ) -> None:
         super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
         self._y_score = y_score
-        self._label_type = label_type
 
+        self._label_type = label_type
         check_label_type(label_type)
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true}, "
-            f"y_score={self._y_score}, label_type={self._label_type}, "
-            f"drop_nulls={self._drop_nulls})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true,
+                "y_score": self._y_score,
+                "label_type": self._label_type,
+                "drop_nulls": self._drop_nulls,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> AveragePrecisionResult | Result:
         logger.info(
             f"Evaluating the average precision | label_type={self._label_type} | "
-            f"y_true={self._y_true} | y_score={self._y_score} | drop_nulls={self._drop_nulls}"
+            f"y_true={self._y_true} | y_score={self._y_score} | "
+            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy}"
         )
         return self._evaluate(data, lazy)
 
@@ -80,6 +99,7 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
             y_true=to_array(data[self._y_true]),
             y_score=to_array(data[self._y_score]),
             label_type=self._label_type,
+            nan_policy=self._nan_policy,
         )
 
     def _get_columns(self) -> tuple[str, ...]:
