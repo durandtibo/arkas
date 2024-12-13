@@ -186,3 +186,26 @@ def test_average_precision_evaluator_evaluate_drop_nulls_false() -> None:
             equal_nan=True,
         )
     )
+
+
+@pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
+def test_average_precision_evaluator_evaluate_nan_policy(nan_policy: str) -> None:
+    assert (
+        AveragePrecisionEvaluator(y_true="target", y_score="pred", nan_policy=nan_policy)
+        .evaluate(
+            pl.DataFrame(
+                {
+                    "pred": [1.0, 2.0, 3.0, 4.0, 5.0, float("nan")],
+                    "target": [5.0, 4.0, 3.0, 2.0, 1.0, float("nan")],
+                }
+            )
+        )
+        .equal(
+            AveragePrecisionResult(
+                y_true=np.array([5.0, 4.0, 3.0, 2.0, 1.0, float("nan")]),
+                y_score=np.array([1.0, 2.0, 3.0, 4.0, 5.0, float("nan")]),
+                nan_policy=nan_policy,
+            ),
+            equal_nan=True,
+        )
+    )
