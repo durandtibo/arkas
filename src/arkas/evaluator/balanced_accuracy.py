@@ -7,7 +7,10 @@ __all__ = ["BalancedAccuracyEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
+from coola.utils.format import repr_mapping_line
+
 from arkas.evaluator.lazy import BaseLazyEvaluator
+from arkas.metric.utils import check_nan_policy
 from arkas.result import BalancedAccuracyResult, Result
 from arkas.utils.array import to_array
 
@@ -27,6 +30,9 @@ class BalancedAccuracyEvaluator(BaseLazyEvaluator[BalancedAccuracyResult]):
         y_pred: The key or column name of the predicted labels.
         drop_nulls: If ``True``, the rows with null values in
             ``y_true`` or ``y_pred`` columns are dropped.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -45,27 +51,43 @@ class BalancedAccuracyEvaluator(BaseLazyEvaluator[BalancedAccuracyResult]):
     ```
     """
 
-    def __init__(self, y_true: str, y_pred: str, drop_nulls: bool = True) -> None:
+    def __init__(
+        self,
+        y_true: str,
+        y_pred: str,
+        drop_nulls: bool = True,
+        nan_policy: str = "propagate",
+    ) -> None:
         super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
         self._y_pred = y_pred
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_pred={self._y_pred}, "
-            f"drop_nulls={self._drop_nulls})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true,
+                "y_pred": self._y_pred,
+                "drop_nulls": self._drop_nulls,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BalancedAccuracyResult | Result:
         logger.info(
             f"Evaluating the balanced accuracy | y_true={self._y_true} | y_pred={self._y_pred} | "
-            f"drop_nulls={self._drop_nulls}"
+            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy}"
         )
         return self._evaluate(data, lazy)
 
     def _compute_result(self, data: pl.DataFrame) -> BalancedAccuracyResult:
         return BalancedAccuracyResult(
-            y_true=to_array(data[self._y_true]).ravel(), y_pred=to_array(data[self._y_pred]).ravel()
+            y_true=to_array(data[self._y_true]).ravel(),
+            y_pred=to_array(data[self._y_pred]).ravel(),
+            nan_policy=self._nan_policy,
         )
 
     def _get_columns(self) -> tuple[str, ...]:
