@@ -68,8 +68,8 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
         self._y_true = y_true
         self._y_score = y_score
 
-        self._label_type = label_type
         check_label_type(label_type)
+        self._label_type = label_type
 
         check_nan_policy(nan_policy)
         self._nan_policy = nan_policy
