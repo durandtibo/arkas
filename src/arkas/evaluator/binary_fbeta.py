@@ -43,7 +43,7 @@ class BinaryFbetaScoreEvaluator(BaseLazyEvaluator[BinaryFbetaScoreResult]):
     >>> from arkas.evaluator import BinaryFbetaScoreEvaluator
     >>> evaluator = BinaryFbetaScoreEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    BinaryFbetaScoreEvaluator(y_true=target, y_pred=pred, betas=(1,), drop_nulls=True)
+    BinaryFbetaScoreEvaluator(y_true='target', y_pred='pred', betas=(1,), drop_nulls=True, nan_policy='propagate')
     >>> data = pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(
     ...     data=pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
