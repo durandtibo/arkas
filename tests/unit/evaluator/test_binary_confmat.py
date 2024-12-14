@@ -135,6 +135,5 @@ def test_binary_confusion_matrix_evaluator_evaluate_nan_policy(nan_policy: str) 
                 y_pred=np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
                 nan_policy=nan_policy,
             ),
-            equal_nan=True,
         )
     )
