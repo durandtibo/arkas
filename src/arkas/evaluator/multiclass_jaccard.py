@@ -7,7 +7,10 @@ __all__ = ["MulticlassJaccardEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
+from coola.utils.format import repr_mapping_line
+
 from arkas.evaluator.lazy import BaseLazyEvaluator
+from arkas.metric.utils import check_nan_policy
 from arkas.result import MulticlassJaccardResult
 from arkas.utils.array import to_array
 
@@ -40,7 +43,7 @@ class MulticlassJaccardEvaluator(BaseLazyEvaluator[MulticlassJaccardResult]):
     >>> from arkas.evaluator import MulticlassJaccardEvaluator
     >>> evaluator = MulticlassJaccardEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    MulticlassJaccardEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
+    MulticlassJaccardEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
     >>> data = pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]})
     >>> result = evaluator.evaluate(data)
     >>> result
@@ -49,27 +52,44 @@ class MulticlassJaccardEvaluator(BaseLazyEvaluator[MulticlassJaccardResult]):
     ```
     """
 
-    def __init__(self, y_true: str, y_pred: str, drop_nulls: bool = True) -> None:
+    def __init__(
+        self,
+        y_true: str,
+        y_pred: str,
+        drop_nulls: bool = True,
+        nan_policy: str = "propagate",
+    ) -> None:
         super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
         self._y_pred = y_pred
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_pred={self._y_pred}, "
-            f"drop_nulls={self._drop_nulls})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true,
+                "y_pred": self._y_pred,
+                "drop_nulls": self._drop_nulls,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> MulticlassJaccardResult | Result:
         logger.info(
             f"Evaluating the multiclass Jaccard | y_true={self._y_true} | "
-            f"y_pred={self._y_pred} | drop_nulls={self._drop_nulls}"
+            f"y_pred={self._y_pred} | drop_nulls={self._drop_nulls} | "
+            f"nan_policy={self._nan_policy}"
         )
         return self._evaluate(data, lazy)
 
     def _compute_result(self, data: pl.DataFrame) -> MulticlassJaccardResult:
         return MulticlassJaccardResult(
-            y_true=to_array(data[self._y_true]).ravel(), y_pred=to_array(data[self._y_pred]).ravel()
+            y_true=to_array(data[self._y_true]).ravel(),
+            y_pred=to_array(data[self._y_pred]).ravel(),
+            nan_policy=self._nan_policy,
         )
 
     def _get_columns(self) -> tuple[str, ...]:
