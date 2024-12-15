@@ -8,7 +8,10 @@ __all__ = ["MultilabelRocAucEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
+from coola.utils.format import repr_mapping_line
+
 from arkas.evaluator.lazy import BaseLazyEvaluator
+from arkas.metric.utils import check_nan_policy
 from arkas.result import MultilabelRocAucResult, Result
 from arkas.utils.array import to_array
 
@@ -43,7 +46,7 @@ class MultilabelRocAucEvaluator(BaseLazyEvaluator[MultilabelRocAucResult]):
     >>> from arkas.evaluator import MultilabelRocAucEvaluator
     >>> evaluator = MultilabelRocAucEvaluator(y_true="target", y_score="pred")
     >>> evaluator
-    MultilabelRocAucEvaluator(y_true=target, y_score=pred, drop_nulls=True)
+    MultilabelRocAucEvaluator(y_true='target', y_score='pred', drop_nulls=True, nan_policy='propagate')
     >>> data = pl.DataFrame(
     ...     {
     ...         "pred": [[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]],
@@ -58,27 +61,44 @@ class MultilabelRocAucEvaluator(BaseLazyEvaluator[MultilabelRocAucResult]):
     ```
     """
 
-    def __init__(self, y_true: str, y_score: str, drop_nulls: bool = True) -> None:
+    def __init__(
+        self,
+        y_true: str,
+        y_score: str,
+        drop_nulls: bool = True,
+        nan_policy: str = "propagate",
+    ) -> None:
         super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
         self._y_score = y_score
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_score={self._y_score}, "
-            f"drop_nulls={self._drop_nulls})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true,
+                "y_score": self._y_score,
+                "drop_nulls": self._drop_nulls,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> MultilabelRocAucResult | Result:
         logger.info(
             f"Evaluating the multilabel ROC AUC | y_true={self._y_true} | "
-            f"y_score={self._y_score} | drop_nulls={self._drop_nulls}"
+            f"y_score={self._y_score} | drop_nulls={self._drop_nulls} | "
+            f"nan_policy={self._nan_policy}"
         )
         return self._evaluate(data, lazy)
 
     def _compute_result(self, data: pl.DataFrame) -> MultilabelRocAucResult:
         return MultilabelRocAucResult(
-            y_true=to_array(data[self._y_true]), y_score=to_array(data[self._y_score])
+            y_true=to_array(data[self._y_true]),
+            y_score=to_array(data[self._y_score]),
+            nan_policy=self._nan_policy,
         )
 
     def _get_columns(self) -> tuple[str, ...]:
