@@ -103,17 +103,16 @@ def test_spearman_correlation_evaluator_evaluate_nan_policy(nan_policy: str) -> 
         .evaluate(
             pl.DataFrame(
                 {
-                    "pred": [1.0, 2.0, 3.0, 4.0, 5.0, float("nan")],
-                    "target": [5.0, 4.0, 3.0, 2.0, 1.0, float("nan")],
+                    "pred": [1.0, 2.0, 3.0, 4.0, 5.0, None],
+                    "target": [5.0, 4.0, 3.0, 2.0, 1.0, None],
                 }
             )
         )
         .equal(
             SpearmanCorrelationResult(
-                x=np.array([5.0, 4.0, 3.0, 2.0, 1.0, float("nan")]),
-                y=np.array([1.0, 2.0, 3.0, 4.0, 5.0, float("nan")]),
+                x=np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
+                y=np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
                 nan_policy=nan_policy,
             ),
-            equal_nan=True,
         )
     )

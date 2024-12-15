@@ -109,17 +109,16 @@ def test_wasserstein_distance_evaluator_evaluate_nan_policy(nan_policy: str) -> 
         .evaluate(
             pl.DataFrame(
                 {
-                    "pred": [1.0, 2.0, 3.0, 4.0, 5.0, float("nan")],
-                    "target": [5.0, 4.0, 3.0, 2.0, 1.0, float("nan")],
+                    "pred": [1.0, 2.0, 3.0, 4.0, 5.0, None],
+                    "target": [5.0, 4.0, 3.0, 2.0, 1.0, None],
                 }
             )
         )
         .equal(
             WassersteinDistanceResult(
-                u_values=np.array([5.0, 4.0, 3.0, 2.0, 1.0, float("nan")]),
-                v_values=np.array([1.0, 2.0, 3.0, 4.0, 5.0, float("nan")]),
+                u_values=np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
+                v_values=np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
                 nan_policy=nan_policy,
             ),
-            equal_nan=True,
         )
     )
