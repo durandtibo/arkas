@@ -7,7 +7,10 @@ __all__ = ["MulticlassFbetaScoreEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
+from coola.utils.format import repr_mapping_line
+
 from arkas.evaluator.lazy import BaseLazyEvaluator
+from arkas.metric.utils import check_nan_policy
 from arkas.result import MulticlassFbetaScoreResult, Result
 from arkas.utils.array import to_array
 
@@ -42,7 +45,7 @@ class MulticlassFbetaScoreEvaluator(BaseLazyEvaluator[MulticlassFbetaScoreResult
     >>> from arkas.evaluator import MulticlassFbetaScoreEvaluator
     >>> evaluator = MulticlassFbetaScoreEvaluator(y_true="target", y_pred="pred")
     >>> evaluator
-    MulticlassFbetaScoreEvaluator(y_true=target, y_pred=pred, betas=(1,), drop_nulls=True)
+    MulticlassFbetaScoreEvaluator(y_true='target', y_pred='pred', betas=(1,), drop_nulls=True, nan_policy='propagate')
     >>> data = pl.DataFrame({"pred": [0, 0, 1, 1, 2, 2], "target": [0, 0, 1, 1, 2, 2]})
     >>> result = evaluator.evaluate(data)
     >>> result
@@ -52,25 +55,40 @@ class MulticlassFbetaScoreEvaluator(BaseLazyEvaluator[MulticlassFbetaScoreResult
     """
 
     def __init__(
-        self, y_true: str, y_pred: str, betas: Sequence[float] = (1,), drop_nulls: bool = True
+        self,
+        y_true: str,
+        y_pred: str,
+        betas: Sequence[float] = (1,),
+        drop_nulls: bool = True,
+        nan_policy: str = "propagate",
     ) -> None:
         super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
         self._y_pred = y_pred
         self._betas = tuple(betas)
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_pred={self._y_pred}, "
-            f"betas={self._betas}, drop_nulls={self._drop_nulls})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true,
+                "y_pred": self._y_pred,
+                "betas": self._betas,
+                "drop_nulls": self._drop_nulls,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     def evaluate(
         self, data: pl.DataFrame, lazy: bool = True
     ) -> MulticlassFbetaScoreResult | Result:
         logger.info(
             f"Evaluating the multiclass F-beta score | y_true={self._y_true} | "
-            f"y_pred={self._y_pred} | betas={self._betas} | drop_nulls={self._drop_nulls}"
+            f"y_pred={self._y_pred} | betas={self._betas} | drop_nulls={self._drop_nulls} | "
+            f"nan_policy={self._nan_policy}"
         )
         return self._evaluate(data, lazy)
 
@@ -79,6 +97,7 @@ class MulticlassFbetaScoreEvaluator(BaseLazyEvaluator[MulticlassFbetaScoreResult
             y_true=to_array(data[self._y_true]).ravel(),
             y_pred=to_array(data[self._y_pred]).ravel(),
             betas=self._betas,
+            nan_policy=self._nan_policy,
         )
 
     def _get_columns(self) -> tuple[str, ...]:
