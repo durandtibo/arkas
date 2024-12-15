@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import polars as pl
+import pytest
 from coola import objects_are_equal
 from matplotlib import pyplot as plt
 
@@ -98,5 +99,27 @@ def test_binary_recall_evaluator_evaluate_drop_nulls_false() -> None:
                 y_pred=np.array([3.0, 2.0, 0.0, 1.0, 0.0, float("nan"), 1.0, float("nan")]),
             ),
             equal_nan=True,
+        )
+    )
+
+
+@pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
+def test_binary_recall_evaluator_evaluate_nan_policy(nan_policy: str) -> None:
+    assert (
+        BinaryRecallEvaluator(y_true="target", y_pred="pred", nan_policy=nan_policy)
+        .evaluate(
+            pl.DataFrame(
+                {
+                    "pred": [1.0, 2.0, 3.0, 4.0, 5.0, None],
+                    "target": [5.0, 4.0, 3.0, 2.0, 1.0, None],
+                }
+            )
+        )
+        .equal(
+            BinaryRecallResult(
+                y_true=np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
+                y_pred=np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
+                nan_policy=nan_policy,
+            ),
         )
     )
