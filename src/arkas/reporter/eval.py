@@ -16,6 +16,7 @@ from iden.io import save_text
 from arkas.evaluator.base import BaseEvaluator, setup_evaluator
 from arkas.reporter.base import BaseReporter
 from arkas.reporter.utils import create_html_report
+from arkas.section import ResultSection
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -92,9 +93,10 @@ class EvalReporter(BaseReporter):
         logger.info(f"Analyzing the DataFrame {frame.shape}...")
         result = self._evaluator.evaluate(frame)
         logger.info("Creating the HTML report...")
+        section = ResultSection(result)
         report = create_html_report(
-            toc=section.generate_html_body(max_depth=self._max_toc_depth),
-            body=section.generate_html_toc(),
+            toc=section.generate_html_body(),
+            body=section.generate_html_toc(max_depth=self._max_toc_depth),
         )
         logger.info(f"Saving HTML report at {self._report_path}...")
         save_text(report, self._report_path, exist_ok=True)
