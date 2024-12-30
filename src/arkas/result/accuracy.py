@@ -9,7 +9,8 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
-from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
+from arkas.metric.classification.accuracy import accuracy
+from arkas.metric.classification.balanced_accuracy import balanced_accuracy
 from arkas.metric.utils import check_nan_policy, check_same_shape_pred
 from arkas.result.base import BaseResult
 
