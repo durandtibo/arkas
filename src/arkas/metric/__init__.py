@@ -3,6 +3,9 @@ r"""Contain functions to compute metrics."""
 from __future__ import annotations
 
 __all__ = [
+    "Accuracy",
+    "AccuracyMetric",
+    "BaseMetric",
     "accuracy",
     "average_precision",
     "balanced_accuracy",
@@ -54,6 +57,9 @@ __all__ = [
     "wasserstein_distance",
 ]
 
+from arkas.metric.base import BaseMetric
+from arkas.metric.classification.accuracy import AccuracyMetric
+from arkas.metric.classification.accuracy import AccuracyMetric as Accuracy
 from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
 from arkas.metric.classification.ap import (
     average_precision,
