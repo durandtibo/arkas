@@ -54,7 +54,7 @@ def test_eval_reporter_generate(tmp_path: Path, ingestor: BaseIngestor) -> None:
         transformer=SequentialTransformer(transformers=[]),
         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
         report_path=path,
-    ).compute()
+    ).generate()
     assert path.is_file()
 
 
@@ -66,5 +66,5 @@ def test_eval_reporter_generate_empty(tmp_path: Path) -> None:
         transformer=SequentialTransformer(transformers=[]),
         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
         report_path=path,
-    ).compute()
+    ).generate()
     assert path.is_file()
