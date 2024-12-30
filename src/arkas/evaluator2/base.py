@@ -85,3 +85,35 @@ class BaseEvaluator(ABC):
 
         ```
         """
+
+    @abstractmethod
+    def evaluate(self, prefix: str = "", suffix: str = "") -> dict:
+        r"""Evaluate the metrics.
+
+        Args:
+            prefix: The key prefix in the returned dictionary.
+            suffix: The key suffix in the returned dictionary.
+
+        Returns:
+            The metrics.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.evaluator2 import AccuracyEvaluator
+        >>> from arkas.state import AccuracyState
+        >>> evaluator = AccuracyEvaluator(
+        ...     AccuracyState(
+        ...         y_true=np.array([1, 0, 0, 1, 1]),
+        ...         y_pred=np.array([1, 0, 0, 1, 1]),
+        ...         y_true_name="target",
+        ...         y_pred_name="pred",
+        ...     )
+        ... )
+        >>> evaluator.evaluate()
+        {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
+
+        ```
+        """
