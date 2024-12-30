@@ -3,11 +3,6 @@ r"""Contain functions to compute metrics."""
 from __future__ import annotations
 
 __all__ = [
-    "Accuracy",
-    "AccuracyMetric",
-    "BaseMetric",
-    "EmptyMetric",
-    "Metric",
     "accuracy",
     "average_precision",
     "balanced_accuracy",
@@ -59,9 +54,7 @@ __all__ = [
     "wasserstein_distance",
 ]
 
-from arkas.metric.base import BaseMetric
-from arkas.metric.classification.accuracy import AccuracyMetric
-from arkas.metric.classification.accuracy import AccuracyMetric as Accuracy
+
 from arkas.metric.classification.accuracy import accuracy
 from arkas.metric.classification.ap import (
     average_precision,
@@ -126,4 +119,3 @@ from arkas.metric.regression.r2 import r2_score
 from arkas.metric.regression.rmse import root_mean_squared_error
 from arkas.metric.regression.tweedie_deviance import mean_tweedie_deviance
 from arkas.metric.regression.universal import regression_errors
-from arkas.metric.vanilla import EmptyMetric, Metric
