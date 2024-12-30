@@ -5,11 +5,16 @@ from typing import Any
 import numpy as np
 import pytest
 from jinja2 import Template
+from matplotlib import pyplot as plt
 
 from arkas.result import AccuracyResult, EmptyResult
 from arkas.section import ResultSection
 from arkas.section.accuracy import create_section_template
-from arkas.section.result import create_table_metrics, create_table_metrics_row
+from arkas.section.result import (
+    create_figures,
+    create_table_metrics,
+    create_table_metrics_row,
+)
 
 ###################################
 #     Tests for ResultSection     #
@@ -137,3 +142,17 @@ def test_create_table_metrics_empty() -> None:
 @pytest.mark.parametrize("value", [1, 1.2, "abc", np.array([1, 2, 3]), [1, 2, 3]])
 def test_create_table_metrics_row(value: Any) -> None:
     assert isinstance(create_table_metrics_row(name="meow", value=value), str)
+
+
+####################################
+#     Tests for create_figures     #
+####################################
+
+
+def test_create_figures() -> None:
+    fig, _ = plt.subplots()
+    assert isinstance(create_figures({"accuracy": fig}), str)
+
+
+def test_create_figures_empty() -> None:
+    assert isinstance(create_figures({}), str)
