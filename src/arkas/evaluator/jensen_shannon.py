@@ -67,8 +67,8 @@ class JensenShannonDivergenceEvaluator(BaseLazyEvaluator[JensenShannonDivergence
         self, data: pl.DataFrame, lazy: bool = True
     ) -> JensenShannonDivergenceResult | Result:
         logger.info(
-            f"Evaluating the Wasserstein distance | p={self._p} | "
-            f"q={self._q} | drop_nulls={self._drop_nulls}"
+            f"Evaluating the Wasserstein distance | p={self._p!r} | "
+            f"q={self._q!r} | drop_nulls={self._drop_nulls}"
         )
         return self._evaluate(data, lazy)
 
