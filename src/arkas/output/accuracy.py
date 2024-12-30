@@ -1,25 +1,23 @@
-r"""Implement the classification accuracy evaluators."""
+r"""Implement the classification accuracy output."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracyEvaluator"]
-
+__all__ = ["AccuracyOutput"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping
 
-from arkas.evaluator2.base import BaseEvaluator
-from arkas.metric import accuracy
+from arkas.evaluator2.accuracy import AccuracyEvaluator
 from arkas.metric.utils import check_nan_policy
+from arkas.output.lazy import BaseLazyOutput
 
 if TYPE_CHECKING:
-
     from arkas.state.accuracy import AccuracyState
 
 
-class AccuracyEvaluator(BaseEvaluator):
-    r"""Implement the accuracy evaluator.
+class AccuracyOutput(BaseLazyOutput):
+    r"""Implement the accuracy output.
 
     Args:
         state: The state containing the ground truth and predicted
@@ -33,9 +31,9 @@ class AccuracyEvaluator(BaseEvaluator):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.evaluator2 import AccuracyEvaluator
+    >>> from arkas.output import AccuracyOutput
     >>> from arkas.state import AccuracyState
-    >>> evaluator = AccuracyEvaluator(
+    >>> output = AccuracyOutput(
     ...     AccuracyState(
     ...         y_true=np.array([1, 0, 0, 1, 1]),
     ...         y_pred=np.array([1, 0, 0, 1, 1]),
@@ -43,13 +41,16 @@ class AccuracyEvaluator(BaseEvaluator):
     ...         y_pred_name="pred",
     ...     )
     ... )
-    >>> evaluator
+    >>> output
+    AccuracyOutput(
+      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+      (nan_policy): propagate
+    )
+    >>> output.get_evaluator()
     AccuracyEvaluator(
       (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
       (nan_policy): propagate
     )
-    >>> evaluator.evaluate()
-    {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
 
     ```
     """
@@ -71,11 +72,5 @@ class AccuracyEvaluator(BaseEvaluator):
             and self._nan_policy == other._nan_policy
         )
 
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return accuracy(
-            y_true=self._state.y_true,
-            y_pred=self._state.y_pred,
-            prefix=prefix,
-            suffix=suffix,
-            nan_policy=self._nan_policy,
-        )
+    def _get_evaluator(self) -> AccuracyEvaluator:
+        return AccuracyEvaluator(state=self._state, nan_policy=self._nan_policy)
