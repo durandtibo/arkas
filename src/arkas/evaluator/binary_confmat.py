@@ -80,9 +80,9 @@ class BinaryConfusionMatrixEvaluator(BaseLazyEvaluator[BinaryConfusionMatrixResu
         self, data: pl.DataFrame, lazy: bool = True
     ) -> BinaryConfusionMatrixResult | Result:
         logger.info(
-            f"Evaluating the binary confusion matrix | y_true={self._y_true} | "
-            f"y_pred={self._y_pred} | drop_nulls={self._drop_nulls} | "
-            f"nan_policy={self._nan_policy}"
+            f"Evaluating the binary confusion matrix | y_true={self._y_true!r} | "
+            f"y_pred={self._y_pred!r} | drop_nulls={self._drop_nulls} | "
+            f"nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 

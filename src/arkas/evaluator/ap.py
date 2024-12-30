@@ -88,9 +88,9 @@ class AveragePrecisionEvaluator(BaseLazyEvaluator[AveragePrecisionResult]):
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> AveragePrecisionResult | Result:
         logger.info(
-            f"Evaluating the average precision | label_type={self._label_type} | "
-            f"y_true={self._y_true} | y_score={self._y_score} | "
-            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy}"
+            f"Evaluating the average precision | label_type={self._label_type!r} | "
+            f"y_true={self._y_true!r} | y_score={self._y_score!r} | "
+            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 

@@ -88,9 +88,9 @@ class MultilabelAveragePrecisionEvaluator(BaseLazyEvaluator[MultilabelAveragePre
         self, data: pl.DataFrame, lazy: bool = True
     ) -> MultilabelAveragePrecisionResult | Result:
         logger.info(
-            f"Evaluating the multilabel average precision (AP) | y_true={self._y_true} | "
-            f"y_score={self._y_score} | drop_nulls={self._drop_nulls} | "
-            f"nan_policy={self._nan_policy}"
+            f"Evaluating the multilabel average precision (AP) | y_true={self._y_true!r} | "
+            f"y_score={self._y_score!r} | drop_nulls={self._drop_nulls} | "
+            f"nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 

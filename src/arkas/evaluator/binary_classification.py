@@ -94,9 +94,9 @@ class BinaryClassificationEvaluator(BaseLazyEvaluator[BinaryClassificationResult
         self, data: pl.DataFrame, lazy: bool = True
     ) -> BinaryClassificationResult | Result:
         logger.info(
-            f"Evaluating the binary classification metrics | y_true={self._y_true} | "
-            f"y_pred={self._y_pred} | y_score={self._y_score} | "
-            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy}"
+            f"Evaluating the binary classification metrics | y_true={self._y_true!r} | "
+            f"y_pred={self._y_pred!r} | y_score={self._y_score!r} | "
+            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 
