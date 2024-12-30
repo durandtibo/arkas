@@ -26,9 +26,9 @@ class AccuracyState(BaseState):
         y_pred: The predicted labels. This input must be an
             array of shape ``(n_samples,)`` where the values are
             in ``{0, ..., n_classes-1}``.
-        nan_policy: The policy on how to handle NaN values in the input
-            arrays. The following options are available: ``'omit'``,
-            ``'propagate'``, and ``'raise'``.
+        y_true_name: The name associated to the ground truth target
+            labels.
+        y_pred_name: The name associated to the predicted labels.
 
     Example usage:
 
