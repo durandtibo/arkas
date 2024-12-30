@@ -185,6 +185,25 @@ def create_table_metrics_row(name: str, value: Any) -> str:
 
 
 def create_figures(figures: dict) -> str:
+    r"""Return the HTML code of the figures.
+
+    Args:
+        figures: The figures.
+
+    Returns:
+        The HTML code of the figures.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.section.result import create_figures
+    >>> from matplotlib import pyplot as plt
+    >>> fig, _ = plt.subplots()
+    >>> out = create_figures({"pr": fig})
+
+    ```
+    """
     figures = to_flat_dict(figures)
     rows = "\n".join(
         [

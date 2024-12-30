@@ -1,4 +1,5 @@
-r"""Contain the implementation of a simple reporter."""
+r"""Contain the implementation of a simple reporter that evaluates
+results and writes them in a HTML file."""
 
 from __future__ import annotations
 
@@ -25,7 +26,8 @@ logger = logging.getLogger(__name__)
 
 
 class EvalReporter(BaseReporter):
-    r"""Implement a simple reporter.
+    r"""Implement a simple reporter that evaluates results and writes
+    them in a HTML file.
 
     Args:
         ingestor: The ingestor or its configuration.
@@ -39,17 +41,24 @@ class EvalReporter(BaseReporter):
 
     ```pycon
 
+    >>> import tempfile
+    >>> from pathlib import Path
+    >>> import polars as pl
     >>> from arkas.evaluator import AccuracyEvaluator
-    >>> from grizz.ingestor import ParquetIngestor
+    >>> from grizz.ingestor import Ingestor
     >>> from grizz.transformer import SequentialTransformer
     >>> from arkas.reporter import EvalReporter
-    >>> reporter = EvalReporter(
-    ...     ingestor=ParquetIngestor("/path/to/data.parquet"),
-    ...     transformer=SequentialTransformer(transformers=[]),
-    ...     evaluator=AccuracyEvaluator(),
-    ...     report_path="/path/to/report.html",
-    ... )
-    >>> report = reporter.compute()  # doctest: +SKIP
+    >>> with tempfile.TemporaryDirectory() as tmpdir:
+    ...     reporter = EvalReporter(
+    ...         ingestor=Ingestor(
+    ...             pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+    ...         ),
+    ...         transformer=SequentialTransformer(transformers=[]),
+    ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
+    ...         report_path=Path(tmpdir).joinpath("report.html"),
+    ...     )
+    ...     reporter.compute()
+    ...
 
     ```
     """
@@ -92,11 +101,11 @@ class EvalReporter(BaseReporter):
         frame = self._transformer.transform(frame)
         logger.info(f"Analyzing the DataFrame {frame.shape}...")
         result = self._evaluator.evaluate(frame)
-        logger.info("Creating the HTML report...")
+        logger.info("Creating the HTML report with the results...")
         section = ResultSection(result)
         report = create_html_report(
             toc=section.generate_html_body(),
             body=section.generate_html_toc(max_depth=self._max_toc_depth),
         )
-        logger.info(f"Saving HTML report at {self._report_path}...")
+        logger.info(f"Saving the HTML report at {self._report_path}...")
         save_text(report, self._report_path, exist_ok=True)
