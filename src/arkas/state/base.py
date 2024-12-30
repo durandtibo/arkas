@@ -4,8 +4,16 @@ from __future__ import annotations
 
 __all__ = ["BaseState"]
 
+import sys
 from abc import ABC, abstractmethod
-from typing import Any, Self
+from typing import Any
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:  # pragma: no cover
+    from typing_extensions import (
+        Self,  # use backport because it was added in python 3.11
+    )
 
 
 class BaseState(ABC):

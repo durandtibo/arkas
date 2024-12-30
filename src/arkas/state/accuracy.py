@@ -4,13 +4,21 @@ from __future__ import annotations
 
 __all__ = ["AccuracyState"]
 
-from typing import TYPE_CHECKING, Any, Self
+import sys
+from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
 from arkas.metric.utils import check_same_shape_pred
 from arkas.state.base import BaseState
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:  # pragma: no cover
+    from typing_extensions import (
+        Self,  # use backport because it was added in python 3.11
+    )
 
 if TYPE_CHECKING:
     import numpy as np
