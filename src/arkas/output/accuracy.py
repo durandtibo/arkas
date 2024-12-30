@@ -9,8 +9,10 @@ from typing import TYPE_CHECKING, Any
 from coola.utils import repr_indent, repr_mapping
 
 from arkas.evaluator2.accuracy import AccuracyEvaluator
+from arkas.hcg.accuracy import AccuracyContentGenerator
 from arkas.metric.utils import check_nan_policy
 from arkas.output.lazy import BaseLazyOutput
+from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
     from arkas.state.accuracy import AccuracyState
@@ -72,5 +74,11 @@ class AccuracyOutput(BaseLazyOutput):
             and self._nan_policy == other._nan_policy
         )
 
+    def _get_content_generator(self) -> AccuracyContentGenerator:
+        return AccuracyContentGenerator(state=self._state, nan_policy=self._nan_policy)
+
     def _get_evaluator(self) -> AccuracyEvaluator:
         return AccuracyEvaluator(state=self._state, nan_policy=self._nan_policy)
+
+    def _get_plotter(self) -> Plotter:
+        return Plotter()

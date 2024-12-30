@@ -50,3 +50,26 @@ class BasePlotter(ABC):
 
         ```
         """
+
+    @abstractmethod
+    def plot(self, prefix: str = "", suffix: str = "") -> dict:
+        r"""Generate the figures.
+
+        Args:
+            prefix: The key prefix in the returned dictionary.
+            suffix: The key suffix in the returned dictionary.
+
+        Returns:
+            A dictionary with the generated figures.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.plotter import Plotter
+        >>> plotter = Plotter()
+        >>> plotter.plot()
+        {}
+
+        ```
+        """
