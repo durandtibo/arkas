@@ -12,7 +12,7 @@ from arkas.state import AccuracyState
 ##############################################
 
 
-def test_accuracy_section_repr() -> None:
+def test_accuracy_content_generator_repr() -> None:
     assert repr(
         AccuracyContentGenerator(
             state=AccuracyState(
@@ -25,7 +25,7 @@ def test_accuracy_section_repr() -> None:
     ).startswith("AccuracyContentGenerator(")
 
 
-def test_accuracy_section_str() -> None:
+def test_accuracy_content_generator_str() -> None:
     assert str(
         AccuracyContentGenerator(
             state=AccuracyState(
@@ -38,7 +38,7 @@ def test_accuracy_section_str() -> None:
     ).startswith("AccuracyContentGenerator(")
 
 
-def test_accuracy_section_equal_true() -> None:
+def test_accuracy_content_generator_equal_true() -> None:
     assert AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -58,7 +58,7 @@ def test_accuracy_section_equal_true() -> None:
     )
 
 
-def test_accuracy_section_equal_false_different_state() -> None:
+def test_accuracy_content_generator_equal_false_different_state() -> None:
     assert not AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -78,7 +78,7 @@ def test_accuracy_section_equal_false_different_state() -> None:
     )
 
 
-def test_accuracy_section_equal_false_different_nan_policy() -> None:
+def test_accuracy_content_generator_equal_false_different_nan_policy() -> None:
     assert not AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -99,7 +99,7 @@ def test_accuracy_section_equal_false_different_nan_policy() -> None:
     )
 
 
-def test_accuracy_section_equal_false_different_type() -> None:
+def test_accuracy_content_generator_equal_false_different_type() -> None:
     assert not AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -110,8 +110,8 @@ def test_accuracy_section_equal_false_different_type() -> None:
     ).equal(42)
 
 
-def test_accuracy_section_generate_body() -> None:
-    section = AccuracyContentGenerator(
+def test_accuracy_content_generator_generate_body() -> None:
+    generator = AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -119,61 +119,11 @@ def test_accuracy_section_generate_body() -> None:
             y_pred_name="pred",
         )
     )
-    assert isinstance(Template(section.generate_body()).render(), str)
+    assert isinstance(Template(generator.generate_body()).render(), str)
 
 
-def test_accuracy_section_generate_body_args() -> None:
-    section = AccuracyContentGenerator(
-        state=AccuracyState(
-            y_true=np.array([1, 0, 0, 1, 1]),
-            y_pred=np.array([1, 0, 1, 0, 1]),
-            y_true_name="target",
-            y_pred_name="pred",
-        )
-    )
-    assert isinstance(
-        Template(section.generate_body(number="1.", tags=["meow"], depth=1)).render(), str
-    )
-
-
-def test_accuracy_section_generate_body_count_0() -> None:
-    section = AccuracyContentGenerator(
-        state=AccuracyState(
-            y_true=np.array([]),
-            y_pred=np.array([]),
-            y_true_name="target",
-            y_pred_name="pred",
-        )
-    )
-    assert isinstance(Template(section.generate_body()).render(), str)
-
-
-def test_accuracy_section_generate_body_empty() -> None:
-    section = AccuracyContentGenerator(
-        state=AccuracyState(
-            y_true=np.array([]),
-            y_pred=np.array([]),
-            y_true_name="target",
-            y_pred_name="pred",
-        )
-    )
-    assert isinstance(Template(section.generate_body()).render(), str)
-
-
-def test_accuracy_section_generate_toc() -> None:
-    section = AccuracyContentGenerator(
-        state=AccuracyState(
-            y_true=np.array([1, 0, 0, 1, 1]),
-            y_pred=np.array([1, 0, 1, 0, 1]),
-            y_true_name="target",
-            y_pred_name="pred",
-        )
-    )
-    assert isinstance(Template(section.generate_toc()).render(), str)
-
-
-def test_accuracy_section_generate_toc_args() -> None:
-    section = AccuracyContentGenerator(
+def test_accuracy_content_generator_generate_body_args() -> None:
+    generator = AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -182,7 +132,57 @@ def test_accuracy_section_generate_toc_args() -> None:
         )
     )
     assert isinstance(
-        Template(section.generate_toc(number="1.", tags=["meow"], depth=1)).render(), str
+        Template(generator.generate_body(number="1.", tags=["meow"], depth=1)).render(), str
+    )
+
+
+def test_accuracy_content_generator_generate_body_count_0() -> None:
+    generator = AccuracyContentGenerator(
+        state=AccuracyState(
+            y_true=np.array([]),
+            y_pred=np.array([]),
+            y_true_name="target",
+            y_pred_name="pred",
+        )
+    )
+    assert isinstance(Template(generator.generate_body()).render(), str)
+
+
+def test_accuracy_content_generator_generate_body_empty() -> None:
+    generator = AccuracyContentGenerator(
+        state=AccuracyState(
+            y_true=np.array([]),
+            y_pred=np.array([]),
+            y_true_name="target",
+            y_pred_name="pred",
+        )
+    )
+    assert isinstance(Template(generator.generate_body()).render(), str)
+
+
+def test_accuracy_content_generator_generate_toc() -> None:
+    generator = AccuracyContentGenerator(
+        state=AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        )
+    )
+    assert isinstance(Template(generator.generate_toc()).render(), str)
+
+
+def test_accuracy_content_generator_generate_toc_args() -> None:
+    generator = AccuracyContentGenerator(
+        state=AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        )
+    )
+    assert isinstance(
+        Template(generator.generate_toc(number="1.", tags=["meow"], depth=1)).render(), str
     )
 
 

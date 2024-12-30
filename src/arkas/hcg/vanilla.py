@@ -1,19 +1,15 @@
-r"""Contain the implementation of a HTML content generator that analyzes
-accuracy performances."""
+r"""Contain the implementation of a simple HTML content generator."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracyContentGenerator", "create_template"]
+__all__ = ["ContentGenerator", "create_template"]
 
 import logging
 from typing import TYPE_CHECKING, Any
 
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
-from arkas.evaluator2 import AccuracyEvaluator
 from arkas.hcg.base import BaseContentGenerator
-from arkas.metric.utils import check_nan_policy
 from arkas.section.utils import (
     GO_TO_TOP,
     render_html_toc,
@@ -25,15 +21,12 @@ from arkas.section.utils import (
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from arkas.state import AccuracyState
-
 
 logger = logging.getLogger(__name__)
 
 
-class AccuracyContentGenerator(BaseContentGenerator):
-    r"""Implement a HTML content generator that analyzes accuracy
-    performances.
+class ContentGenerator(BaseContentGenerator):
+    r"""Implement a section that analyze accuracy states.
 
     Args:
         state: The data structure containing the states.
@@ -62,31 +55,22 @@ class AccuracyContentGenerator(BaseContentGenerator):
     ```
     """
 
-    def __init__(self, state: AccuracyState, nan_policy: str = "propagate") -> None:
-        self._state = state
-
-        check_nan_policy(nan_policy)
-        self._nan_policy = nan_policy
+    def __init__(self, content: str = "") -> None:
+        self._content = str(content)
 
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state, "nan_policy": self._nan_policy}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+        return f"{self.__class__.__qualname__}()"
 
     def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state, "nan_policy": self._nan_policy}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+        return f"{self.__class__.__qualname__}()"
 
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:  # noqa: ARG002
         if not isinstance(other, self.__class__):
             return False
-        return (
-            self._state.equal(other._state, equal_nan=equal_nan)
-            and self._nan_policy == other._nan_policy
-        )
+        return self._content == other._content
 
     def generate_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
-        logger.info("Generating the accuracy content...")
-        metrics = AccuracyEvaluator(self._state, nan_policy=self._nan_policy).evaluate()
+        logger.info("Generating the content...")
         return Template(create_template()).render(
             {
                 "go_to_top": GO_TO_TOP,
@@ -94,13 +78,7 @@ class AccuracyContentGenerator(BaseContentGenerator):
                 "depth": valid_h_tag(depth + 1),
                 "title": tags2title(tags),
                 "section": number,
-                "accuracy": f"{metrics.get('accuracy', float('nan')):.4f}",
-                "count": f"{metrics.get('count', 0):,}",
-                "count_correct": f"{metrics.get('count_correct', 0):,}",
-                "count_incorrect": f"{metrics.get('count_incorrect', 0):,}",
-                "error": f"{metrics.get('error', float('nan')):.4f}",
-                "y_true_name": self._state.y_true_name,
-                "y_pred_name": self._state.y_pred_name,
+                "content": self._content,
             }
         )
 
@@ -111,10 +89,10 @@ class AccuracyContentGenerator(BaseContentGenerator):
 
 
 def create_template() -> str:
-    r"""Return the template of the content.
+    r"""Return the template of the section.
 
     Returns:
-        The content template.
+        The section template.
 
     Example usage:
 
@@ -131,12 +109,7 @@ def create_template() -> str:
 
 <p style="margin-top: 1rem;">
 
-<ul>
-  <li>column with target labels: {{y_true_name}}</li>
-  <li>column with predicted labels: {{y_pred_name}}</li>
-  <li>accuracy: {{accuracy}} ({{count_correct}}/{{count}})</li>
-  <li>error: {{error}} ({{count_incorrect}}/{{count}})</li>
-</ul>
+{{content}}
 
 <p style="margin-top: 1rem;">
 """
