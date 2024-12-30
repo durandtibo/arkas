@@ -88,7 +88,7 @@ class PearsonCorrelationEvaluator(BaseLazyEvaluator[PearsonCorrelationResult]):
         logger.info(
             f"Evaluating the Pearson correlation | x={self._x} | "
             f"y={self._y} | drop_nulls={self._drop_nulls} | "
-            f"nan_policy={self._nan_policy}"
+            f"nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 

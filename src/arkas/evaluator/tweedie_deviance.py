@@ -83,9 +83,9 @@ class MeanTweedieDevianceEvaluator(BaseLazyEvaluator[MeanTweedieDevianceResult])
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> MeanTweedieDevianceResult | Result:
         logger.info(
-            f"Evaluating the mean absolute error (MAE) | y_true={self._y_true} | "
-            f"y_pred={self._y_pred} | powers={self._powers} | "
-            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy}"
+            f"Evaluating the mean absolute error (MAE) | y_true={self._y_true!r} | "
+            f"y_pred={self._y_pred!r} | powers={self._powers} | "
+            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 

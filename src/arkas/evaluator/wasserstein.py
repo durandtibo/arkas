@@ -79,9 +79,9 @@ class WassersteinDistanceEvaluator(BaseLazyEvaluator[WassersteinDistanceResult])
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> WassersteinDistanceResult | Result:
         logger.info(
-            f"Evaluating the Wasserstein distance | u_values={self._u_values} | "
-            f"v_values={self._v_values} | drop_nulls={self._drop_nulls} | "
-            f"nan_policy={self._nan_policy}"
+            f"Evaluating the Wasserstein distance | u_values={self._u_values!r} | "
+            f"v_values={self._v_values!r} | drop_nulls={self._drop_nulls} | "
+            f"nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 

@@ -88,7 +88,7 @@ class SpearmanCorrelationEvaluator(BaseLazyEvaluator[SpearmanCorrelationResult])
         logger.info(
             f"Evaluating the Spearman correlation | x={self._x} | "
             f"y={self._y} | drop_nulls={self._drop_nulls} | "
-            f"nan_policy={self._nan_policy}"
+            f"nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 

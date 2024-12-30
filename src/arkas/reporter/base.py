@@ -126,7 +126,7 @@ def setup_reporter(
     by using the ``BaseReporter`` factory function.
 
     Args:
-        reporter: Specifies an reporter or its configuration.
+        reporter: A reporter or its configuration.
 
     Returns:
         An instantiated reporter.

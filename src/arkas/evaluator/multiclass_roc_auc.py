@@ -95,9 +95,9 @@ class MulticlassRocAucEvaluator(BaseLazyEvaluator[MulticlassRocAucResult]):
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> MulticlassRocAucResult | Result:
         logger.info(
-            f"Evaluating the multiclass ROC AUC | y_true={self._y_true} | "
-            f"y_score={self._y_score} | drop_nulls={self._drop_nulls} | "
-            f"nan_policy={self._nan_policy}"
+            f"Evaluating the multiclass ROC AUC | y_true={self._y_true!r} | "
+            f"y_score={self._y_score!r} | drop_nulls={self._drop_nulls} | "
+            f"nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 

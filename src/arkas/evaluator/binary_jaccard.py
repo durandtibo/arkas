@@ -79,8 +79,8 @@ class BinaryJaccardEvaluator(BaseLazyEvaluator[BinaryJaccardResult]):
 
     def evaluate(self, data: pl.DataFrame, lazy: bool = True) -> BinaryJaccardResult | Result:
         logger.info(
-            f"Evaluating the binary Jaccard | y_true={self._y_true} | y_pred={self._y_pred} | "
-            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy}"
+            f"Evaluating the binary Jaccard | y_true={self._y_true!r} | y_pred={self._y_pred!r} | "
+            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 
