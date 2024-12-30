@@ -20,6 +20,7 @@ from arkas.section.utils import (
     tags2title,
     valid_h_tag,
 )
+from arkas.utils.figure import figure2html
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -85,7 +86,7 @@ class ResultSection(BaseSection):
                 "title": tags2title(tags),
                 "section": number,
                 "metrics": create_table_metrics(metrics),
-                "figures": figures,
+                "figures": create_figures(figures),
             }
         )
 
@@ -117,8 +118,6 @@ def create_section_template() -> str:
 <p style="margin-top: 1rem;">
 
 {{metrics}}
-
-<p style="margin-top: 1rem;">
 
 {{figures}}
 
@@ -183,3 +182,14 @@ def create_table_metrics_row(name: str, value: Any) -> str:
     ```
     """
     return f'<tr><th>{name}</th><td style="text-align: right;">{value}</td></tr>'
+
+
+def create_figures(figures: dict) -> str:
+    figures = to_flat_dict(figures)
+    rows = "\n".join(
+        [
+            f"<li>{name}</li>\n{figure2html(value, reactive=False, close_fig=True)}"
+            for name, value in figures.items()
+        ]
+    )
+    return f"<ul>\n{rows}\n</ul>"
