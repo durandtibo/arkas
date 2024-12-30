@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = ["BaseReporter", "is_reporter_config", "setup_reporter"]
 
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from objectory import AbstractFactory
 from objectory.utils import is_object_config
@@ -20,29 +20,29 @@ class BaseReporter(ABC, metaclass=AbstractFactory):
 
     ```pycon
 
-    >>> from arkas.evaluator import NullValueAnalyzer
-    >>> from grizz.ingestor import ParquetIngestor
+    >>> import tempfile
+    >>> from pathlib import Path
+    >>> import polars as pl
+    >>> from arkas.evaluator import AccuracyEvaluator
+    >>> from grizz.ingestor import Ingestor
     >>> from grizz.transformer import SequentialTransformer
-    >>> from arkas.reporter import Reporter
-    >>> reporter = Reporter(
-    ...     ingestor=ParquetIngestor("/path/to/data.parquet"),
-    ...     transformer=SequentialTransformer(transformers=[]),
-    ...     evaluator=NullValueAnalyzer(),
-    ...     report_path="/path/to/report.html",
-    ... )
-    >>> reporter
-    Reporter(
-      (ingestor): ParquetIngestor(path=/path/to/data.parquet)
-      (transformer): SequentialTransformer()
-      (evaluator): NullValueAnalyzer(figsize=None)
-      (report_path): /path/to/report.html
-      (max_toc_depth): 6
-    )
-    >>> report = reporter.generate()  # doctest: +SKIP
+    >>> from arkas.reporter import EvalReporter
+    >>> with tempfile.TemporaryDirectory() as tmpdir:
+    ...     reporter = EvalReporter(
+    ...         ingestor=Ingestor(
+    ...             pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+    ...         ),
+    ...         transformer=SequentialTransformer(transformers=[]),
+    ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
+    ...         report_path=Path(tmpdir).joinpath("report.html"),
+    ...     )
+    ...     reporter.generate()
+    ...
 
     ```
     """
 
+    @abstractmethod
     def generate(self) -> None:
         r"""Generate a HTML report.
 
@@ -50,17 +50,24 @@ class BaseReporter(ABC, metaclass=AbstractFactory):
 
         ```pycon
 
-        >>> from arkas.evaluator import NullValueAnalyzer
-        >>> from grizz.ingestor import ParquetIngestor
+        >>> import tempfile
+        >>> from pathlib import Path
+        >>> import polars as pl
+        >>> from arkas.evaluator import AccuracyEvaluator
+        >>> from grizz.ingestor import Ingestor
         >>> from grizz.transformer import SequentialTransformer
-        >>> from arkas.reporter import Reporter
-        >>> reporter = Reporter(
-        ...     ingestor=ParquetIngestor("/path/to/data.parquet"),
-        ...     transformer=SequentialTransformer(transformers=[]),
-        ...     evaluator=NullValueAnalyzer(figsize=None),
-        ...     report_path="/path/to/report.html",
-        ... )
-        >>> report = reporter.generate()  # doctest: +SKIP
+        >>> from arkas.reporter import EvalReporter
+        >>> with tempfile.TemporaryDirectory() as tmpdir:
+        ...     reporter = EvalReporter(
+        ...         ingestor=Ingestor(
+        ...             pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
+        ...         ),
+        ...         transformer=SequentialTransformer(transformers=[]),
+        ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
+        ...         report_path=Path(tmpdir).joinpath("report.html"),
+        ...     )
+        ...     reporter.generate()
+        ...
 
         ```
         """
@@ -89,13 +96,17 @@ def is_reporter_config(config: dict) -> bool:
     >>> from arkas.reporter import is_reporter_config
     >>> is_reporter_config(
     ...     {
-    ...         "_target_": "arkas.reporter.Reporter",
+    ...         "_target_": "arkas.reporter.EvalReporter",
     ...         "ingestor": {
     ...             "_target_": "grizz.ingestor.CsvIngestor",
     ...             "path": "/path/to/data.csv",
     ...         },
     ...         "transformer": {"_target_": "grizz.transformer.DropDuplicate"},
-    ...         "evaluator": {"_target_": "arkas.evaluator.NullValueAnalyzer"},
+    ...         "evaluator": {
+    ...             "_target_": "arkas.evaluator.AccuracyEvaluator",
+    ...             "y_true": "target",
+    ...             "y_pred": "pred",
+    ...         },
     ...         "report_path": "/path/to/report.html",
     ...     }
     ... )
@@ -127,21 +138,25 @@ def setup_reporter(
     >>> from arkas.reporter import setup_reporter
     >>> reporter = setup_reporter(
     ...     {
-    ...         "_target_": "arkas.reporter.Reporter",
+    ...         "_target_": "arkas.reporter.EvalReporter",
     ...         "ingestor": {
     ...             "_target_": "grizz.ingestor.CsvIngestor",
     ...             "path": "/path/to/data.csv",
     ...         },
     ...         "transformer": {"_target_": "grizz.transformer.DropDuplicate"},
-    ...         "evaluator": {"_target_": "arkas.evaluator.NullValueAnalyzer"},
+    ...         "evaluator": {
+    ...             "_target_": "arkas.evaluator.AccuracyEvaluator",
+    ...             "y_true": "target",
+    ...             "y_pred": "pred",
+    ...         },
     ...         "report_path": "/path/to/report.html",
     ...     }
     ... )
     >>> reporter
-    Reporter(
+    EvalReporter(
       (ingestor): CsvIngestor(path=/path/to/data.csv)
       (transformer): DropDuplicateTransformer(columns=None, ignore_missing=False)
-      (evaluator): NullValueAnalyzer(figsize=None)
+      (evaluator): AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
       (report_path): /path/to/report.html
       (max_toc_depth): 6
     )
@@ -149,7 +164,7 @@ def setup_reporter(
     ```
     """
     if isinstance(reporter, dict):
-        logger.info("Initializing an reporter from its configuration... ")
+        logger.info("Initializing a reporter from its configuration... ")
         reporter = BaseReporter.factory(**reporter)
     if not isinstance(reporter, BaseReporter):
         logger.warning(f"reporter is not a `BaseReporter` (received: {type(reporter)})")

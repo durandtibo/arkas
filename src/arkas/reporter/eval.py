@@ -57,7 +57,7 @@ class EvalReporter(BaseReporter):
     ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
     ...         report_path=Path(tmpdir).joinpath("report.html"),
     ...     )
-    ...     reporter.compute()
+    ...     reporter.generate()
     ...
 
     ```
@@ -94,7 +94,7 @@ class EvalReporter(BaseReporter):
         )
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    def compute(self) -> None:
+    def generate(self) -> None:
         logger.info("Ingesting the DataFrame...")
         frame = self._ingestor.ingest()
         logger.info(f"Transforming the DataFrame {frame.shape}...")
