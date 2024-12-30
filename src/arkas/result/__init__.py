@@ -52,13 +52,14 @@ __all__ = [
     "WassersteinDistanceResult",
 ]
 
-from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
+from arkas.result.accuracy import AccuracyResult
 from arkas.result.ap import (
     AveragePrecisionResult,
     BinaryAveragePrecisionResult,
     MulticlassAveragePrecisionResult,
     MultilabelAveragePrecisionResult,
 )
+from arkas.result.balanced_accuracy import BalancedAccuracyResult
 from arkas.result.base import BaseResult
 from arkas.result.binary_classification import BinaryClassificationResult
 from arkas.result.confmat import (
