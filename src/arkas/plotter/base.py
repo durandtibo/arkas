@@ -15,7 +15,6 @@ class BasePlotter(ABC):
 
     ```pycon
 
-    >>> import numpy as np
     >>> from arkas.plotter import Plotter
     >>> plotter = Plotter()
     >>> plotter
