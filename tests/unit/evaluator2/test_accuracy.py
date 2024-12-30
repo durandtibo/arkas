@@ -38,7 +38,7 @@ def test_accuracy_evaluator_str() -> None:
     ).startswith("AccuracyEvaluator(")
 
 
-def test_accuracy_evaluator_evaluate_equal_true() -> None:
+def test_accuracy_evaluator_equal_true() -> None:
     assert AccuracyEvaluator(
         AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -58,7 +58,7 @@ def test_accuracy_evaluator_evaluate_equal_true() -> None:
     )
 
 
-def test_accuracy_evaluator_evaluate_equal_false_different_state() -> None:
+def test_accuracy_evaluator_equal_false_different_state() -> None:
     assert not AccuracyEvaluator(
         AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -78,7 +78,7 @@ def test_accuracy_evaluator_evaluate_equal_false_different_state() -> None:
     )
 
 
-def test_accuracy_evaluator_evaluate_equal_false_different_nan_policy() -> None:
+def test_accuracy_evaluator_equal_false_different_nan_policy() -> None:
     assert not AccuracyEvaluator(
         AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -99,7 +99,7 @@ def test_accuracy_evaluator_evaluate_equal_false_different_nan_policy() -> None:
     )
 
 
-def test_accuracy_evaluator_evaluate_equal_false_different_type() -> None:
+def test_accuracy_evaluator_equal_false_different_type() -> None:
     assert not AccuracyEvaluator(
         AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
