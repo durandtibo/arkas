@@ -60,13 +60,14 @@ __all__ = [
 from arkas.metric.base import BaseMetric
 from arkas.metric.classification.accuracy import AccuracyMetric
 from arkas.metric.classification.accuracy import AccuracyMetric as Accuracy
-from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
+from arkas.metric.classification.accuracy import accuracy
 from arkas.metric.classification.ap import (
     average_precision,
     binary_average_precision,
     multiclass_average_precision,
     multilabel_average_precision,
 )
+from arkas.metric.classification.balanced_accuracy import balanced_accuracy
 from arkas.metric.classification.confmat import (
     binary_confusion_matrix,
     confusion_matrix,
