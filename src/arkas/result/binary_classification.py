@@ -10,8 +10,9 @@ from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
 from arkas.metric.utils import check_nan_policy
-from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
+from arkas.result.accuracy import AccuracyResult
 from arkas.result.ap import BinaryAveragePrecisionResult
+from arkas.result.balanced_accuracy import BalancedAccuracyResult
 from arkas.result.base import BaseResult
 from arkas.result.confmat import BinaryConfusionMatrixResult
 from arkas.result.fbeta import BinaryFbetaScoreResult

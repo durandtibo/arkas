@@ -1,15 +1,15 @@
-r"""Implement the accuracy result."""
+r"""Implement the balanced accuracy result."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracyResult"]
+__all__ = ["BalancedAccuracyResult"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
-from arkas.metric.classification.accuracy import accuracy
+from arkas.metric.classification.balanced_accuracy import balanced_accuracy
 from arkas.metric.utils import check_nan_policy, check_same_shape_pred
 from arkas.result.base import BaseResult
 
@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-class AccuracyResult(BaseResult):
-    r"""Implement the accuracy result.
+class BalancedAccuracyResult(BaseResult):
+    r"""Implement the balanced accuracy result.
 
     Args:
         y_true: The ground truth target labels. This input must
@@ -37,13 +37,13 @@ class AccuracyResult(BaseResult):
 
     >>> import numpy as np
     >>> from arkas.result import AccuracyResult
-    >>> result = AccuracyResult(
+    >>> result = BalancedAccuracyResult(
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    AccuracyResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
+    BalancedAccuracyResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
-    {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
+    {'balanced_accuracy': 1.0, 'count': 5}
 
     ```
     """
@@ -84,7 +84,7 @@ class AccuracyResult(BaseResult):
         return self._nan_policy
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return accuracy(
+        return balanced_accuracy(
             y_true=self._y_true,
             y_pred=self._y_pred,
             prefix=prefix,
