@@ -198,7 +198,7 @@ def setup_runner(
     >>> runner
     EvaluationRunner(
       (ingestor): Ingestor(shape=(5, 2))
-      (transformer): DropDuplicateTransformer(columns=None, ignore_missing=False)
+      (transformer): DropDuplicateTransformer(columns=None, exclude_columns=(), missing_policy='raise')
       (evaluator): AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
