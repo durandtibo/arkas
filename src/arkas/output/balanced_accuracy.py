@@ -1,15 +1,15 @@
-r"""Implement the accuracy output."""
+r"""Implement the balanced accuracy output."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracyOutput"]
+__all__ = ["BalancedAccuracyOutput"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping
 
-from arkas.content.accuracy import AccuracyContentGenerator
-from arkas.evaluator2.accuracy import AccuracyEvaluator
+from arkas.content.balanced_accuracy import BalancedAccuracyContentGenerator
+from arkas.evaluator2.balanced_accuracy import BalancedAccuracyEvaluator
 from arkas.metric.utils import check_nan_policy
 from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.vanilla import Plotter
@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from arkas.state.accuracy import AccuracyState
 
 
-class AccuracyOutput(BaseLazyOutput):
-    r"""Implement the accuracy output.
+class BalancedAccuracyOutput(BaseLazyOutput):
+    r"""Implement the balanced accuracy output.
 
     Args:
         state: The state containing the ground truth and predicted
@@ -33,9 +33,9 @@ class AccuracyOutput(BaseLazyOutput):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.output import AccuracyOutput
+    >>> from arkas.output import BalancedAccuracyOutput
     >>> from arkas.state import AccuracyState
-    >>> output = AccuracyOutput(
+    >>> output = BalancedAccuracyOutput(
     ...     AccuracyState(
     ...         y_true=np.array([1, 0, 0, 1, 1]),
     ...         y_pred=np.array([1, 0, 0, 1, 1]),
@@ -44,7 +44,7 @@ class AccuracyOutput(BaseLazyOutput):
     ...     )
     ... )
     >>> output
-    AccuracyOutput(
+    BalancedAccuracyOutput(
       (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
       (nan_policy): propagate
     )
@@ -74,11 +74,11 @@ class AccuracyOutput(BaseLazyOutput):
             and self._nan_policy == other._nan_policy
         )
 
-    def get_content_generator(self) -> AccuracyContentGenerator:
-        return AccuracyContentGenerator(state=self._state, nan_policy=self._nan_policy)
+    def get_content_generator(self) -> BalancedAccuracyContentGenerator:
+        return BalancedAccuracyContentGenerator(state=self._state, nan_policy=self._nan_policy)
 
-    def _get_evaluator(self) -> AccuracyEvaluator:
-        return AccuracyEvaluator(state=self._state, nan_policy=self._nan_policy)
+    def _get_evaluator(self) -> BalancedAccuracyEvaluator:
+        return BalancedAccuracyEvaluator(state=self._state, nan_policy=self._nan_policy)
 
     def _get_plotter(self) -> Plotter:
         return Plotter()
