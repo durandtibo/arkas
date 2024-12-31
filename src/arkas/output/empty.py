@@ -32,7 +32,7 @@ class EmptyOutput(Output):
     """
 
     def __init__(self) -> None:
-        super().__init__(generator=ContentGenerator(), evaluator=Evaluator(), plotter=Plotter())
+        super().__init__(content=ContentGenerator(), evaluator=Evaluator(), plotter=Plotter())
 
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"

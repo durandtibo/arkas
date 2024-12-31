@@ -13,7 +13,7 @@ from arkas.plotter import Plotter
 def test_output_repr() -> None:
     assert repr(
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )
@@ -23,7 +23,7 @@ def test_output_repr() -> None:
 def test_output_str() -> None:
     assert str(
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )
@@ -32,12 +32,12 @@ def test_output_str() -> None:
 
 def test_output_equal_true() -> None:
     assert Output(
-        generator=ContentGenerator("meow"),
+        content=ContentGenerator("meow"),
         evaluator=Evaluator(metrics={"accuracy": 0.42}),
         plotter=Plotter(),
     ).equal(
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )
@@ -46,12 +46,12 @@ def test_output_equal_true() -> None:
 
 def test_output_equal_false_different_generator() -> None:
     assert not Output(
-        generator=ContentGenerator("meow"),
+        content=ContentGenerator("meow"),
         evaluator=Evaluator(metrics={"accuracy": 0.42}),
         plotter=Plotter(),
     ).equal(
         Output(
-            generator=ContentGenerator("miaou"),
+            content=ContentGenerator("miaou"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )
@@ -60,12 +60,12 @@ def test_output_equal_false_different_generator() -> None:
 
 def test_output_equal_false_different_evaluator() -> None:
     assert not Output(
-        generator=ContentGenerator("meow"),
+        content=ContentGenerator("meow"),
         evaluator=Evaluator(metrics={"accuracy": 0.42}),
         plotter=Plotter(),
     ).equal(
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 1.0}),
             plotter=Plotter(),
         )
@@ -74,12 +74,12 @@ def test_output_equal_false_different_evaluator() -> None:
 
 def test_output_equal_false_different_plotter() -> None:
     assert not Output(
-        generator=ContentGenerator("meow"),
+        content=ContentGenerator("meow"),
         evaluator=Evaluator(metrics={"accuracy": 0.42}),
         plotter=Plotter(),
     ).equal(
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter({"fig": None}),
         )
@@ -88,7 +88,7 @@ def test_output_equal_false_different_plotter() -> None:
 
 def test_output_equal_false_different_type() -> None:
     assert not Output(
-        generator=ContentGenerator("meow"),
+        content=ContentGenerator("meow"),
         evaluator=Evaluator(metrics={"accuracy": 0.42}),
         plotter=Plotter(),
     ).equal(42)
@@ -97,7 +97,7 @@ def test_output_equal_false_different_type() -> None:
 def test_output_get_content_generator() -> None:
     assert (
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )
@@ -109,7 +109,7 @@ def test_output_get_content_generator() -> None:
 def test_output_get_evaluator_lazy_true() -> None:
     assert (
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )
@@ -121,7 +121,7 @@ def test_output_get_evaluator_lazy_true() -> None:
 def test_output_get_evaluator_lazy_false() -> None:
     assert (
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )
@@ -133,7 +133,7 @@ def test_output_get_evaluator_lazy_false() -> None:
 def test_output_get_plotter_lazy_true() -> None:
     assert (
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )
@@ -145,7 +145,7 @@ def test_output_get_plotter_lazy_true() -> None:
 def test_output_get_plotter_lazy_false() -> None:
     assert (
         Output(
-            generator=ContentGenerator("meow"),
+            content=ContentGenerator("meow"),
             evaluator=Evaluator(metrics={"accuracy": 0.42}),
             plotter=Plotter(),
         )

@@ -20,7 +20,7 @@ class Output(BaseLazyOutput):
     r"""Implement a simple output.
 
     Args:
-        generator: The HTML content generator.
+        content: The HTML content generator.
         evaluator: The evaluator.
         plotter: The plotter.
 
@@ -34,11 +34,11 @@ class Output(BaseLazyOutput):
     >>> from arkas.evaluator2 import Evaluator
     >>> from arkas.plotter import Plotter
     >>> output = Output(
-    ...     generator=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
+    ...     content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
     ... )
     >>> output
     Output(
-      (generator): ContentGenerator()
+      (content): ContentGenerator()
       (evaluator): Evaluator(count=0)
       (plotter): Plotter(count=0)
     )
@@ -54,11 +54,11 @@ class Output(BaseLazyOutput):
 
     def __init__(
         self,
-        generator: BaseContentGenerator,
+        content: BaseContentGenerator,
         evaluator: BaseEvaluator,
         plotter: BasePlotter,
     ) -> None:
-        self._generator = generator
+        self._content = content
         self._evaluator = evaluator
         self._plotter = plotter
 
@@ -66,7 +66,7 @@ class Output(BaseLazyOutput):
         args = repr_indent(
             repr_mapping(
                 {
-                    "generator": self._generator,
+                    "content": self._content,
                     "evaluator": self._evaluator,
                     "plotter": self._plotter,
                 }
@@ -78,13 +78,13 @@ class Output(BaseLazyOutput):
         if not isinstance(other, self.__class__):
             return False
         return (
-            self._generator.equal(other._generator, equal_nan=equal_nan)
+            self._content.equal(other._content, equal_nan=equal_nan)
             and self._evaluator.equal(other._evaluator, equal_nan=equal_nan)
             and self._plotter.equal(other._plotter, equal_nan=equal_nan)
         )
 
     def get_content_generator(self) -> BaseContentGenerator:
-        return self._generator
+        return self._content
 
     def _get_evaluator(self) -> BaseEvaluator:
         return self._evaluator
