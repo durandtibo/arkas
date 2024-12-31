@@ -55,7 +55,7 @@ class DataFrameSummaryContentGenerator(BaseContentGenerator):
     ...     )
     ... )
     >>> content
-    DataFrameSummaryContentGenerator(top=5)
+    DataFrameSummaryContentGenerator(shape=(4, 3), top=5)
 
     ```
     """
@@ -68,7 +68,7 @@ class DataFrameSummaryContentGenerator(BaseContentGenerator):
         self._top = top
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(top={self._top})"
+        return f"{self.__class__.__qualname__}(shape={self._frame.shape}, top={self._top})"
 
     @property
     def frame(self) -> pl.DataFrame:
