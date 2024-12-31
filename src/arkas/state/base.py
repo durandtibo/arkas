@@ -6,7 +6,14 @@ __all__ = ["BaseState"]
 
 import sys
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+from coola.equality.comparators import BaseEqualityComparator
+from coola.equality.handlers import EqualNanHandler, SameObjectHandler, SameTypeHandler
+from coola.equality.testers import EqualityTester
+
+if TYPE_CHECKING:
+    from coola.equality import EqualityConfig
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -108,3 +115,24 @@ class BaseState(ABC):
 
         ```
         """
+
+
+class StateEqualityComparator(BaseEqualityComparator[BaseState]):
+    r"""Implement an equality comparator for ``BaseState`` objects."""
+
+    def __init__(self) -> None:
+        self._handler = SameObjectHandler()
+        self._handler.chain(SameTypeHandler()).chain(EqualNanHandler())
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__)
+
+    def clone(self) -> StateEqualityComparator:
+        return self.__class__()
+
+    def equal(self, actual: BaseState, expected: Any, config: EqualityConfig) -> bool:
+        return self._handler.handle(actual, expected, config=config)
+
+
+if not EqualityTester.has_comparator(BaseState):  # pragma: no cover
+    EqualityTester.add_comparator(BaseState, StateEqualityComparator())

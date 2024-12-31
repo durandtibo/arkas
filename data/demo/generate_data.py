@@ -23,7 +23,8 @@ def generate_toy_binary_classification_data() -> None:
             "pred": [1, 0, 0, 1, 1],
             "score": [2, -1, 0, 3, 1],
             "target": [1, 0, 0, 1, 1],
-        }
+        },
+        schema={"pred": pl.Int64, "score": pl.Int64, "target": pl.Int64},
     ).write_parquet(path)
 
 
