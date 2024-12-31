@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 from arkas.analyzer.base import BaseAnalyzer
 from arkas.output.frame_summary import DataFrameSummaryOutput
+from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
     import polars as pl
@@ -48,9 +49,7 @@ class DataFrameSummaryAnalyzer(BaseAnalyzer):
     """
 
     def __init__(self, top: int = 5, sort: bool = False) -> None:
-        if top < 0:
-            msg = f"Incorrect top value ({top}). top must be positive"
-            raise ValueError(msg)
+        check_positive(name="top", value=top)
         self._top = top
         self._sort = bool(sort)
 

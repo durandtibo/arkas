@@ -35,7 +35,7 @@ def test_dataframe_summary_output_str(dataframe: pl.DataFrame) -> None:
 
 
 def test_dataframe_summary_output_incorrect_top(dataframe: pl.DataFrame) -> None:
-    with pytest.raises(ValueError, match=r"Incorrect top value \(-1\). top must be positive"):
+    with pytest.raises(ValueError, match=r"Incorrect 'top': -1. The value must be positive"):
         DataFrameSummaryOutput(dataframe, top=-1)
 
 

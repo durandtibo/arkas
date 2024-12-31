@@ -12,6 +12,7 @@ from arkas.content.frame_summary import DataFrameSummaryContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.vanilla import Plotter
+from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
     import polars as pl
@@ -53,9 +54,7 @@ class DataFrameSummaryOutput(BaseLazyOutput):
 
     def __init__(self, frame: pl.DataFrame, top: int = 5) -> None:
         self._frame = frame
-        if top < 0:
-            msg = f"Incorrect top value ({top}). top must be positive"
-            raise ValueError(msg)
+        check_positive(name="top", value=top)
         self._top = top
 
     def __repr__(self) -> str:

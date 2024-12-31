@@ -45,7 +45,7 @@ def test_dataframe_summary_analyzer_analyze_top(top: int) -> None:
 
 
 def test_dataframe_summary_analyzer_analyze_incorrect_top() -> None:
-    with pytest.raises(ValueError, match=r"Incorrect top value \(-1\). top must be positive"):
+    with pytest.raises(ValueError, match=r"Incorrect 'top': -1. The value must be positive"):
         DataFrameSummaryAnalyzer(top=-1)
 
 

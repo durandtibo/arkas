@@ -42,7 +42,7 @@ def test_dataframe_summary_content_generator_top(dataframe: pl.DataFrame, top: i
 
 
 def test_dataframe_summary_content_generator_top_incorrect(dataframe: pl.DataFrame) -> None:
-    with pytest.raises(ValueError, match=r"Incorrect top value \(-1\). top must be positive"):
+    with pytest.raises(ValueError, match=r"Incorrect 'top': -1. The value must be positive"):
         DataFrameSummaryContentGenerator(dataframe, top=-1)
 
 

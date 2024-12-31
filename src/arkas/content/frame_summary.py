@@ -21,6 +21,7 @@ from jinja2 import Template
 
 from arkas.content.base import BaseContentGenerator
 from arkas.utils.html import GO_TO_TOP, render_toc, tags2id, tags2title, valid_h_tag
+from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -62,9 +63,7 @@ class DataFrameSummaryContentGenerator(BaseContentGenerator):
 
     def __init__(self, frame: pl.DataFrame, top: int = 5) -> None:
         self._frame = frame
-        if top < 0:
-            msg = f"Incorrect top value ({top}). top must be positive"
-            raise ValueError(msg)
+        check_positive(name="top", value=top)
         self._top = top
 
     def __repr__(self) -> str:
