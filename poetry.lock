@@ -997,13 +997,13 @@ colorama = ">=0.4"
 
 [[package]]
 name = "grizz"
-version = "0.2.0a12"
+version = "0.2.0a13"
 description = "A light library to preprocess data with polars"
 optional = false
 python-versions = "<3.14,>=3.9"
 files = [
-    {file = "grizz-0.2.0a12-py3-none-any.whl", hash = "sha256:b2f24509d6c8fdb0bcbe56bf00df1ec380a167938f4a74a3246e7d41ea412281"},
-    {file = "grizz-0.2.0a12.tar.gz", hash = "sha256:998a9ca84909ca7ac91546ca0f32ed4e07176e08b53de3fea14183eaf82cb8d0"},
+    {file = "grizz-0.2.0a13-py3-none-any.whl", hash = "sha256:e169bac3af0e397abd60861bc3513479e2e9879b7fbdb71f1be6bdc8587dc885"},
+    {file = "grizz-0.2.0a13.tar.gz", hash = "sha256:deb6e6016dfd6decb3f7832fb82682312075d8e994b75c1aeba0b17305b97a5c"},
 ]
 
 [package.dependencies]
@@ -2803,13 +2803,13 @@ extra = ["pygments (>=2.12)"]
 
 [[package]]
 name = "pyparsing"
-version = "3.2.0"
+version = "3.2.1"
 description = "pyparsing module - Classes and methods to define and execute parsing grammars"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "pyparsing-3.2.0-py3-none-any.whl", hash = "sha256:93d9577b88da0bbea8cc8334ee8b918ed014968fd2ec383e868fb8afb1ccef84"},
-    {file = "pyparsing-3.2.0.tar.gz", hash = "sha256:cbf74e27246d595d9a74b186b810f6fbb86726dbf3b9532efb343f6d7294fe9c"},
+    {file = "pyparsing-3.2.1-py3-none-any.whl", hash = "sha256:506ff4f4386c4cec0590ec19e6302d3aedb992fdc02c761e90416f158dacf8e1"},
+    {file = "pyparsing-3.2.1.tar.gz", hash = "sha256:61980854fd66de3a90028d679a954d5f2623e83144b5afe5ee86f43d762e5f0a"},
 ]
 
 [package.extras]
@@ -4057,4 +4057,4 @@ cli = ["colorlog", "hya", "hydra-core", "omegaconf"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "79c1b5c0c988562b4c1198c8df1ff743a4bae7d0e39f70ee3f86f75949e1b392"
+content-hash = "3cd224515c6f926ab3b1abbb7836b6114852be4ea31da3115e056a50892b16f0"
