@@ -53,7 +53,6 @@ class MappingEvaluator(BaseEvaluator):
         )
       (two): Evaluator(count=2)
     )
-
     >>> metrics = evaluator.evaluate()
     >>> metrics
     {'one': {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0},
