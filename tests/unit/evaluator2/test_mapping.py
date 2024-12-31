@@ -20,14 +20,14 @@ def test_mapping_evaluator_str() -> None:
 def test_mapping_evaluator_equal_true() -> None:
     assert MappingEvaluator(
         {
-            "class1": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
-            "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+            "one": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
+            "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
         }
     ).equal(
         MappingEvaluator(
             {
-                "class1": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
-                "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+                "one": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
+                "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
             }
         )
     )
@@ -36,13 +36,13 @@ def test_mapping_evaluator_equal_true() -> None:
 def test_mapping_evaluator_equal_false_different_evaluators() -> None:
     assert not MappingEvaluator(
         {
-            "class1": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
-            "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+            "one": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
+            "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
         }
     ).equal(
         MappingEvaluator(
             {
-                "class1": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
+                "one": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
             }
         )
     )
@@ -51,8 +51,8 @@ def test_mapping_evaluator_equal_false_different_evaluators() -> None:
 def test_mapping_evaluator_equal_false_different_types() -> None:
     assert not MappingEvaluator(
         {
-            "class1": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
-            "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+            "one": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
+            "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
         }
     ).equal(Evaluator(metrics={"accuracy": 62.0, "count": 42}))
 
@@ -60,14 +60,14 @@ def test_mapping_evaluator_equal_false_different_types() -> None:
 def test_mapping_evaluator_equal_nan_true() -> None:
     assert MappingEvaluator(
         {
-            "class1": Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
-            "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+            "one": Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
+            "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
         }
     ).equal(
         MappingEvaluator(
             {
-                "class1": Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
-                "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+                "one": Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
+                "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
             }
         ),
         equal_nan=True,
@@ -77,14 +77,14 @@ def test_mapping_evaluator_equal_nan_true() -> None:
 def test_mapping_evaluator_equal_nan_false() -> None:
     assert not MappingEvaluator(
         {
-            "class1": Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
-            "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+            "one": Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
+            "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
         }
     ).equal(
         MappingEvaluator(
             {
-                "class1": Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
-                "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+                "one": Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
+                "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
             }
         ),
     )
@@ -94,11 +94,11 @@ def test_mapping_evaluator_evaluate() -> None:
     assert objects_are_equal(
         MappingEvaluator(
             {
-                "class1": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
-                "class2": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
+                "one": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
+                "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
             }
         ).evaluate(),
-        {"class1": {"accuracy": 62.0, "count": 42}, "class2": {"accuracy": 42.0, "count": 30}},
+        {"one": {"accuracy": 62.0, "count": 42}, "two": {"accuracy": 42.0, "count": 30}},
     )
 
 
