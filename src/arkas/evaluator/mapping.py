@@ -2,7 +2,7 @@ r"""Contain an evaluator that evaluates a mapping of evaluators."""
 
 from __future__ import annotations
 
-__all__ = ["MappingEvaluator"]
+__all__ = ["EvaluatorDict"]
 
 import logging
 from typing import TYPE_CHECKING
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MappingEvaluator(BaseEvaluator):
+class EvaluatorDict(BaseEvaluator):
     r"""Implement an evaluator that sequentially evaluates a mapping of
     evaluators.
 
@@ -35,18 +35,18 @@ class MappingEvaluator(BaseEvaluator):
 
     >>> import polars as pl
     >>> from arkas.evaluator import (
-    ...     MappingEvaluator,
+    ...     EvaluatorDict,
     ...     BinaryPrecisionEvaluator,
     ...     BinaryRecallEvaluator,
     ... )
-    >>> evaluator = MappingEvaluator(
+    >>> evaluator = EvaluatorDict(
     ...     {
     ...         "precision": BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
     ...         "recall": BinaryRecallEvaluator(y_true="target", y_pred="pred"),
     ...     }
     ... )
     >>> evaluator
-    MappingEvaluator(
+    EvaluatorDict(
       (precision): BinaryPrecisionEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
       (recall): BinaryRecallEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
     )
