@@ -34,7 +34,7 @@ class MappingEvaluator(BaseEvaluator):
     >>> from arkas.evaluator2 import MappingEvaluator, AccuracyEvaluator, Evaluator
     >>> evaluator = MappingEvaluator(
     ...     {
-    ...         "accuracy": AccuracyEvaluator(
+    ...         "one": AccuracyEvaluator(
     ...             AccuracyState(
     ...                 y_true=np.array([1, 0, 0, 1, 1]),
     ...                 y_pred=np.array([1, 0, 0, 1, 1]),
@@ -42,22 +42,22 @@ class MappingEvaluator(BaseEvaluator):
     ...                 y_pred_name="pred",
     ...             )
     ...         ),
-    ...         "other": Evaluator({"accuracy": 1.0, "total": 42}),
+    ...         "two": Evaluator({"accuracy": 1.0, "total": 42}),
     ...     }
     ... )
     >>> evaluator
     MappingEvaluator(
-      (accuracy): AccuracyEvaluator(
+      (one): AccuracyEvaluator(
           (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
           (nan_policy): propagate
         )
-      (other): Evaluator(count=2)
+      (two): Evaluator(count=2)
     )
 
-    >>> result = evaluator.evaluate()
-    >>> result
-    {'accuracy': {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0},
-     'other': {'accuracy': 1.0, 'total': 42}}
+    >>> metrics = evaluator.evaluate()
+    >>> metrics
+    {'one': {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0},
+     'two': {'accuracy': 1.0, 'total': 42}}
 
     ```
     """
