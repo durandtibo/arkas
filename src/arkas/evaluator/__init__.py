@@ -17,9 +17,9 @@ __all__ = [
     "BinaryRecallEvaluator",
     "BinaryRocAucEvaluator",
     "EnergyDistanceEvaluator",
+    "EvaluatorDict",
     "JensenShannonDivergenceEvaluator",
     "KLDivEvaluator",
-    "MappingEvaluator",
     "MeanAbsoluteErrorEvaluator",
     "MeanAbsolutePercentageErrorEvaluator",
     "MeanSquaredErrorEvaluator",
@@ -68,7 +68,7 @@ from arkas.evaluator.kl import KLDivEvaluator
 from arkas.evaluator.lazy import BaseLazyEvaluator
 from arkas.evaluator.mae import MeanAbsoluteErrorEvaluator
 from arkas.evaluator.mape import MeanAbsolutePercentageErrorEvaluator
-from arkas.evaluator.mapping import MappingEvaluator
+from arkas.evaluator.mapping import EvaluatorDict
 from arkas.evaluator.median_error import MedianAbsoluteErrorEvaluator
 from arkas.evaluator.mse import MeanSquaredErrorEvaluator
 from arkas.evaluator.msle import MeanSquaredLogErrorEvaluator
