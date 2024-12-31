@@ -18,7 +18,7 @@ def test_transform_analyzer_repr() -> None:
         TransformAnalyzer(
             transformer=DropNullRow(), analyzer=AccuracyAnalyzer(y_true="target", y_pred="pred")
         )
-    ).startswith("AccuracyAnalyzer(")
+    ).startswith("TransformAnalyzer(")
 
 
 def test_transform_analyzer_str() -> None:
@@ -26,7 +26,7 @@ def test_transform_analyzer_str() -> None:
         TransformAnalyzer(
             transformer=DropNullRow(), analyzer=AccuracyAnalyzer(y_true="target", y_pred="pred")
         )
-    ).startswith("AccuracyAnalyzer(")
+    ).startswith("TransformAnalyzer(")
 
 
 def test_transform_analyzer_analyze() -> None:
