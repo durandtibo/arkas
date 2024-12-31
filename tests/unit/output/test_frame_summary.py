@@ -64,6 +64,7 @@ def test_dataframe_summary_output_equal_false_different_top(dataframe: pl.DataFr
 def test_dataframe_summary_output_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not DataFrameSummaryOutput(dataframe).equal(42)
 
+
 @pytest.mark.parametrize("top", [1, 2, 3])
 def test_dataframe_summary_output_get_content_generator(dataframe: pl.DataFrame, top: int) -> None:
     generator = DataFrameSummaryOutput(dataframe, top=top).get_content_generator()

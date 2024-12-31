@@ -46,6 +46,42 @@ def test_dataframe_summary_content_generator_top_incorrect(dataframe: pl.DataFra
         DataFrameSummaryContentGenerator(dataframe, top=-1)
 
 
+def test_dataframe_summary_content_generator_equal_true(dataframe: pl.DataFrame) -> None:
+    assert DataFrameSummaryContentGenerator(dataframe).equal(
+        DataFrameSummaryContentGenerator(dataframe)
+    )
+
+
+def test_dataframe_summary_content_generator_equal_false_different_frame(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not DataFrameSummaryContentGenerator(dataframe).equal(
+        DataFrameSummaryContentGenerator(
+            pl.DataFrame(
+                {
+                    "float": [1.2, 4.2, None, 2.2, 1, 2.2],
+                    "int": [1, 1, 0, 1, 1, 1],
+                },
+                schema={"float": pl.Float64, "int": pl.Int64},
+            )
+        )
+    )
+
+
+def test_dataframe_summary_content_generator_equal_false_different_top(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not DataFrameSummaryContentGenerator(dataframe, top=3).equal(
+        DataFrameSummaryContentGenerator(dataframe)
+    )
+
+
+def test_dataframe_summary_content_generator_equal_false_different_type(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not DataFrameSummaryContentGenerator(dataframe).equal(42)
+
+
 def test_dataframe_summary_content_generator_get_columns(dataframe: pl.DataFrame) -> None:
     assert DataFrameSummaryContentGenerator(dataframe).get_columns() == ("float", "int", "str")
 
