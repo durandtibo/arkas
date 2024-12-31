@@ -14,7 +14,7 @@ from objectory.utils import is_object_config
 if TYPE_CHECKING:
     import polars as pl
 
-    from arkas.result import BaseResult
+    from arkas.output import BaseOutput
 
 logger = logging.getLogger(__name__)
 
@@ -34,22 +34,19 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
     >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
     >>> result = analyzer.analyze(data)
     >>> result
-    AccuracyResult(y_true=(6,), y_pred=(6,), nan_policy='propagate')
+    AccuracyOutput(y_true=(6,), y_pred=(6,), nan_policy='propagate')
 
     ```
     """
 
-    def analyze(self, data: pl.DataFrame, lazy: bool = True) -> BaseResult:
+    def analyze(self, data: pl.DataFrame) -> BaseOutput:
         r"""Evaluate the result.
 
         Args:
             data: The data to analyze.
-            lazy: If ``True``, it forces the computation of the
-                result, otherwise it returns a result object that
-                delays the evaluation of the result.
 
         Returns:
-            The generated result.
+            The generated output.
 
         Example usage:
 
@@ -61,7 +58,7 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
         >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
         >>> result = analyzer.analyze(data)
         >>> result
-        AccuracyResult(y_true=(6,), y_pred=(6,), nan_policy='propagate')
+        AccuracyOutput(y_true=(6,), y_pred=(6,), nan_policy='propagate')
 
         ```
         """
