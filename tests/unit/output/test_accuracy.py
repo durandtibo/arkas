@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from arkas.evaluator2 import AccuracyEvaluator, Evaluator
-from arkas.hcg import AccuracyContentGenerator, ContentGenerator
+from arkas.hcg import AccuracyContentGenerator
 from arkas.output import AccuracyOutput
 from arkas.plotter import Plotter
 from arkas.state import AccuracyState
@@ -113,7 +113,7 @@ def test_accuracy_output_equal_false_different_type() -> None:
 
 
 @pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
-def test_accuracy_output_get_content_generator_lazy_true(nan_policy: str) -> None:
+def test_accuracy_output_get_content_generator(nan_policy: str) -> None:
     state = AccuracyState(
         y_true=np.array([1, 0, 0, 1, 1]),
         y_pred=np.array([1, 0, 0, 1, 1]),
@@ -122,18 +122,6 @@ def test_accuracy_output_get_content_generator_lazy_true(nan_policy: str) -> Non
     )
     generator = AccuracyOutput(state, nan_policy).get_content_generator()
     assert generator.equal(AccuracyContentGenerator(state, nan_policy))
-
-
-def test_accuracy_output_get_content_generator_lazy_false() -> None:
-    generator = AccuracyOutput(
-        AccuracyState(
-            y_true=np.array([1, 0, 0, 1, 1]),
-            y_pred=np.array([1, 0, 0, 1, 1]),
-            y_true_name="target",
-            y_pred_name="pred",
-        )
-    ).get_content_generator(lazy=False)
-    assert isinstance(generator, ContentGenerator)
 
 
 @pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
