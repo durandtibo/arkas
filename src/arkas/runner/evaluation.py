@@ -28,6 +28,7 @@ class EvaluationRunner(BaseRunner):
 
     Args:
         ingestor: The data ingestor or its configuration.
+        transformer: The data transformer or its configuration.
         evaluator: The evaluator or its configuration.
         saver: The metric saver or its configuration.
         path: The path where to save the metrics.
