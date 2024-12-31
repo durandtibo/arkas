@@ -30,11 +30,14 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
     >>> from arkas.analyzer import AccuracyAnalyzer
     >>> analyzer = AccuracyAnalyzer(y_true="target", y_pred="pred")
     >>> analyzer
-    AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
+    AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, missing_policy='raise', nan_policy='propagate')
     >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
     >>> result = analyzer.analyze(data)
     >>> result
-    AccuracyOutput(y_true=(6,), y_pred=(6,), nan_policy='propagate')
+    AccuracyOutput(
+      (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred')
+      (nan_policy): propagate
+    )
 
     ```
     """
@@ -58,7 +61,10 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
         >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
         >>> result = analyzer.analyze(data)
         >>> result
-        AccuracyOutput(y_true=(6,), y_pred=(6,), nan_policy='propagate')
+        AccuracyOutput(
+          (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred')
+          (nan_policy): propagate
+        )
 
         ```
         """
@@ -120,7 +126,7 @@ def setup_analyzer(
     ...     }
     ... )
     >>> analyzer
-    AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
+    AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, missing_policy='raise', nan_policy='propagate')
 
     ```
     """
