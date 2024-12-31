@@ -92,13 +92,8 @@ class BaseOutput(ABC):
         """
 
     @abstractmethod
-    def get_content_generator(self, lazy: bool = True) -> BaseContentGenerator:
+    def get_content_generator(self) -> BaseContentGenerator:
         r"""Get the HTML content generator associated to the output.
-
-        Args:
-            lazy: If ``True``, it forces the computation of the
-                content, otherwise it returns a content generator
-                object that contains the logic to generate the content.
 
         Returns:
             The HTML content generator.

@@ -26,6 +26,8 @@ class EmptyOutput(BaseOutput):
     EmptyOutput()
     >>> output.get_evaluator()
     Evaluator(count=0)
+    >>> output.get_plotter()
+    Plotter(count=0)
 
     ```
     """
@@ -36,7 +38,7 @@ class EmptyOutput(BaseOutput):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:  # noqa: ARG002
         return isinstance(other, self.__class__)
 
-    def get_content_generator(self, lazy: bool = True) -> ContentGenerator:  # noqa: ARG002
+    def get_content_generator(self) -> ContentGenerator:
         return ContentGenerator()
 
     def get_evaluator(self, lazy: bool = True) -> Evaluator:  # noqa: ARG002
