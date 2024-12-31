@@ -101,7 +101,7 @@ class DataFrameSummaryContentGenerator(BaseContentGenerator):
         return tuple(tuple(Counter(series.to_list()).most_common(top)) for series in self.frame)
 
     def generate_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
-        logger.info("Rendering the DataFrame summary content...")
+        logger.info("Generating the DataFrame summary content...")
         return Template(create_template()).render(
             {
                 "go_to_top": GO_TO_TOP,
