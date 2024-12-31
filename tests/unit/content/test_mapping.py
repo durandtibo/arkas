@@ -4,7 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from arkas.hcg import BaseContentGenerator, ContentGenerator, ContentGeneratorDict
+from arkas.content import BaseContentGenerator, ContentGenerator, ContentGeneratorDict
 
 
 @pytest.fixture

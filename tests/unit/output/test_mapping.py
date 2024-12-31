@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import numpy as np
 
+from arkas.content import (
+    AccuracyContentGenerator,
+    ContentGenerator,
+    ContentGeneratorDict,
+)
 from arkas.evaluator2 import AccuracyEvaluator, Evaluator, EvaluatorDict
-from arkas.hcg import AccuracyContentGenerator, ContentGenerator, ContentGeneratorDict
 from arkas.output import AccuracyOutput, Output, OutputDict
 from arkas.plotter import Plotter, PlotterDict
 from arkas.state import AccuracyState

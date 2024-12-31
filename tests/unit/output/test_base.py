@@ -9,8 +9,8 @@ from coola import objects_are_allclose, objects_are_equal
 from coola.equality import EqualityConfig
 from coola.equality.testers import EqualityTester
 
+from arkas.content import ContentGenerator
 from arkas.evaluator2 import Evaluator
-from arkas.hcg import ContentGenerator
 from arkas.output import AccuracyOutput, Output
 from arkas.output.base import OutputEqualityComparator
 from arkas.plotter import Plotter

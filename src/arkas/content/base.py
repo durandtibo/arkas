@@ -25,7 +25,7 @@ class BaseContentGenerator(ABC):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.hcg import AccuracyContentGenerator
+    >>> from arkas.content import AccuracyContentGenerator
     >>> from arkas.state import AccuracyState
     >>> generator = AccuracyContentGenerator(
     ...     state=AccuracyState(
@@ -62,7 +62,7 @@ class BaseContentGenerator(ABC):
         ```pycon
 
         >>> import numpy as np
-        >>> from arkas.hcg import AccuracyContentGenerator
+        >>> from arkas.content import AccuracyContentGenerator
         >>> from arkas.state import AccuracyState
         >>> generator1 = AccuracyContentGenerator(
         ...     AccuracyState(
@@ -113,7 +113,7 @@ class BaseContentGenerator(ABC):
         ```pycon
 
         >>> import numpy as np
-        >>> from arkas.hcg import AccuracyContentGenerator
+        >>> from arkas.content import AccuracyContentGenerator
         >>> from arkas.state import AccuracyState
         >>> generator = AccuracyContentGenerator(
         ...     state=AccuracyState(
@@ -150,7 +150,7 @@ class BaseContentGenerator(ABC):
         ```pycon
 
         >>> import numpy as np
-        >>> from arkas.hcg import AccuracyContentGenerator
+        >>> from arkas.content import AccuracyContentGenerator
         >>> from arkas.state import AccuracyState
         >>> generator = AccuracyContentGenerator(
         ...     state=AccuracyState(

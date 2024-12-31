@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from jinja2 import Template
 
-from arkas.hcg.base import BaseContentGenerator
+from arkas.content.base import BaseContentGenerator
 from arkas.section.utils import (
     GO_TO_TOP,
     render_html_toc,
@@ -36,7 +36,7 @@ class ContentGenerator(BaseContentGenerator):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.hcg import AccuracyContentGenerator
+    >>> from arkas.content import AccuracyContentGenerator
     >>> from arkas.state import AccuracyState
     >>> generator = AccuracyContentGenerator(
     ...     state=AccuracyState(
@@ -98,7 +98,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.hcg.accuracy import create_template
+    >>> from arkas.content.accuracy import create_template
     >>> template = create_template()
 
     ```

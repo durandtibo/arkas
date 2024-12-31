@@ -14,8 +14,8 @@ from coola.equality.testers import EqualityTester
 if TYPE_CHECKING:
     from coola.equality import EqualityConfig
 
+    from arkas.content.base import BaseContentGenerator
     from arkas.evaluator2.base import BaseEvaluator
-    from arkas.hcg.base import BaseContentGenerator
     from arkas.plotter.base import BasePlotter
 
 

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from jinja2 import Template
 
-from arkas.hcg import ContentGenerator
-from arkas.hcg.accuracy import create_template
+from arkas.content import ContentGenerator
+from arkas.content.accuracy import create_template
 
 ######################################
 #     Tests for ContentGenerator     #

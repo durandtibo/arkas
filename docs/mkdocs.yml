@@ -29,7 +29,7 @@ nav:
       - arkas.evaluator: refs/evaluator.md
       - arkas.evaluator2: refs/evaluator2.md
       - arkas.exporter: refs/exporter.md
-      - arkas.hcg: refs/hcg.md
+      - arkas.content: refs/content.md
       - arkas.metric: refs/metric.md
       - arkas.output: refs/output.md
       - arkas.plot: refs/plot.md

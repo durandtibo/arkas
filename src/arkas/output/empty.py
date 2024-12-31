@@ -5,8 +5,8 @@ from __future__ import annotations
 __all__ = ["EmptyOutput"]
 
 
+from arkas.content.vanilla import ContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
-from arkas.hcg.vanilla import ContentGenerator
 from arkas.output.vanilla import Output
 from arkas.plotter.vanilla import Plotter
 
