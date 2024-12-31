@@ -1,8 +1,8 @@
-r"""Implement the accuracy evaluator."""
+r"""Implement the balanced accuracy evaluator."""
 
 from __future__ import annotations
 
-__all__ = ["AccuracyEvaluator"]
+__all__ = ["BalancedAccuracyEvaluator"]
 
 
 from typing import TYPE_CHECKING, Any
@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 from coola.utils import repr_indent, repr_mapping
 
 from arkas.evaluator2.base import BaseEvaluator
-from arkas.metric import accuracy
+from arkas.metric import balanced_accuracy
 from arkas.metric.utils import check_nan_policy
 
 if TYPE_CHECKING:
@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from arkas.state.accuracy import AccuracyState
 
 
-class AccuracyEvaluator(BaseEvaluator):
-    r"""Implement the accuracy evaluator.
+class BalancedAccuracyEvaluator(BaseEvaluator):
+    r"""Implement the balanced accuracy evaluator.
 
     Args:
         state: The state containing the ground truth and predicted
@@ -33,9 +33,9 @@ class AccuracyEvaluator(BaseEvaluator):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.evaluator2 import AccuracyEvaluator
+    >>> from arkas.evaluator2 import BalancedAccuracyEvaluator
     >>> from arkas.state import AccuracyState
-    >>> evaluator = AccuracyEvaluator(
+    >>> evaluator = BalancedAccuracyEvaluator(
     ...     AccuracyState(
     ...         y_true=np.array([1, 0, 0, 1, 1]),
     ...         y_pred=np.array([1, 0, 0, 1, 1]),
@@ -44,12 +44,12 @@ class AccuracyEvaluator(BaseEvaluator):
     ...     )
     ... )
     >>> evaluator
-    AccuracyEvaluator(
+    BalancedAccuracyEvaluator(
       (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
       (nan_policy): propagate
     )
     >>> evaluator.evaluate()
-    {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
+    {'balanced_accuracy': 1.0, 'count': 5}
 
     ```
     """
@@ -72,7 +72,7 @@ class AccuracyEvaluator(BaseEvaluator):
         )
 
     def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        return accuracy(
+        return balanced_accuracy(
             y_true=self._state.y_true,
             y_pred=self._state.y_pred,
             prefix=prefix,
