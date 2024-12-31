@@ -25,13 +25,20 @@ nav:
   - Home: index.md
   - get_started.md
   - Reference:
+      - arkas.analyzer: refs/analyzer.md
       - arkas.evaluator: refs/evaluator.md
+      - arkas.evaluator2: refs/evaluator2.md
+      - arkas.exporter: refs/exporter.md
+      - arkas.hcg: refs/hcg.md
       - arkas.metric: refs/metric.md
+      - arkas.output: refs/output.md
       - arkas.plot: refs/plot.md
+      - arkas.plotter: refs/plotter.md
       - arkas.reporter: refs/reporter.md
       - arkas.result: refs/result.md
       - arkas.runner: refs/runner.md
       - arkas.section: refs/section.md
+      - arkas.state: refs/state.md
       - arkas.utils: refs/utils.md
   - GitHub: https://github.com/durandtibo/arkas
 
