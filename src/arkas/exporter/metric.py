@@ -28,6 +28,8 @@ class MetricExporter(BaseExporter):
     Args:
         path: The path where to save the metrics.
         saver: The metric saver or its configuration.
+        exist_ok: If ``exist_ok`` is ``False`` (the default),
+            an exception is raised if the path already exists.
         show_metrics: If ``True``, the metrics are shown in the
             logging output.
 
@@ -61,10 +63,12 @@ class MetricExporter(BaseExporter):
         self,
         path: Path | str,
         saver: BaseSaver | dict | None = None,
+        exist_ok: bool = False,
         show_metrics: bool = True,
     ) -> None:
         self._path = sanitize_path(path)
         self._saver = setup_saver(saver or PickleSaver())
+        self._exist_ok = exist_ok
         self._show_metrics = show_metrics
 
     def __repr__(self) -> str:
@@ -73,6 +77,7 @@ class MetricExporter(BaseExporter):
                 {
                     "path": self._path,
                     "saver": self._saver,
+                    "exist_ok": self._exist_ok,
                     "show_metrics": self._show_metrics,
                 }
             )
@@ -84,6 +89,6 @@ class MetricExporter(BaseExporter):
         logger.info("Computing metrics...")
         metrics = output.get_evaluator().evaluate()
         logger.info(f"Saving metrics at {self._path}...")
-        self._saver.save(metrics, path=self._path, exist_ok=True)
+        self._saver.save(metrics, path=self._path, exist_ok=self._exist_ok)
         if self._show_metrics:
             logger.info(f"metrics:\n{str_mapping(to_flat_dict(metrics), sorted_keys=True)}")

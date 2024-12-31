@@ -53,6 +53,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
       (exporter): MetricExporter(
           (path): .../metrics.pkl
           (saver): PickleSaver(protocol=5)
+          (exist_ok): False
           (show_metrics): True
         )
     )
@@ -205,6 +206,7 @@ def setup_runner(
       (exporter): MetricExporter(
           (path): /path/to/data.csv
           (saver): PickleSaver(protocol=5)
+          (exist_ok): False
           (show_metrics): True
         )
     )
