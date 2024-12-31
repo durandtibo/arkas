@@ -29,7 +29,7 @@ class ContentGenerator(BaseContentGenerator):
     r"""Implement a section that analyze accuracy states.
 
     Args:
-        state: The data structure containing the states.
+        content: The HTML content.
 
     Example usage:
 

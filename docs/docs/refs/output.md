@@ -1,0 +1,3 @@
+# arkas.output
+
+### ::: arkas.output
