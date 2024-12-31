@@ -5,7 +5,7 @@ from __future__ import annotations
 __all__ = ["BaseAnalyzer", "is_analyzer_config", "setup_analyzer"]
 
 import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from objectory import AbstractFactory
@@ -32,8 +32,8 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
     >>> analyzer
     AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, missing_policy='raise', nan_policy='propagate')
     >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    >>> result = analyzer.analyze(data)
-    >>> result
+    >>> output = analyzer.analyze(data)
+    >>> output
     AccuracyOutput(
       (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred')
       (nan_policy): propagate
@@ -42,6 +42,7 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
     ```
     """
 
+    @abstractmethod
     def analyze(self, frame: pl.DataFrame) -> BaseOutput:
         r"""Analyze the DataFrame.
 
@@ -59,8 +60,8 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
         >>> from arkas.analyzer import AccuracyAnalyzer
         >>> analyzer = AccuracyAnalyzer(y_true="target", y_pred="pred")
         >>> data = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-        >>> result = analyzer.analyze(data)
-        >>> result
+        >>> output = analyzer.analyze(data)
+        >>> output
         AccuracyOutput(
           (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred')
           (nan_policy): propagate
