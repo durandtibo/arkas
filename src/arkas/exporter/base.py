@@ -26,22 +26,28 @@ class BaseExporter(ABC, metaclass=AbstractFactory):
 
     >>> import tempfile
     >>> from pathlib import Path
-    >>> import polars as pl
-    >>> from arkas.evaluator import AccuracyEvaluator
-    >>> from grizz.ingestor import Ingestor
-    >>> from grizz.transformer import SequentialTransformer
-    >>> from arkas.exporter import EvalExporter
-    >>> with tempfile.TemporaryDirectory() as tmpdir:
-    ...     exporter = EvalExporter(
-    ...         ingestor=Ingestor(
-    ...             pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    ...         ),
-    ...         transformer=SequentialTransformer(transformers=[]),
-    ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
-    ...         report_path=Path(tmpdir).joinpath("report.html"),
+    >>> import numpy as np
+    >>> from arkas.output import AccuracyOutput
+    >>> from arkas.state import AccuracyState
+    >>> from arkas.exporter import MetricExporter
+    >>> output = AccuracyOutput(
+    ...     state=AccuracyState(
+    ...         y_true=np.array([1, 0, 0, 1, 1]),
+    ...         y_pred=np.array([1, 0, 0, 1, 1]),
+    ...         y_true_name="target",
+    ...         y_pred_name="pred",
     ...     )
-    ...     exporter.generate()
+    ... )
+    >>> with tempfile.TemporaryDirectory() as tmpdir:
+    ...     exporter = MetricExporter(path=Path(tmpdir).joinpath("metrics.pkl"))
+    ...     print(exporter)
+    ...     exporter.export(output)
     ...
+    MetricExporter(
+      (path): .../metrics.pkl
+      (saver): PickleSaver(protocol=5)
+      (show_metrics): True
+    )
 
     ```
     """
@@ -59,21 +65,21 @@ class BaseExporter(ABC, metaclass=AbstractFactory):
 
         >>> import tempfile
         >>> from pathlib import Path
-        >>> import polars as pl
-        >>> from arkas.evaluator import AccuracyEvaluator
-        >>> from grizz.ingestor import Ingestor
-        >>> from grizz.transformer import SequentialTransformer
-        >>> from arkas.exporter import EvalExporter
-        >>> with tempfile.TemporaryDirectory() as tmpdir:
-        ...     exporter = EvalExporter(
-        ...         ingestor=Ingestor(
-        ...             pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-        ...         ),
-        ...         transformer=SequentialTransformer(transformers=[]),
-        ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
-        ...         report_path=Path(tmpdir).joinpath("report.html"),
+        >>> import numpy as np
+        >>> from arkas.output import AccuracyOutput
+        >>> from arkas.state import AccuracyState
+        >>> from arkas.exporter import MetricExporter
+        >>> output = AccuracyOutput(
+        ...     state=AccuracyState(
+        ...         y_true=np.array([1, 0, 0, 1, 1]),
+        ...         y_pred=np.array([1, 0, 0, 1, 1]),
+        ...         y_true_name="target",
+        ...         y_pred_name="pred",
         ...     )
-        ...     exporter.generate()
+        ... )
+        >>> with tempfile.TemporaryDirectory() as tmpdir:
+        ...     exporter = MetricExporter(path=Path(tmpdir).joinpath("metrics.pkl"))
+        ...     exporter.export(output)
         ...
 
         ```
@@ -103,18 +109,8 @@ def is_exporter_config(config: dict) -> bool:
     >>> from arkas.exporter import is_exporter_config
     >>> is_exporter_config(
     ...     {
-    ...         "_target_": "arkas.exporter.EvalExporter",
-    ...         "ingestor": {
-    ...             "_target_": "grizz.ingestor.CsvIngestor",
-    ...             "path": "/path/to/data.csv",
-    ...         },
-    ...         "transformer": {"_target_": "grizz.transformer.DropDuplicate"},
-    ...         "evaluator": {
-    ...             "_target_": "arkas.evaluator.AccuracyEvaluator",
-    ...             "y_true": "target",
-    ...             "y_pred": "pred",
-    ...         },
-    ...         "report_path": "/path/to/report.html",
+    ...         "_target_": "arkas.exporter.MetricExporter",
+    ...         "path": "/path/to/data.csv",
     ...     }
     ... )
     True
@@ -145,22 +141,16 @@ def setup_exporter(
     >>> from arkas.exporter import setup_exporter
     >>> exporter = setup_exporter(
     ...     {
-    ...         "_target_": "arkas.exporter.EvalExporter",
-    ...         "ingestor": {
-    ...             "_target_": "grizz.ingestor.CsvIngestor",
-    ...             "path": "/path/to/data.csv",
-    ...         },
-    ...         "transformer": {"_target_": "grizz.transformer.DropDuplicate"},
-    ...         "evaluator": {
-    ...             "_target_": "arkas.evaluator.AccuracyEvaluator",
-    ...             "y_true": "target",
-    ...             "y_pred": "pred",
-    ...         },
-    ...         "report_path": "/path/to/report.html",
+    ...         "_target_": "arkas.exporter.MetricExporter",
+    ...         "path": "/path/to/data.csv",
     ...     }
     ... )
     >>> exporter
-    EvalExporter(
+    MetricExporter(
+      (path): /path/to/data.csv
+      (saver): PickleSaver(protocol=5)
+      (show_metrics): True
+    )
 
     ```
     """
