@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 from coola import objects_are_equal
-from iden.io import load_pickle
+from iden.io import load_pickle, save_pickle
 
 from arkas.exporter import MetricExporter
 from arkas.output import AccuracyOutput, BaseOutput
@@ -59,6 +59,25 @@ def test_metric_exporter_export_show_metrics(
     with caplog.at_level(level=logging.INFO):
         exporter.export(output)
         assert caplog.messages[-1].startswith("metrics:")
+    assert path.is_file()
+    assert objects_are_equal(
+        load_pickle(path),
+        {"accuracy": 1.0, "count_correct": 5, "count_incorrect": 0, "count": 5, "error": 0.0},
+    )
+
+
+def test_metric_exporter_export_exist_ok_false(tmp_path: Path, output: BaseOutput) -> None:
+    path = tmp_path.joinpath("metrics.pkl")
+    save_pickle({}, path)
+    exporter = MetricExporter(path)
+    with pytest.raises(FileExistsError, match="path .* already exists."):
+        exporter.export(output)
+
+
+def test_metric_exporter_export_exist_ok_true(tmp_path: Path, output: BaseOutput) -> None:
+    path = tmp_path.joinpath("metrics.pkl")
+    save_pickle({}, path)
+    MetricExporter(path, exist_ok=True).export(output)
     assert path.is_file()
     assert objects_are_equal(
         load_pickle(path),
