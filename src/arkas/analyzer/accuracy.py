@@ -1,4 +1,4 @@
-r"""Contain an accuracy analyzer."""
+r"""Contain the accuracy analyzer."""
 
 from __future__ import annotations
 
