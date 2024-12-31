@@ -11,6 +11,7 @@ from coola.nested import to_flat_dict
 from coola.utils import str_indent, str_mapping
 from coola.utils.path import sanitize_path
 from grizz.ingestor import BaseIngestor, setup_ingestor
+from grizz.transformer import BaseTransformer, setup_transformer
 from iden.io import BaseSaver, setup_saver
 
 from arkas.evaluator import BaseEvaluator, setup_evaluator
@@ -42,6 +43,7 @@ class EvaluationRunner(BaseRunner):
     >>> from pathlib import Path
     >>> from iden.io import PickleSaver
     >>> from grizz.ingestor import Ingestor
+    >>> from grizz.transformer import SequentialTransformer
     >>> from arkas.evaluator import AccuracyEvaluator
     >>> from arkas.runner import EvaluationRunner
     >>> with tempfile.TemporaryDirectory() as tmpdir:
@@ -55,6 +57,7 @@ class EvaluationRunner(BaseRunner):
     ...                 }
     ...             )
     ...         ),
+    ...         transformer=SequentialTransformer(transformers=[]),
     ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
     ...         saver=PickleSaver(),
     ...         path=path,
@@ -64,6 +67,7 @@ class EvaluationRunner(BaseRunner):
     ...
     EvaluationRunner(
       (ingestor): Ingestor(shape=(5, 2))
+      (transformer): SequentialTransformer()
       (evaluator): AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
@@ -76,12 +80,14 @@ class EvaluationRunner(BaseRunner):
     def __init__(
         self,
         ingestor: BaseIngestor | dict,
+        transformer: BaseTransformer | dict,
         evaluator: BaseEvaluator | dict,
         saver: BaseSaver | dict,
         path: Path | str,
         show_metrics: bool = True,
     ) -> None:
         self._ingestor = setup_ingestor(ingestor)
+        self._transformer = setup_transformer(transformer)
         self._evaluator = setup_evaluator(evaluator)
         self._saver = setup_saver(saver)
         self._path = sanitize_path(path)
@@ -92,6 +98,7 @@ class EvaluationRunner(BaseRunner):
             str_mapping(
                 {
                     "ingestor": self._ingestor,
+                    "transformer": self._transformer,
                     "evaluator": self._evaluator,
                     "saver": self._saver,
                     "path": self._path,
@@ -103,7 +110,9 @@ class EvaluationRunner(BaseRunner):
 
     def run(self) -> Any:
         logger.info("Ingesting data...")
-        data = self._ingestor.ingest()
+        raw_data = self._ingestor.ingest()
+        logger.info("Transforming data...")
+        data = self._transformer.transform(raw_data)
         logger.info("Evaluating...")
         result = self._evaluator.evaluate(data)
         logger.info(f"result:\n{result}")

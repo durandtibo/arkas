@@ -7,6 +7,7 @@ import polars as pl
 import pytest
 from coola import objects_are_equal
 from grizz.ingestor import Ingestor
+from grizz.transformer import SequentialTransformer
 from iden.io import PickleSaver, load_pickle
 
 from arkas.evaluator import AccuracyEvaluator
@@ -29,6 +30,7 @@ def test_evaluation_runner_repr(tmp_path: Path) -> None:
                     {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
                 )
             ),
+            transformer=SequentialTransformer(transformers=[]),
             evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
             saver=PickleSaver(),
             path=path,
@@ -45,6 +47,7 @@ def test_evaluation_runner_str(tmp_path: Path) -> None:
                     {"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])}
                 )
             ),
+            transformer=SequentialTransformer(transformers=[]),
             evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
             saver=PickleSaver(),
             path=path,
@@ -59,6 +62,7 @@ def test_evaluation_runner_evaluate(tmp_path: Path, show_metrics: bool) -> None:
         ingestor=Ingestor(
             pl.DataFrame({"pred": np.array([3, 2, 0, 1, 0]), "target": np.array([3, 2, 0, 1, 0])})
         ),
+        transformer=SequentialTransformer(transformers=[]),
         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
         saver=PickleSaver(),
         path=path,

@@ -26,6 +26,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
     >>> from pathlib import Path
     >>> from iden.io import PickleSaver
     >>> from grizz.ingestor import Ingestor
+    >>> from grizz.transformer import SequentialTransformer
     >>> from arkas.evaluator import AccuracyEvaluator
     >>> from arkas.runner import EvaluationRunner
     >>> with tempfile.TemporaryDirectory() as tmpdir:
@@ -39,6 +40,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
     ...                 }
     ...             )
     ...         ),
+    ...         transformer=SequentialTransformer(transformers=[]),
     ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
     ...         saver=PickleSaver(),
     ...         path=path,
@@ -48,6 +50,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
     ...
     EvaluationRunner(
       (ingestor): Ingestor(shape=(5, 2))
+      (transformer): SequentialTransformer()
       (evaluator): AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
@@ -73,6 +76,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
         >>> from pathlib import Path
         >>> from iden.io import PickleSaver
         >>> from grizz.ingestor import Ingestor
+        >>> from grizz.transformer import SequentialTransformer
         >>> from arkas.evaluator import AccuracyEvaluator
         >>> from arkas.runner import EvaluationRunner
         >>> with tempfile.TemporaryDirectory() as tmpdir:
@@ -86,6 +90,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
         ...                 }
         ...             )
         ...         ),
+        ...         transformer=SequentialTransformer(transformers=[]),
         ...         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
         ...         saver=PickleSaver(),
         ...         path=path,
@@ -117,8 +122,30 @@ def is_runner_config(config: dict) -> bool:
 
     ```pycon
 
+    >>> import polars as pl
     >>> from arkas.runner import is_runner_config
-    >>> is_runner_config({"_target_": "arkas.runner.EvaluationRunner"})
+    >>> is_runner_config(
+    ...     {
+    ...         "_target_": "arkas.runner.EvaluationRunner",
+    ...         "ingestor": {
+    ...             "_target_": "grizz.ingestor.Ingestor",
+    ...             "frame": pl.DataFrame(
+    ...                 {
+    ...                     "pred": [3, 2, 0, 1, 0],
+    ...                     "target": [3, 2, 0, 1, 0],
+    ...                 }
+    ...             ),
+    ...         },
+    ...         "transformer": {"_target_": "grizz.transformer.DropDuplicate"},
+    ...         "evaluator": {
+    ...             "_target_": "arkas.evaluator.AccuracyEvaluator",
+    ...             "y_true": "target",
+    ...             "y_pred": "pred",
+    ...         },
+    ...         "saver": {"_target_": "iden.io.PickleSaver"},
+    ...         "path": "/tmp/data/metrics.pkl",
+    ...     }
+    ... )
     True
 
     ```
@@ -158,6 +185,7 @@ def setup_runner(
     ...                 }
     ...             ),
     ...         },
+    ...         "transformer": {"_target_": "grizz.transformer.DropDuplicate"},
     ...         "evaluator": {
     ...             "_target_": "arkas.evaluator.AccuracyEvaluator",
     ...             "y_true": "target",
@@ -170,6 +198,7 @@ def setup_runner(
     >>> runner
     EvaluationRunner(
       (ingestor): Ingestor(shape=(5, 2))
+      (transformer): DropDuplicateTransformer(columns=None, ignore_missing=False)
       (evaluator): AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
       (saver): PickleSaver(protocol=5)
       (path): .../metrics.pkl
