@@ -39,11 +39,11 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
     ```
     """
 
-    def analyze(self, data: pl.DataFrame) -> BaseOutput:
-        r"""Evaluate the result.
+    def analyze(self, frame: pl.DataFrame) -> BaseOutput:
+        r"""Analyze the DataFrame.
 
         Args:
-            data: The data to analyze.
+            frame: The DataFrame to analyze.
 
         Returns:
             The generated output.
