@@ -39,13 +39,7 @@ def test_plotter_dict_equal_false_different_plotters() -> None:
             "one": Plotter(figures={"fig": None}),
             "two": Plotter(),
         }
-    ).equal(
-        PlotterDict(
-            {
-                "one": Plotter(figures={"fig": None}),
-            }
-        )
-    )
+    ).equal(PlotterDict({"one": Plotter(figures={"fig": None})}))
 
 
 def test_plotter_dict_equal_false_different_types() -> None:
