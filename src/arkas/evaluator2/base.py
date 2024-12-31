@@ -5,7 +5,14 @@ from __future__ import annotations
 __all__ = ["BaseEvaluator"]
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+from coola.equality.comparators import BaseEqualityComparator
+from coola.equality.handlers import EqualNanHandler, SameObjectHandler, SameTypeHandler
+from coola.equality.testers import EqualityTester
+
+if TYPE_CHECKING:
+    from coola.equality import EqualityConfig
 
 
 class BaseEvaluator(ABC):
@@ -117,3 +124,25 @@ class BaseEvaluator(ABC):
 
         ```
         """
+
+
+class EvaluatorEqualityComparator(BaseEqualityComparator[BaseEvaluator]):
+    r"""Implement an equality comparator for ``BaseEvaluator``
+    objects."""
+
+    def __init__(self) -> None:
+        self._handler = SameObjectHandler()
+        self._handler.chain(SameTypeHandler()).chain(EqualNanHandler())
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__)
+
+    def clone(self) -> EvaluatorEqualityComparator:
+        return self.__class__()
+
+    def equal(self, actual: BaseEvaluator, expected: Any, config: EqualityConfig) -> bool:
+        return self._handler.handle(actual, expected, config=config)
+
+
+if not EqualityTester.has_comparator(BaseEvaluator):  # pragma: no cover
+    EqualityTester.add_comparator(BaseEvaluator, EvaluatorEqualityComparator())
