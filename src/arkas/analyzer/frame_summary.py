@@ -40,9 +40,9 @@ class DataFrameSummaryAnalyzer(BaseAnalyzer):
     ...     },
     ...     schema={"col1": pl.Int64, "col2": pl.Int64, "col3": pl.Int64},
     ... )
-    >>> section = analyzer.analyze(frame)
-    >>> section
-    DataFrameSummarySection(top=5)
+    >>> output = analyzer.analyze(frame)
+    >>> output
+    DataFrameSummaryOutput(shape=(4, 3), top=5)
 
     ```
     """
