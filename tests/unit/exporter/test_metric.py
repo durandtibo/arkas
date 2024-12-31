@@ -34,11 +34,11 @@ def output() -> BaseOutput:
 
 
 def test_metric_exporter_repr(tmp_path: Path) -> None:
-    assert repr(MetricExporter(tmp_path.joinpath("metrics.pkl")))
+    assert repr(MetricExporter(tmp_path.joinpath("metrics.pkl"))).startswith("MetricExporter(")
 
 
 def test_metric_exporter_str(tmp_path: Path) -> None:
-    assert str(MetricExporter(tmp_path.joinpath("metrics.pkl")))
+    assert str(MetricExporter(tmp_path.joinpath("metrics.pkl"))).startswith("MetricExporter(")
 
 
 def test_metric_exporter_export(tmp_path: Path, output: BaseOutput) -> None:

@@ -31,11 +31,11 @@ def output() -> BaseOutput:
 
 
 def test_figure_exporter_repr(tmp_path: Path) -> None:
-    assert repr(FigureExporter(tmp_path.joinpath("figures.pkl")))
+    assert repr(FigureExporter(tmp_path.joinpath("figures.pkl"))).startswith("FigureExporter")
 
 
 def test_figure_exporter_str(tmp_path: Path) -> None:
-    assert str(FigureExporter(tmp_path.joinpath("figures.pkl")))
+    assert str(FigureExporter(tmp_path.joinpath("figures.pkl"))).startswith("FigureExporter")
 
 
 def test_figure_exporter_export(tmp_path: Path, output: BaseOutput) -> None:

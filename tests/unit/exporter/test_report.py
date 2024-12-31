@@ -32,11 +32,11 @@ def output() -> BaseOutput:
 
 
 def test_report_exporter_repr(tmp_path: Path) -> None:
-    assert repr(ReportExporter(tmp_path.joinpath("report.html")))
+    assert repr(ReportExporter(tmp_path.joinpath("report.html"))).startswith("ReportExporter(")
 
 
 def test_report_exporter_str(tmp_path: Path) -> None:
-    assert str(ReportExporter(tmp_path.joinpath("report.html")))
+    assert str(ReportExporter(tmp_path.joinpath("report.html"))).startswith("ReportExporter(")
 
 
 def test_report_exporter_export(tmp_path: Path, output: BaseOutput) -> None:
