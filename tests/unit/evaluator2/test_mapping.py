@@ -4,9 +4,9 @@ from coola import objects_are_equal
 
 from arkas.evaluator2 import Evaluator, EvaluatorDict
 
-######################################
+###################################
 #     Tests for EvaluatorDict     #
-######################################
+###################################
 
 
 def test_evaluator_dict_repr() -> None:
