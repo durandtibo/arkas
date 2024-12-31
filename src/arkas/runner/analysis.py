@@ -25,7 +25,7 @@ class AnalysisRunner(BaseRunner):
         ingestor: The data ingestor or its configuration.
         transformer: The data transformer or its configuration.
         analyzer: The analyzer or its configuration.
-        exporter: The output exporyer or its configuration.
+        exporter: The output exporter or its configuration.
 
     Example usage:
 
@@ -34,7 +34,6 @@ class AnalysisRunner(BaseRunner):
     >>> import tempfile
     >>> import polars as pl
     >>> from pathlib import Path
-    >>> from iden.io import PickleSaver
     >>> from grizz.ingestor import Ingestor
     >>> from grizz.transformer import SequentialTransformer
     >>> from arkas.analyzer import AccuracyAnalyzer
