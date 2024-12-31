@@ -3,18 +3,18 @@ from __future__ import annotations
 import numpy as np
 from jinja2 import Template
 
-from arkas.hcg import BalancedAccuracyContentGenerator
-from arkas.hcg.accuracy import create_template
+from arkas.content import AccuracyContentGenerator
+from arkas.content.accuracy import create_template
 from arkas.state import AccuracyState
 
-######################################################
-#     Tests for BalancedAccuracyContentGenerator     #
-######################################################
+##############################################
+#     Tests for AccuracyContentGenerator     #
+##############################################
 
 
 def test_accuracy_content_generator_repr() -> None:
     assert repr(
-        BalancedAccuracyContentGenerator(
+        AccuracyContentGenerator(
             state=AccuracyState(
                 y_true=np.array([1, 0, 0, 1, 1]),
                 y_pred=np.array([1, 0, 1, 0, 1]),
@@ -22,12 +22,12 @@ def test_accuracy_content_generator_repr() -> None:
                 y_pred_name="pred",
             )
         )
-    ).startswith("BalancedAccuracyContentGenerator(")
+    ).startswith("AccuracyContentGenerator(")
 
 
 def test_accuracy_content_generator_str() -> None:
     assert str(
-        BalancedAccuracyContentGenerator(
+        AccuracyContentGenerator(
             state=AccuracyState(
                 y_true=np.array([1, 0, 0, 1, 1]),
                 y_pred=np.array([1, 0, 1, 0, 1]),
@@ -35,11 +35,11 @@ def test_accuracy_content_generator_str() -> None:
                 y_pred_name="pred",
             )
         )
-    ).startswith("BalancedAccuracyContentGenerator(")
+    ).startswith("AccuracyContentGenerator(")
 
 
 def test_accuracy_content_generator_equal_true() -> None:
-    assert BalancedAccuracyContentGenerator(
+    assert AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -47,7 +47,7 @@ def test_accuracy_content_generator_equal_true() -> None:
             y_pred_name="pred",
         )
     ).equal(
-        BalancedAccuracyContentGenerator(
+        AccuracyContentGenerator(
             state=AccuracyState(
                 y_true=np.array([1, 0, 0, 1, 1]),
                 y_pred=np.array([1, 0, 1, 0, 1]),
@@ -59,7 +59,7 @@ def test_accuracy_content_generator_equal_true() -> None:
 
 
 def test_accuracy_content_generator_equal_false_different_state() -> None:
-    assert not BalancedAccuracyContentGenerator(
+    assert not AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -67,7 +67,7 @@ def test_accuracy_content_generator_equal_false_different_state() -> None:
             y_pred_name="pred",
         )
     ).equal(
-        BalancedAccuracyContentGenerator(
+        AccuracyContentGenerator(
             state=AccuracyState(
                 y_true=np.array([]),
                 y_pred=np.array([]),
@@ -79,7 +79,7 @@ def test_accuracy_content_generator_equal_false_different_state() -> None:
 
 
 def test_accuracy_content_generator_equal_false_different_nan_policy() -> None:
-    assert not BalancedAccuracyContentGenerator(
+    assert not AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -87,7 +87,7 @@ def test_accuracy_content_generator_equal_false_different_nan_policy() -> None:
             y_pred_name="pred",
         )
     ).equal(
-        BalancedAccuracyContentGenerator(
+        AccuracyContentGenerator(
             state=AccuracyState(
                 y_true=np.array([1, 0, 0, 1, 1]),
                 y_pred=np.array([1, 0, 1, 0, 1]),
@@ -100,7 +100,7 @@ def test_accuracy_content_generator_equal_false_different_nan_policy() -> None:
 
 
 def test_accuracy_content_generator_equal_false_different_type() -> None:
-    assert not BalancedAccuracyContentGenerator(
+    assert not AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -111,7 +111,7 @@ def test_accuracy_content_generator_equal_false_different_type() -> None:
 
 
 def test_accuracy_content_generator_generate_body() -> None:
-    generator = BalancedAccuracyContentGenerator(
+    generator = AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -123,7 +123,7 @@ def test_accuracy_content_generator_generate_body() -> None:
 
 
 def test_accuracy_content_generator_generate_body_args() -> None:
-    generator = BalancedAccuracyContentGenerator(
+    generator = AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -137,7 +137,7 @@ def test_accuracy_content_generator_generate_body_args() -> None:
 
 
 def test_accuracy_content_generator_generate_body_count_0() -> None:
-    generator = BalancedAccuracyContentGenerator(
+    generator = AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([]),
             y_pred=np.array([]),
@@ -149,7 +149,7 @@ def test_accuracy_content_generator_generate_body_count_0() -> None:
 
 
 def test_accuracy_content_generator_generate_body_empty() -> None:
-    generator = BalancedAccuracyContentGenerator(
+    generator = AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([]),
             y_pred=np.array([]),
@@ -161,7 +161,7 @@ def test_accuracy_content_generator_generate_body_empty() -> None:
 
 
 def test_accuracy_content_generator_generate_toc() -> None:
-    generator = BalancedAccuracyContentGenerator(
+    generator = AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
@@ -173,7 +173,7 @@ def test_accuracy_content_generator_generate_toc() -> None:
 
 
 def test_accuracy_content_generator_generate_toc_args() -> None:
-    generator = BalancedAccuracyContentGenerator(
+    generator = AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),

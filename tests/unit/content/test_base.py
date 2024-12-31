@@ -8,8 +8,8 @@ from coola import objects_are_allclose, objects_are_equal
 from coola.equality import EqualityConfig
 from coola.equality.testers import EqualityTester
 
-from arkas.hcg import ContentGenerator
-from arkas.hcg.base import ContentGeneratorEqualityComparator
+from arkas.content import ContentGenerator
+from arkas.content.base import ContentGeneratorEqualityComparator
 from tests.unit.helpers import ExamplePair
 
 

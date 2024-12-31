@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 import pytest
 from iden.io import load_pickle, save_pickle
 
+from arkas.content import ContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.exporter import FigureExporter
-from arkas.hcg import ContentGenerator
 from arkas.output import BaseOutput, Output
 from arkas.plotter import Plotter
 

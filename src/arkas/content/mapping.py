@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 from coola.utils import repr_indent, repr_mapping, str_indent
 
-from arkas.hcg.base import BaseContentGenerator
+from arkas.content.base import BaseContentGenerator
 from arkas.section.utils import (
     GO_TO_TOP,
     render_html_toc,
@@ -37,7 +37,7 @@ class ContentGeneratorDict(BaseContentGenerator):
 
     ```pycon
 
-    >>> from arkas.hcg import ContentGeneratorDict, ContentGenerator
+    >>> from arkas.content import ContentGeneratorDict, ContentGenerator
     >>> content = ContentGeneratorDict(
     ...     {
     ...         "one": ContentGenerator(),

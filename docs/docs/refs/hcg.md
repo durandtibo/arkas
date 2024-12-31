@@ -1,3 +1,0 @@
-# arkas.hcg
-
-### ::: arkas.hcg

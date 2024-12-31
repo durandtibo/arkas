@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 from coola.utils import str_indent, str_mapping
 
+from arkas.content.mapping import ContentGeneratorDict
 from arkas.evaluator2.mapping import EvaluatorDict
-from arkas.hcg.mapping import ContentGeneratorDict
 from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.mapping import PlotterDict
 
@@ -34,7 +34,7 @@ class OutputDict(BaseLazyOutput):
 
     >>> import numpy as np
     >>> from arkas.output import OutputDict, Output, AccuracyOutput
-    >>> from arkas.hcg import ContentGenerator
+    >>> from arkas.content import ContentGenerator
     >>> from arkas.evaluator2 import Evaluator
     >>> from arkas.plotter import Plotter
     >>> from arkas.state import AccuracyState

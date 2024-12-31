@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping
 
+from arkas.content.accuracy import AccuracyContentGenerator
 from arkas.evaluator2.accuracy import AccuracyEvaluator
-from arkas.hcg.accuracy import AccuracyContentGenerator
 from arkas.metric.utils import check_nan_policy
 from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.vanilla import Plotter

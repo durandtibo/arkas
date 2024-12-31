@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING, Any
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
+from arkas.content.base import BaseContentGenerator
 from arkas.evaluator2 import AccuracyEvaluator
-from arkas.hcg.base import BaseContentGenerator
 from arkas.metric.utils import check_nan_policy
 from arkas.section.utils import (
     GO_TO_TOP,
@@ -43,7 +43,7 @@ class AccuracyContentGenerator(BaseContentGenerator):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.hcg import AccuracyContentGenerator
+    >>> from arkas.content import AccuracyContentGenerator
     >>> from arkas.state import AccuracyState
     >>> generator = AccuracyContentGenerator(
     ...     state=AccuracyState(
@@ -120,7 +120,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.hcg.accuracy import create_template
+    >>> from arkas.content.accuracy import create_template
     >>> template = create_template()
 
     ```

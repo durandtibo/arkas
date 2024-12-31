@@ -18,7 +18,7 @@ from arkas.reporter.utils import create_html_report
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from arkas.hcg import BaseContentGenerator
+    from arkas.content import BaseContentGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class Reporter(BaseReporter):
     >>> import tempfile
     >>> from pathlib import Path
     >>> import numpy as np
-    >>> from arkas.hcg import AccuracyContentGenerator
+    >>> from arkas.content import AccuracyContentGenerator
     >>> from arkas.state import AccuracyState
     >>> from arkas.reporter import Reporter
     >>> generator = AccuracyContentGenerator(

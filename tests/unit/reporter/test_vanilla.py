@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 
-from arkas.hcg import AccuracyContentGenerator, BaseContentGenerator
+from arkas.content import AccuracyContentGenerator, BaseContentGenerator
 from arkas.reporter import Reporter
 from arkas.state import AccuracyState
 
