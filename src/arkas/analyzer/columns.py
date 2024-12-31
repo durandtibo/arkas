@@ -1,12 +1,14 @@
+r"""Define some template classes to implement some analyzers."""
+
 from __future__ import annotations
 
 __all__ = ["BaseTruePredAnalyzer"]
 
 import logging
+from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 import polars as pl
-from coola.utils.format import repr_mapping_line
 from grizz.utils.column import check_column_missing_policy, check_missing_column
 from grizz.utils.format import str_shape_diff
 from polars import selectors as cs
@@ -49,38 +51,32 @@ class BaseTruePredAnalyzer(BaseAnalyzer):
     ) -> None:
         self._y_true = y_true
         self._y_pred = y_pred
-
         self._drop_nulls = bool(drop_nulls)
+
         check_column_missing_policy(missing_policy)
         self._missing_policy = missing_policy
 
-    def __repr__(self) -> str:
-        args = repr_mapping_line(
-            {
-                "y_true": self._y_true,
-                "y_pred": self._y_pred,
-                "drop_nulls": self._drop_nulls,
-                "missing_policy": self._missing_policy,
-            }
-        )
-        return f"{self.__class__.__qualname__}({args})"
+    # def __repr__(self) -> str:
+    #     args = repr_mapping_line(
+    #         {
+    #             "y_true": self._y_true,
+    #             "y_pred": self._y_pred,
+    #             "drop_nulls": self._drop_nulls,
+    #             "missing_policy": self._missing_policy,
+    #         }
+    #     )
+    #     return f"{self.__class__.__qualname__}({args})"
 
     def analyze(self, frame: pl.DataFrame) -> BaseOutput:
         self._check_input_column(frame)
-        if self._y_true not in frame:
-            logger.info(
-                f"Skipping '{self.__class__.__qualname__}.analyze' "
-                f"because the input column {self._y_true!r} is missing"
-            )
-            return EmptyOutput()
-        if self._y_pred not in frame:
-            logger.info(
-                f"Skipping '{self.__class__.__qualname__}.analyze' "
-                f"because the input column {self._y_pred!r} is missing"
-            )
-            return EmptyOutput()
-        prepared_frame = self._prepare_data(frame)
-        return self._analyze(prepared_frame)
+        for col in [self._y_true, self._y_pred]:
+            if col not in frame:
+                logger.info(
+                    f"Skipping '{self.__class__.__qualname__}.analyze' "
+                    f"because the input column {col!r} is missing"
+                )
+                return EmptyOutput()
+        return self._analyze(self._prepare_data(frame))
 
     def _prepare_data(self, data: pl.DataFrame) -> pl.DataFrame:
         if self._drop_nulls:
@@ -100,6 +96,7 @@ class BaseTruePredAnalyzer(BaseAnalyzer):
         check_missing_column(frame, column=self._y_true, missing_policy=self._missing_policy)
         check_missing_column(frame, column=self._y_pred, missing_policy=self._missing_policy)
 
+    @abstractmethod
     def _analyze(self, frame: pl.DataFrame) -> BaseOutput:
         r"""Analyze the DataFrame.
 
