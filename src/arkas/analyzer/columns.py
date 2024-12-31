@@ -12,6 +12,7 @@ from grizz.utils.format import str_shape_diff
 from polars import selectors as cs
 
 from arkas.analyzer.base import BaseAnalyzer
+from arkas.output.empty import EmptyOutput
 
 if TYPE_CHECKING:
     from arkas.output.base import BaseOutput
@@ -71,13 +72,13 @@ class BaseTruePredAnalyzer(BaseAnalyzer):
                 f"Skipping '{self.__class__.__qualname__}.analyze' "
                 f"because the input column {self._y_true!r} is missing"
             )
-            return Output()
+            return EmptyOutput()
         if self._y_pred not in frame:
             logger.info(
                 f"Skipping '{self.__class__.__qualname__}.analyze' "
                 f"because the input column {self._y_pred!r} is missing"
             )
-            return Output()
+            return EmptyOutput()
         prepared_frame = self._prepare_data(frame)
         return self._analyze(prepared_frame)
 
