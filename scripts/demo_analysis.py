@@ -12,7 +12,12 @@ from grizz.ingestor import Ingestor
 from grizz.transformer import SequentialTransformer
 
 from arkas.analyzer import AccuracyAnalyzer
-from arkas.exporter import MetricExporter
+from arkas.exporter import (
+    FigureExporter,
+    MetricExporter,
+    ReportExporter,
+    SequentialExporter,
+)
 from arkas.runner import AnalysisRunner
 from arkas.utils.logging import configure_logging
 
@@ -33,12 +38,18 @@ def main() -> None:
         )
     )
 
-    metric_path = Path.cwd().joinpath("tmp/metrics.pkl")
+    path = Path.cwd().joinpath("tmp")
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
         analyzer=AccuracyAnalyzer(y_true="target", y_pred="pred"),
-        exporter=MetricExporter(path=metric_path),
+        exporter=SequentialExporter(
+            [
+                FigureExporter(path=path.joinpath("figures.pkl"), exist_ok=True),
+                ReportExporter(path=path.joinpath("report.html"), exist_ok=True),
+                MetricExporter(path=path.joinpath("metrics.pkl"), exist_ok=True),
+            ]
+        ),
     )
     logger.info(f"runner:\n{runner}")
     runner.run()
