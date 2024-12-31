@@ -74,7 +74,7 @@ class AccuracyOutput(BaseLazyOutput):
             and self._nan_policy == other._nan_policy
         )
 
-    def _get_content_generator(self) -> AccuracyContentGenerator:
+    def get_content_generator(self) -> AccuracyContentGenerator:
         return AccuracyContentGenerator(state=self._state, nan_policy=self._nan_policy)
 
     def _get_evaluator(self) -> AccuracyEvaluator:
