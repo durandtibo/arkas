@@ -3,7 +3,7 @@ plotters."""
 
 from __future__ import annotations
 
-__all__ = ["MappingPlotter"]
+__all__ = ["PlotterDict"]
 
 import logging
 from typing import TYPE_CHECKING, Any
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class MappingPlotter(BasePlotter):
+class PlotterDict(BasePlotter):
     r"""Implement a plotter that generates figures from a mapping of
     plotters.
 
@@ -30,15 +30,15 @@ class MappingPlotter(BasePlotter):
 
     ```pycon
 
-    >>> from arkas.plotter import MappingPlotter, Plotter
-    >>> plotter = MappingPlotter(
+    >>> from arkas.plotter import PlotterDict, Plotter
+    >>> plotter = PlotterDict(
     ...     {
     ...         "one": Plotter(),
     ...         "two": Plotter({"fig": None}),
     ...     }
     ... )
     >>> plotter
-    MappingPlotter(
+    PlotterDict(
       (one): Plotter(count=0)
       (two): Plotter(count=1)
     )
