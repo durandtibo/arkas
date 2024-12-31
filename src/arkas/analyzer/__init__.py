@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __all__ = [
     "AccuracyAnalyzer",
+    "BalancedAccuracyAnalyzer",
     "BaseAnalyzer",
     "BaseTruePredAnalyzer",
     "is_analyzer_config",
@@ -11,5 +12,6 @@ __all__ = [
 ]
 
 from arkas.analyzer.accuracy import AccuracyAnalyzer
+from arkas.analyzer.balanced_accuracy import BalancedAccuracyAnalyzer
 from arkas.analyzer.base import BaseAnalyzer, is_analyzer_config, setup_analyzer
 from arkas.analyzer.columns import BaseTruePredAnalyzer
