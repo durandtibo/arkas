@@ -1,5 +1,6 @@
 _target_: arkas.runner.EvaluationRunner
 ingestor: ${ingestor}
+transformer: ${transformer}
 evaluator: ${evaluator}
 saver:
   _target_: iden.io.PickleSaver

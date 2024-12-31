@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 import polars as pl
 from grizz.ingestor import Ingestor
+from grizz.transformer import SequentialTransformer
 from iden.io import PickleSaver
 
 from arkas.evaluator import (
@@ -45,6 +46,7 @@ def main() -> None:
     path_metrics = Path.cwd().joinpath("tmp/metrics.pkl")
     runner = EvaluationRunner(
         ingestor=ingestor,
+        transformer=SequentialTransformer(transformers=[]),
         evaluator=SequentialEvaluator(
             [
                 AccuracyEvaluator(y_true="target", y_pred="pred"),

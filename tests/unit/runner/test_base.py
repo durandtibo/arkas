@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import polars as pl
 from grizz.ingestor import Ingestor
+from grizz.transformer import SequentialTransformer
 from iden.io import PickleSaver
 from objectory import OBJECT_TARGET
 
@@ -39,6 +40,7 @@ def test_is_runner_config_false() -> None:
 def test_setup_runner_object(tmp_path: Path) -> None:
     runner = EvaluationRunner(
         ingestor=Ingestor(pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [3, 2, 0, 1, 0]})),
+        transformer=SequentialTransformer(transformers=[]),
         evaluator=AccuracyEvaluator(y_true="target", y_pred="pred"),
         saver=PickleSaver(),
         path=tmp_path.joinpath("metrics.pkl"),
@@ -60,6 +62,7 @@ def test_setup_runner_dict(tmp_path: Path) -> None:
                         }
                     ),
                 },
+                "transformer": {OBJECT_TARGET: "grizz.transformer.DropDuplicate"},
                 "evaluator": {
                     OBJECT_TARGET: "arkas.evaluator.AccuracyEvaluator",
                     "y_true": "target",

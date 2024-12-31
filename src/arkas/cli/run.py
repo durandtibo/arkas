@@ -67,6 +67,7 @@ def main(config: dict[str, Any]) -> None:
     ...                     }
     ...                 ),
     ...             },
+    ...             "transformer": {"_target_": "grizz.transformer.DropDuplicate"},
     ...             "evaluator": {
     ...                 "_target_": "arkas.evaluator.AccuracyEvaluator",
     ...                 "y_true": "target",
