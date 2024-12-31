@@ -1,27 +1,19 @@
-r"""Contain a simple evaluation runner implementation."""
+r"""Contain a simple runner to analyze data."""
 
 from __future__ import annotations
 
 __all__ = ["AnalysisRunner"]
 
 import logging
-from typing import TYPE_CHECKING, Any
 
-from coola.nested import to_flat_dict
 from coola.utils import str_indent, str_mapping
-from coola.utils.path import sanitize_path
 from grizz.ingestor import BaseIngestor, setup_ingestor
 from grizz.transformer import BaseTransformer, setup_transformer
-from iden.io import BaseSaver, setup_saver
+from iden.utils.time import timeblock
 
 from arkas.analyzer.base import BaseAnalyzer, setup_analyzer
-from arkas.reporter import BaseReporter, setup_reporter
+from arkas.exporter import BaseExporter, setup_exporter
 from arkas.runner.base import BaseRunner
-
-if TYPE_CHECKING:
-    from pathlib import Path
-
-    from arkas.output import BaseOutput
 
 logger = logging.getLogger(__name__)
 
@@ -33,10 +25,7 @@ class AnalysisRunner(BaseRunner):
         ingestor: The data ingestor or its configuration.
         transformer: The data transformer or its configuration.
         analyzer: The analyzer or its configuration.
-        metric_saver: The metric saver or its configuration.
-        metric_path: The path where to save the metrics.
-        show_metrics: If ``True``, the metrics are shown in the
-            logging output.
+        exporter: The output exporyer or its configuration.
 
     Example usage:
 
@@ -49,10 +38,9 @@ class AnalysisRunner(BaseRunner):
     >>> from grizz.ingestor import Ingestor
     >>> from grizz.transformer import SequentialTransformer
     >>> from arkas.analyzer import AccuracyAnalyzer
-    >>> from arkas.reporter import Reporter
+    >>> from arkas.exporter import MetricExporter
     >>> from arkas.runner import AnalysisRunner
     >>> with tempfile.TemporaryDirectory() as tmpdir:
-    ...     path = Path(tmpdir).joinpath("metrics.pkl")
     ...     runner = AnalysisRunner(
     ...         ingestor=Ingestor(
     ...             pl.DataFrame(
@@ -64,20 +52,20 @@ class AnalysisRunner(BaseRunner):
     ...         ),
     ...         transformer=SequentialTransformer(transformers=[]),
     ...         analyzer=AccuracyAnalyzer(y_true="target", y_pred="pred"),
-    ...         reporter=Reporter(),
-    ...         saver=PickleSaver(),
-    ...         path=path,
+    ...         exporter=MetricExporter(Path(tmpdir).joinpath("metrics.pkl")),
     ...     )
     ...     print(runner)
     ...     runner.run()
     ...
-    EvaluationRunner(
+    AnalysisRunner(
       (ingestor): Ingestor(shape=(5, 2))
       (transformer): SequentialTransformer()
-      (analyzer): AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
-      (saver): PickleSaver(protocol=5)
-      (path): .../metrics.pkl
-      (show_metrics): True
+      (analyzer): AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, missing_policy='raise', nan_policy='propagate')
+      (exporter): MetricExporter(
+          (path): .../metrics.pkl
+          (saver): PickleSaver(protocol=5)
+          (show_metrics): True
+        )
     )
 
     ```
@@ -88,18 +76,12 @@ class AnalysisRunner(BaseRunner):
         ingestor: BaseIngestor | dict,
         transformer: BaseTransformer | dict,
         analyzer: BaseAnalyzer | dict,
-        reporter: BaseReporter | dict,
-        metric_saver: BaseSaver | dict,
-        metric_path: Path | str,
-        show_metrics: bool = True,
+        exporter: BaseExporter | dict,
     ) -> None:
         self._ingestor = setup_ingestor(ingestor)
         self._transformer = setup_transformer(transformer)
         self._analyzer = setup_analyzer(analyzer)
-        self._reporter = setup_reporter(reporter)
-        self._metric_saver = setup_saver(metric_saver)
-        self._metric_path = sanitize_path(metric_path)
-        self._show_metrics = bool(show_metrics)
+        self._exporter = setup_exporter(exporter)
 
     def __repr__(self) -> str:
         args = str_indent(
@@ -108,16 +90,17 @@ class AnalysisRunner(BaseRunner):
                     "ingestor": self._ingestor,
                     "transformer": self._transformer,
                     "analyzer": self._analyzer,
-                    "reporter": self._reporter,
-                    "metric_saver": self._metric_saver,
-                    "metric_path": self._metric_path,
-                    "show_metrics": self._show_metrics,
+                    "exporter": self._exporter,
                 }
             )
         )
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    def run(self) -> Any:
+    def run(self) -> None:
+        with timeblock():
+            self._run()
+
+    def _run(self) -> None:
         logger.info("Ingesting data...")
         raw_data = self._ingestor.ingest()
         logger.info("Transforming data...")
@@ -125,16 +108,5 @@ class AnalysisRunner(BaseRunner):
         logger.info("Analyzing...")
         output = self._analyzer.analyze(data)
         logger.info(f"output:\n{output}")
-
-        self._export_metrics(output)
-
-        self._reporter.generate(output)
-
-    def _export_metrics(self, output: BaseOutput) -> None:
-        logger.info("Computing metrics...")
-        metrics = output.get_evaluator().evaluate()
-        logger.info(f"Saving metrics at {self._metric_path}...")
-        self._metric_saver.save(metrics, path=self._metric_path, exist_ok=True)
-
-        if self._show_metrics:
-            logger.info(f"metrics:\n{str_mapping(to_flat_dict(metrics), sorted_keys=True)}")
+        logger.info("Exporting the output...")
+        self._exporter.export(output)
