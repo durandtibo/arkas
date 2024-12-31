@@ -39,13 +39,7 @@ def test_evaluator_dict_equal_false_different_evaluators() -> None:
             "one": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
             "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
         }
-    ).equal(
-        EvaluatorDict(
-            {
-                "one": Evaluator(metrics={"accuracy": 62.0, "count": 42}),
-            }
-        )
-    )
+    ).equal(EvaluatorDict({"one": Evaluator(metrics={"accuracy": 62.0, "count": 42})}))
 
 
 def test_evaluator_dict_equal_false_different_types() -> None:
