@@ -6,11 +6,10 @@ __all__ = ["BaseExporter", "is_exporter_config", "setup_exporter"]
 
 import logging
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from objectory import AbstractFactory
 from objectory.utils import is_object_config
-
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from arkas.output.base import BaseOutput
