@@ -5,8 +5,9 @@ from __future__ import annotations
 __all__ = ["MetricExporter"]
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+from coola import objects_are_equal
 from coola.nested import to_flat_dict
 from coola.utils import str_indent, str_mapping
 from coola.utils.path import sanitize_path
@@ -83,6 +84,15 @@ class MetricExporter(BaseExporter):
             )
         )
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(
+            (self._path, self._saver, self._exist_ok, self._show_metrics),
+            (other._path, other._saver, other._exist_ok, other._show_metrics),
+            equal_nan=equal_nan,
+        )
 
     def export(self, output: BaseOutput) -> None:
         logger.info("Exporting metrics...")

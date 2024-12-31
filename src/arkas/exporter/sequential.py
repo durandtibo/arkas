@@ -5,8 +5,9 @@ from __future__ import annotations
 __all__ = ["SequentialExporter"]
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+from coola import objects_are_equal
 from coola.utils import repr_indent, repr_sequence
 
 from arkas.exporter import BaseExporter, setup_exporter
@@ -83,6 +84,11 @@ class SequentialExporter(BaseExporter):
     def __repr__(self) -> str:
         args = repr_indent(repr_sequence(self._exporters))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(self._exporters, other._exporters, equal_nan=equal_nan)
 
     def export(self, output: BaseOutput) -> None:
         for exporter in self._exporters:
