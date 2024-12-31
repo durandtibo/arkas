@@ -7,7 +7,13 @@ __all__ = ["BaseOutput"]
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
+from coola.equality.comparators import BaseEqualityComparator
+from coola.equality.handlers import EqualNanHandler, SameObjectHandler, SameTypeHandler
+from coola.equality.testers import EqualityTester
+
 if TYPE_CHECKING:
+    from coola.equality import EqualityConfig
+
     from arkas.evaluator2.base import BaseEvaluator
     from arkas.hcg.base import BaseContentGenerator
     from arkas.plotter.base import BasePlotter
@@ -33,7 +39,7 @@ class BaseOutput(ABC):
     ... )
     >>> output
     AccuracyOutput(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+      (state): AccuracyOutput(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
       (nan_policy): propagate
     )
 
@@ -115,7 +121,7 @@ class BaseOutput(ABC):
         ... )
         >>> output.get_content_generator()
         AccuracyContentGenerator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+          (state): AccuracyOutput(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
           (nan_policy): propagate
         )
 
@@ -151,7 +157,7 @@ class BaseOutput(ABC):
         ... )
         >>> output.get_evaluator()
         AccuracyEvaluator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+          (state): AccuracyOutput(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
           (nan_policy): propagate
         )
 
@@ -190,3 +196,24 @@ class BaseOutput(ABC):
 
         ```
         """
+
+
+class OutputEqualityComparator(BaseEqualityComparator[BaseOutput]):
+    r"""Implement an equality comparator for ``BaseOutput`` objects."""
+
+    def __init__(self) -> None:
+        self._handler = SameObjectHandler()
+        self._handler.chain(SameTypeHandler()).chain(EqualNanHandler())
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__)
+
+    def clone(self) -> OutputEqualityComparator:
+        return self.__class__()
+
+    def equal(self, actual: BaseOutput, expected: Any, config: EqualityConfig) -> bool:
+        return self._handler.handle(actual, expected, config=config)
+
+
+if not EqualityTester.has_comparator(BaseOutput):  # pragma: no cover
+    EqualityTester.add_comparator(BaseOutput, OutputEqualityComparator())
