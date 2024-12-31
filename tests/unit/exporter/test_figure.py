@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 @pytest.fixture
 def output() -> BaseOutput:
     return Output(
-        generator=ContentGenerator("meow"),
+        content=ContentGenerator("meow"),
         evaluator=Evaluator(),
         plotter=Plotter({"fig": plt.subplots()[0]}),
     )

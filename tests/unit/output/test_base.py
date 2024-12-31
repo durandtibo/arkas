@@ -33,10 +33,10 @@ STATE_EQUAL = [
     pytest.param(
         ExamplePair(
             actual=Output(
-                generator=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
+                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
             ),
             expected=Output(
-                generator=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
+                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
             ),
         ),
         id="output",
@@ -68,7 +68,7 @@ STATE_NOT_EQUAL = [
     pytest.param(
         ExamplePair(
             actual=Output(
-                generator=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
+                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
             ),
             expected=AccuracyOutput(
                 state=AccuracyState(
@@ -85,10 +85,10 @@ STATE_NOT_EQUAL = [
     pytest.param(
         ExamplePair(
             actual=Output(
-                generator=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
+                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
             ),
             expected=Output(
-                generator=ContentGenerator("miaou"), evaluator=Evaluator(), plotter=Plotter()
+                content=ContentGenerator("miaou"), evaluator=Evaluator(), plotter=Plotter()
             ),
             expected_message="objects are not equal:",
         ),
@@ -121,7 +121,7 @@ def test_output_equality_comparator_clone() -> None:
 
 
 def test_output_equality_comparator_equal_true_same_object(config: EqualityConfig) -> None:
-    x = Output(generator=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter())
+    x = Output(content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter())
     assert OutputEqualityComparator().equal(x, x, config)
 
 
