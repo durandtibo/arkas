@@ -1,4 +1,5 @@
-r"""Contain an plotter that evaluates a mapping of plotters."""
+r"""Contain an plotter that generates figures from a mapping of
+plotters."""
 
 from __future__ import annotations
 
@@ -19,11 +20,11 @@ logger = logging.getLogger(__name__)
 
 
 class MappingPlotter(BasePlotter):
-    r"""Implement an plotter that sequentially evaluates a mapping of
+    r"""Implement a plotter that generates figures from a mapping of
     plotters.
 
     Args:
-        plotters: The mapping of plotters to evaluate.
+        plotters: The mapping of plotters.
 
     Example usage:
 
@@ -41,7 +42,6 @@ class MappingPlotter(BasePlotter):
       (one): Plotter(count=0)
       (two): Plotter(count=1)
     )
-
     >>> figures = plotter.plot()
     >>> figures
     {'one': {}, 'two': {'fig': None}}
