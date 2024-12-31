@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from arkas.section.utils import render_html_toc, tags2id, tags2title, valid_h_tag
+from arkas.utils.html import render_toc, tags2id, tags2title, valid_h_tag
 
 #############################
 #     Tests for tags2id     #
@@ -57,29 +57,29 @@ def test_valid_h_tag_7() -> None:
     assert valid_h_tag(7) == 6
 
 
-#####################################
-#     Tests for render_html_toc     #
-#####################################
+################################
+#     Tests for render_toc     #
+################################
 
 
-def test_render_html_toc_no_tags_and_number() -> None:
-    assert render_html_toc() == '<li><a href="#"> </a></li>'
+def test_render_toc_no_tags_and_number() -> None:
+    assert render_toc() == '<li><a href="#"> </a></li>'
 
 
-def test_render_html_toc_no_tags() -> None:
-    assert render_html_toc(number="1.2.") == '<li><a href="#">1.2. </a></li>'
+def test_render_toc_no_tags() -> None:
+    assert render_toc(number="1.2.") == '<li><a href="#">1.2. </a></li>'
 
 
-def test_render_html_toc_tags() -> None:
+def test_render_toc_tags() -> None:
     assert (
-        render_html_toc(number="1.2.", tags=("super", "meow"))
+        render_toc(number="1.2.", tags=("super", "meow"))
         == '<li><a href="#super-meow">1.2. meow</a></li>'
     )
 
 
-def test_render_html_toc_tags_without_number() -> None:
-    assert render_html_toc(tags=("super", "meow")) == '<li><a href="#super-meow"> meow</a></li>'
+def test_render_toc_tags_without_number() -> None:
+    assert render_toc(tags=("super", "meow")) == '<li><a href="#super-meow"> meow</a></li>'
 
 
-def test_render_html_toc_max_depth() -> None:
-    assert render_html_toc(depth=2, max_depth=2) == ""
+def test_render_toc_max_depth() -> None:
+    assert render_toc(depth=2, max_depth=2) == ""

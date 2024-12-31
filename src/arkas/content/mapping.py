@@ -12,13 +12,7 @@ from coola import objects_are_equal
 from coola.utils import repr_indent, repr_mapping, str_indent
 
 from arkas.content.base import BaseContentGenerator
-from arkas.section.utils import (
-    GO_TO_TOP,
-    render_html_toc,
-    tags2id,
-    tags2title,
-    valid_h_tag,
-)
+from arkas.utils.html import GO_TO_TOP, render_toc, tags2id, tags2title, valid_h_tag
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -102,7 +96,7 @@ class ContentGeneratorDict(BaseContentGenerator):
             return ""
         toc = []
         if tags:
-            toc.append(render_html_toc(number=number, tags=tags, depth=depth, max_depth=max_depth))
+            toc.append(render_toc(number=number, tags=tags, depth=depth, max_depth=max_depth))
         subtoc = self._generate_toc_content(tags=tags, depth=depth + 1, max_depth=max_depth)
         if subtoc:
             toc.append(subtoc)

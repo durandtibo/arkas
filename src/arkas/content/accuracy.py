@@ -14,13 +14,7 @@ from jinja2 import Template
 from arkas.content.base import BaseContentGenerator
 from arkas.evaluator2 import AccuracyEvaluator
 from arkas.metric.utils import check_nan_policy
-from arkas.section.utils import (
-    GO_TO_TOP,
-    render_html_toc,
-    tags2id,
-    tags2title,
-    valid_h_tag,
-)
+from arkas.utils.html import GO_TO_TOP, render_toc, tags2id, tags2title, valid_h_tag
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -107,7 +101,7 @@ class AccuracyContentGenerator(BaseContentGenerator):
     def generate_toc(
         self, number: str = "", tags: Sequence[str] = (), depth: int = 0, max_depth: int = 1
     ) -> str:
-        return render_html_toc(number=number, tags=tags, depth=depth, max_depth=max_depth)
+        return render_toc(number=number, tags=tags, depth=depth, max_depth=max_depth)
 
 
 def create_template() -> str:
