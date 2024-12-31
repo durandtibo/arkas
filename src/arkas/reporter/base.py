@@ -155,7 +155,7 @@ def setup_reporter(
     >>> reporter
     EvalReporter(
       (ingestor): CsvIngestor(path=/path/to/data.csv)
-      (transformer): DropDuplicateTransformer(columns=None, ignore_missing=False)
+      (transformer): DropDuplicateTransformer(columns=None, exclude_columns=(), missing_policy='raise')
       (evaluator): AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
       (report_path): /path/to/report.html
       (max_toc_depth): 6
