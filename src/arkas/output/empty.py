@@ -1,18 +1,17 @@
-r"""Implement the classification accuracy output."""
+r"""Implement an empty output."""
 
 from __future__ import annotations
 
 __all__ = ["EmptyOutput"]
 
-from typing import Any
 
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.hcg.vanilla import ContentGenerator
-from arkas.output.base import BaseOutput
+from arkas.output.vanilla import Output
 from arkas.plotter.vanilla import Plotter
 
 
-class EmptyOutput(BaseOutput):
+class EmptyOutput(Output):
     r"""Implement the accuracy output.
 
     Example usage:
@@ -32,17 +31,8 @@ class EmptyOutput(BaseOutput):
     ```
     """
 
+    def __init__(self) -> None:
+        super().__init__(generator=ContentGenerator(), evaluator=Evaluator(), plotter=Plotter())
+
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:  # noqa: ARG002
-        return isinstance(other, self.__class__)
-
-    def get_content_generator(self) -> ContentGenerator:
-        return ContentGenerator()
-
-    def get_evaluator(self, lazy: bool = True) -> Evaluator:  # noqa: ARG002
-        return Evaluator()
-
-    def get_plotter(self, lazy: bool = True) -> Plotter:  # noqa: ARG002
-        return Plotter()
