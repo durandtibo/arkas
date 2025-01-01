@@ -4,13 +4,12 @@ import logging
 from typing import Callable
 
 import pytest
-from coola import objects_are_allclose, objects_are_equal
 from coola.equality import EqualityConfig
 from coola.equality.testers import EqualityTester
 
 from arkas.plotter import Plotter
 from arkas.plotter.base import PlotterEqualityComparator
-from tests.unit.helpers import ExamplePair
+from tests.unit.helpers import COMPARATOR_FUNCTIONS, ExamplePair
 
 
 @pytest.fixture
@@ -22,9 +21,7 @@ def config() -> EqualityConfig:
 #     Tests for PlotterEqualityComparator     #
 ###############################################
 
-STATE_FUNCTIONS = [objects_are_equal, objects_are_allclose]
-
-STATE_EQUAL = [
+PLOTTER_EQUAL = [
     pytest.param(
         ExamplePair(
             actual=Plotter(),
@@ -34,7 +31,7 @@ STATE_EQUAL = [
     ),
 ]
 
-STATE_NOT_EQUAL = [
+PLOTTER_NOT_EQUAL = [
     pytest.param(
         ExamplePair(
             actual=Plotter(),
@@ -82,7 +79,7 @@ def test_plotter_equality_comparator_equal_true_same_object(config: EqualityConf
     assert PlotterEqualityComparator().equal(x, x, config)
 
 
-@pytest.mark.parametrize("example", STATE_EQUAL)
+@pytest.mark.parametrize("example", PLOTTER_EQUAL)
 def test_plotter_equality_comparator_equal_true(
     example: ExamplePair,
     config: EqualityConfig,
@@ -94,7 +91,7 @@ def test_plotter_equality_comparator_equal_true(
         assert not caplog.messages
 
 
-@pytest.mark.parametrize("example", STATE_EQUAL)
+@pytest.mark.parametrize("example", PLOTTER_EQUAL)
 def test_plotter_equality_comparator_equal_true_show_difference(
     example: ExamplePair,
     config: EqualityConfig,
@@ -107,7 +104,7 @@ def test_plotter_equality_comparator_equal_true_show_difference(
         assert not caplog.messages
 
 
-@pytest.mark.parametrize("example", STATE_NOT_EQUAL)
+@pytest.mark.parametrize("example", PLOTTER_NOT_EQUAL)
 def test_plotter_equality_comparator_equal_false(
     example: ExamplePair,
     config: EqualityConfig,
@@ -119,7 +116,7 @@ def test_plotter_equality_comparator_equal_false(
         assert not caplog.messages
 
 
-@pytest.mark.parametrize("example", STATE_NOT_EQUAL)
+@pytest.mark.parametrize("example", PLOTTER_NOT_EQUAL)
 def test_plotter_equality_comparator_equal_false_show_difference(
     example: ExamplePair,
     config: EqualityConfig,
@@ -132,8 +129,8 @@ def test_plotter_equality_comparator_equal_false_show_difference(
         assert caplog.messages[-1].startswith(example.expected_message)
 
 
-@pytest.mark.parametrize("function", STATE_FUNCTIONS)
-@pytest.mark.parametrize("example", STATE_EQUAL)
+@pytest.mark.parametrize("function", COMPARATOR_FUNCTIONS)
+@pytest.mark.parametrize("example", PLOTTER_EQUAL)
 @pytest.mark.parametrize("show_difference", [True, False])
 def test_objects_are_equal_true(
     function: Callable,
@@ -146,8 +143,8 @@ def test_objects_are_equal_true(
         assert not caplog.messages
 
 
-@pytest.mark.parametrize("function", STATE_FUNCTIONS)
-@pytest.mark.parametrize("example", STATE_NOT_EQUAL)
+@pytest.mark.parametrize("function", COMPARATOR_FUNCTIONS)
+@pytest.mark.parametrize("example", PLOTTER_NOT_EQUAL)
 def test_objects_are_equal_false(
     function: Callable, example: ExamplePair, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -156,8 +153,8 @@ def test_objects_are_equal_false(
         assert not caplog.messages
 
 
-@pytest.mark.parametrize("function", STATE_FUNCTIONS)
-@pytest.mark.parametrize("example", STATE_NOT_EQUAL)
+@pytest.mark.parametrize("function", COMPARATOR_FUNCTIONS)
+@pytest.mark.parametrize("example", PLOTTER_NOT_EQUAL)
 def test_objects_are_equal_false_show_difference(
     function: Callable, example: ExamplePair, caplog: pytest.LogCaptureFixture
 ) -> None:

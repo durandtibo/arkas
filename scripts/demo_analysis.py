@@ -11,8 +11,12 @@ import polars as pl
 from grizz.ingestor import Ingestor
 from grizz.transformer import SequentialTransformer
 
-from arkas.analyzer import AccuracyAnalyzer, BalancedAccuracyAnalyzer, MappingAnalyzer, \
-    DataFrameSummaryAnalyzer
+from arkas.analyzer import (
+    AccuracyAnalyzer,
+    BalancedAccuracyAnalyzer,
+    DataFrameSummaryAnalyzer,
+    MappingAnalyzer,
+)
 from arkas.exporter import (
     FigureExporter,
     MetricExporter,
