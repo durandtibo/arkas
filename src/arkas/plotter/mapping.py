@@ -12,6 +12,7 @@ from coola import objects_are_equal
 from coola.utils import repr_indent, repr_mapping
 
 from arkas.plotter.base import BasePlotter
+from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Mapping
@@ -55,6 +56,9 @@ class PlotterDict(BasePlotter):
     def __repr__(self) -> str:
         args = repr_indent(repr_mapping(self._plotters))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def compute(self) -> Plotter:
+        return Plotter(figures=self.plot())
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):

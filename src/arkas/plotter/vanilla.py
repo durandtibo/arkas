@@ -37,6 +37,9 @@ class Plotter(BasePlotter):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(count={len(self._figures):,})"
 
+    def compute(self) -> Plotter:
+        return Plotter(self._figures)
+
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
