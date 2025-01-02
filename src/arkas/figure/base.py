@@ -9,11 +9,36 @@ from typing import Any
 
 
 class BaseFigure(ABC):
-    r"""Define the base class to implement a figure."""
+    r"""Define the base class to implement a figure.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from matplotlib import pyplot as plt
+    >>> from arkas.figure import MatplotlibFigure
+    >>> fig = MatplotlibFigure(plt.subplots()[0])
+    >>> fig
+    MatplotlibFigure(reactive=True)
+
+    ```
+    """
 
     @abstractmethod
     def close(self) -> None:
-        r"""Close the figure."""
+        r"""Close the figure.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from matplotlib import pyplot as plt
+        >>> from arkas.figure import MatplotlibFigure
+        >>> fig = MatplotlibFigure(plt.subplots()[0])
+        >>> fig.close()
+
+        ```
+        """
 
     @abstractmethod
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
@@ -26,6 +51,23 @@ class BaseFigure(ABC):
 
         Returns:
             ``True`` if the two objects are equal, otherwise ``False``.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from matplotlib import pyplot as plt
+        >>> from arkas.figure import MatplotlibFigure
+        >>> fig = plt.subplots()[0]
+        >>> fig1 = MatplotlibFigure(fig)
+        >>> fig2 = MatplotlibFigure(fig)
+        >>> fig3 = MatplotlibFigure(fig, reactive=False)
+        >>> fig1.equal(fig2)
+        True
+        >>> fig1.equal(fig3)
+        False
+
+        ```
         """
 
     @abstractmethod
@@ -34,16 +76,49 @@ class BaseFigure(ABC):
 
         Returns:
             The HTML code of the figure.
+
+        ```pycon
+
+        >>> from matplotlib import pyplot as plt
+        >>> from arkas.figure import MatplotlibFigure
+        >>> fig = MatplotlibFigure(plt.subplots()[0])
+        >>> html = fig.to_html()
+
+        ```
         """
 
 
 class BaseFigureConfig(ABC):
-    r"""Define the base class to implement a figure config."""
+    r"""Define the base class to implement a figure config.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.figure import MatplotlibFigureConfig
+    >>> config = MatplotlibFigureConfig(dpi=300)
+    >>> config
+    MatplotlibFigureConfig(dpi=300)
+
+    ```
+    """
 
     @property
     @abstractmethod
     def backend(self) -> str:
-        r"""The backend to generate the figure."""
+        r"""The backend to generate the figure.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.figure import MatplotlibFigureConfig
+        >>> backend = MatplotlibFigureConfig.backend()
+        >>> backend
+        matplotlib
+
+        ```
+        """
 
     @abstractmethod
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
@@ -56,6 +131,21 @@ class BaseFigureConfig(ABC):
 
         Returns:
             ``True`` if the two objects are equal, otherwise ``False``.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.figure import MatplotlibFigureConfig
+        >>> config1 = MatplotlibFigureConfig(dpi=300)
+        >>> config2 = MatplotlibFigureConfig(dpi=300)
+        >>> config3 = MatplotlibFigureConfig()
+        >>> config1.equal(config2)
+        True
+        >>> config1.equal(config3)
+        False
+
+        ```
         """
 
     @abstractmethod
@@ -64,4 +154,15 @@ class BaseFigureConfig(ABC):
 
         Returns:
             The config arguments.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.figure import MatplotlibFigureConfig
+        >>> config = MatplotlibFigureConfig(dpi=300)
+        >>> config.get_args()
+        {'dpi': 300}
+
+        ```
         """
