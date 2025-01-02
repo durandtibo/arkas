@@ -109,7 +109,7 @@ def test_accuracy_content_generator_equal_false_different_type() -> None:
     ).equal(42)
 
 
-def test_accuracy_content_generate_content() -> None:
+def test_accuracy_content_generator_generate_content() -> None:
     assert AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -128,7 +128,7 @@ def test_accuracy_content_generate_content() -> None:
     )
 
 
-def test_accuracy_content_generate_content_empty() -> None:
+def test_accuracy_content_generator_generate_content_empty() -> None:
     assert AccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([]),
