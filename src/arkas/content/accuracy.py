@@ -12,7 +12,7 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
-from arkas.evaluator2 import AccuracyEvaluator
+from arkas.evaluator2.accuracy import AccuracyEvaluator
 from arkas.metric.utils import check_nan_policy
 
 if TYPE_CHECKING:
