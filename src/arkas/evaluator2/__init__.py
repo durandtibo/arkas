@@ -8,10 +8,16 @@ __all__ = [
     "BaseEvaluator",
     "Evaluator",
     "EvaluatorDict",
+    "BinaryPrecisionEvaluator",
+    "MulticlassPrecisionEvaluator",
+    "MultilabelPrecisionEvaluator",
+    "PrecisionEvaluator",
 ]
 
 from arkas.evaluator2.accuracy import AccuracyEvaluator
 from arkas.evaluator2.balanced_accuracy import BalancedAccuracyEvaluator
 from arkas.evaluator2.base import BaseEvaluator
 from arkas.evaluator2.mapping import EvaluatorDict
+from arkas.evaluator2.precision import BinaryPrecisionEvaluator, MulticlassPrecisionEvaluator, \
+    MultilabelPrecisionEvaluator, PrecisionEvaluator
 from arkas.evaluator2.vanilla import Evaluator
