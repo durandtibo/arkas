@@ -98,6 +98,20 @@ class BaseInNLazyAnalyzer(BaseAnalyzer):
     ```pycon
 
     >>> import polars as pl
+    >>> from arkas.analyzer import ColumnCooccurrenceAnalyzer
+    >>> analyzer = ColumnCooccurrenceAnalyzer()
+    >>> analyzer
+    ColumnCooccurrenceAnalyzer(columns=None, exclude_columns=(), missing_policy='raise', ignore_self=False)
+    >>> frame = pl.DataFrame(
+    ...     {
+    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
+    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
+    ...         "col3": [0, 0, 0, 0, 1, 1, 1],
+    ...     }
+    ... )
+    >>> output = analyzer.analyze(frame)
+    >>> output
+    ColumnCooccurrenceOutput(shape=(7, 3), ignore_self=False)
 
     ```
     """
@@ -146,21 +160,20 @@ class BaseInNLazyAnalyzer(BaseAnalyzer):
         ```pycon
 
         >>> import polars as pl
-        >>> from grizz.transformer import StripChars
+        >>> from arkas.analyzer import ColumnCooccurrenceAnalyzer
         >>> frame = pl.DataFrame(
         ...     {
-        ...         "col1": [1, 2, 3, 4, 5],
-        ...         "col2": ["1", "2", "3", "4", "5"],
-        ...         "col3": ["a ", " b", "  c  ", "d", "e"],
-        ...         "col4": ["a ", " b", "  c  ", "d", "e"],
+        ...         "col1": [0, 1, 1, 0, 0, 1, 0],
+        ...         "col2": [0, 1, 0, 1, 0, 1, 0],
+        ...         "col3": [0, 0, 0, 0, 1, 1, 1],
         ...     }
         ... )
-        >>> transformer = StripChars(columns=["col2", "col3"])
-        >>> transformer.find_columns(frame)
+        >>> analyzer = ColumnCooccurrenceAnalyzer(columns=["col2", "col3"])
+        >>> analyzer.find_columns(frame)
         ('col2', 'col3')
-        >>> transformer = StripChars()
-        >>> transformer.find_columns(frame)
-        ('col1', 'col2', 'col3', 'col4')
+        >>> analyzer = ColumnCooccurrenceAnalyzer()
+        >>> analyzer.find_columns(frame)
+        ('col1', 'col2', 'col3')
 
         ```
         """
@@ -185,21 +198,20 @@ class BaseInNLazyAnalyzer(BaseAnalyzer):
         ```pycon
 
         >>> import polars as pl
-        >>> from grizz.transformer import StripChars
+        >>> from arkas.analyzer import ColumnCooccurrenceAnalyzer
         >>> frame = pl.DataFrame(
         ...     {
-        ...         "col1": [1, 2, 3, 4, 5],
-        ...         "col2": ["1", "2", "3", "4", "5"],
-        ...         "col3": ["a ", " b", "  c  ", "d", "e"],
-        ...         "col4": ["a ", " b", "  c  ", "d", "e"],
+        ...         "col1": [0, 1, 1, 0, 0, 1, 0],
+        ...         "col2": [0, 1, 0, 1, 0, 1, 0],
+        ...         "col3": [0, 0, 0, 0, 1, 1, 1],
         ...     }
         ... )
-        >>> transformer = StripChars(columns=["col2", "col3", "col5"])
-        >>> transformer.find_common_columns(frame)
+        >>> analyzer = ColumnCooccurrenceAnalyzer(columns=["col2", "col3", "col5"])
+        >>> analyzer.find_common_columns(frame)
         ('col2', 'col3')
-        >>> transformer = StripChars()
-        >>> transformer.find_common_columns(frame)
-        ('col1', 'col2', 'col3', 'col4')
+        >>> analyzer = ColumnCooccurrenceAnalyzer()
+        >>> analyzer.find_common_columns(frame)
+        ('col1', 'col2', 'col3')
 
         ```
         """
@@ -221,20 +233,19 @@ class BaseInNLazyAnalyzer(BaseAnalyzer):
         ```pycon
 
         >>> import polars as pl
-        >>> from grizz.transformer import StripChars
+        >>> from arkas.analyzer import ColumnCooccurrenceAnalyzer
         >>> frame = pl.DataFrame(
         ...     {
-        ...         "col1": [1, 2, 3, 4, 5],
-        ...         "col2": ["1", "2", "3", "4", "5"],
-        ...         "col3": ["a ", " b", "  c  ", "d", "e"],
-        ...         "col4": ["a ", " b", "  c  ", "d", "e"],
+        ...         "col1": [0, 1, 1, 0, 0, 1, 0],
+        ...         "col2": [0, 1, 0, 1, 0, 1, 0],
+        ...         "col3": [0, 0, 0, 0, 1, 1, 1],
         ...     }
         ... )
-        >>> transformer = StripChars(columns=["col2", "col3", "col5"])
-        >>> transformer.find_missing_columns(frame)
+        >>> analyzer = ColumnCooccurrenceAnalyzer(columns=["col2", "col3", "col5"])
+        >>> analyzer.find_missing_columns(frame)
         ('col5',)
-        >>> transformer = StripChars()
-        >>> transformer.find_missing_columns(frame)
+        >>> analyzer = ColumnCooccurrenceAnalyzer()
+        >>> analyzer.find_missing_columns(frame)
         ()
 
         ```
