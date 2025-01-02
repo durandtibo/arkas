@@ -7,6 +7,10 @@ __all__ = ["ExamplePair"]
 from dataclasses import dataclass
 from typing import Any
 
+from coola import objects_are_allclose, objects_are_equal
+
+COMPARATOR_FUNCTIONS = [objects_are_equal, objects_are_allclose]
+
 
 @dataclass
 class ExamplePair:

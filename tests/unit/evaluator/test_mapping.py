@@ -7,7 +7,7 @@ from coola import objects_are_equal
 from arkas.evaluator import (
     BinaryPrecisionEvaluator,
     BinaryRecallEvaluator,
-    MappingEvaluator,
+    EvaluatorDict,
 )
 from arkas.result import (
     BinaryPrecisionResult,
@@ -17,35 +17,35 @@ from arkas.result import (
 )
 
 ######################################
-#     Tests for MappingEvaluator     #
+#     Tests for EvaluatorDict     #
 ######################################
 
 
 def test_mapping_evaluator_repr() -> None:
     assert repr(
-        MappingEvaluator(
+        EvaluatorDict(
             {
                 "precision": BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
                 "recall": BinaryRecallEvaluator(y_true="target", y_pred="pred"),
             }
         )
-    ).startswith("MappingEvaluator(")
+    ).startswith("EvaluatorDict(")
 
 
 def test_mapping_evaluator_str() -> None:
     assert str(
-        MappingEvaluator(
+        EvaluatorDict(
             {
                 "precision": BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
                 "recall": BinaryRecallEvaluator(y_true="target", y_pred="pred"),
             }
         )
-    ).startswith("MappingEvaluator(")
+    ).startswith("EvaluatorDict(")
 
 
 def test_mapping_evaluator_evaluate() -> None:
     assert (
-        MappingEvaluator(
+        EvaluatorDict(
             {
                 "precision": BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
                 "recall": BinaryRecallEvaluator(y_true="target", y_pred="pred"),
@@ -68,7 +68,7 @@ def test_mapping_evaluator_evaluate() -> None:
 
 
 def test_mapping_evaluator_evaluate_lazy_false() -> None:
-    result = MappingEvaluator(
+    result = EvaluatorDict(
         {
             "precision": BinaryPrecisionEvaluator(y_true="target", y_pred="pred"),
             "recall": BinaryRecallEvaluator(y_true="target", y_pred="pred"),

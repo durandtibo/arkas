@@ -1,4 +1,4 @@
-r"""Implement the classification accuracy evaluators."""
+r"""Implement the accuracy evaluator."""
 
 from __future__ import annotations
 

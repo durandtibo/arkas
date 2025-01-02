@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from arkas.content import ContentGenerator
 from arkas.evaluator2 import Evaluator
-from arkas.hcg import ContentGenerator
 from arkas.output import Output
 from arkas.plotter import Plotter
 

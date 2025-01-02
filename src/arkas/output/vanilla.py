@@ -11,8 +11,8 @@ from coola.utils import repr_indent, repr_mapping
 from arkas.output.lazy import BaseLazyOutput
 
 if TYPE_CHECKING:
+    from arkas.content.base import BaseContentGenerator
     from arkas.evaluator2.base import BaseEvaluator
-    from arkas.hcg.base import BaseContentGenerator
     from arkas.plotter.base import BasePlotter
 
 
@@ -28,9 +28,8 @@ class Output(BaseLazyOutput):
 
     ```pycon
 
-    >>> import numpy as np
     >>> from arkas.output import Output
-    >>> from arkas.hcg import ContentGenerator
+    >>> from arkas.content import ContentGenerator
     >>> from arkas.evaluator2 import Evaluator
     >>> from arkas.plotter import Plotter
     >>> output = Output(

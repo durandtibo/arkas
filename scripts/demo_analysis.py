@@ -11,7 +11,12 @@ import polars as pl
 from grizz.ingestor import Ingestor
 from grizz.transformer import SequentialTransformer
 
-from arkas.analyzer import AccuracyAnalyzer
+from arkas.analyzer import (
+    AccuracyAnalyzer,
+    BalancedAccuracyAnalyzer,
+    DataFrameSummaryAnalyzer,
+    MappingAnalyzer,
+)
 from arkas.exporter import (
     FigureExporter,
     MetricExporter,
@@ -42,7 +47,13 @@ def main() -> None:
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
-        analyzer=AccuracyAnalyzer(y_true="target", y_pred="pred"),
+        analyzer=MappingAnalyzer(
+            {
+                "summary": DataFrameSummaryAnalyzer(),
+                "group one": AccuracyAnalyzer(y_true="target", y_pred="pred"),
+                "group two": BalancedAccuracyAnalyzer(y_true="target", y_pred="pred"),
+            }
+        ),
         exporter=SequentialExporter(
             [
                 FigureExporter(path=path.joinpath("figures.pkl"), exist_ok=True),

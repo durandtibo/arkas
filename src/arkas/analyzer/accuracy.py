@@ -1,4 +1,4 @@
-r"""Contain an accuracy analyzer."""
+r"""Contain the accuracy analyzer."""
 
 from __future__ import annotations
 
@@ -53,8 +53,8 @@ class AccuracyAnalyzer(BaseTruePredAnalyzer):
     >>> analyzer
     AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, missing_policy='raise', nan_policy='propagate')
     >>> frame = pl.DataFrame({"pred": [3, 2, 0, 1, 0, 1], "target": [3, 2, 0, 1, 0, 1]})
-    >>> result = analyzer.analyze(frame)
-    >>> result
+    >>> output = analyzer.analyze(frame)
+    >>> output
     AccuracyOutput(
       (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred')
       (nan_policy): propagate

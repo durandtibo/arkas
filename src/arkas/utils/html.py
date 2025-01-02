@@ -4,7 +4,7 @@ from __future__ import annotations
 
 __all__ = [
     "GO_TO_TOP",
-    "render_html_toc",
+    "render_toc",
     "tags2id",
     "tags2title",
     "valid_h_tag",
@@ -32,7 +32,7 @@ def tags2id(tags: Sequence[str]) -> str:
 
     ```pycon
 
-    >>> from arkas.section.utils import tags2id
+    >>> from arkas.utils.html import tags2id
     >>> out = tags2id(["super", "meow"])
     >>> out
     super-meow
@@ -55,7 +55,7 @@ def tags2title(tags: Sequence[str]) -> str:
 
     ```pycon
 
-    >>> from arkas.section.utils import tags2title
+    >>> from arkas.utils.html import tags2title
     >>> out = tags2title(["super", "meow"])
     >>> out
     meow | super
@@ -78,7 +78,7 @@ def valid_h_tag(index: int) -> int:
 
     ```pycon
 
-    >>> from arkas.section.utils import valid_h_tag
+    >>> from arkas.utils.html import valid_h_tag
     >>> out = valid_h_tag(4)
     >>> out
     4
@@ -88,7 +88,7 @@ def valid_h_tag(index: int) -> int:
     return max(1, min(6, index))
 
 
-def render_html_toc(
+def render_toc(
     number: str = "", tags: Sequence[str] = (), depth: int = 0, max_depth: int = 1
 ) -> str:
     r"""Return the HTML table of content (TOC) associated to the section.
@@ -106,8 +106,8 @@ def render_html_toc(
 
     ```pycon
 
-    >>> from arkas.section.utils import render_html_toc
-    >>> out = render_html_toc(number="2.0", tags=["super", "meow"])
+    >>> from arkas.utils.html import render_toc
+    >>> out = render_toc(number="2.0", tags=["super", "meow"])
     >>> out
     <li><a href="#super-meow">2.0 meow</a></li>
 

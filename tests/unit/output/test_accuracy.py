@@ -3,8 +3,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from arkas.content import AccuracyContentGenerator
 from arkas.evaluator2 import AccuracyEvaluator, Evaluator
-from arkas.hcg import AccuracyContentGenerator
 from arkas.output import AccuracyOutput
 from arkas.plotter import Plotter
 from arkas.state import AccuracyState

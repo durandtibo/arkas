@@ -40,15 +40,15 @@ jobs:
       - name: check arkas.analyzer
         run: |
           python -c "from arkas import analyzer"
+      - name: check arkas.content
+        run: |
+          python -c "from arkas import content"
       - name: check arkas.evaluator
         run: |
           python -c "from arkas import evaluator"
       - name: check arkas.evaluator2
         run: |
           python -c "from arkas import evaluator2"
-      - name: check arkas.hcg
-        run: |
-          python -c "from arkas import hcg"
       - name: check arkas.metric
         run: |
           python -c "from arkas import metric"

@@ -99,8 +99,8 @@ class ReportExporter(BaseExporter):
         logger.info("Creating the HTML report...")
         generator = output.get_content_generator()
         report = create_html_report(
-            toc=generator.generate_body(),
-            body=generator.generate_toc(max_depth=self._max_toc_depth),
+            toc=generator.generate_toc(max_depth=self._max_toc_depth),
+            body=generator.generate_body(),
         )
         logger.info(f"Saving the HTML report at {self._path}...")
         self._saver.save(report, self._path, exist_ok=self._exist_ok)
