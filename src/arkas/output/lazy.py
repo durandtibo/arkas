@@ -32,21 +32,21 @@ class BaseLazyOutput(BaseOutput):
 
     def get_content_generator(self, lazy: bool = True) -> BaseContentGenerator:
         content = self._get_content_generator()
-        if lazy:
-            return content
-        return content.compute()
+        if not lazy:
+            content = content.compute()
+        return content
 
     def get_evaluator(self, lazy: bool = True) -> BaseEvaluator:
         evaluator = self._get_evaluator()
-        if lazy:
-            return evaluator
-        return evaluator.compute()
+        if not lazy:
+            evaluator = evaluator.compute()
+        return evaluator
 
     def get_plotter(self, lazy: bool = True) -> BasePlotter:
         plotter = self._get_plotter()
-        if lazy:
-            return plotter
-        return plotter.compute()
+        if not lazy:
+            plotter = plotter.compute()
+        return plotter
 
     @abstractmethod
     def _get_content_generator(self) -> BaseContentGenerator:
