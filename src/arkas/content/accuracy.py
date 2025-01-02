@@ -16,7 +16,6 @@ from arkas.evaluator2.accuracy import AccuracyEvaluator
 from arkas.metric.utils import check_nan_policy
 
 if TYPE_CHECKING:
-
     from arkas.state import AccuracyState
 
 

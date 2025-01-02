@@ -203,7 +203,7 @@ def test_accuracy_content_generator_generate_toc_args() -> None:
     )
 
 
-def test_accuracy_content_precompute() -> None:
+def test_accuracy_content_generator_precompute() -> None:
     assert (
         AccuracyContentGenerator(
             state=AccuracyState(
