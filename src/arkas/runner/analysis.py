@@ -26,6 +26,7 @@ class AnalysisRunner(BaseRunner):
         transformer: The data transformer or its configuration.
         analyzer: The analyzer or its configuration.
         exporter: The output exporter or its configuration.
+        lazy: If ``True``, the analyzer computation is done lazily.
 
     Example usage:
 
@@ -66,6 +67,7 @@ class AnalysisRunner(BaseRunner):
           (exist_ok): False
           (show_metrics): True
         )
+      (lazy): True
     )
 
     ```
@@ -77,11 +79,13 @@ class AnalysisRunner(BaseRunner):
         transformer: BaseTransformer | dict,
         analyzer: BaseAnalyzer | dict,
         exporter: BaseExporter | dict,
+        lazy: bool = True,
     ) -> None:
         self._ingestor = setup_ingestor(ingestor)
         self._transformer = setup_transformer(transformer)
         self._analyzer = setup_analyzer(analyzer)
         self._exporter = setup_exporter(exporter)
+        self._lazy = lazy
 
     def __repr__(self) -> str:
         args = str_indent(
@@ -91,6 +95,7 @@ class AnalysisRunner(BaseRunner):
                     "transformer": self._transformer,
                     "analyzer": self._analyzer,
                     "exporter": self._exporter,
+                    "lazy": self._lazy,
                 }
             )
         )
@@ -106,7 +111,7 @@ class AnalysisRunner(BaseRunner):
         logger.info("Transforming data...")
         data = self._transformer.transform(raw_data)
         logger.info("Analyzing...")
-        output = self._analyzer.analyze(data)
+        output = self._analyzer.analyze(data, lazy=self._lazy)
         logger.info(f"output:\n{output}")
         logger.info("Exporting the output...")
         self._exporter.export(output)
