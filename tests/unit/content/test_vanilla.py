@@ -30,6 +30,10 @@ def test_content_generator_equal_false_different_type() -> None:
     assert not ContentGenerator("meow").equal(42)
 
 
+def test_content_generator_generate_content() -> None:
+    assert ContentGenerator("meow").generate_content() == "meow"
+
+
 def test_content_generator_generate_body() -> None:
     generator = ContentGenerator("meow")
     assert isinstance(Template(generator.generate_body()).render(), str)

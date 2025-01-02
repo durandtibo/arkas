@@ -30,21 +30,12 @@ class ContentGenerator(BaseContentGenerator):
     ```pycon
 
     >>> import numpy as np
-    >>> from arkas.content import AccuracyContentGenerator
-    >>> from arkas.state import AccuracyState
-    >>> generator = AccuracyContentGenerator(
-    ...     state=AccuracyState(
-    ...         y_true=np.array([1, 0, 0, 1, 1]),
-    ...         y_pred=np.array([1, 0, 0, 1, 1]),
-    ...         y_true_name="target",
-    ...         y_pred_name="pred",
-    ...     )
-    ... )
+    >>> from arkas.content import ContentGenerator
+    >>> generator = ContentGenerator("meow")
     >>> generator
-    AccuracyContentGenerator(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
-      (nan_policy): propagate
-    )
+    ContentGenerator()
+    >>> generator.generate_content()
+    'meow'
 
     ```
     """
@@ -64,7 +55,6 @@ class ContentGenerator(BaseContentGenerator):
         return self._content == other._content
 
     def generate_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
-        logger.info("Generating the content...")
         return Template(create_template()).render(
             {
                 "go_to_top": GO_TO_TOP,
@@ -72,9 +62,12 @@ class ContentGenerator(BaseContentGenerator):
                 "depth": valid_h_tag(depth + 1),
                 "title": tags2title(tags),
                 "section": number,
-                "content": self._content,
+                "content": self.generate_content(),
             }
         )
+
+    def generate_content(self) -> str:
+        return self._content
 
     def generate_toc(
         self, number: str = "", tags: Sequence[str] = (), depth: int = 0, max_depth: int = 1
