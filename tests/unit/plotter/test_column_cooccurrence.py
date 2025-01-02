@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import matplotlib.pyplot as plt
 import numpy as np
 import polars as pl
 import pytest
@@ -100,23 +101,21 @@ def test_column_cooccurrence_plotter_equal_nan_false() -> None:
 
 
 def test_column_cooccurrence_plotter_plot(dataframe: pl.DataFrame) -> None:
-    assert objects_are_equal(
-        ColumnCooccurrencePlotter(dataframe).plot(),
-        {"column_cooccurrence": None},
-    )
+    figures = ColumnCooccurrencePlotter(dataframe).plot()
+    assert len(figures) == 1
+    assert isinstance(figures["column_cooccurrence"], plt.Figure)
 
 
 def test_column_cooccurrence_plotter_plot_empty() -> None:
-    assert objects_are_equal(
-        ColumnCooccurrencePlotter(pl.DataFrame()).plot(), {"column_cooccurrence": None}
-    )
+    figures = ColumnCooccurrencePlotter(pl.DataFrame()).plot()
+    assert len(figures) == 1
+    assert isinstance(figures["column_cooccurrence"], plt.Figure)
 
 
 def test_column_cooccurrence_plotter_plot_prefix_suffix(dataframe: pl.DataFrame) -> None:
-    assert objects_are_equal(
-        ColumnCooccurrencePlotter(dataframe).plot(prefix="prefix_", suffix="_suffix"),
-        {"prefix_column_cooccurrence_suffix": None},
-    )
+    figures = ColumnCooccurrencePlotter(dataframe).plot(prefix="prefix_", suffix="_suffix")
+    assert len(figures) == 1
+    assert isinstance(figures["prefix_column_cooccurrence_suffix"], plt.Figure)
 
 
 def test_column_cooccurrence_plotter_cooccurrence_matrix(dataframe: pl.DataFrame) -> None:

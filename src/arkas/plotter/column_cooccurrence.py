@@ -7,6 +7,7 @@ __all__ = ["ColumnCooccurrencePlotter"]
 
 from typing import TYPE_CHECKING, Any
 
+import matplotlib.pyplot as plt
 from coola import objects_are_equal
 from grizz.utils.cooccurrence import compute_pairwise_cooccurrence
 
@@ -65,7 +66,7 @@ class ColumnCooccurrencePlotter(BasePlotter):
         )
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:
-        return {f"{prefix}column_cooccurrence{suffix}": None}
+        return {f"{prefix}column_cooccurrence{suffix}": plt.subplots()[0]}
 
     def cooccurrence_matrix(self) -> np.ndarray:
         r"""Return the pairwise column co-occurrence matrix.
