@@ -6,6 +6,7 @@ __all__ = [
     "AccuracyAnalyzer",
     "BalancedAccuracyAnalyzer",
     "BaseAnalyzer",
+    "BaseLazyAnalyzer",
     "BaseTruePredAnalyzer",
     "DataFrameSummaryAnalyzer",
     "MappingAnalyzer",
@@ -19,5 +20,6 @@ from arkas.analyzer.balanced_accuracy import BalancedAccuracyAnalyzer
 from arkas.analyzer.base import BaseAnalyzer, is_analyzer_config, setup_analyzer
 from arkas.analyzer.columns import BaseTruePredAnalyzer
 from arkas.analyzer.frame_summary import DataFrameSummaryAnalyzer
+from arkas.analyzer.lazy import BaseLazyAnalyzer
 from arkas.analyzer.mapping import MappingAnalyzer
 from arkas.analyzer.transform import TransformAnalyzer
