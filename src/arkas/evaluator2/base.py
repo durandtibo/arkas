@@ -125,6 +125,36 @@ class BaseEvaluator(ABC):
         ```
         """
 
+    @abstractmethod
+    def precompute(self) -> BaseEvaluator:
+        r"""Precompute the metrics in the evaluator and return a new
+        evaluator.
+
+        Returns:
+            A new evaluator with the precomputed metrics.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.evaluator2 import AccuracyEvaluator
+        >>> from arkas.state import AccuracyState
+        >>> evaluator = AccuracyEvaluator(
+        ...     AccuracyState(
+        ...         y_true=np.array([1, 0, 0, 1, 1]),
+        ...         y_pred=np.array([1, 0, 0, 1, 1]),
+        ...         y_true_name="target",
+        ...         y_pred_name="pred",
+        ...     )
+        ... )
+        >>> precomputed_evaluator = evaluator.precompute()
+        >>> precomputed_evaluator
+        Evaluator(count=5)
+
+        ```
+        """
+
 
 class EvaluatorEqualityComparator(BaseEqualityComparator[BaseEvaluator]):
     r"""Implement an equality comparator for ``BaseEvaluator``

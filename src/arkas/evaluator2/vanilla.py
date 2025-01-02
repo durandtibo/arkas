@@ -45,3 +45,6 @@ class Evaluator(BaseEvaluator):
 
     def evaluate(self, prefix: str = "", suffix: str = "") -> dict:
         return {f"{prefix}{key}{suffix}": value for key, value in self._metrics.items()}
+
+    def precompute(self) -> Evaluator:
+        return Evaluator(metrics=self._metrics)

@@ -11,6 +11,7 @@ from coola import objects_are_equal
 from coola.utils import repr_indent, repr_mapping
 
 from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.vanilla import Evaluator
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Mapping
@@ -78,3 +79,6 @@ class EvaluatorDict(BaseEvaluator):
             key: evaluator.evaluate(prefix=prefix, suffix=suffix)
             for key, evaluator in self._evaluators.items()
         }
+
+    def precompute(self) -> Evaluator:
+        return Evaluator(metrics=self.evaluate())
