@@ -61,6 +61,7 @@ def main() -> None:
                 MetricExporter(path=path.joinpath("metrics.pkl"), exist_ok=True),
             ]
         ),
+        lazy=False,
     )
     logger.info(f"runner:\n{runner}")
     runner.run()
