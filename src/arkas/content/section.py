@@ -62,6 +62,13 @@ class BaseSectionContentGenerator(BaseContentGenerator):
             The content  without the tags.
         """
 
+    def precompute(self) -> BaseContentGenerator:
+        # local import to avoid cyclic dependency because ContentGenerator
+        # uses this class as base class
+        from arkas.content.vanilla import ContentGenerator
+
+        return ContentGenerator(self.generate_content())
+
 
 def create_template() -> str:
     r"""Return the template of the section.
