@@ -25,10 +25,20 @@ def dataframe() -> pl.DataFrame:
 ######################################################
 
 
+def test_dataframe_summary_content_generator_repr(dataframe: pl.DataFrame) -> None:
+    assert repr(DataFrameSummaryContentGenerator(dataframe)).startswith(
+        "DataFrameSummaryContentGenerator("
+    )
+
+
 def test_dataframe_summary_content_generator_str(dataframe: pl.DataFrame) -> None:
     assert str(DataFrameSummaryContentGenerator(dataframe)).startswith(
         "DataFrameSummaryContentGenerator("
     )
+
+
+def test_dataframe_summary_content_generator_compute(dataframe: pl.DataFrame) -> None:
+    assert isinstance(DataFrameSummaryContentGenerator(dataframe).compute(), ContentGenerator)
 
 
 def test_dataframe_summary_content_generator_frame(dataframe: pl.DataFrame) -> None:
@@ -180,10 +190,6 @@ def test_dataframe_summary_content_generator_generate_toc_args(dataframe: pl.Dat
         ),
         str,
     )
-
-
-def test_dataframe_summary_content_generator_precompute(dataframe: pl.DataFrame) -> None:
-    assert isinstance(DataFrameSummaryContentGenerator(dataframe).precompute(), ContentGenerator)
 
 
 #####################################

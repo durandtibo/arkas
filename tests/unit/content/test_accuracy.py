@@ -37,6 +37,31 @@ def test_accuracy_content_generator_str() -> None:
     ).startswith("AccuracyContentGenerator(")
 
 
+def test_accuracy_content_generator_compute() -> None:
+    assert (
+        AccuracyContentGenerator(
+            state=AccuracyState(
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_pred=np.array([1, 0, 0, 1, 1]),
+                y_true_name="target",
+                y_pred_name="pred",
+            )
+        )
+        .compute()
+        .equal(
+            ContentGenerator(
+                "<ul>\n"
+                "  <li>column with target labels: target</li>\n"
+                "  <li>column with predicted labels: pred</li>\n"
+                "  <li>accuracy: 1.0000 (5/5)</li>\n"
+                "  <li>error: 0.0000 (0/5)</li>\n"
+                "  <li>number of samples: 5</li>\n"
+                "</ul>"
+            )
+        )
+    )
+
+
 def test_accuracy_content_generator_equal_true() -> None:
     assert AccuracyContentGenerator(
         state=AccuracyState(
@@ -200,31 +225,6 @@ def test_accuracy_content_generator_generate_toc_args() -> None:
             )
         ).generate_toc(number="1.", tags=["meow"], depth=1),
         str,
-    )
-
-
-def test_accuracy_content_generator_precompute() -> None:
-    assert (
-        AccuracyContentGenerator(
-            state=AccuracyState(
-                y_true=np.array([1, 0, 0, 1, 1]),
-                y_pred=np.array([1, 0, 0, 1, 1]),
-                y_true_name="target",
-                y_pred_name="pred",
-            )
-        )
-        .precompute()
-        .equal(
-            ContentGenerator(
-                "<ul>\n"
-                "  <li>column with target labels: target</li>\n"
-                "  <li>column with predicted labels: pred</li>\n"
-                "  <li>accuracy: 1.0000 (5/5)</li>\n"
-                "  <li>error: 0.0000 (0/5)</li>\n"
-                "  <li>number of samples: 5</li>\n"
-                "</ul>"
-            )
-        )
     )
 
 
