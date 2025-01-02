@@ -15,6 +15,8 @@ from coola import objects_are_equal
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
+from arkas.plotter import ColumnCooccurrencePlotter
+from arkas.utils.figure import figure2html
 
 if TYPE_CHECKING:
 
@@ -77,10 +79,12 @@ class ColumnCooccurrenceContentGenerator(BaseSectionContentGenerator):
 
     def generate_content(self) -> str:
         logger.info("Generating the DataFrame summary content...")
+        figures = ColumnCooccurrencePlotter(frame=self._frame, ignore_self=self._ignore_self).plot()
         return Template(create_template()).render(
             {
                 "nrows": f"{self._frame.shape[0]:,}",
                 "ncols": f"{self._frame.shape[1]:,}",
+                "figure": figure2html(figures["column_cooccurrence"], close_fig=True),
             }
         )
 
@@ -100,8 +104,10 @@ def create_template() -> str:
 
     ```
     """
-    return """<ul>
-  <li> number of rows: {{nrows}}</li>
+    return """This section shows the pairwise column co-occurrence.
+<ul>
   <li> number of columns: {{ncols}} </li>
+  <li> number of rows: {{nrows}}</li>
 </ul>
+{{figure}}
 """

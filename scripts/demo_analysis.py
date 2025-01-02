@@ -34,6 +34,7 @@ def main() -> None:
     r"""Define the main function."""
     n_samples = 1000
     rng = np.random.default_rng(42)
+    ncols = 100
     ingestor = Ingestor(
         pl.DataFrame(
             {
@@ -41,7 +42,7 @@ def main() -> None:
                 "score": rng.normal(0, 1, n_samples),
                 "target": rng.integers(0, 2, n_samples),
             }
-            | {f"col{i}": rng.integers(0, 2, n_samples) for i in range(5)}
+            | {f"col{i}": rng.integers(0, 2, n_samples) for i in range(ncols)}
         )
     )
 
@@ -54,7 +55,9 @@ def main() -> None:
                 "summary": DataFrameSummaryAnalyzer(),
                 "group one": AccuracyAnalyzer(y_true="target", y_pred="pred"),
                 "group two": BalancedAccuracyAnalyzer(y_true="target", y_pred="pred"),
-                "co-occurrence": ColumnCooccurrenceAnalyzer(columns=[f"col{i}" for i in range(5)]),
+                "co-occurrence": ColumnCooccurrenceAnalyzer(
+                    columns=[f"col{i}" for i in range(ncols)], ignore_self=True
+                ),
             }
         ),
         exporter=SequentialExporter(
