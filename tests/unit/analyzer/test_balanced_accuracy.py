@@ -31,12 +31,12 @@ def test_balanced_accuracy_analyzer_str() -> None:
 def test_balanced_accuracy_analyzer_analyze() -> None:
     assert (
         BalancedAccuracyAnalyzer(y_true="target", y_pred="pred")
-        .analyze(pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]}))
+        .analyze(pl.DataFrame({"pred": [1, 0, 0, 1, 0], "target": [1, 1, 0, 0, 1]}))
         .equal(
             BalancedAccuracyOutput(
                 state=AccuracyState(
-                    y_true=np.array([1, 2, 3, 2, 1]),
-                    y_pred=np.array([3, 2, 0, 1, 0]),
+                    y_true=np.array([1, 1, 0, 0, 1]),
+                    y_pred=np.array([1, 0, 0, 1, 0]),
                     y_true_name="target",
                     y_pred_name="pred",
                 )
@@ -48,7 +48,7 @@ def test_balanced_accuracy_analyzer_analyze() -> None:
 def test_balanced_accuracy_analyzer_analyze_lazy_false() -> None:
     assert isinstance(
         BalancedAccuracyAnalyzer(y_true="target", y_pred="pred").analyze(
-            pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]}), lazy=False
+            pl.DataFrame({"pred": [1, 0, 0, 1, 0], "target": [1, 1, 0, 0, 1]}), lazy=False
         ),
         Output,
     )
