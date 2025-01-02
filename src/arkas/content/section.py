@@ -44,6 +44,32 @@ class BaseSectionContentGenerator(BaseContentGenerator):
 
         Returns:
             A new content generator with the computed content.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.content import AccuracyContentGenerator
+        >>> from arkas.state import AccuracyState
+        >>> generator = AccuracyContentGenerator(
+        ...     state=AccuracyState(
+        ...         y_true=np.array([1, 0, 0, 1, 1]),
+        ...         y_pred=np.array([1, 0, 0, 1, 1]),
+        ...         y_true_name="target",
+        ...         y_pred_name="pred",
+        ...     )
+        ... )
+        >>> generator
+        AccuracyContentGenerator(
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+          (nan_policy): propagate
+        )
+        >>> generator2 = generator.compute()
+        >>> generator2
+        ContentGenerator()
+
+        ```
         """
         # local import to avoid cyclic dependency because ContentGenerator
         # uses this class as base class
