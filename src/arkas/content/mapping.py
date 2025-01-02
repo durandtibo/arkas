@@ -57,6 +57,12 @@ class ContentGeneratorDict(BaseContentGenerator):
         args = repr_indent(repr_mapping(self._generators))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
+    def compute(self) -> ContentGeneratorDict:
+        return ContentGeneratorDict(
+            generators={key: generator.compute() for key, generator in self._generators.items()},
+            max_toc_depth=self._max_toc_depth,
+        )
+
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
