@@ -7,6 +7,7 @@ import pytest
 from coola import objects_are_equal
 
 from arkas.plotter import ColumnCooccurrencePlotter, Plotter
+from arkas.plotter.column_cooccurrence import create_figure
 
 
 @pytest.fixture
@@ -132,3 +133,22 @@ def test_column_cooccurrence_plotter_cooccurrence_matrix_ignore_self(
         ColumnCooccurrencePlotter(dataframe, ignore_self=True).cooccurrence_matrix(),
         np.array([[0, 2, 1], [2, 0, 1], [1, 1, 0]], dtype=int),
     )
+
+
+###################################
+#     Tests for create_figure     #
+###################################
+
+
+def test_create_figure_small() -> None:
+    assert isinstance(create_figure(matrix=np.ones((3, 3)), columns=["a", "b", "c"]), plt.Figure)
+
+
+def test_create_figure_large() -> None:
+    assert isinstance(
+        create_figure(matrix=np.ones((50, 50)), columns=list(map(str, range(50)))), plt.Figure
+    )
+
+
+def test_create_figure_empty() -> None:
+    assert isinstance(create_figure(matrix=np.ones((0, 0)), columns=[]), plt.Figure)
