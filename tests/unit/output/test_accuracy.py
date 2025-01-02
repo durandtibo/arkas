@@ -55,11 +55,11 @@ def test_accuracy_output_compute() -> None:
             Output(
                 content=ContentGenerator(
                     "<ul>\n"
-                    "  <li>column with target labels: target</li>\n"
-                    "  <li>column with predicted labels: pred</li>\n"
-                    "  <li>accuracy: 1.0000 (5/5)</li>\n"
-                    "  <li>error: 0.0000 (0/5)</li>\n"
-                    "  <li>number of samples: 5</li>\n"
+                    "  <li><b>accuracy</b>: 1.0000 (5/5)</li>\n"
+                    "  <li><b>error</b>: 0.0000 (0/5)</li>\n"
+                    "  <li><b>number of samples</b>: 5</li>\n"
+                    "  <li><b>target label column</b>: target</li>\n"
+                    "  <li><b>predicted label column</b>: pred</li>\n"
                     "</ul>"
                 ),
                 evaluator=Evaluator(
