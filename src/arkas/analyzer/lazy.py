@@ -1,16 +1,27 @@
-r"""Define a base class to implement a lazy analyzer."""
+r"""Define a base class to implement lazy analyzers."""
 
 from __future__ import annotations
 
-__all__ = ["BaseLazyAnalyzer"]
+__all__ = ["BaseInNLazyAnalyzer", "BaseLazyAnalyzer"]
 
 import logging
 from abc import abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
+from grizz.utils.column import (
+    check_column_missing_policy,
+    check_missing_columns,
+    find_common_columns,
+    find_missing_columns,
+)
 
 from arkas.analyzer.base import BaseAnalyzer
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import polars as pl
 
     from arkas.output import BaseOutput
@@ -50,6 +61,209 @@ class BaseLazyAnalyzer(BaseAnalyzer):
         if not lazy:
             output = output.compute()
         return output
+
+    @abstractmethod
+    def _analyze(self, frame: pl.DataFrame) -> BaseOutput:
+        r"""Analyze the DataFrame.
+
+        Args:
+            frame: The DataFrame to analyze.
+
+        Returns:
+            The generated output.
+        """
+
+
+class BaseInNLazyAnalyzer(BaseAnalyzer):
+    r"""Define a base class to implement analyzers that analyze
+    DataFrames by using multiple input columns.
+
+    Args:
+        columns: The columns to analyze. If ``None``, it analyzes all
+            the columns.
+        exclude_columns: The columns to exclude from the input
+            ``columns``. If any column is not found, it will be ignored
+            during the filtering process.
+        missing_policy: The policy on how to handle missing columns.
+            The following options are available: ``'ignore'``,
+            ``'warn'``, and ``'raise'``. If ``'raise'``, an exception
+            is raised if at least one column is missing.
+            If ``'warn'``, a warning is raised if at least one column
+            is missing and the missing columns are ignored.
+            If ``'ignore'``, the missing columns are ignored and
+            no warning message appears.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import polars as pl
+
+    ```
+    """
+
+    def __init__(
+        self,
+        columns: Sequence[str] | None = None,
+        exclude_columns: Sequence[str] = (),
+        missing_policy: str = "raise",
+    ) -> None:
+        self._columns = tuple(columns) if columns is not None else None
+        self._exclude_columns = exclude_columns
+
+        check_column_missing_policy(missing_policy)
+        self._missing_policy = missing_policy
+
+    def __repr__(self) -> str:
+        args = repr_mapping_line(self.get_args())
+        return f"{self.__class__.__qualname__}({args})"
+
+    def analyze(self, frame: pl.DataFrame, lazy: bool = True) -> BaseOutput:
+        self._check_input_columns(frame)
+        output = self._analyze(frame)
+        if not lazy:
+            output = output.compute()
+        return output
+
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(self.get_args(), other.get_args(), equal_nan=equal_nan)
+
+    def find_columns(self, frame: pl.DataFrame) -> tuple[str, ...]:
+        r"""Find the columns to transform.
+
+        Args:
+            frame: The input DataFrame. Sometimes the columns to
+                transform are found by analyzing the input
+                DataFrame.
+
+        Returns:
+            The columns to transform.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import polars as pl
+        >>> from grizz.transformer import StripChars
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "col1": [1, 2, 3, 4, 5],
+        ...         "col2": ["1", "2", "3", "4", "5"],
+        ...         "col3": ["a ", " b", "  c  ", "d", "e"],
+        ...         "col4": ["a ", " b", "  c  ", "d", "e"],
+        ...     }
+        ... )
+        >>> transformer = StripChars(columns=["col2", "col3"])
+        >>> transformer.find_columns(frame)
+        ('col2', 'col3')
+        >>> transformer = StripChars()
+        >>> transformer.find_columns(frame)
+        ('col1', 'col2', 'col3', 'col4')
+
+        ```
+        """
+        cols = list(frame.columns if self._columns is None else self._columns)
+        [cols.remove(col) for col in self._exclude_columns if col in cols]
+        return tuple(cols)
+
+    def find_common_columns(self, frame: pl.DataFrame) -> tuple[str, ...]:
+        r"""Find the common columns between the DataFrame columns and the
+        input columns.
+
+        Args:
+            frame: The input DataFrame. Sometimes the columns to
+                transform are found by analyzing the input
+                DataFrame.
+
+        Returns:
+            The common columns.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import polars as pl
+        >>> from grizz.transformer import StripChars
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "col1": [1, 2, 3, 4, 5],
+        ...         "col2": ["1", "2", "3", "4", "5"],
+        ...         "col3": ["a ", " b", "  c  ", "d", "e"],
+        ...         "col4": ["a ", " b", "  c  ", "d", "e"],
+        ...     }
+        ... )
+        >>> transformer = StripChars(columns=["col2", "col3", "col5"])
+        >>> transformer.find_common_columns(frame)
+        ('col2', 'col3')
+        >>> transformer = StripChars()
+        >>> transformer.find_common_columns(frame)
+        ('col1', 'col2', 'col3', 'col4')
+
+        ```
+        """
+        return find_common_columns(frame, self.find_columns(frame))
+
+    def find_missing_columns(self, frame: pl.DataFrame) -> tuple[str, ...]:
+        r"""Find the missing columns.
+
+        Args:
+            frame: The input DataFrame. Sometimes the columns to
+                transform are found by analyzing the input
+                DataFrame.
+
+        Returns:
+            The missing columns.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import polars as pl
+        >>> from grizz.transformer import StripChars
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "col1": [1, 2, 3, 4, 5],
+        ...         "col2": ["1", "2", "3", "4", "5"],
+        ...         "col3": ["a ", " b", "  c  ", "d", "e"],
+        ...         "col4": ["a ", " b", "  c  ", "d", "e"],
+        ...     }
+        ... )
+        >>> transformer = StripChars(columns=["col2", "col3", "col5"])
+        >>> transformer.find_missing_columns(frame)
+        ('col5',)
+        >>> transformer = StripChars()
+        >>> transformer.find_missing_columns(frame)
+        ()
+
+        ```
+        """
+        return find_missing_columns(frame, self.find_columns(frame))
+
+    def get_args(self) -> dict:
+        r"""Get the arguments of the analyzer.
+
+        Returns:
+            The arguments.
+        """
+        return {
+            "columns": self._columns,
+            "exclude_columns": self._exclude_columns,
+            "missing_policy": self._missing_policy,
+        }
+
+    def _check_input_columns(self, frame: pl.DataFrame) -> None:
+        r"""Check if some input columns are missing.
+
+        Args:
+            frame: The input DataFrame to check.
+        """
+        check_missing_columns(
+            frame_or_cols=frame,
+            columns=self.find_columns(frame),
+            missing_policy=self._missing_policy,
+        )
 
     @abstractmethod
     def _analyze(self, frame: pl.DataFrame) -> BaseOutput:
