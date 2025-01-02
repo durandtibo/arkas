@@ -45,6 +45,40 @@ class BaseContentGenerator(ABC):
     """
 
     @abstractmethod
+    def compute(self) -> BaseContentGenerator:
+        r"""Compute the content and return a new content generator.
+
+        Returns:
+            A new content generator with the computed content.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.content import AccuracyContentGenerator
+        >>> from arkas.state import AccuracyState
+        >>> generator = AccuracyContentGenerator(
+        ...     state=AccuracyState(
+        ...         y_true=np.array([1, 0, 0, 1, 1]),
+        ...         y_pred=np.array([1, 0, 0, 1, 1]),
+        ...         y_true_name="target",
+        ...         y_pred_name="pred",
+        ...     )
+        ... )
+        >>> generator
+        AccuracyContentGenerator(
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+          (nan_policy): propagate
+        )
+        >>> generator2 = generator.compute()
+        >>> generator2
+        ContentGenerator()
+
+        ```
+        """
+
+    @abstractmethod
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         r"""Indicate if two content generators are equal or not.
 

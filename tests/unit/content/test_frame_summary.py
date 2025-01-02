@@ -3,9 +3,8 @@ from __future__ import annotations
 import polars as pl
 import pytest
 from coola import objects_are_allclose
-from jinja2 import Template
 
-from arkas.content import DataFrameSummaryContentGenerator
+from arkas.content import ContentGenerator, DataFrameSummaryContentGenerator
 from arkas.content.frame_summary import create_table, create_table_row, create_template
 
 
@@ -26,10 +25,20 @@ def dataframe() -> pl.DataFrame:
 ######################################################
 
 
+def test_dataframe_summary_content_generator_repr(dataframe: pl.DataFrame) -> None:
+    assert repr(DataFrameSummaryContentGenerator(dataframe)).startswith(
+        "DataFrameSummaryContentGenerator("
+    )
+
+
 def test_dataframe_summary_content_generator_str(dataframe: pl.DataFrame) -> None:
     assert str(DataFrameSummaryContentGenerator(dataframe)).startswith(
         "DataFrameSummaryContentGenerator("
     )
+
+
+def test_dataframe_summary_content_generator_compute(dataframe: pl.DataFrame) -> None:
+    assert isinstance(DataFrameSummaryContentGenerator(dataframe).compute(), ContentGenerator)
 
 
 def test_dataframe_summary_content_generator_frame(dataframe: pl.DataFrame) -> None:
@@ -135,42 +144,51 @@ def test_dataframe_summary_content_generator_get_most_frequent_values_empty() ->
     assert DataFrameSummaryContentGenerator(pl.DataFrame({})).get_most_frequent_values() == ()
 
 
+def test_dataframe_summary_content_generator_generate_content(dataframe: pl.DataFrame) -> None:
+    assert isinstance(DataFrameSummaryContentGenerator(dataframe).generate_content(), str)
+
+
+def test_dataframe_summary_content_generator_generate_content_empty() -> None:
+    assert isinstance(
+        DataFrameSummaryContentGenerator(frame=pl.DataFrame()).generate_content(), str
+    )
+
+
+def test_dataframe_summary_content_generator_generate_content_empty_rows() -> None:
+    assert isinstance(
+        DataFrameSummaryContentGenerator(
+            frame=pl.DataFrame(
+                {"float": [], "int": [], "str": []},
+                schema={"float": pl.Float64, "int": pl.Int64, "str": pl.String},
+            )
+        ).generate_content(),
+        str,
+    )
+
+
 def test_dataframe_summary_content_generator_generate_body(dataframe: pl.DataFrame) -> None:
-    section = DataFrameSummaryContentGenerator(dataframe)
-    assert isinstance(Template(section.generate_body()).render(), str)
+    assert isinstance(DataFrameSummaryContentGenerator(dataframe).generate_body(), str)
 
 
 def test_dataframe_summary_content_generator_generate_body_args(dataframe: pl.DataFrame) -> None:
-    section = DataFrameSummaryContentGenerator(dataframe)
     assert isinstance(
-        Template(section.generate_body(number="1.", tags=["meow"], depth=1)).render(), str
+        DataFrameSummaryContentGenerator(dataframe).generate_body(
+            number="1.", tags=["meow"], depth=1
+        ),
+        str,
     )
-
-
-def test_dataframe_summary_content_generator_generate_body_empty_rows() -> None:
-    section = DataFrameSummaryContentGenerator(
-        pl.DataFrame(
-            {"float": [], "int": [], "str": []},
-            schema={"float": pl.Float64, "int": pl.Int64, "str": pl.String},
-        )
-    )
-    assert isinstance(Template(section.generate_body()).render(), str)
-
-
-def test_dataframe_summary_content_generator_generate_body_empty() -> None:
-    section = DataFrameSummaryContentGenerator(pl.DataFrame({}))
-    assert isinstance(Template(section.generate_body()).render(), str)
 
 
 def test_dataframe_summary_content_generator_generate_toc(dataframe: pl.DataFrame) -> None:
-    section = DataFrameSummaryContentGenerator(dataframe)
-    assert isinstance(Template(section.generate_toc()).render(), str)
+    assert isinstance(DataFrameSummaryContentGenerator(dataframe).generate_toc(), str)
 
 
 def test_dataframe_summary_content_generator_generate_toc_args(dataframe: pl.DataFrame) -> None:
-    section = DataFrameSummaryContentGenerator(dataframe)
     assert isinstance(
-        Template(section.generate_toc(number="1.", tags=["meow"], depth=1)).render(), str
+        DataFrameSummaryContentGenerator(dataframe).generate_toc(
+            number="1.", tags=["meow"], depth=1
+        ),
+        str,
     )
 
 

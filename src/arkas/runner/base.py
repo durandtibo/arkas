@@ -56,6 +56,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
           (exist_ok): False
           (show_metrics): True
         )
+      (lazy): True
     )
 
     ```
@@ -209,6 +210,7 @@ def setup_runner(
           (exist_ok): False
           (show_metrics): True
         )
+      (lazy): True
     )
 
     ```

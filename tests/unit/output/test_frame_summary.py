@@ -3,9 +3,9 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from arkas.content import DataFrameSummaryContentGenerator
+from arkas.content import ContentGenerator, DataFrameSummaryContentGenerator
 from arkas.evaluator2 import Evaluator
-from arkas.output import DataFrameSummaryOutput
+from arkas.output import DataFrameSummaryOutput, Output
 from arkas.plotter import Plotter
 
 
@@ -39,6 +39,13 @@ def test_dataframe_summary_output_incorrect_top(dataframe: pl.DataFrame) -> None
         DataFrameSummaryOutput(dataframe, top=-1)
 
 
+def test_balanced_accuracy_output_compute(dataframe: pl.DataFrame) -> None:
+    assert isinstance(
+        DataFrameSummaryOutput(dataframe).compute(),
+        Output,
+    )
+
+
 def test_dataframe_summary_output_equal_true(dataframe: pl.DataFrame) -> None:
     assert DataFrameSummaryOutput(dataframe).equal(DataFrameSummaryOutput(dataframe))
 
@@ -66,26 +73,37 @@ def test_dataframe_summary_output_equal_false_different_type(dataframe: pl.DataF
 
 
 @pytest.mark.parametrize("top", [1, 2, 3])
-def test_dataframe_summary_output_get_content_generator(dataframe: pl.DataFrame, top: int) -> None:
-    generator = DataFrameSummaryOutput(dataframe, top=top).get_content_generator()
-    assert generator.equal(DataFrameSummaryContentGenerator(dataframe, top=top))
+def test_dataframe_summary_output_get_content_generator_lazy_true(
+    dataframe: pl.DataFrame, top: int
+) -> None:
+    assert (
+        DataFrameSummaryOutput(dataframe, top=top)
+        .get_content_generator()
+        .equal(DataFrameSummaryContentGenerator(dataframe, top=top))
+    )
+
+
+@pytest.mark.parametrize("top", [1, 2, 3])
+def test_dataframe_summary_output_get_content_generator_lazy_false(
+    dataframe: pl.DataFrame, top: int
+) -> None:
+    assert isinstance(
+        DataFrameSummaryOutput(dataframe, top=top).get_content_generator(lazy=False),
+        ContentGenerator,
+    )
 
 
 def test_dataframe_summary_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> None:
-    evaluator = DataFrameSummaryOutput(dataframe).get_evaluator()
-    assert evaluator.equal(Evaluator())
+    assert DataFrameSummaryOutput(dataframe).get_evaluator().equal(Evaluator())
 
 
 def test_dataframe_summary_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
-    evaluator = DataFrameSummaryOutput(dataframe).get_evaluator(lazy=False)
-    assert evaluator.equal(Evaluator())
+    assert DataFrameSummaryOutput(dataframe).get_evaluator(lazy=False).equal(Evaluator())
 
 
 def test_dataframe_summary_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    plotter = DataFrameSummaryOutput(dataframe).get_plotter()
-    assert plotter.equal(Plotter())
+    assert DataFrameSummaryOutput(dataframe).get_plotter().equal(Plotter())
 
 
 def test_dataframe_summary_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    plotter = DataFrameSummaryOutput(dataframe).get_plotter(lazy=False)
-    assert plotter.equal(Plotter())
+    assert DataFrameSummaryOutput(dataframe).get_plotter(lazy=False).equal(Plotter())

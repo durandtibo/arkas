@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from coola import objects_are_equal
 
-from arkas.evaluator2 import BalancedAccuracyEvaluator
+from arkas.evaluator2 import BalancedAccuracyEvaluator, Evaluator
 from arkas.state import AccuracyState
 
 ###############################################
@@ -292,3 +292,18 @@ def test_balanced_accuracy_evaluator_evaluate_nan_raise_y_pred() -> None:
     )
     with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
         evaluator.evaluate()
+
+
+def test_balanced_accuracy_evaluator_compute() -> None:
+    assert (
+        BalancedAccuracyEvaluator(
+            AccuracyState(
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_pred=np.array([1, 0, 0, 1, 1]),
+                y_true_name="target",
+                y_pred_name="pred",
+            ),
+        )
+        .compute()
+        .equal(Evaluator({"balanced_accuracy": 1.0, "count": 5}))
+    )

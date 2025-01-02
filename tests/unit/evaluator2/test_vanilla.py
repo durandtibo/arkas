@@ -64,3 +64,10 @@ def test_evaluator_evaluate_prefix_suffix() -> None:
         ),
         {"prefix_accuracy_suffix": 1.0, "prefix_count_suffix": 42},
     )
+
+
+def test_evaluator_compute() -> None:
+    x = Evaluator(metrics={"accuracy": 1.0, "count": 42})
+    y = x.compute()
+    assert x is not y
+    assert x.equal(y)

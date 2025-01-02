@@ -37,6 +37,30 @@ def test_balanced_accuracy_content_generator_str() -> None:
     ).startswith("BalancedAccuracyContentGenerator(")
 
 
+def test_balanced_accuracy_content_generator_compute() -> None:
+    assert (
+        BalancedAccuracyContentGenerator(
+            state=AccuracyState(
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_pred=np.array([1, 0, 0, 1, 1]),
+                y_true_name="target",
+                y_pred_name="pred",
+            )
+        )
+        .compute()
+        .equal(
+            ContentGenerator(
+                "<ul>\n"
+                "  <li><b>balanced accuracy</b>: 1.0000</li>\n"
+                "  <li><b>number of samples</b>: 5</li>\n"
+                "  <li><b>target label column</b>: target</li>\n"
+                "  <li><b>predicted label column</b>: pred</li>\n"
+                "</ul>"
+            )
+        )
+    )
+
+
 def test_balanced_accuracy_content_generator_equal_true() -> None:
     assert BalancedAccuracyContentGenerator(
         state=AccuracyState(
@@ -109,7 +133,7 @@ def test_balanced_accuracy_content_generator_equal_false_different_type() -> Non
     ).equal(42)
 
 
-def test_balanced_accuracy_content_generate_content() -> None:
+def test_balanced_accuracy_content_generator_generate_content() -> None:
     assert BalancedAccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
@@ -119,15 +143,15 @@ def test_balanced_accuracy_content_generate_content() -> None:
         )
     ).generate_content() == (
         "<ul>\n"
-        "  <li>column with target labels: target</li>\n"
-        "  <li>column with predicted labels: pred</li>\n"
-        "  <li>balanced accuracy: 1.0000</li>\n"
-        "  <li>number of samples: 5</li>\n"
+        "  <li><b>balanced accuracy</b>: 1.0000</li>\n"
+        "  <li><b>number of samples</b>: 5</li>\n"
+        "  <li><b>target label column</b>: target</li>\n"
+        "  <li><b>predicted label column</b>: pred</li>\n"
         "</ul>"
     )
 
 
-def test_balanced_accuracy_content_generate_content_empty() -> None:
+def test_balanced_accuracy_content_generator_generate_content_empty() -> None:
     assert BalancedAccuracyContentGenerator(
         state=AccuracyState(
             y_true=np.array([]),
@@ -137,10 +161,10 @@ def test_balanced_accuracy_content_generate_content_empty() -> None:
         )
     ).generate_content() == (
         "<ul>\n"
-        "  <li>column with target labels: target</li>\n"
-        "  <li>column with predicted labels: pred</li>\n"
-        "  <li>balanced accuracy: nan</li>\n"
-        "  <li>number of samples: 0</li>\n"
+        "  <li><b>balanced accuracy</b>: nan</li>\n"
+        "  <li><b>number of samples</b>: 0</li>\n"
+        "  <li><b>target label column</b>: target</li>\n"
+        "  <li><b>predicted label column</b>: pred</li>\n"
         "</ul>"
     )
 
@@ -198,30 +222,6 @@ def test_balanced_accuracy_content_generator_generate_toc_args() -> None:
             )
         ).generate_toc(number="1.", tags=["meow"], depth=1),
         str,
-    )
-
-
-def test_balanced_accuracy_content_generator_precompute() -> None:
-    assert (
-        BalancedAccuracyContentGenerator(
-            state=AccuracyState(
-                y_true=np.array([1, 0, 0, 1, 1]),
-                y_pred=np.array([1, 0, 0, 1, 1]),
-                y_true_name="target",
-                y_pred_name="pred",
-            )
-        )
-        .precompute()
-        .equal(
-            ContentGenerator(
-                "<ul>\n"
-                "  <li>column with target labels: target</li>\n"
-                "  <li>column with predicted labels: pred</li>\n"
-                "  <li>balanced accuracy: 1.0000</li>\n"
-                "  <li>number of samples: 5</li>\n"
-                "</ul>"
-            )
-        )
     )
 
 

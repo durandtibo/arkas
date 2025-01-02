@@ -81,7 +81,7 @@ class BalancedAccuracyOutput(BaseLazyOutput):
             and self._nan_policy == other._nan_policy
         )
 
-    def get_content_generator(self) -> BalancedAccuracyContentGenerator:
+    def _get_content_generator(self) -> BalancedAccuracyContentGenerator:
         return BalancedAccuracyContentGenerator(state=self._state, nan_policy=self._nan_policy)
 
     def _get_evaluator(self) -> BalancedAccuracyEvaluator:

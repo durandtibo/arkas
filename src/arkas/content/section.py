@@ -16,6 +16,8 @@ from arkas.utils.html import GO_TO_TOP, render_toc, tags2id, tags2title, valid_h
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from arkas.content.vanilla import ContentGenerator
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,6 +38,13 @@ class BaseSectionContentGenerator(BaseContentGenerator):
 
     ```
     """
+
+    def compute(self) -> ContentGenerator:
+        # local import to avoid cyclic dependency because ContentGenerator
+        # uses this class as base class
+        from arkas.content.vanilla import ContentGenerator
+
+        return ContentGenerator(self.generate_content())
 
     def generate_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
         return Template(create_template()).render(
@@ -61,13 +70,6 @@ class BaseSectionContentGenerator(BaseContentGenerator):
         Returns:
             The content  without the tags.
         """
-
-    def precompute(self) -> BaseContentGenerator:
-        # local import to avoid cyclic dependency because ContentGenerator
-        # uses this class as base class
-        from arkas.content.vanilla import ContentGenerator
-
-        return ContentGenerator(self.generate_content())
 
 
 def create_template() -> str:

@@ -7,7 +7,7 @@ __all__ = ["DataFrameSummaryAnalyzer"]
 import logging
 from typing import TYPE_CHECKING
 
-from arkas.analyzer.base import BaseAnalyzer
+from arkas.analyzer.lazy import BaseLazyAnalyzer
 from arkas.output.frame_summary import DataFrameSummaryOutput
 from arkas.utils.validation import check_positive
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class DataFrameSummaryAnalyzer(BaseAnalyzer):
+class DataFrameSummaryAnalyzer(BaseLazyAnalyzer):
     r"""Implement an analyzer to show a summary of the DataFrame.
 
     Args:
@@ -56,7 +56,7 @@ class DataFrameSummaryAnalyzer(BaseAnalyzer):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(top={self._top:,}, sort={self._sort})"
 
-    def analyze(self, frame: pl.DataFrame) -> DataFrameSummaryOutput:
+    def _analyze(self, frame: pl.DataFrame) -> DataFrameSummaryOutput:
         logger.info("Analyzing the DataFrame...")
         if self._sort:
             frame = frame.select(sorted(frame.columns))

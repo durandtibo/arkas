@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 
 from arkas.analyzer import DataFrameSummaryAnalyzer
-from arkas.output import DataFrameSummaryOutput
+from arkas.output import DataFrameSummaryOutput, Output
 
 ##############################################
 #     Tests for DataFrameSummaryAnalyzer     #
@@ -28,6 +28,15 @@ def test_dataframe_summary_analyzer_analyze() -> None:
                 pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]})
             )
         )
+    )
+
+
+def test_dataframe_summary_analyzer_analyze_lazy_false() -> None:
+    assert isinstance(
+        DataFrameSummaryAnalyzer().analyze(
+            pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]}), lazy=False
+        ),
+        Output,
     )
 
 

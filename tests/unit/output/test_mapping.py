@@ -25,6 +25,58 @@ def test_output_dict_str() -> None:
     assert str(OutputDict({})).startswith("OutputDict(")
 
 
+def test_output_dict_compute() -> None:
+    assert (
+        OutputDict(
+            {
+                "one": Output(
+                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
+                ),
+                "two": AccuracyOutput(
+                    AccuracyState(
+                        y_true=np.array([1, 0, 0, 1, 1]),
+                        y_pred=np.array([1, 0, 0, 1, 1]),
+                        y_true_name="target",
+                        y_pred_name="pred",
+                    )
+                ),
+            }
+        )
+        .compute()
+        .equal(
+            Output(
+                content=ContentGeneratorDict(
+                    {
+                        "one": ContentGenerator("meow"),
+                        "two": ContentGenerator(
+                            "<ul>\n"
+                            "  <li><b>accuracy</b>: 1.0000 (5/5)</li>\n"
+                            "  <li><b>error</b>: 0.0000 (0/5)</li>\n"
+                            "  <li><b>number of samples</b>: 5</li>\n"
+                            "  <li><b>target label column</b>: target</li>\n"
+                            "  <li><b>predicted label column</b>: pred</li>\n"
+                            "</ul>"
+                        ),
+                    }
+                ),
+                evaluator=Evaluator(
+                    {
+                        "one": {},
+                        "two": {
+                            "accuracy": 1.0,
+                            "count": 5,
+                            "count_correct": 5,
+                            "count_incorrect": 0,
+                            "error": 0.0,
+                        },
+                    }
+                ),
+                plotter=Plotter({"one": {}, "two": {}}),
+            )
+        )
+    )
+
+
 def test_output_dict_equal_true() -> None:
     assert OutputDict(
         {
@@ -164,7 +216,7 @@ def test_output_dict_equal_nan_false() -> None:
     )
 
 
-def test_output_dict_get_content_generator() -> None:
+def test_output_dict_get_content_generator_lazy_true() -> None:
     assert (
         OutputDict(
             {
@@ -193,6 +245,43 @@ def test_output_dict_get_content_generator() -> None:
                             y_true_name="target",
                             y_pred_name="pred",
                         )
+                    ),
+                }
+            )
+        )
+    )
+
+
+def test_output_dict_get_content_generator_lazy_false() -> None:
+    assert (
+        OutputDict(
+            {
+                "one": Output(
+                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
+                ),
+                "two": AccuracyOutput(
+                    AccuracyState(
+                        y_true=np.array([1, 0, 0, 1, 1]),
+                        y_pred=np.array([1, 0, 0, 1, 1]),
+                        y_true_name="target",
+                        y_pred_name="pred",
+                    )
+                ),
+            }
+        )
+        .get_content_generator(lazy=False)
+        .equal(
+            ContentGeneratorDict(
+                {
+                    "one": ContentGenerator("meow"),
+                    "two": ContentGenerator(
+                        "<ul>\n"
+                        "  <li><b>accuracy</b>: 1.0000 (5/5)</li>\n"
+                        "  <li><b>error</b>: 0.0000 (0/5)</li>\n"
+                        "  <li><b>number of samples</b>: 5</li>\n"
+                        "  <li><b>target label column</b>: target</li>\n"
+                        "  <li><b>predicted label column</b>: pred</li>\n"
+                        "</ul>"
                     ),
                 }
             )

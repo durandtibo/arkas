@@ -31,6 +31,28 @@ class BasePlotter(ABC):
     """
 
     @abstractmethod
+    def compute(self) -> BasePlotter:
+        r"""Compute the figures and return a new plotter.
+
+        Returns:
+            A new plotter with the computed figures.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.plotter import Plotter
+        >>> plotter = Plotter({"fig": None})
+        >>> plotter
+        Plotter(count=1)
+        >>> plotter2 = plotter.compute()
+        >>> plotter2
+        Plotter(count=1)
+
+        ```
+        """
+
+    @abstractmethod
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         r"""Indicate if two plotters are equal or not.
 

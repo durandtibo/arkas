@@ -63,7 +63,10 @@ class MappingAnalyzer(BaseAnalyzer):
         args = repr_indent(repr_mapping(self._analyzers))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    def analyze(self, frame: pl.DataFrame) -> OutputDict:
+    def analyze(self, frame: pl.DataFrame, lazy: bool = True) -> OutputDict:
         return OutputDict(
-            {key: analyzer.analyze(frame) for key, analyzer in self._analyzers.items()}
+            {
+                key: analyzer.analyze(frame=frame, lazy=lazy)
+                for key, analyzer in self._analyzers.items()
+            }
         )

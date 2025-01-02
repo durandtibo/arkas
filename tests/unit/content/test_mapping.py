@@ -2,9 +2,16 @@ from __future__ import annotations
 
 from unittest.mock import Mock
 
+import numpy as np
 import pytest
 
-from arkas.content import BaseContentGenerator, ContentGenerator, ContentGeneratorDict
+from arkas.content import (
+    AccuracyContentGenerator,
+    BaseContentGenerator,
+    ContentGenerator,
+    ContentGeneratorDict,
+)
+from arkas.state import AccuracyState
 
 
 @pytest.fixture
@@ -38,6 +45,43 @@ def test_content_generator_dict_repr() -> None:
 
 def test_content_generator_dict_str() -> None:
     assert str(ContentGeneratorDict({})).startswith("ContentGeneratorDict(")
+
+
+def test_content_generator_dict_compute() -> None:
+    assert (
+        ContentGeneratorDict(
+            {
+                "one": ContentGenerator("meow"),
+                "two": AccuracyContentGenerator(
+                    state=AccuracyState(
+                        y_true=np.array([1, 0, 0, 1, 1]),
+                        y_pred=np.array([1, 0, 0, 1, 1]),
+                        y_true_name="target",
+                        y_pred_name="pred",
+                    )
+                ),
+            },
+            max_toc_depth=4,
+        )
+        .compute()
+        .equal(
+            ContentGeneratorDict(
+                {
+                    "one": ContentGenerator("meow"),
+                    "two": ContentGenerator(
+                        "<ul>\n"
+                        "  <li><b>accuracy</b>: 1.0000 (5/5)</li>\n"
+                        "  <li><b>error</b>: 0.0000 (0/5)</li>\n"
+                        "  <li><b>number of samples</b>: 5</li>\n"
+                        "  <li><b>target label column</b>: target</li>\n"
+                        "  <li><b>predicted label column</b>: pred</li>\n"
+                        "</ul>"
+                    ),
+                },
+                max_toc_depth=4,
+            )
+        )
+    )
 
 
 def test_content_generator_dict_equal_true() -> None:

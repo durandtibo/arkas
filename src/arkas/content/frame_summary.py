@@ -19,8 +19,7 @@ from grizz.utils.count import compute_nunique
 from grizz.utils.null import compute_null_count
 from jinja2 import Template
 
-from arkas.content.base import BaseContentGenerator
-from arkas.utils.html import GO_TO_TOP, render_toc, tags2id, tags2title, valid_h_tag
+from arkas.content.section import BaseSectionContentGenerator
 from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
@@ -31,7 +30,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class DataFrameSummaryContentGenerator(BaseContentGenerator):
+class DataFrameSummaryContentGenerator(BaseSectionContentGenerator):
     r"""Implement a content generator that returns a summary of a
     DataFrame.
 
@@ -100,25 +99,15 @@ class DataFrameSummaryContentGenerator(BaseContentGenerator):
     def get_most_frequent_values(self, top: int = 5) -> tuple[tuple[tuple[Any, int], ...], ...]:
         return tuple(tuple(Counter(series.to_list()).most_common(top)) for series in self.frame)
 
-    def generate_body(self, number: str = "", tags: Sequence[str] = (), depth: int = 0) -> str:
+    def generate_content(self) -> str:
         logger.info("Generating the DataFrame summary content...")
         return Template(create_template()).render(
             {
-                "go_to_top": GO_TO_TOP,
-                "id": tags2id(tags),
-                "depth": valid_h_tag(depth + 1),
-                "title": tags2title(tags),
-                "content": number,
                 "table": self._create_table(),
                 "nrows": f"{self._frame.shape[0]:,}",
                 "ncols": f"{self._frame.shape[1]:,}",
             }
         )
-
-    def generate_toc(
-        self, number: str = "", tags: Sequence[str] = (), depth: int = 0, max_depth: int = 1
-    ) -> str:
-        return render_toc(number=number, tags=tags, depth=depth, max_depth=max_depth)
 
     def _create_table(self) -> str:
         return create_table(
@@ -146,13 +135,7 @@ def create_template() -> str:
 
     ```
     """
-    return """
-<h{{depth}} id="{{id}}">{{content}} {{title}} </h{{depth}}>
-
-{{go_to_top}}
-
-<p style="margin-top: 1rem;">
-This content shows a short summary of each column.
+    return """This content shows a short summary of each column.
 
 <ul>
   <li> <b>column</b>: are the column names</li>
@@ -170,8 +153,6 @@ This content shows a short summary of each column.
 </ul>
 
 {{table}}
-
-<p style="margin-top: 1rem;">
 """
 
 

@@ -16,6 +16,10 @@ def test_content_generator_str() -> None:
     assert str(ContentGenerator("meow")).startswith("ContentGenerator(")
 
 
+def test_content_generator_compute() -> None:
+    assert ContentGenerator("meow").compute().equal(ContentGenerator("meow"))
+
+
 def test_content_generator_equal_true() -> None:
     assert ContentGenerator("meow").equal(ContentGenerator("meow"))
 
