@@ -51,11 +51,11 @@ def test_accuracy_content_generator_compute() -> None:
         .equal(
             ContentGenerator(
                 "<ul>\n"
-                "  <li>column with target labels: target</li>\n"
-                "  <li>column with predicted labels: pred</li>\n"
-                "  <li>accuracy: 1.0000 (5/5)</li>\n"
-                "  <li>error: 0.0000 (0/5)</li>\n"
-                "  <li>number of samples: 5</li>\n"
+                "  <li><b>accuracy</b>: 1.0000 (5/5)</li>\n"
+                "  <li><b>error</b>: 0.0000 (0/5)</li>\n"
+                "  <li><b>number of samples</b>: 5</li>\n"
+                "  <li><b>target label column</b>: target</li>\n"
+                "  <li><b>predicted label column</b>: pred</li>\n"
                 "</ul>"
             )
         )
@@ -144,11 +144,11 @@ def test_accuracy_content_generator_generate_content() -> None:
         )
     ).generate_content() == (
         "<ul>\n"
-        "  <li>column with target labels: target</li>\n"
-        "  <li>column with predicted labels: pred</li>\n"
-        "  <li>accuracy: 1.0000 (5/5)</li>\n"
-        "  <li>error: 0.0000 (0/5)</li>\n"
-        "  <li>number of samples: 5</li>\n"
+        "  <li><b>accuracy</b>: 1.0000 (5/5)</li>\n"
+        "  <li><b>error</b>: 0.0000 (0/5)</li>\n"
+        "  <li><b>number of samples</b>: 5</li>\n"
+        "  <li><b>target label column</b>: target</li>\n"
+        "  <li><b>predicted label column</b>: pred</li>\n"
         "</ul>"
     )
 
@@ -163,11 +163,11 @@ def test_accuracy_content_generator_generate_content_empty() -> None:
         )
     ).generate_content() == (
         "<ul>\n"
-        "  <li>column with target labels: target</li>\n"
-        "  <li>column with predicted labels: pred</li>\n"
-        "  <li>accuracy: nan (nan/0)</li>\n"
-        "  <li>error: nan (nan/0)</li>\n"
-        "  <li>number of samples: 0</li>\n"
+        "  <li><b>accuracy</b>: nan (nan/0)</li>\n"
+        "  <li><b>error</b>: nan (nan/0)</li>\n"
+        "  <li><b>number of samples</b>: 0</li>\n"
+        "  <li><b>target label column</b>: target</li>\n"
+        "  <li><b>predicted label column</b>: pred</li>\n"
         "</ul>"
     )
 

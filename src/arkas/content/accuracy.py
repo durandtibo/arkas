@@ -111,10 +111,10 @@ def create_template() -> str:
     ```
     """
     return """<ul>
-  <li>column with target labels: {{y_true_name}}</li>
-  <li>column with predicted labels: {{y_pred_name}}</li>
-  <li>accuracy: {{accuracy}} ({{count_correct}}/{{count}})</li>
-  <li>error: {{error}} ({{count_incorrect}}/{{count}})</li>
-  <li>number of samples: {{count}}</li>
+  <li><b>accuracy</b>: {{accuracy}} ({{count_correct}}/{{count}})</li>
+  <li><b>error</b>: {{error}} ({{count_incorrect}}/{{count}})</li>
+  <li><b>number of samples</b>: {{count}}</li>
+  <li><b>target label column</b>: {{y_true_name}}</li>
+  <li><b>predicted label column</b>: {{y_pred_name}}</li>
 </ul>
 """
