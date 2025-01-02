@@ -43,6 +43,35 @@ class BaseEvaluator(ABC):
     """
 
     @abstractmethod
+    def compute(self) -> BaseEvaluator:
+        r"""Compute the metrics and return a new evaluator.
+
+        Returns:
+            A new evaluator with the computed metrics.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.evaluator2 import AccuracyEvaluator
+        >>> from arkas.state import AccuracyState
+        >>> evaluator = AccuracyEvaluator(
+        ...     AccuracyState(
+        ...         y_true=np.array([1, 0, 0, 1, 1]),
+        ...         y_pred=np.array([1, 0, 0, 1, 1]),
+        ...         y_true_name="target",
+        ...         y_pred_name="pred",
+        ...     )
+        ... )
+        >>> evaluator2 = evaluator.compute()
+        >>> evaluator2
+        Evaluator(count=5)
+
+        ```
+        """
+
+    @abstractmethod
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         r"""Indicate if two evaluators are equal or not.
 

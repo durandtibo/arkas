@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING, Any
 from coola.utils import repr_indent, repr_mapping
 
 from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import balanced_accuracy
 from arkas.metric.utils import check_nan_policy
 
 if TYPE_CHECKING:
-
     from arkas.state.accuracy import AccuracyState
 
 
@@ -62,6 +62,9 @@ class BalancedAccuracyEvaluator(BaseEvaluator):
     def __repr__(self) -> str:
         args = repr_indent(repr_mapping({"state": self._state, "nan_policy": self._nan_policy}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def compute(self) -> Evaluator:
+        return Evaluator(metrics=self.evaluate())
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
