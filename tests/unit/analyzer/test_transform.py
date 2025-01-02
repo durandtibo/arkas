@@ -5,7 +5,7 @@ import polars as pl
 from grizz.transformer import DropNullRow
 
 from arkas.analyzer import AccuracyAnalyzer, TransformAnalyzer
-from arkas.output import AccuracyOutput
+from arkas.output import AccuracyOutput, Output
 from arkas.state import AccuracyState
 
 #######################################
@@ -45,4 +45,16 @@ def test_transform_analyzer_analyze() -> None:
                 )
             )
         )
+    )
+
+
+def test_transform_analyzer_analyze_lazy_false() -> None:
+    assert isinstance(
+        TransformAnalyzer(
+            transformer=DropNullRow(), analyzer=AccuracyAnalyzer(y_true="target", y_pred="pred")
+        ).analyze(
+            pl.DataFrame({"pred": [3, 2, 0, 1, 0, None], "target": [1, 2, 3, 2, 1, None]}),
+            lazy=False,
+        ),
+        Output,
     )

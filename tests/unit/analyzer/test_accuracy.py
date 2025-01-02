@@ -8,7 +8,7 @@ import pytest
 from grizz.exceptions import ColumnNotFoundError, ColumnNotFoundWarning
 
 from arkas.analyzer import AccuracyAnalyzer
-from arkas.output import AccuracyOutput, EmptyOutput
+from arkas.output import AccuracyOutput, EmptyOutput, Output
 from arkas.state import AccuracyState
 
 ######################################
@@ -38,6 +38,15 @@ def test_accuracy_analyzer_analyze() -> None:
                 )
             )
         )
+    )
+
+
+def test_accuracy_analyzer_analyze_lazy_false() -> None:
+    assert isinstance(
+        AccuracyAnalyzer(y_true="target", y_pred="pred").analyze(
+            pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]}), lazy=False
+        ),
+        Output,
     )
 
 

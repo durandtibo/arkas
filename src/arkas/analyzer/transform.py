@@ -72,6 +72,6 @@ class TransformAnalyzer(BaseAnalyzer):
         )
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    def analyze(self, frame: pl.DataFrame) -> BaseOutput:
+    def analyze(self, frame: pl.DataFrame, lazy: bool = True) -> BaseOutput:
         frame = self._transformer.transform(frame)
-        return self._analyzer.analyze(frame)
+        return self._analyzer.analyze(frame=frame, lazy=lazy)
