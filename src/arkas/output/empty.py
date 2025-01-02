@@ -18,7 +18,6 @@ class EmptyOutput(Output):
 
     ```pycon
 
-    >>> import numpy as np
     >>> from arkas.output import EmptyOutput
     >>> output = EmptyOutput()
     >>> output
