@@ -17,6 +17,26 @@ def test_plotter_dict_str() -> None:
     assert str(PlotterDict({})).startswith("PlotterDict(")
 
 
+def test_plotter_dict_compute() -> None:
+    assert (
+        PlotterDict(
+            {
+                "one": Plotter(figures={"fig": None}),
+                "two": Plotter(),
+            }
+        )
+        .compute()
+        .equal(
+            Plotter(
+                {
+                    "one": {"fig": None},
+                    "two": {},
+                }
+            )
+        )
+    )
+
+
 def test_plotter_dict_equal_true() -> None:
     assert PlotterDict(
         {

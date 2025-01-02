@@ -25,6 +25,10 @@ def test_plotter_str() -> None:
     assert str(Plotter()) == "Plotter(count=0)"
 
 
+def test_plotter_compute(figure: plt.Figure) -> None:
+    assert Plotter(figures={"fig": figure}).compute().equal(Plotter(figures={"fig": figure}))
+
+
 def test_plotter_equal_true() -> None:
     assert Plotter().equal(Plotter())
 
