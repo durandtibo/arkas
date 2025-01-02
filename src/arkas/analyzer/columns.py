@@ -67,7 +67,7 @@ class BaseTruePredAnalyzer(BaseAnalyzer):
     #     )
     #     return f"{self.__class__.__qualname__}({args})"
 
-    def analyze(self, frame: pl.DataFrame) -> BaseOutput:
+    def analyze(self, frame: pl.DataFrame, lazy: bool = True) -> BaseOutput:
         self._check_input_column(frame)
         for col in [self._y_true, self._y_pred]:
             if col not in frame:
@@ -76,7 +76,10 @@ class BaseTruePredAnalyzer(BaseAnalyzer):
                     f"because the input column {col!r} is missing"
                 )
                 return EmptyOutput()
-        return self._analyze(self._prepare_data(frame))
+        output = self._analyze(self._prepare_data(frame))
+        if not lazy:
+            output = output.compute()
+        return output
 
     def _prepare_data(self, data: pl.DataFrame) -> pl.DataFrame:
         if self._drop_nulls:

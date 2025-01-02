@@ -43,11 +43,14 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
     """
 
     @abstractmethod
-    def analyze(self, frame: pl.DataFrame) -> BaseOutput:
+    def analyze(self, frame: pl.DataFrame, lazy: bool = True) -> BaseOutput:
         r"""Analyze the DataFrame.
 
         Args:
             frame: The DataFrame to analyze.
+            lazy: If ``True``, it forces the computation of the output,
+                otherwise it returns an output object that contains the
+                logic.
 
         Returns:
             The generated output.

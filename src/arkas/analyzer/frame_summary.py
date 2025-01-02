@@ -56,8 +56,11 @@ class DataFrameSummaryAnalyzer(BaseAnalyzer):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(top={self._top:,}, sort={self._sort})"
 
-    def analyze(self, frame: pl.DataFrame) -> DataFrameSummaryOutput:
+    def analyze(self, frame: pl.DataFrame, lazy: bool = True) -> DataFrameSummaryOutput:
         logger.info("Analyzing the DataFrame...")
         if self._sort:
             frame = frame.select(sorted(frame.columns))
-        return DataFrameSummaryOutput(frame=frame, top=self._top)
+        output = DataFrameSummaryOutput(frame=frame, top=self._top)
+        if not lazy:
+            output = output.compute()
+        return output
