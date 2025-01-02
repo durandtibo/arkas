@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from coola import objects_are_equal
 from grizz.utils.cooccurrence import compute_pairwise_cooccurrence
 
-from arkas.plot.utils import readable_xticklabels
+from arkas.plot.utils import readable_xticklabels, readable_yticklabels
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
 
@@ -126,6 +126,7 @@ def create_figure(matrix: np.ndarray, columns: Sequence[str]) -> plt.Figure:
         fontsize="x-small" if matrix.shape[0] > 30 else None,
     )
     readable_xticklabels(ax, max_num_xticks=50)
+    readable_yticklabels(ax, max_num_yticks=50)
     ax.set_title("pairwise column co-occurrence matrix")
 
     if matrix.shape[0] < 16:
