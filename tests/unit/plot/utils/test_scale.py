@@ -10,8 +10,8 @@ from arkas.plot.utils import auto_yscale_continuous, auto_yscale_discrete
 ############################################
 
 
-@pytest.mark.parametrize("nbins", [1, 5, 10, 100, 1000])
-def test_auto_yscale_continuous_nbins(nbins: int) -> None:
+@pytest.mark.parametrize("nbins", [None, 1, 5, 10, 100, 1000])
+def test_auto_yscale_continuous_nbins(nbins: int | None) -> None:
     assert auto_yscale_continuous(np.arange(100), nbins=nbins) == "linear"
 
 
