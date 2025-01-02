@@ -16,6 +16,8 @@ from arkas.utils.html import GO_TO_TOP, render_toc, tags2id, tags2title, valid_h
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from arkas.content.vanilla import ContentGenerator
+
 logger = logging.getLogger(__name__)
 
 
@@ -62,7 +64,13 @@ class BaseSectionContentGenerator(BaseContentGenerator):
             The content  without the tags.
         """
 
-    def precompute(self) -> BaseContentGenerator:
+    def precompute(self) -> ContentGenerator:
+        r"""Precompute the content and return a new content generator
+        with the precomputed content.
+
+        Returns:
+            A new content generator with the precomputed content.
+        """
         # local import to avoid cyclic dependency because ContentGenerator
         # uses this class as base class
         from arkas.content.vanilla import ContentGenerator
