@@ -28,7 +28,6 @@ class Output(BaseLazyOutput):
 
     ```pycon
 
-    >>> import numpy as np
     >>> from arkas.output import Output
     >>> from arkas.content import ContentGenerator
     >>> from arkas.evaluator2 import Evaluator
