@@ -51,10 +51,10 @@ def test_balanced_accuracy_content_generator_compute() -> None:
         .equal(
             ContentGenerator(
                 "<ul>\n"
-                "  <li>column with target labels: target</li>\n"
-                "  <li>column with predicted labels: pred</li>\n"
-                "  <li>balanced accuracy: 1.0000</li>\n"
-                "  <li>number of samples: 5</li>\n"
+                "  <li><b>balanced accuracy</b>: 1.0000</li>\n"
+                "  <li><b>number of samples</b>: 5</li>\n"
+                "  <li><b>target label column</b>: target</li>\n"
+                "  <li><b>predicted label column</b>: pred</li>\n"
                 "</ul>"
             )
         )
@@ -143,10 +143,10 @@ def test_balanced_accuracy_content_generator_generate_content() -> None:
         )
     ).generate_content() == (
         "<ul>\n"
-        "  <li>column with target labels: target</li>\n"
-        "  <li>column with predicted labels: pred</li>\n"
-        "  <li>balanced accuracy: 1.0000</li>\n"
-        "  <li>number of samples: 5</li>\n"
+        "  <li><b>balanced accuracy</b>: 1.0000</li>\n"
+        "  <li><b>number of samples</b>: 5</li>\n"
+        "  <li><b>target label column</b>: target</li>\n"
+        "  <li><b>predicted label column</b>: pred</li>\n"
         "</ul>"
     )
 
@@ -161,10 +161,10 @@ def test_balanced_accuracy_content_generator_generate_content_empty() -> None:
         )
     ).generate_content() == (
         "<ul>\n"
-        "  <li>column with target labels: target</li>\n"
-        "  <li>column with predicted labels: pred</li>\n"
-        "  <li>balanced accuracy: nan</li>\n"
-        "  <li>number of samples: 0</li>\n"
+        "  <li><b>balanced accuracy</b>: nan</li>\n"
+        "  <li><b>number of samples</b>: 0</li>\n"
+        "  <li><b>target label column</b>: target</li>\n"
+        "  <li><b>predicted label column</b>: pred</li>\n"
         "</ul>"
     )
 
