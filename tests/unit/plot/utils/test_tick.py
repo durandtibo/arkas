@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from matplotlib import pyplot as plt
 
-from arkas.plot.utils import readable_xticklabels
+from arkas.plot.utils import readable_xticklabels, readable_yticklabels
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
@@ -45,3 +45,19 @@ def test_readable_xticklabels_xticklabel_max_len(axes: Axes, xticklabel_max_len:
 def test_readable_xticklabels_xticklabel_min(axes: Axes, xticklabel_min: int) -> None:
     readable_xticklabels(axes, xticklabel_min=xticklabel_min)
     assert len(axes.get_xticks()) <= 100
+
+
+##########################################
+#     Tests for readable_yticklabels     #
+##########################################
+
+
+def test_readable_yticklabels(axes: Axes) -> None:
+    readable_yticklabels(axes)
+    assert len(axes.get_yticks()) <= 100
+
+
+@pytest.mark.parametrize("max_num_yticks", [2, 5, 100])
+def test_readable_yticklabels_max_num_yticks(axes: Axes, max_num_yticks: int) -> None:
+    readable_yticklabels(axes, max_num_yticks=max_num_yticks)
+    assert len(axes.get_yticks()) <= max_num_yticks
