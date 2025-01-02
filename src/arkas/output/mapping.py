@@ -95,7 +95,7 @@ class OutputDict(BaseLazyOutput):
             return False
         return objects_are_equal(self._outputs, other._outputs, equal_nan=equal_nan)
 
-    def get_content_generator(self) -> ContentGeneratorDict:
+    def _get_content_generator(self) -> ContentGeneratorDict:
         return ContentGeneratorDict(
             {key: output.get_content_generator() for key, output in self._outputs.items()}
         )

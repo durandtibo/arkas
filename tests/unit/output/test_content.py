@@ -26,8 +26,12 @@ def test_content_output_equal_false_different_type() -> None:
     assert not ContentOutput("meow").equal(42)
 
 
-def test_content_output_get_content_generator() -> None:
+def test_content_output_get_content_generator_lazy_true() -> None:
     assert ContentOutput("meow").get_content_generator().equal(ContentGenerator("meow"))
+
+
+def test_content_output_get_content_generator_lazy_false() -> None:
+    assert ContentOutput("meow").get_content_generator(lazy=False).equal(ContentGenerator("meow"))
 
 
 def test_content_output_get_evaluator_lazy_true() -> None:

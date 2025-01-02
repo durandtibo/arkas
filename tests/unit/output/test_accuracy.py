@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from arkas.content import AccuracyContentGenerator
+from arkas.content import AccuracyContentGenerator, ContentGenerator
 from arkas.evaluator2 import AccuracyEvaluator, Evaluator
 from arkas.output import AccuracyOutput
 from arkas.plotter import Plotter
@@ -113,7 +113,7 @@ def test_accuracy_output_equal_false_different_type() -> None:
 
 
 @pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
-def test_accuracy_output_get_content_generator(nan_policy: str) -> None:
+def test_accuracy_output_get_content_generator_lazy_true(nan_policy: str) -> None:
     state = AccuracyState(
         y_true=np.array([1, 0, 0, 1, 1]),
         y_pred=np.array([1, 0, 0, 1, 1]),
@@ -122,6 +122,22 @@ def test_accuracy_output_get_content_generator(nan_policy: str) -> None:
     )
     generator = AccuracyOutput(state, nan_policy).get_content_generator()
     assert generator.equal(AccuracyContentGenerator(state, nan_policy))
+
+
+@pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
+def test_accuracy_output_get_content_generator_lazy_false(nan_policy: str) -> None:
+    assert isinstance(
+        AccuracyOutput(
+            AccuracyState(
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_pred=np.array([1, 0, 0, 1, 1]),
+                y_true_name="target",
+                y_pred_name="pred",
+            ),
+            nan_policy,
+        ).get_content_generator(lazy=False),
+        ContentGenerator,
+    )
 
 
 @pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
@@ -136,14 +152,16 @@ def test_accuracy_output_get_evaluator_lazy_true(nan_policy: str) -> None:
     assert evaluator.equal(AccuracyEvaluator(state, nan_policy))
 
 
-def test_accuracy_output_get_evaluator_lazy_false() -> None:
+@pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
+def test_accuracy_output_get_evaluator_lazy_false(nan_policy: str) -> None:
     evaluator = AccuracyOutput(
         AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             y_true_name="target",
             y_pred_name="pred",
-        )
+        ),
+        nan_policy=nan_policy,
     ).get_evaluator(lazy=False)
     assert evaluator.equal(
         Evaluator(
@@ -164,13 +182,15 @@ def test_accuracy_output_get_plotter_lazy_true(nan_policy: str) -> None:
     assert plotter.equal(Plotter())
 
 
-def test_accuracy_output_get_plotter_lazy_false() -> None:
+@pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
+def test_accuracy_output_get_plotter_lazy_false(nan_policy: str) -> None:
     plotter = AccuracyOutput(
         AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 0, 1, 1]),
             y_true_name="target",
             y_pred_name="pred",
-        )
+        ),
+        nan_policy=nan_policy,
     ).get_plotter(lazy=False)
     assert plotter.equal(Plotter())

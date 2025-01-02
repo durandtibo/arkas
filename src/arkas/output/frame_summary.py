@@ -67,7 +67,7 @@ class DataFrameSummaryOutput(BaseLazyOutput):
             self._frame, other._frame, equal_nan=equal_nan
         )
 
-    def get_content_generator(self) -> DataFrameSummaryContentGenerator:
+    def _get_content_generator(self) -> DataFrameSummaryContentGenerator:
         return DataFrameSummaryContentGenerator(frame=self._frame, top=self._top)
 
     def _get_evaluator(self) -> Evaluator:
