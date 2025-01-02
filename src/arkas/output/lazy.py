@@ -13,12 +13,22 @@ from arkas.output.base import BaseOutput
 if TYPE_CHECKING:
     from arkas.content.base import BaseContentGenerator
     from arkas.evaluator2.base import BaseEvaluator
+    from arkas.output.vanilla import Output
     from arkas.plotter.base import BasePlotter
 
 
 class BaseLazyOutput(BaseOutput):
     r"""Define a base class that partially implements the lazy
     computation logic."""
+
+    def compute(self) -> Output:
+        from arkas.output.vanilla import Output
+
+        return Output(
+            content=self.get_content_generator().compute(),
+            evaluator=self.get_evaluator().compute(),
+            plotter=self.get_plotter().compute(),
+        )
 
     def get_content_generator(self, lazy: bool = True) -> BaseContentGenerator:
         content = self._get_content_generator()

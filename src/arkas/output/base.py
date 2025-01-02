@@ -47,6 +47,44 @@ class BaseOutput(ABC):
     """
 
     @abstractmethod
+    def compute(self) -> BaseOutput:
+        r"""Compute the results and return a new ouptut.
+
+        Returns:
+            A new ouptut with the computed results.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.output import AccuracyOutput
+        >>> from arkas.state import AccuracyState
+        >>> output = AccuracyOutput(
+        ...     AccuracyState(
+        ...         y_true=np.array([1, 0, 0, 1, 1]),
+        ...         y_pred=np.array([1, 0, 0, 1, 1]),
+        ...         y_true_name="target",
+        ...         y_pred_name="pred",
+        ...     )
+        ... )
+        >>> output
+        AccuracyOutput(
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+          (nan_policy): propagate
+        )
+        >>> out = output.compute()
+        >>> out
+        Output(
+          (content): ContentGenerator()
+          (evaluator): Evaluator(count=5)
+          (plotter): Plotter(count=0)
+        )
+
+        ```
+        """
+
+    @abstractmethod
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         r"""Indicate if two outputs are equal or not.
 

@@ -5,7 +5,7 @@ import pytest
 
 from arkas.content import BalancedAccuracyContentGenerator, ContentGenerator
 from arkas.evaluator2 import BalancedAccuracyEvaluator, Evaluator
-from arkas.output import BalancedAccuracyOutput
+from arkas.output import BalancedAccuracyOutput, Output
 from arkas.plotter import Plotter
 from arkas.state import AccuracyState
 
@@ -38,6 +38,20 @@ def test_balanced_accuracy_output_str() -> None:
             ),
         )
     ).startswith("BalancedAccuracyOutput(")
+
+
+def test_balanced_accuracy_output_compute() -> None:
+    assert isinstance(
+        BalancedAccuracyOutput(
+            AccuracyState(
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_pred=np.array([1, 0, 0, 1, 1]),
+                y_true_name="target",
+                y_pred_name="pred",
+            ),
+        ).compute(),
+        Output,
+    )
 
 
 def test_balanced_accuracy_output_equal_true() -> None:

@@ -5,7 +5,7 @@ import pytest
 
 from arkas.content import ContentGenerator, DataFrameSummaryContentGenerator
 from arkas.evaluator2 import Evaluator
-from arkas.output import DataFrameSummaryOutput
+from arkas.output import DataFrameSummaryOutput, Output
 from arkas.plotter import Plotter
 
 
@@ -37,6 +37,13 @@ def test_dataframe_summary_output_str(dataframe: pl.DataFrame) -> None:
 def test_dataframe_summary_output_incorrect_top(dataframe: pl.DataFrame) -> None:
     with pytest.raises(ValueError, match=r"Incorrect 'top': -1. The value must be positive"):
         DataFrameSummaryOutput(dataframe, top=-1)
+
+
+def test_balanced_accuracy_output_compute(dataframe: pl.DataFrame) -> None:
+    assert isinstance(
+        DataFrameSummaryOutput(dataframe).compute(),
+        Output,
+    )
 
 
 def test_dataframe_summary_output_equal_true(dataframe: pl.DataFrame) -> None:
