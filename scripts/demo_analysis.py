@@ -14,6 +14,7 @@ from grizz.transformer import SequentialTransformer
 from arkas.analyzer import (
     AccuracyAnalyzer,
     BalancedAccuracyAnalyzer,
+    ColumnCooccurrenceAnalyzer,
     DataFrameSummaryAnalyzer,
     MappingAnalyzer,
 )
@@ -36,10 +37,11 @@ def main() -> None:
     ingestor = Ingestor(
         pl.DataFrame(
             {
-                "pred": rng.integers(0, 2, (n_samples,)),
-                "score": rng.normal(0, 1, (n_samples,)),
-                "target": rng.integers(0, 2, (n_samples,)),
+                "pred": rng.integers(0, 2, n_samples),
+                "score": rng.normal(0, 1, n_samples),
+                "target": rng.integers(0, 2, n_samples),
             }
+            | {f"col{i}": rng.integers(0, 2, n_samples) for i in range(5)}
         )
     )
 
@@ -52,6 +54,7 @@ def main() -> None:
                 "summary": DataFrameSummaryAnalyzer(),
                 "group one": AccuracyAnalyzer(y_true="target", y_pred="pred"),
                 "group two": BalancedAccuracyAnalyzer(y_true="target", y_pred="pred"),
+                "co-occurrence": ColumnCooccurrenceAnalyzer(columns=[f"col{i}" for i in range(5)]),
             }
         ),
         exporter=SequentialExporter(
