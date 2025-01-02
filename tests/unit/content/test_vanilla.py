@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from jinja2 import Template
-
 from arkas.content import ContentGenerator
 from arkas.content.accuracy import create_template
 
@@ -35,37 +33,68 @@ def test_content_generator_generate_content() -> None:
 
 
 def test_content_generator_generate_body() -> None:
-    generator = ContentGenerator("meow")
-    assert isinstance(Template(generator.generate_body()).render(), str)
+    assert ContentGenerator("meow").generate_body() == (
+        '<h1 id="">  </h1>\n'
+        '<a href="#">Go to top</a>\n'
+        '<p style="margin-top: 1rem;">\n'
+        "meow\n"
+        '<p style="margin-top: 1rem;">'
+    )
 
 
 def test_content_generator_generate_body_args() -> None:
-    generator = ContentGenerator("meow")
-    assert isinstance(
-        Template(generator.generate_body(number="1.", tags=["meow"], depth=1)).render(), str
+    assert ContentGenerator("meow").generate_body(number="1.", tags=["meow"], depth=1) == (
+        '<h2 id="meow">1. meow </h2>\n'
+        '<a href="#">Go to top</a>\n'
+        '<p style="margin-top: 1rem;">\n'
+        "meow\n"
+        '<p style="margin-top: 1rem;">'
     )
 
 
-def test_content_generator_generate_body_count_0() -> None:
-    generator = ContentGenerator("meow")
-    assert isinstance(Template(generator.generate_body()).render(), str)
+def test_content_generator_generate_body_depth_1() -> None:
+    assert ContentGenerator("meow").generate_body(depth=1) == (
+        '<h2 id="">  </h2>\n'
+        '<a href="#">Go to top</a>\n'
+        '<p style="margin-top: 1rem;">\n'
+        "meow\n"
+        '<p style="margin-top: 1rem;">'
+    )
+
+
+def test_content_generator_generate_body_depth_2() -> None:
+    assert ContentGenerator("meow").generate_body(depth=2) == (
+        '<h3 id="">  </h3>\n'
+        '<a href="#">Go to top</a>\n'
+        '<p style="margin-top: 1rem;">\n'
+        "meow\n"
+        '<p style="margin-top: 1rem;">'
+    )
 
 
 def test_content_generator_generate_body_empty() -> None:
-    generator = ContentGenerator("meow")
-    assert isinstance(Template(generator.generate_body()).render(), str)
+    assert ContentGenerator().generate_body() == (
+        '<h1 id="">  </h1>\n'
+        '<a href="#">Go to top</a>\n'
+        '<p style="margin-top: 1rem;">\n'
+        "\n"
+        '<p style="margin-top: 1rem;">'
+    )
 
 
 def test_content_generator_generate_toc() -> None:
-    generator = ContentGenerator("meow")
-    assert isinstance(Template(generator.generate_toc()).render(), str)
+    assert ContentGenerator("meow").generate_toc() == '<li><a href="#"> </a></li>'
 
 
 def test_content_generator_generate_toc_args() -> None:
-    generator = ContentGenerator("meow")
-    assert isinstance(
-        Template(generator.generate_toc(number="1.", tags=["meow"], depth=1)).render(), str
+    assert (
+        ContentGenerator("meow").generate_toc(number="1.", tags=["meow"], depth=1, max_depth=6)
+        == '<li><a href="#meow">1. meow</a></li>'
     )
+
+
+def test_content_generator_generate_toc_too_deep() -> None:
+    assert ContentGenerator("meow").generate_toc(number="1.", tags=["meow"], depth=1) == ""
 
 
 #####################################
