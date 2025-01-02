@@ -5,7 +5,7 @@ import pytest
 
 from arkas.content import AccuracyContentGenerator, ContentGenerator
 from arkas.evaluator2 import AccuracyEvaluator, Evaluator
-from arkas.output import AccuracyOutput
+from arkas.output import AccuracyOutput, Output
 from arkas.plotter import Plotter
 from arkas.state import AccuracyState
 
@@ -38,6 +38,43 @@ def test_accuracy_output_str() -> None:
             ),
         )
     ).startswith("AccuracyOutput(")
+
+
+def test_accuracy_output_compute() -> None:
+    assert (
+        AccuracyOutput(
+            AccuracyState(
+                y_true=np.array([1, 0, 0, 1, 1]),
+                y_pred=np.array([1, 0, 0, 1, 1]),
+                y_true_name="target",
+                y_pred_name="pred",
+            ),
+        )
+        .compute()
+        .equal(
+            Output(
+                content=ContentGenerator(
+                    "<ul>\n"
+                    "  <li>column with target labels: target</li>\n"
+                    "  <li>column with predicted labels: pred</li>\n"
+                    "  <li>accuracy: 1.0000 (5/5)</li>\n"
+                    "  <li>error: 0.0000 (0/5)</li>\n"
+                    "  <li>number of samples: 5</li>\n"
+                    "</ul>"
+                ),
+                evaluator=Evaluator(
+                    {
+                        "accuracy": 1.0,
+                        "count": 5,
+                        "count_correct": 5,
+                        "count_incorrect": 0,
+                        "error": 0.0,
+                    }
+                ),
+                plotter=Plotter(),
+            )
+        )
+    )
 
 
 def test_accuracy_output_equal_true() -> None:

@@ -30,6 +30,24 @@ def test_output_str() -> None:
     ).startswith("Output(")
 
 
+def test_content_output_compute() -> None:
+    assert (
+        Output(
+            content=ContentGenerator("meow"),
+            evaluator=Evaluator(metrics={"accuracy": 0.42}),
+            plotter=Plotter(),
+        )
+        .compute()
+        .equal(
+            Output(
+                content=ContentGenerator("meow"),
+                evaluator=Evaluator(metrics={"accuracy": 0.42}),
+                plotter=Plotter(),
+            )
+        )
+    )
+
+
 def test_output_equal_true() -> None:
     assert Output(
         content=ContentGenerator("meow"),

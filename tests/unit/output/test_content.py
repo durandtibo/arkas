@@ -18,6 +18,10 @@ def test_content_output_str() -> None:
     assert str(ContentOutput("meow")).startswith("ContentOutput(")
 
 
+def test_content_output_compute() -> None:
+    assert ContentOutput("meow").compute().equal(ContentOutput("meow"))
+
+
 def test_content_output_equal_true() -> None:
     assert ContentOutput("meow").equal(ContentOutput("meow"))
 

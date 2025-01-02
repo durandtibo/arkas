@@ -25,6 +25,58 @@ def test_output_dict_str() -> None:
     assert str(OutputDict({})).startswith("OutputDict(")
 
 
+def test_output_dict_compute() -> None:
+    assert (
+        OutputDict(
+            {
+                "one": Output(
+                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
+                ),
+                "two": AccuracyOutput(
+                    AccuracyState(
+                        y_true=np.array([1, 0, 0, 1, 1]),
+                        y_pred=np.array([1, 0, 0, 1, 1]),
+                        y_true_name="target",
+                        y_pred_name="pred",
+                    )
+                ),
+            }
+        )
+        .compute()
+        .equal(
+            Output(
+                content=ContentGeneratorDict(
+                    {
+                        "one": ContentGenerator("meow"),
+                        "two": ContentGenerator(
+                            "<ul>\n"
+                            "  <li>column with target labels: target</li>\n"
+                            "  <li>column with predicted labels: pred</li>\n"
+                            "  <li>accuracy: 1.0000 (5/5)</li>\n"
+                            "  <li>error: 0.0000 (0/5)</li>\n"
+                            "  <li>number of samples: 5</li>\n"
+                            "</ul>"
+                        ),
+                    }
+                ),
+                evaluator=Evaluator(
+                    {
+                        "one": {},
+                        "two": {
+                            "accuracy": 1.0,
+                            "count": 5,
+                            "count_correct": 5,
+                            "count_incorrect": 0,
+                            "error": 0.0,
+                        },
+                    }
+                ),
+                plotter=Plotter({"one": {}, "two": {}}),
+            )
+        )
+    )
+
+
 def test_output_dict_equal_true() -> None:
     assert OutputDict(
         {

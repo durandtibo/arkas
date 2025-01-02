@@ -18,6 +18,10 @@ def test_empty_output_str() -> None:
     assert str(EmptyOutput()) == "EmptyOutput()"
 
 
+def test_empty_output_compute() -> None:
+    assert EmptyOutput().compute().equal(EmptyOutput())
+
+
 def test_empty_output_equal_true() -> None:
     assert EmptyOutput().equal(EmptyOutput())
 
