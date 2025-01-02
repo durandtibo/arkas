@@ -68,6 +68,18 @@ def test_mapping_analyzer_analyze() -> None:
     )
 
 
+def test_mapping_analyzer_analyze_lazy_false() -> None:
+    assert isinstance(
+        MappingAnalyzer(
+            {
+                "one": AccuracyAnalyzer(y_true="target", y_pred="pred"),
+                "two": BalancedAccuracyAnalyzer(y_true="target", y_pred="pred"),
+            }
+        ).analyze(pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 1, 0, 1]}), lazy=False),
+        OutputDict,
+    )
+
+
 def test_mapping_analyzer_analyze_empty() -> None:
     assert (
         MappingAnalyzer(
