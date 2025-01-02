@@ -100,7 +100,7 @@ def test_evaluator_dict_evaluate_empty() -> None:
     assert objects_are_equal(EvaluatorDict({}).evaluate(), {})
 
 
-def test_evaluator_dict_precompute() -> None:
+def test_evaluator_dict_compute() -> None:
     assert (
         EvaluatorDict(
             {
@@ -108,7 +108,7 @@ def test_evaluator_dict_precompute() -> None:
                 "two": Evaluator(metrics={"accuracy": 42.0, "count": 30}),
             }
         )
-        .precompute()
+        .compute()
         .equal(
             Evaluator(
                 {"one": {"accuracy": 62.0, "count": 42}, "two": {"accuracy": 42.0, "count": 30}}

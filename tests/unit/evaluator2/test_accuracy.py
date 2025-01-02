@@ -369,7 +369,7 @@ def test_accuracy_evaluator_evaluate_nan_raise_y_pred() -> None:
         evaluator.evaluate()
 
 
-def test_accuracy_evaluator_precompute() -> None:
+def test_accuracy_evaluator_compute() -> None:
     assert (
         AccuracyEvaluator(
             AccuracyState(
@@ -379,7 +379,7 @@ def test_accuracy_evaluator_precompute() -> None:
                 y_pred_name="pred",
             ),
         )
-        .precompute()
+        .compute()
         .equal(
             Evaluator(
                 {

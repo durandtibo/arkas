@@ -63,6 +63,9 @@ class BalancedAccuracyEvaluator(BaseEvaluator):
         args = repr_indent(repr_mapping({"state": self._state, "nan_policy": self._nan_policy}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
+    def compute(self) -> Evaluator:
+        return Evaluator(metrics=self.evaluate())
+
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
@@ -79,6 +82,3 @@ class BalancedAccuracyEvaluator(BaseEvaluator):
             suffix=suffix,
             nan_policy=self._nan_policy,
         )
-
-    def precompute(self) -> Evaluator:
-        return Evaluator(metrics=self.evaluate())

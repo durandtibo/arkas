@@ -66,8 +66,8 @@ def test_evaluator_evaluate_prefix_suffix() -> None:
     )
 
 
-def test_evaluator_precompute() -> None:
+def test_evaluator_compute() -> None:
     x = Evaluator(metrics={"accuracy": 1.0, "count": 42})
-    y = x.precompute()
+    y = x.compute()
     assert x is not y
     assert x.equal(y)

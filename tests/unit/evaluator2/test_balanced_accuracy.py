@@ -294,7 +294,7 @@ def test_balanced_accuracy_evaluator_evaluate_nan_raise_y_pred() -> None:
         evaluator.evaluate()
 
 
-def test_balanced_accuracy_evaluator_precompute() -> None:
+def test_balanced_accuracy_evaluator_compute() -> None:
     assert (
         BalancedAccuracyEvaluator(
             AccuracyState(
@@ -304,6 +304,6 @@ def test_balanced_accuracy_evaluator_precompute() -> None:
                 y_pred_name="pred",
             ),
         )
-        .precompute()
+        .compute()
         .equal(Evaluator({"balanced_accuracy": 1.0, "count": 5}))
     )
