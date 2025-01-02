@@ -26,8 +26,12 @@ def test_empty_output_equal_false_different_type() -> None:
     assert not EmptyOutput().equal(42)
 
 
-def test_empty_output_get_content_generator() -> None:
+def test_empty_output_get_content_generator_lazy_true() -> None:
     assert EmptyOutput().get_content_generator().equal(ContentGenerator())
+
+
+def test_empty_output_get_content_generator_lazy_false() -> None:
+    assert EmptyOutput().get_content_generator(lazy=False).equal(ContentGenerator())
 
 
 def test_empty_output_get_evaluator_lazy_true() -> None:

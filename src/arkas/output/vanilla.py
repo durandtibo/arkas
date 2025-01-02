@@ -82,7 +82,7 @@ class Output(BaseLazyOutput):
             and self._plotter.equal(other._plotter, equal_nan=equal_nan)
         )
 
-    def get_content_generator(self) -> BaseContentGenerator:
+    def _get_content_generator(self) -> BaseContentGenerator:
         return self._content
 
     def _get_evaluator(self) -> BaseEvaluator:
