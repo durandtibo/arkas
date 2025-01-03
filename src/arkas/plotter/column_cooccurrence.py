@@ -108,31 +108,23 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         if matrix.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
-        fontsize = (
-            "xx-small" if matrix.shape[0] > 30 else "x-small" if matrix.shape[0] > 15 else "small"
-        )
         fig, ax = plt.subplots(**config.get_args())
         im = ax.imshow(matrix)
-        fig.colorbar(im, anchor=(-0.3, 0.0), aspect=30).ax.tick_params(labelsize=6)
+        fig.colorbar(im)
         ax.set_xticks(
             range(len(columns)),
             labels=columns,
             rotation=45,
             ha="right",
             rotation_mode="anchor",
-            fontsize=fontsize,
         )
         ax.set_yticks(
             range(len(columns)),
             labels=columns,
-            fontsize=fontsize,
         )
         readable_xticklabels(ax, max_num_xticks=50)
         readable_yticklabels(ax, max_num_yticks=50)
-        ax.set_title(
-            "pairwise column co-occurrence matrix",
-            fontsize=None if fontsize == "small" else "small",
-        )
+        ax.set_title("pairwise column co-occurrence matrix")
 
         if matrix.shape[0] < 16:
             for i in range(len(columns)):

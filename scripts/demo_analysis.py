@@ -35,7 +35,7 @@ def main() -> None:
     r"""Define the main function."""
     n_samples = 10000
     rng = np.random.default_rng(42)
-    ncols = 10
+    ncols = 200
     ingestor = Ingestor(
         pl.DataFrame(
             {
@@ -48,6 +48,7 @@ def main() -> None:
     )
 
     path = Path.cwd().joinpath("tmp")
+    figure_config = MatplotlibFigureConfig(dpi=500, figsize=(13, 10))
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
@@ -59,7 +60,7 @@ def main() -> None:
                 "co-occurrence": ColumnCooccurrenceAnalyzer(
                     columns=[f"col{i}" for i in range(ncols)],
                     ignore_self=True,
-                    figure_config=MatplotlibFigureConfig(dpi=500),
+                    figure_config=figure_config,
                 ),
             }
         ),
