@@ -35,7 +35,7 @@ def main() -> None:
     r"""Define the main function."""
     n_samples = 10000
     rng = np.random.default_rng(42)
-    ncols = 200
+    ncols = 100
     ingestor = Ingestor(
         pl.DataFrame(
             {
