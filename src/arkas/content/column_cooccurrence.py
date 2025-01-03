@@ -97,16 +97,18 @@ class ColumnCooccurrenceContentGenerator(BaseSectionContentGenerator):
         figures = ColumnCooccurrencePlotter(
             frame=self._frame, ignore_self=self._ignore_self, figure_config=self._figure_config
         ).plot()
+        columns = list(self._frame.columns)
         return Template(create_template()).render(
             {
                 "nrows": f"{self._frame.shape[0]:,}",
                 "ncols": f"{self._frame.shape[1]:,}",
+                "columns": ", ".join([f"{x!r}" for x in columns]),
                 "figure": figure2html(figures["column_cooccurrence"], close_fig=True),
                 "table": create_table_section(
                     matrix=compute_pairwise_cooccurrence(
                         frame=self._frame, ignore_self=self._ignore_self
                     ),
-                    columns=list(self._frame.columns),
+                    columns=columns,
                 ),
             }
         )
@@ -127,12 +129,17 @@ def create_template() -> str:
 
     ```
     """
-    return """This section shows the pairwise column co-occurrence.
+    return """This section shows an analysis of the pairwise column co-occurrence.
 <ul>
   <li> number of columns: {{ncols}} </li>
   <li> number of rows: {{nrows}}</li>
 </ul>
 {{figure}}
+<details>
+    <summary>[show columns]</summary>
+    {{columns}}
+</details>
+<p style="margin-top: 1rem;">
 {{table}}
 """
 
