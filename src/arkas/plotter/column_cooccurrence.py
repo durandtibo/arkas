@@ -5,21 +5,76 @@ from __future__ import annotations
 
 __all__ = ["ColumnCooccurrencePlotter"]
 
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 from coola import objects_are_equal
 from grizz.utils.cooccurrence import compute_pairwise_cooccurrence
 
+from arkas.figure.creator import FigureCreatorRegistry
+from arkas.figure.default import DefaultFigureConfig
+from arkas.figure.html import HtmlFigure
+from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.plot.utils import readable_xticklabels, readable_yticklabels
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
+from arkas.utils.figure import MISSING_FIGURE_MESSAGE
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     import numpy as np
     import polars as pl
+
+    from arkas.figure.base import BaseFigure, BaseFigureConfig
+
+
+class BaseFigureCreator(ABC):
+
+    @abstractmethod
+    def create(
+        self, matrix: np.ndarray, columns: Sequence[str], config: BaseFigureConfig
+    ) -> BaseFigure:
+        pass
+
+
+class MatplotlibFigureCreator(BaseFigureCreator):
+
+    def create(
+        self, matrix: np.ndarray, columns: Sequence[str], config: BaseFigureConfig
+    ) -> BaseFigure:
+        if matrix.shape[0] == 0:
+            return HtmlFigure(MISSING_FIGURE_MESSAGE)
+
+        fig, ax = plt.subplots(**config.get_args())
+        ax.imshow(matrix)
+        ax.set_xticks(
+            range(len(columns)),
+            labels=columns,
+            rotation=45,
+            ha="right",
+            rotation_mode="anchor",
+            fontsize="x-small" if matrix.shape[0] > 30 else None,
+        )
+        ax.set_yticks(
+            range(len(columns)),
+            labels=columns,
+            fontsize="x-small" if matrix.shape[0] > 30 else None,
+        )
+        readable_xticklabels(ax, max_num_xticks=50)
+        readable_yticklabels(ax, max_num_yticks=50)
+        ax.set_title("pairwise column co-occurrence matrix")
+
+        if matrix.shape[0] < 16:
+            for i in range(len(columns)):
+                for j in range(len(columns)):
+                    ax.text(
+                        j, i, matrix[i, j], ha="center", va="center", color="w", fontsize="x-small"
+                    )
+
+        fig.tight_layout()
+        return MatplotlibFigure(fig)
 
 
 class ColumnCooccurrencePlotter(BasePlotter):
@@ -50,9 +105,19 @@ class ColumnCooccurrencePlotter(BasePlotter):
     ```
     """
 
-    def __init__(self, frame: pl.DataFrame, ignore_self: bool = False) -> None:
+    registry: FigureCreatorRegistry = FigureCreatorRegistry(
+        {
+            DefaultFigureConfig.backend(): MatplotlibFigureCreator(),
+            MatplotlibFigureConfig.backend(): MatplotlibFigureCreator(),
+        }
+    )
+
+    def __init__(
+        self, frame: pl.DataFrame, ignore_self: bool = False, config: BaseFigureConfig | None = None
+    ) -> None:
         self._frame = frame
         self._ignore_self = bool(ignore_self)
+        self._config = config or DefaultFigureConfig()
 
     def __repr__(self) -> str:
         return (
@@ -71,12 +136,10 @@ class ColumnCooccurrencePlotter(BasePlotter):
         )
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:
-        return {
-            f"{prefix}column_cooccurrence{suffix}": create_figure(
-                matrix=self.cooccurrence_matrix(),
-                columns=self._frame.columns,
-            )
-        }
+        figure = self.registry.find_creator(self._config.backend()).create(
+            matrix=self.cooccurrence_matrix(), columns=self._frame.columns, config=self._config
+        )
+        return {f"{prefix}column_cooccurrence{suffix}": figure}
 
     def cooccurrence_matrix(self) -> np.ndarray:
         r"""Return the pairwise column co-occurrence matrix.
