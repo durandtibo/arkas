@@ -103,10 +103,10 @@ class BaseFigureConfig(ABC):
     ```
     """
 
-    @property
+    @classmethod
     @abstractmethod
-    def backend(self) -> str:
-        r"""The backend to generate the figure.
+    def backend(cls) -> str:
+        r"""Return the backend to generate the figure.
 
         Example usage:
 
