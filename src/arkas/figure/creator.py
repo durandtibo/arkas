@@ -73,11 +73,9 @@ class FigureCreatorRegistry:
         Example usage:
 
         ```pycon
-        >>> from coola.figure.testers import EqualityTester
-        >>> from coola.figure.creators import DefaultEqualityComparator
-        >>> tester = EqualityTester.local_copy()
-        >>> tester.add_creator(str, DefaultEqualityComparator())
-        >>> tester.add_creator(str, DefaultEqualityComparator(), exist_ok=True)
+
+        >>> from arkas.figure.creator import FigureCreatorRegistry
+        >>> registry = FigureCreatorRegistry()
 
         ```
         """
@@ -91,9 +89,45 @@ class FigureCreatorRegistry:
         self._registry[backend] = creator
 
     def create(self, config: BaseFigureConfig) -> BaseFigure:
+        r"""Create a figure given the figure config.
+
+        Args:
+            config: The figure config.
+
+        Returns:
+            The generated figure.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.figure.creator import FigureCreatorRegistry
+        >>> registry = FigureCreatorRegistry()
+
+        ```
+        """
         return self.find_creator(config.backend()).create(config)
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
+        r"""Indicate if two registries are equal or not.
+
+        Args:
+            other: The other object to compare with.
+            equal_nan: Whether to compare NaN's as equal. If ``True``,
+                NaN's in both objects will be considered equal.
+
+        Returns:
+            ``True`` if the two objects are equal, otherwise ``False``.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.figure.creator import FigureCreatorRegistry
+        >>> registry = FigureCreatorRegistry()
+
+        ```
+        """
         if not isinstance(other, self.__class__):
             return False
         return objects_are_equal(self._registry, other._registry, equal_nan=equal_nan)
@@ -140,7 +174,6 @@ class FigureCreatorRegistry:
 
         >>> from arkas.figure.creator import FigureCreatorRegistry
         >>> registry = FigureCreatorRegistry()
-        >>> registry.find_creator("matplotlib")
 
         ```
         """
