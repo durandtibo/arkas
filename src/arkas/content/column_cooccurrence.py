@@ -173,10 +173,11 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
         """<details>
     <summary>[show top-{{top}} pairwise column co-occurrence]</summary>
     The following table shows the top-{{top}} pairwise column co-occurrences.
+    The co-occurrence matrix is symmetric and only the co-occurrences in the lower triangular matrix are shown.
     <ul>
       <li> <b>rank</b>: is the rank of the co-occurrence </li>
-      <li> <b>column (row)</b>: represents the first column of the co-occurrence matrix and corresponds to the row index </li>
-      <li> <b>column (col)</b>: represents the second column of the co-occurrence matrix and corresponds to the column index </li>
+      <li> <b>column 1</b>: represents the first column of the co-occurrence matrix </li>
+      <li> <b>column 2</b>: represents the second column of the co-occurrence matrix </li>
       <li> <b>count</b>: is the number of co-occurrences </li>
       <li> <b>percentage</b>: is the percentage of co-occurrences w.r.t. the total of co-occurrences </li>
     </ul>
@@ -209,9 +210,13 @@ def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> s
 
     ```
     """
-    total = matrix.sum().item()
-    rows, cols = np.unravel_index(np.argsort(matrix, axis=None), matrix.shape)
-    rows, cols = rows[: -top - 1 : -1], cols[: -top - 1 : -1]
+    total = np.tril(matrix).sum().item()
+    # Fill the upper triangular part with -1 before to sort the occurrences
+    half_matrix = np.tril(matrix) - np.triu(np.ones_like(matrix), 1)
+    rows, cols = np.unravel_index(np.argsort(half_matrix, axis=None), matrix.shape)
+    n = matrix.shape[0]
+    m = min(top, int(n * (n + 1) / 2))
+    rows, cols = rows[: -m - 1 : -1], cols[: -m - 1 : -1]
     table_rows = []
     for i, (r, c) in enumerate(zip(rows, cols)):
         table_rows.append(
@@ -223,7 +228,7 @@ def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> s
     return Template(
         """<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
-        <tr><th>rank</th><th>column (row)</th><th>column (col)</th><th>count</th><th>percentage</th></tr>
+        <tr><th>rank</th><th>column 1</th><th>column 2</th><th>count</th><th>percentage</th></tr>
     </thead>
     <tbody class="tbody table-group-divider">
         {{rows}}
