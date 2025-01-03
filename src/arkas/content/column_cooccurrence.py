@@ -15,8 +15,8 @@ from coola import objects_are_equal
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
+from arkas.figure.utils import figure2html
 from arkas.plotter import ColumnCooccurrencePlotter
-from arkas.utils.figure import figure2html
 
 if TYPE_CHECKING:
 
