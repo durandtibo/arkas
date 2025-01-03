@@ -14,11 +14,13 @@ MISSING_FIGURE_MESSAGE = (
 )
 
 
-def figure2html(figure: BaseFigure, close_fig: bool = False) -> str:
+def figure2html(figure: BaseFigure, reactive: bool = True, close_fig: bool = False) -> str:
     r"""Convert a figure to a HTML code.
 
     Args:
         figure: The figure to convert.
+        reactive: If ``True``, the generated is configured to be
+            reactive to the screen size.
         close_fig: If ``True``, the figure is closed after it is
             converted to HTML format.
 
@@ -36,7 +38,7 @@ def figure2html(figure: BaseFigure, close_fig: bool = False) -> str:
 
     ```
     """
-    data = figure.to_html()
+    data = figure.set_reactive(reactive).to_html()
     if close_fig:
         figure.close()
     return data
