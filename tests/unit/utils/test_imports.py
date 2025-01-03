@@ -9,6 +9,7 @@ from arkas.utils.imports import (
     check_hya,
     check_hydra,
     check_markdown,
+    check_matplotlib,
     check_omegaconf,
     check_plotly,
     check_scipy,
@@ -19,10 +20,12 @@ from arkas.utils.imports import (
     is_hya_available,
     is_hydra_available,
     is_markdown_available,
+    is_matplotlib_available,
     is_omegaconf_available,
     is_plotly_available,
     is_scipy_available,
     markdown_available,
+    matplotlib_available,
     omegaconf_available,
     plotly_available,
     scipy_available,
@@ -243,6 +246,60 @@ def test_markdown_available_decorator_without_package() -> None:
     with patch("arkas.utils.imports.is_markdown_available", lambda: False):
 
         @markdown_available
+        def fn(n: int = 0) -> int:
+            return 42 + n
+
+        assert fn(2) is None
+
+
+######################
+#     matplotlib     #
+######################
+
+
+def test_check_matplotlib_with_package() -> None:
+    with patch("arkas.utils.imports.is_matplotlib_available", lambda: True):
+        check_matplotlib()
+
+
+def test_check_matplotlib_without_package() -> None:
+    with (
+        patch("arkas.utils.imports.is_matplotlib_available", lambda: False),
+        pytest.raises(RuntimeError, match="'matplotlib' package is required but not installed."),
+    ):
+        check_matplotlib()
+
+
+def test_is_matplotlib_available() -> None:
+    assert isinstance(is_matplotlib_available(), bool)
+
+
+def test_matplotlib_available_with_package() -> None:
+    with patch("arkas.utils.imports.is_matplotlib_available", lambda: True):
+        fn = matplotlib_available(my_function)
+        assert fn(2) == 44
+
+
+def test_matplotlib_available_without_package() -> None:
+    with patch("arkas.utils.imports.is_matplotlib_available", lambda: False):
+        fn = matplotlib_available(my_function)
+        assert fn(2) is None
+
+
+def test_matplotlib_available_decorator_with_package() -> None:
+    with patch("arkas.utils.imports.is_matplotlib_available", lambda: True):
+
+        @matplotlib_available
+        def fn(n: int = 0) -> int:
+            return 42 + n
+
+        assert fn(2) == 44
+
+
+def test_matplotlib_available_decorator_without_package() -> None:
+    with patch("arkas.utils.imports.is_matplotlib_available", lambda: False):
+
+        @matplotlib_available
         def fn(n: int = 0) -> int:
             return 42 + n
 
