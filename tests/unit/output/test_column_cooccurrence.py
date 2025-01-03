@@ -5,6 +5,7 @@ import pytest
 
 from arkas.content import ColumnCooccurrenceContentGenerator, ContentGenerator
 from arkas.evaluator2 import Evaluator
+from arkas.figure import MatplotlibFigureConfig
 from arkas.output import ColumnCooccurrenceOutput, Output
 from arkas.plotter import Plotter
 
@@ -25,11 +26,11 @@ def dataframe() -> pl.DataFrame:
 ############################################
 
 
-def test_dataframe_summary_output_repr(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_repr(dataframe: pl.DataFrame) -> None:
     assert repr(ColumnCooccurrenceOutput(dataframe)).startswith("ColumnCooccurrenceOutput(")
 
 
-def test_dataframe_summary_output_str(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_str(dataframe: pl.DataFrame) -> None:
     assert str(ColumnCooccurrenceOutput(dataframe)).startswith("ColumnCooccurrenceOutput(")
 
 
@@ -40,11 +41,11 @@ def test_balanced_accuracy_output_compute(dataframe: pl.DataFrame) -> None:
     )
 
 
-def test_dataframe_summary_output_equal_true(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_equal_true(dataframe: pl.DataFrame) -> None:
     assert ColumnCooccurrenceOutput(dataframe).equal(ColumnCooccurrenceOutput(dataframe))
 
 
-def test_dataframe_summary_output_equal_false_different_frame(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_equal_false_different_frame(dataframe: pl.DataFrame) -> None:
     assert not ColumnCooccurrenceOutput(dataframe).equal(
         ColumnCooccurrenceOutput(
             pl.DataFrame(
@@ -58,7 +59,7 @@ def test_dataframe_summary_output_equal_false_different_frame(dataframe: pl.Data
     )
 
 
-def test_dataframe_summary_output_equal_false_different_ignore_self(
+def test_column_cooccurrence_output_equal_false_different_ignore_self(
     dataframe: pl.DataFrame,
 ) -> None:
     assert not ColumnCooccurrenceOutput(dataframe, ignore_self=True).equal(
@@ -66,12 +67,20 @@ def test_dataframe_summary_output_equal_false_different_ignore_self(
     )
 
 
-def test_dataframe_summary_output_equal_false_different_type(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_equal_false_different_figure_config(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not ColumnCooccurrenceOutput(dataframe).equal(
+        ColumnCooccurrenceOutput(dataframe, figure_config=MatplotlibFigureConfig(dpi=50))
+    )
+
+
+def test_column_cooccurrence_output_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not ColumnCooccurrenceOutput(dataframe).equal(42)
 
 
 @pytest.mark.parametrize("ignore_self", [True, False])
-def test_dataframe_summary_output_get_content_generator_lazy_true(
+def test_column_cooccurrence_output_get_content_generator_lazy_true(
     dataframe: pl.DataFrame, ignore_self: bool
 ) -> None:
     assert (
@@ -82,7 +91,7 @@ def test_dataframe_summary_output_get_content_generator_lazy_true(
 
 
 @pytest.mark.parametrize("ignore_self", [True, False])
-def test_dataframe_summary_output_get_content_generator_lazy_false(
+def test_column_cooccurrence_output_get_content_generator_lazy_false(
     dataframe: pl.DataFrame, ignore_self: bool
 ) -> None:
     assert isinstance(
@@ -93,17 +102,17 @@ def test_dataframe_summary_output_get_content_generator_lazy_false(
     )
 
 
-def test_dataframe_summary_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> None:
     assert ColumnCooccurrenceOutput(dataframe).get_evaluator().equal(Evaluator())
 
 
-def test_dataframe_summary_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
     assert ColumnCooccurrenceOutput(dataframe).get_evaluator(lazy=False).equal(Evaluator())
 
 
-def test_dataframe_summary_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
     assert ColumnCooccurrenceOutput(dataframe).get_plotter().equal(Plotter())
 
 
-def test_dataframe_summary_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
+def test_column_cooccurrence_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
     assert ColumnCooccurrenceOutput(dataframe).get_plotter(lazy=False).equal(Plotter())

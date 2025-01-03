@@ -16,6 +16,8 @@ from arkas.plotter.vanilla import Plotter
 if TYPE_CHECKING:
     import polars as pl
 
+    from arkas.figure.base import BaseFigureConfig
+
 
 class ColumnCooccurrenceOutput(BaseLazyOutput):
     r"""Implement the pairwise column co-occurrence output.
@@ -51,9 +53,15 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
     ```
     """
 
-    def __init__(self, frame: pl.DataFrame, ignore_self: bool = False) -> None:
+    def __init__(
+        self,
+        frame: pl.DataFrame,
+        ignore_self: bool = False,
+        figure_config: BaseFigureConfig | None = None,
+    ) -> None:
         self._frame = frame
         self._ignore_self = bool(ignore_self)
+        self._figure_config = figure_config
 
     def __repr__(self) -> str:
         return (
@@ -64,12 +72,16 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self._ignore_self == other._ignore_self and objects_are_equal(
-            self._frame, other._frame, equal_nan=equal_nan
+        return (
+            self._ignore_self == other._ignore_self
+            and objects_are_equal(self._frame, other._frame, equal_nan=equal_nan)
+            and objects_are_equal(self._figure_config, other._figure_config, equal_nan=equal_nan)
         )
 
     def _get_content_generator(self) -> ColumnCooccurrenceContentGenerator:
-        return ColumnCooccurrenceContentGenerator(frame=self._frame, ignore_self=self._ignore_self)
+        return ColumnCooccurrenceContentGenerator(
+            frame=self._frame, ignore_self=self._ignore_self, figure_config=self._figure_config
+        )
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()

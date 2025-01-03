@@ -22,6 +22,8 @@ if TYPE_CHECKING:
 
     import polars as pl
 
+    from arkas.figure.base import BaseFigureConfig
+
 logger = logging.getLogger(__name__)
 
 
@@ -54,12 +56,21 @@ class ColumnCooccurrenceContentGenerator(BaseSectionContentGenerator):
     ```
     """
 
-    def __init__(self, frame: pl.DataFrame, ignore_self: bool = False) -> None:
+    def __init__(
+        self,
+        frame: pl.DataFrame,
+        ignore_self: bool = False,
+        figure_config: BaseFigureConfig | None = None,
+    ) -> None:
         self._frame = frame
         self._ignore_self = bool(ignore_self)
+        self._figure_config = figure_config
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(shape={self._frame.shape}, ignore_self={self._ignore_self})"
+        return (
+            f"{self.__class__.__qualname__}(shape={self._frame.shape}, "
+            f"ignore_self={self._ignore_self})"
+        )
 
     @property
     def frame(self) -> pl.DataFrame:
@@ -73,13 +84,17 @@ class ColumnCooccurrenceContentGenerator(BaseSectionContentGenerator):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self.ignore_self == other.ignore_self and objects_are_equal(
-            self.frame, other.frame, equal_nan=equal_nan
+        return (
+            self.ignore_self == other.ignore_self
+            and objects_are_equal(self.frame, other.frame, equal_nan=equal_nan)
+            and objects_are_equal(self._figure_config, other._figure_config, equal_nan=equal_nan)
         )
 
     def generate_content(self) -> str:
         logger.info("Generating the DataFrame summary content...")
-        figures = ColumnCooccurrencePlotter(frame=self._frame, ignore_self=self._ignore_self).plot()
+        figures = ColumnCooccurrencePlotter(
+            frame=self._frame, ignore_self=self._ignore_self, figure_config=self._figure_config
+        ).plot()
         return Template(create_template()).render(
             {
                 "nrows": f"{self._frame.shape[0]:,}",

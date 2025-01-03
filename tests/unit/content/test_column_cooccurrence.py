@@ -5,6 +5,7 @@ import pytest
 
 from arkas.content import ColumnCooccurrenceContentGenerator, ContentGenerator
 from arkas.content.column_cooccurrence import create_template
+from arkas.figure import MatplotlibFigureConfig
 
 
 @pytest.fixture
@@ -80,6 +81,14 @@ def test_column_cooccurrence_content_generator_equal_false_different_ignore_self
 ) -> None:
     assert not ColumnCooccurrenceContentGenerator(dataframe).equal(
         ColumnCooccurrenceContentGenerator(dataframe, ignore_self=True)
+    )
+
+
+def test_column_cooccurrence_content_generator_equal_false_different_figure_config(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not ColumnCooccurrenceContentGenerator(dataframe).equal(
+        ColumnCooccurrenceContentGenerator(dataframe, figure_config=MatplotlibFigureConfig(dpi=50))
     )
 
 
