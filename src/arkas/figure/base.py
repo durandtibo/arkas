@@ -212,7 +212,8 @@ class BaseFigureConfig(ABC):
 
 
 class FigureEqualityComparator(BaseEqualityComparator[BaseFigure]):
-    r"""Implement an equality comparator for ``BaseFigure`` objects."""
+    r"""Implement an equality comparator for ``BaseFigure`` and
+    ``BaseFigureConfig`` objects."""
 
     def __init__(self) -> None:
         self._handler = SameObjectHandler()

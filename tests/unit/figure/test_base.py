@@ -17,9 +17,9 @@ def config() -> EqualityConfig:
     return EqualityConfig(tester=EqualityTester())
 
 
-#############################################
+##############################################
 #     Tests for FigureEqualityComparator     #
-#############################################
+##############################################
 
 FIGURE_EQUAL = [
     pytest.param(
