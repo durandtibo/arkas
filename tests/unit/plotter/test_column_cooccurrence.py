@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-import matplotlib.pyplot as plt
 import numpy as np
 import polars as pl
 import pytest
 from coola import objects_are_equal
 
+from arkas.figure import HtmlFigure, MatplotlibFigure, MatplotlibFigureConfig
+from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plotter import ColumnCooccurrencePlotter, Plotter
-from arkas.plotter.column_cooccurrence import create_figure
+from arkas.plotter.column_cooccurrence import MatplotlibFigureCreator
 
 
 @pytest.fixture
@@ -104,19 +105,19 @@ def test_column_cooccurrence_plotter_equal_nan_false() -> None:
 def test_column_cooccurrence_plotter_plot(dataframe: pl.DataFrame) -> None:
     figures = ColumnCooccurrencePlotter(dataframe).plot()
     assert len(figures) == 1
-    assert isinstance(figures["column_cooccurrence"], plt.Figure)
+    assert isinstance(figures["column_cooccurrence"], MatplotlibFigure)
 
 
 def test_column_cooccurrence_plotter_plot_empty() -> None:
     figures = ColumnCooccurrencePlotter(pl.DataFrame()).plot()
     assert len(figures) == 1
-    assert isinstance(figures["column_cooccurrence"], plt.Figure)
+    assert figures["column_cooccurrence"].equal(HtmlFigure(MISSING_FIGURE_MESSAGE))
 
 
 def test_column_cooccurrence_plotter_plot_prefix_suffix(dataframe: pl.DataFrame) -> None:
     figures = ColumnCooccurrencePlotter(dataframe).plot(prefix="prefix_", suffix="_suffix")
     assert len(figures) == 1
-    assert isinstance(figures["prefix_column_cooccurrence_suffix"], plt.Figure)
+    assert isinstance(figures["prefix_column_cooccurrence_suffix"], MatplotlibFigure)
 
 
 def test_column_cooccurrence_plotter_cooccurrence_matrix(dataframe: pl.DataFrame) -> None:
@@ -135,20 +136,42 @@ def test_column_cooccurrence_plotter_cooccurrence_matrix_ignore_self(
     )
 
 
-###################################
-#     Tests for create_figure     #
-###################################
+#############################################
+#     Tests for MatplotlibFigureCreator     #
+#############################################
 
 
-def test_create_figure_small() -> None:
-    assert isinstance(create_figure(matrix=np.ones((3, 3)), columns=["a", "b", "c"]), plt.Figure)
+def test_matplotlib_figure_creator_repr() -> None:
+    assert repr(MatplotlibFigureCreator()).startswith("MatplotlibFigureCreator(")
 
 
-def test_create_figure_large() -> None:
+def test_matplotlib_figure_creator_str() -> None:
+    assert str(MatplotlibFigureCreator()).startswith("MatplotlibFigureCreator(")
+
+
+def test_matplotlib_figure_creator_create_small() -> None:
     assert isinstance(
-        create_figure(matrix=np.ones((50, 50)), columns=list(map(str, range(50)))), plt.Figure
+        MatplotlibFigureCreator().create(
+            matrix=np.ones((3, 3)), columns=["a", "b", "c"], config=MatplotlibFigureConfig()
+        ),
+        MatplotlibFigure,
     )
 
 
-def test_create_figure_empty() -> None:
-    assert isinstance(create_figure(matrix=np.ones((0, 0)), columns=[]), plt.Figure)
+def test_matplotlib_figure_creator_create_large() -> None:
+    assert isinstance(
+        MatplotlibFigureCreator().create(
+            matrix=np.ones((50, 50)),
+            columns=list(map(str, range(50))),
+            config=MatplotlibFigureConfig(),
+        ),
+        MatplotlibFigure,
+    )
+
+
+def test_matplotlib_figure_creator_create_empty() -> None:
+    assert (
+        MatplotlibFigureCreator()
+        .create(matrix=np.ones((0, 0)), columns=[], config=MatplotlibFigureConfig())
+        .equal(HtmlFigure(MISSING_FIGURE_MESSAGE))
+    )
