@@ -91,7 +91,7 @@ class FigureCreatorRegistry:
         self._registry[backend] = creator
 
     def create(self, config: BaseFigureConfig) -> BaseFigure:
-        return self.find_creator(config.backend).create(config)
+        return self.find_creator(config.backend()).create(config)
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):

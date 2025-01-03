@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
+from arkas.figure import HtmlFigure, MatplotlibFigureConfig
 from arkas.figure.creator import BaseFigureCreator, FigureCreatorRegistry
 
 if TYPE_CHECKING:
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
 class MyFigureCreator(BaseFigureCreator):
 
     def create(self, config: BaseFigureConfig) -> BaseFigure:  # noqa: ARG002
-        return HtmlFigure("")
+        return HtmlFigure("meow")
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:  # noqa: ARG002
         return isinstance(other, self.__class__)
@@ -52,6 +53,14 @@ def test_figure_creator_registry_add_creator_exist_ok_true() -> None:
     registry.add_creator("b1", MyFigureCreator())
     registry.add_creator("b1", MyFigureCreator(), exist_ok=True)
     assert len(registry._registry) == 1
+
+
+def test_figure_creator_registry_create() -> None:
+    assert (
+        FigureCreatorRegistry({MatplotlibFigureConfig.backend(): MyFigureCreator()})
+        .create(MatplotlibFigureConfig())
+        .equal(HtmlFigure("meow"))
+    )
 
 
 def test_figure_creator_registry_equal_true() -> None:
