@@ -3,15 +3,15 @@ the pairwise column co-occurrence."""
 
 from __future__ import annotations
 
-__all__ = [
-    "ColumnCooccurrenceContentGenerator",
-    "create_template",
-]
+__all__ = ["ColumnCooccurrenceContentGenerator", "create_table", "create_template"]
 
 import logging
 from typing import TYPE_CHECKING, Any
 
+import numpy as np
 from coola import objects_are_equal
+from coola.utils import str_indent
+from grizz.utils.cooccurrence import compute_pairwise_cooccurrence
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
@@ -19,6 +19,7 @@ from arkas.figure.utils import figure2html
 from arkas.plotter import ColumnCooccurrencePlotter
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
 
     import polars as pl
 
@@ -101,6 +102,12 @@ class ColumnCooccurrenceContentGenerator(BaseSectionContentGenerator):
                 "nrows": f"{self._frame.shape[0]:,}",
                 "ncols": f"{self._frame.shape[1]:,}",
                 "figure": figure2html(figures["column_cooccurrence"], close_fig=True),
+                "table": create_table_section(
+                    matrix=compute_pairwise_cooccurrence(
+                        frame=self._frame, ignore_self=self._ignore_self
+                    ),
+                    columns=list(self._frame.columns),
+                ),
             }
         )
 
@@ -126,4 +133,87 @@ def create_template() -> str:
   <li> number of rows: {{nrows}}</li>
 </ul>
 {{figure}}
+{{table}}
 """
+
+
+def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> str:
+    if matrix.shape[0] == 0:
+        return "<span>&#9888;</span> No table is generated because the column is empty"
+
+    return Template(
+        """<details>
+    <summary>[show top {{top}} pairwise column co-occurrence]</summary>
+
+    <ul>
+      <li> <b>count</b>: is the number of occurrences of the value </li>
+    </ul>
+
+    {{table}}
+</details>
+"""
+    ).render({"top": top, "table": create_table(matrix=matrix, columns=columns, top=top)})
+
+
+def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> str:
+    rows, cols = np.unravel_index(np.argsort(matrix, axis=None), matrix.shape)
+    rows, cols = rows[::-1], cols[::-1]
+    table_rows = []
+    for i, (r, c) in enumerate(zip(rows, cols)):
+        table_rows.append(
+            create_table_row(
+                rank=i + 1, col1=columns[r], col2=columns[c], count=matrix[r, c].item()
+            )
+        )
+    table_rows = "\n".join(table_rows)
+    return Template(
+        """<table class="table table-hover table-responsive w-auto" >
+    <thead class="thead table-group-divider">
+        <tr><th>rank</th><th>column (row)</th><th>column (col)</th><th>count</th></tr>
+    </thead>
+    <tbody class="tbody table-group-divider">
+        {{rows}}
+        <tr class="table-group-divider"></tr>
+    </tbody>
+</table>
+"""
+    ).render({"rows": str_indent(table_rows, num_spaces=8)})
+
+
+def create_table_row(rank: int, col1: str, col2: str, count: int) -> str:
+    r"""Return the HTML code of a table row.
+
+    Args:
+        rank: The rank of the pair of columns.
+        col1: The first column.
+        col2:  The second column.
+        count: The number of co-occurrence.
+
+    Returns:
+        The table row.
+
+    Example usage:
+
+    ```pycon
+
+    >>> import polars as pl
+    >>> from arkas.content.column_cooccurrence import create_table_row
+    >>> row = create_table_row(rank=2, col1="cat", col2="meow", count=42)
+
+    ```
+    """
+    return Template(
+        "<tr><th>{{rank}}</th>"
+        "<td>{{col1}}</td>"
+        "<td>{{col2}}</td>"
+        '<td style="text-align: right;">{{count}}</td>'
+        "</tr>"
+    ).render(
+        {
+            "num_style": 'style="text-align: right;"',
+            "rank": rank,
+            "col1": col1,
+            "col2": col2,
+            "count": count,
+        }
+    )
