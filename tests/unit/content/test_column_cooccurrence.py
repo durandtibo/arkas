@@ -194,9 +194,9 @@ def test_create_table() -> None:
         "    </thead>\n"
         '    <tbody class="tbody table-group-divider">\n'
         '        <tr><th>1</th><td>col1</td><td>col1</td><td style="text-align: right;">80</td><td style="text-align: right;">80.0000 %</td></tr>\n'
-        '        <tr><th>2</th><td>col3</td><td>col1</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
-        '        <tr><th>3</th><td>col3</td><td>col2</td><td style="text-align: right;">5</td><td style="text-align: right;">5.0000 %</td></tr>\n'
-        '        <tr><th>4</th><td>col2</td><td>col1</td><td style="text-align: right;">4</td><td style="text-align: right;">4.0000 %</td></tr>\n'
+        '        <tr><th>2</th><td>col1</td><td>col3</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
+        '        <tr><th>3</th><td>col2</td><td>col3</td><td style="text-align: right;">5</td><td style="text-align: right;">5.0000 %</td></tr>\n'
+        '        <tr><th>4</th><td>col1</td><td>col2</td><td style="text-align: right;">4</td><td style="text-align: right;">4.0000 %</td></tr>\n'
         '        <tr><th>5</th><td>col3</td><td>col3</td><td style="text-align: right;">3</td><td style="text-align: right;">3.0000 %</td></tr>\n'
         '        <tr><th>6</th><td>col2</td><td>col2</td><td style="text-align: right;">2</td><td style="text-align: right;">2.0000 %</td></tr>\n'
         '        <tr class="table-group-divider"></tr>\n'
@@ -215,7 +215,7 @@ def test_create_table_top_2() -> None:
         "    </thead>\n"
         '    <tbody class="tbody table-group-divider">\n'
         '        <tr><th>1</th><td>col1</td><td>col1</td><td style="text-align: right;">80</td><td style="text-align: right;">80.0000 %</td></tr>\n'
-        '        <tr><th>2</th><td>col3</td><td>col1</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
+        '        <tr><th>2</th><td>col1</td><td>col3</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
         '        <tr class="table-group-divider"></tr>\n'
         "    </tbody>\n"
         "</table>"

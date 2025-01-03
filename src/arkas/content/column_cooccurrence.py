@@ -171,7 +171,7 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
 
     return Template(
         """<details>
-    <summary>[show top-{{top}} pairwise column co-occurrence]</summary>
+    <summary>[show top-{{top}} pairwise column co-occurrence]</summary><br>
     The following table shows the top-{{top}} pairwise column co-occurrences.
     The co-occurrence matrix is symmetric and only the co-occurrences in the lower triangular matrix are shown.
     <ul>
@@ -179,7 +179,7 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
       <li> <b>column 1</b>: represents the first column of the co-occurrence matrix </li>
       <li> <b>column 2</b>: represents the second column of the co-occurrence matrix </li>
       <li> <b>count</b>: is the number of co-occurrences </li>
-      <li> <b>percentage</b>: is the percentage of co-occurrences w.r.t. the total of co-occurrences </li>
+      <li> <b>percentage</b>: is the percentage of co-occurrences w.r.t. the total number of co-occurrences </li>
     </ul>
 
     {{table}}
@@ -210,9 +210,9 @@ def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> s
 
     ```
     """
-    total = np.tril(matrix).sum().item()
-    # Fill the upper triangular part with -1 before to sort the occurrences
-    half_matrix = np.tril(matrix) - np.triu(np.ones_like(matrix), 1)
+    total = np.triu(matrix).sum().item()
+    # Fill the lower triangular part with -1 before to sort the occurrences
+    half_matrix = np.triu(matrix) - np.tril(np.ones_like(matrix), 1)
     rows, cols = np.unravel_index(np.argsort(half_matrix, axis=None), matrix.shape)
     n = matrix.shape[0]
     m = min(top, int(n * (n + 1) / 2))
