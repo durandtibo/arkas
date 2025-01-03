@@ -3,7 +3,7 @@ plotter."""
 
 from __future__ import annotations
 
-__all__ = ["ColumnCooccurrencePlotter"]
+__all__ = ["BaseFigureCreator", "ColumnCooccurrencePlotter", "MatplotlibFigureCreator"]
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
@@ -145,6 +145,7 @@ class ColumnCooccurrencePlotter(BasePlotter):
         frame: The DataFrame to analyze.
         ignore_self: If ``True``, the diagonal of the co-occurrence
             matrix (a.k.a. self-co-occurrence) is set to 0.
+        figure_config: The figure configuration.
 
     Example usage:
 
@@ -174,11 +175,14 @@ class ColumnCooccurrencePlotter(BasePlotter):
     )
 
     def __init__(
-        self, frame: pl.DataFrame, ignore_self: bool = False, config: BaseFigureConfig | None = None
+        self,
+        frame: pl.DataFrame,
+        ignore_self: bool = False,
+        figure_config: BaseFigureConfig | None = None,
     ) -> None:
         self._frame = frame
         self._ignore_self = bool(ignore_self)
-        self._config = config or DefaultFigureConfig()
+        self._figure_config = figure_config or DefaultFigureConfig()
 
     def __repr__(self) -> str:
         return (
@@ -197,8 +201,10 @@ class ColumnCooccurrencePlotter(BasePlotter):
         )
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:
-        figure = self.registry.find_creator(self._config.backend()).create(
-            matrix=self.cooccurrence_matrix(), columns=self._frame.columns, config=self._config
+        figure = self.registry.find_creator(self._figure_config.backend()).create(
+            matrix=self.cooccurrence_matrix(),
+            columns=self._frame.columns,
+            config=self._figure_config,
         )
         return {f"{prefix}column_cooccurrence{suffix}": figure}
 
