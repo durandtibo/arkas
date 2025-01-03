@@ -179,7 +179,7 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
       <li> <b>column 1</b>: represents the first column of the co-occurrence matrix </li>
       <li> <b>column 2</b>: represents the second column of the co-occurrence matrix </li>
       <li> <b>count</b>: is the number of co-occurrences </li>
-      <li> <b>percentage</b>: is the percentage of co-occurrences w.r.t. the total of co-occurrences </li>
+      <li> <b>percentage</b>: is the percentage of co-occurrences w.r.t. the total number of co-occurrences </li>
     </ul>
 
     {{table}}
