@@ -21,9 +21,9 @@ def dataframe() -> pl.DataFrame:
     )
 
 
-############################################
+##############################################
 #     Tests for ColumnCooccurrenceOutput     #
-############################################
+##############################################
 
 
 def test_column_cooccurrence_output_repr(dataframe: pl.DataFrame) -> None:
@@ -84,9 +84,15 @@ def test_column_cooccurrence_output_get_content_generator_lazy_true(
     dataframe: pl.DataFrame, ignore_self: bool
 ) -> None:
     assert (
-        ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self)
+        ColumnCooccurrenceOutput(
+            dataframe, ignore_self=ignore_self, figure_config=MatplotlibFigureConfig(dpi=50)
+        )
         .get_content_generator()
-        .equal(ColumnCooccurrenceContentGenerator(dataframe, ignore_self=ignore_self))
+        .equal(
+            ColumnCooccurrenceContentGenerator(
+                dataframe, ignore_self=ignore_self, figure_config=MatplotlibFigureConfig(dpi=50)
+            )
+        )
     )
 
 
@@ -102,17 +108,50 @@ def test_column_cooccurrence_output_get_content_generator_lazy_false(
     )
 
 
-def test_column_cooccurrence_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert ColumnCooccurrenceOutput(dataframe).get_evaluator().equal(Evaluator())
+@pytest.mark.parametrize("ignore_self", [True, False])
+def test_column_cooccurrence_output_get_evaluator_lazy_true(
+    dataframe: pl.DataFrame, ignore_self: bool
+) -> None:
+    assert (
+        ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self)
+        .get_evaluator()
+        .equal(Evaluator())
+    )
 
 
-def test_column_cooccurrence_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert ColumnCooccurrenceOutput(dataframe).get_evaluator(lazy=False).equal(Evaluator())
+@pytest.mark.parametrize("ignore_self", [True, False])
+def test_column_cooccurrence_output_get_evaluator_lazy_false(
+    dataframe: pl.DataFrame, ignore_self: bool
+) -> None:
+    assert (
+        ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self)
+        .get_evaluator(lazy=False)
+        .equal(Evaluator())
+    )
 
 
-def test_column_cooccurrence_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert ColumnCooccurrenceOutput(dataframe).get_plotter().equal(Plotter())
+@pytest.mark.parametrize("ignore_self", [True, False])
+def test_column_cooccurrence_output_get_plotter_lazy_true(
+    dataframe: pl.DataFrame, ignore_self: bool
+) -> None:
+    assert (
+        ColumnCooccurrenceOutput(
+            dataframe, ignore_self=ignore_self, figure_config=MatplotlibFigureConfig(dpi=30)
+        )
+        .get_content_generator()
+        .equal(
+            ColumnCooccurrenceContentGenerator(
+                dataframe, ignore_self=ignore_self, figure_config=MatplotlibFigureConfig(dpi=30)
+            )
+        )
+    )
 
 
-def test_column_cooccurrence_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert ColumnCooccurrenceOutput(dataframe).get_plotter(lazy=False).equal(Plotter())
+@pytest.mark.parametrize("ignore_self", [True, False])
+def test_column_cooccurrence_output_get_plotter_lazy_false(
+    dataframe: pl.DataFrame, ignore_self: bool
+) -> None:
+    assert isinstance(
+        ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self).get_plotter(lazy=False),
+        Plotter,
+    )
