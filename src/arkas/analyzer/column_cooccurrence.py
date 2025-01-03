@@ -51,7 +51,7 @@ class ColumnCooccurrenceAnalyzer(BaseInNLazyAnalyzer):
     >>> from arkas.analyzer import ColumnCooccurrenceAnalyzer
     >>> analyzer = ColumnCooccurrenceAnalyzer()
     >>> analyzer
-    ColumnCooccurrenceAnalyzer(columns=None, exclude_columns=(), missing_policy='raise', ignore_self=False)
+    ColumnCooccurrenceAnalyzer(columns=None, exclude_columns=(), missing_policy='raise', ignore_self=False, figure_config=None)
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 1, 0, 0, 1, 0],

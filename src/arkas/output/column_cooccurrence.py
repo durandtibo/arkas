@@ -49,7 +49,7 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
-    Plotter(count=0)
+    ColumnCooccurrencePlotter(shape=(7, 3), ignore_self=False)
 
     ```
     """
