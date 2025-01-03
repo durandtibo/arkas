@@ -59,7 +59,7 @@ def main() -> None:
                 "co-occurrence": ColumnCooccurrenceAnalyzer(
                     columns=[f"col{i}" for i in range(ncols)],
                     ignore_self=True,
-                    figure_config=MatplotlibFigureConfig(dpi=100),
+                    figure_config=MatplotlibFigureConfig(dpi=500),
                 ),
             }
         ),
