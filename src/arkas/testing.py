@@ -8,6 +8,7 @@ __all__ = [
     "hydra_available",
     "markdown_available",
     "omegaconf_available",
+    "plotly_available",
     "scipy_available",
 ]
 
@@ -19,6 +20,7 @@ from arkas.utils.imports import (
     is_hydra_available,
     is_markdown_available,
     is_omegaconf_available,
+    is_plotly_available,
     is_scipy_available,
 )
 
@@ -27,4 +29,5 @@ hya_available = pytest.mark.skipif(not is_hya_available(), reason="requires hya"
 hydra_available = pytest.mark.skipif(not is_hydra_available(), reason="requires hydra")
 markdown_available = pytest.mark.skipif(not is_markdown_available(), reason="requires markdown")
 omegaconf_available = pytest.mark.skipif(not is_omegaconf_available(), reason="requires omegaconf")
+plotly_available = pytest.mark.skipif(not is_plotly_available(), reason="requires plotly")
 scipy_available = pytest.mark.skipif(not is_scipy_available(), reason="requires scipy")

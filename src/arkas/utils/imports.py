@@ -8,6 +8,7 @@ __all__ = [
     "check_hydra",
     "check_markdown",
     "check_omegaconf",
+    "check_plotly",
     "check_scipy",
     "colorlog_available",
     "hya_available",
@@ -17,9 +18,11 @@ __all__ = [
     "is_hydra_available",
     "is_markdown_available",
     "is_omegaconf_available",
+    "is_plotly_available",
     "is_scipy_available",
     "markdown_available",
     "omegaconf_available",
+    "plotly_available",
     "scipy_available",
 ]
 
@@ -335,9 +338,9 @@ def markdown_available(fn: Callable[..., Any]) -> Callable[..., Any]:
     return decorator_package_available(fn, is_markdown_available)
 
 
-####################
+#####################
 #     omegaconf     #
-####################
+#####################
 
 
 def is_omegaconf_available() -> bool:
@@ -409,6 +412,82 @@ def omegaconf_available(fn: Callable[..., Any]) -> Callable[..., Any]:
     ```
     """
     return decorator_package_available(fn, is_omegaconf_available)
+
+
+##################
+#     plotly     #
+##################
+
+
+def is_plotly_available() -> bool:
+    r"""Indicate if the ``plotly`` package is installed or not.
+
+    Returns:
+        ``True`` if ``plotly`` is available otherwise
+            ``False``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import is_plotly_available
+    >>> is_plotly_available()
+
+    ```
+    """
+    return package_available("plotly")
+
+
+def check_plotly() -> None:
+    r"""Check if the ``plotly`` package is installed.
+
+    Raises:
+        RuntimeError: if the ``plotly`` package is not
+            installed.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import check_plotly
+    >>> check_plotly()
+
+    ```
+    """
+    if not is_plotly_available():
+        msg = (
+            "'plotly' package is required but not installed. "
+            "You can install 'plotly' package with the command:\n\n"
+            "pip install plotly\n"
+        )
+        raise RuntimeError(msg)
+
+
+def plotly_available(fn: Callable[..., Any]) -> Callable[..., Any]:
+    r"""Implement a decorator to execute a function only if ``plotly``
+    package is installed.
+
+    Args:
+        fn: The function to execute.
+
+    Returns:
+        A wrapper around ``fn`` if ``plotly`` package is
+            installed, otherwise ``None``.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.utils.imports import plotly_available
+    >>> @plotly_available
+    ... def my_function(n: int = 0) -> int:
+    ...     return 42 + n
+    ...
+    >>> my_function()
+
+    ```
+    """
+    return decorator_package_available(fn, is_plotly_available)
 
 
 #################

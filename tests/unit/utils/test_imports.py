@@ -10,6 +10,7 @@ from arkas.utils.imports import (
     check_hydra,
     check_markdown,
     check_omegaconf,
+    check_plotly,
     check_scipy,
     colorlog_available,
     hya_available,
@@ -19,9 +20,11 @@ from arkas.utils.imports import (
     is_hydra_available,
     is_markdown_available,
     is_omegaconf_available,
+    is_plotly_available,
     is_scipy_available,
     markdown_available,
     omegaconf_available,
+    plotly_available,
     scipy_available,
 )
 
@@ -294,6 +297,60 @@ def test_omegaconf_available_decorator_without_package() -> None:
     with patch("arkas.utils.imports.is_omegaconf_available", lambda: False):
 
         @omegaconf_available
+        def fn(n: int = 0) -> int:
+            return 42 + n
+
+        assert fn(2) is None
+
+
+##################
+#     plotly     #
+##################
+
+
+def test_check_plotly_with_package() -> None:
+    with patch("arkas.utils.imports.is_plotly_available", lambda: True):
+        check_plotly()
+
+
+def test_check_plotly_without_package() -> None:
+    with (
+        patch("arkas.utils.imports.is_plotly_available", lambda: False),
+        pytest.raises(RuntimeError, match="'plotly' package is required but not installed."),
+    ):
+        check_plotly()
+
+
+def test_is_plotly_available() -> None:
+    assert isinstance(is_plotly_available(), bool)
+
+
+def test_plotly_available_with_package() -> None:
+    with patch("arkas.utils.imports.is_plotly_available", lambda: True):
+        fn = plotly_available(my_function)
+        assert fn(2) == 44
+
+
+def test_plotly_available_without_package() -> None:
+    with patch("arkas.utils.imports.is_plotly_available", lambda: False):
+        fn = plotly_available(my_function)
+        assert fn(2) is None
+
+
+def test_plotly_available_decorator_with_package() -> None:
+    with patch("arkas.utils.imports.is_plotly_available", lambda: True):
+
+        @plotly_available
+        def fn(n: int = 0) -> int:
+            return 42 + n
+
+        assert fn(2) == 44
+
+
+def test_plotly_available_decorator_without_package() -> None:
+    with patch("arkas.utils.imports.is_plotly_available", lambda: False):
+
+        @plotly_available
         def fn(n: int = 0) -> int:
             return 42 + n
 
