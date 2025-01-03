@@ -171,7 +171,7 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
 
     return Template(
         """<details>
-    <summary>[show top-{{top}} pairwise column co-occurrence]</summary>
+    <summary>[show top-{{top}} pairwise column co-occurrence]</summary><br>
     The following table shows the top-{{top}} pairwise column co-occurrences.
     The co-occurrence matrix is symmetric and only the co-occurrences in the lower triangular matrix are shown.
     <ul>
