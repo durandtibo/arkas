@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from arkas.figure import HtmlFigure
 
 ################################
@@ -35,6 +37,11 @@ def test_html_figure_equal_false_different_figure() -> None:
 
 def test_html_figure_equal_false_different_type() -> None:
     assert not HtmlFigure().equal(42)
+
+
+@pytest.mark.parametrize("reactive", [True, False])
+def test_html_figure_set_reactive(reactive: bool) -> None:
+    assert HtmlFigure("meow").set_reactive(reactive).equal(HtmlFigure("meow"))
 
 
 def test_html_figure_to_html() -> None:

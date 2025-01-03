@@ -47,6 +47,15 @@ def test_matplotlib_figure_equal_false_different_type(figure: plt.Figure) -> Non
 
 
 @pytest.mark.parametrize("reactive", [True, False])
+def test_matplotlib_figure_set_reactive(figure: plt.Figure, reactive: bool) -> None:
+    assert (
+        MatplotlibFigure(figure)
+        .set_reactive(reactive)
+        .equal(MatplotlibFigure(figure, reactive=reactive))
+    )
+
+
+@pytest.mark.parametrize("reactive", [True, False])
 def test_matplotlib_figure_to_html(figure: plt.Figure, reactive: bool) -> None:
     assert isinstance(MatplotlibFigure(figure, reactive=reactive).to_html(), str)
 

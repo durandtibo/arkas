@@ -4,9 +4,17 @@ from __future__ import annotations
 
 __all__ = ["HtmlFigure"]
 
+import sys
 from typing import Any
 
 from arkas.figure.base import BaseFigure
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:  # pragma: no cover
+    from typing_extensions import (
+        Self,  # use backport because it was added in python 3.11
+    )
 
 
 class HtmlFigure(BaseFigure):
@@ -41,6 +49,9 @@ class HtmlFigure(BaseFigure):
         if not isinstance(other, self.__class__):
             return False
         return self._figure == other._figure
+
+    def set_reactive(self, reactive: bool) -> Self:  # noqa: ARG002
+        return self
 
     def to_html(self) -> str:
         return self._figure

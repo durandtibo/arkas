@@ -4,8 +4,16 @@ from __future__ import annotations
 
 __all__ = ["BaseFigure", "BaseFigureConfig"]
 
+import sys
 from abc import ABC, abstractmethod
 from typing import Any
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:  # pragma: no cover
+    from typing_extensions import (
+        Self,  # use backport because it was added in python 3.11
+    )
 
 
 class BaseFigure(ABC):
@@ -71,11 +79,39 @@ class BaseFigure(ABC):
         """
 
     @abstractmethod
+    def set_reactive(self, reactive: bool) -> Self:
+        r"""Set the figure reactive mode.
+
+        Args:
+            reactive: The reactive mode.
+
+        Returns:
+            A new figure object with the right reactive mode.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from matplotlib import pyplot as plt
+        >>> from arkas.figure import MatplotlibFigure
+        >>> fig = MatplotlibFigure(plt.subplots()[0])
+        >>> fig
+        fig
+        >>> fig2 = fig.set_reactive(False)
+        >>> fig2
+        fig
+
+        ```
+        """
+
+    @abstractmethod
     def to_html(self) -> str:
         r"""Export the figure to a HTML code.
 
         Returns:
             The HTML code of the figure.
+
+        Example usage:
 
         ```pycon
 
