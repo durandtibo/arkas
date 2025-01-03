@@ -112,7 +112,8 @@ class MatplotlibFigureCreator(BaseFigureCreator):
             "xx-small" if matrix.shape[0] > 30 else "x-small" if matrix.shape[0] > 15 else "small"
         )
         fig, ax = plt.subplots(**config.get_args())
-        ax.imshow(matrix)
+        im = ax.imshow(matrix)
+        fig.colorbar(im, anchor=(-0.3, 0.0), aspect=30).ax.tick_params(labelsize=6)
         ax.set_xticks(
             range(len(columns)),
             labels=columns,
