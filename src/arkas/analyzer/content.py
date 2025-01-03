@@ -52,5 +52,5 @@ class ContentAnalyzer(BaseLazyAnalyzer):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"
 
-    def _analyze(self, frame: pl.DataFrame, lazy: bool = True) -> ContentOutput:  # noqa: ARG002
+    def _analyze(self, frame: pl.DataFrame) -> ContentOutput:  # noqa: ARG002
         return ContentOutput(self._content)
