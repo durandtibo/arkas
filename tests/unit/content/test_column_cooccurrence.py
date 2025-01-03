@@ -186,22 +186,19 @@ def test_create_table_section_empty() -> None:
 
 def test_create_table() -> None:
     assert create_table(
-        np.array([[5, 7, 1], [0, 6, 3], [72, 2, 4]]), columns=["col1", "col2", "col3"]
+        np.array([[80, 4, 6], [4, 2, 5], [6, 5, 3]]), columns=["col1", "col2", "col3"]
     ) == (
         '<table class="table table-hover table-responsive w-auto" >\n'
         '    <thead class="thead table-group-divider">\n'
-        "        <tr><th>rank</th><th>column (row)</th><th>column (col)</th><th>count</th><th>percentage</th></tr>\n"
+        "        <tr><th>rank</th><th>column 1</th><th>column 2</th><th>count</th><th>percentage</th></tr>\n"
         "    </thead>\n"
         '    <tbody class="tbody table-group-divider">\n'
-        '        <tr><th>1</th><td>col3</td><td>col1</td><td style="text-align: right;">72</td><td style="text-align: right;">72.0000 %</td></tr>\n'
-        '        <tr><th>2</th><td>col1</td><td>col2</td><td style="text-align: right;">7</td><td style="text-align: right;">7.0000 %</td></tr>\n'
-        '        <tr><th>3</th><td>col2</td><td>col2</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
-        '        <tr><th>4</th><td>col1</td><td>col1</td><td style="text-align: right;">5</td><td style="text-align: right;">5.0000 %</td></tr>\n'
-        '        <tr><th>5</th><td>col3</td><td>col3</td><td style="text-align: right;">4</td><td style="text-align: right;">4.0000 %</td></tr>\n'
-        '        <tr><th>6</th><td>col2</td><td>col3</td><td style="text-align: right;">3</td><td style="text-align: right;">3.0000 %</td></tr>\n'
-        '        <tr><th>7</th><td>col3</td><td>col2</td><td style="text-align: right;">2</td><td style="text-align: right;">2.0000 %</td></tr>\n'
-        '        <tr><th>8</th><td>col1</td><td>col3</td><td style="text-align: right;">1</td><td style="text-align: right;">1.0000 %</td></tr>\n'
-        '        <tr><th>9</th><td>col2</td><td>col1</td><td style="text-align: right;">0</td><td style="text-align: right;">0.0000 %</td></tr>\n'
+        '        <tr><th>1</th><td>col1</td><td>col1</td><td style="text-align: right;">80</td><td style="text-align: right;">80.0000 %</td></tr>\n'
+        '        <tr><th>2</th><td>col3</td><td>col1</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
+        '        <tr><th>3</th><td>col3</td><td>col2</td><td style="text-align: right;">5</td><td style="text-align: right;">5.0000 %</td></tr>\n'
+        '        <tr><th>4</th><td>col2</td><td>col1</td><td style="text-align: right;">4</td><td style="text-align: right;">4.0000 %</td></tr>\n'
+        '        <tr><th>5</th><td>col3</td><td>col3</td><td style="text-align: right;">3</td><td style="text-align: right;">3.0000 %</td></tr>\n'
+        '        <tr><th>6</th><td>col2</td><td>col2</td><td style="text-align: right;">2</td><td style="text-align: right;">2.0000 %</td></tr>\n'
         '        <tr class="table-group-divider"></tr>\n'
         "    </tbody>\n"
         "</table>"
@@ -210,15 +207,15 @@ def test_create_table() -> None:
 
 def test_create_table_top_2() -> None:
     assert create_table(
-        np.array([[5, 7, 1], [0, 6, 3], [72, 2, 4]]), columns=["col1", "col2", "col3"], top=2
+        np.array([[80, 4, 6], [4, 2, 5], [6, 5, 3]]), columns=["col1", "col2", "col3"], top=2
     ) == (
         '<table class="table table-hover table-responsive w-auto" >\n'
         '    <thead class="thead table-group-divider">\n'
-        "        <tr><th>rank</th><th>column (row)</th><th>column (col)</th><th>count</th><th>percentage</th></tr>\n"
+        "        <tr><th>rank</th><th>column 1</th><th>column 2</th><th>count</th><th>percentage</th></tr>\n"
         "    </thead>\n"
         '    <tbody class="tbody table-group-divider">\n'
-        '        <tr><th>1</th><td>col3</td><td>col1</td><td style="text-align: right;">72</td><td style="text-align: right;">72.0000 %</td></tr>\n'
-        '        <tr><th>2</th><td>col1</td><td>col2</td><td style="text-align: right;">7</td><td style="text-align: right;">7.0000 %</td></tr>\n'
+        '        <tr><th>1</th><td>col1</td><td>col1</td><td style="text-align: right;">80</td><td style="text-align: right;">80.0000 %</td></tr>\n'
+        '        <tr><th>2</th><td>col3</td><td>col1</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
         '        <tr class="table-group-divider"></tr>\n'
         "    </tbody>\n"
         "</table>"
@@ -229,7 +226,7 @@ def test_create_table_empty() -> None:
     assert create_table(matrix=np.zeros((0, 0)), columns=[]) == (
         '<table class="table table-hover table-responsive w-auto" >\n'
         '    <thead class="thead table-group-divider">\n'
-        "        <tr><th>rank</th><th>column (row)</th><th>column (col)</th><th>count</th><th>percentage</th></tr>\n"
+        "        <tr><th>rank</th><th>column 1</th><th>column 2</th><th>count</th><th>percentage</th></tr>\n"
         "    </thead>\n"
         '    <tbody class="tbody table-group-divider">\n'
         "        \n"

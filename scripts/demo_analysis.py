@@ -33,9 +33,9 @@ logger = logging.getLogger(__name__)
 
 def main() -> None:
     r"""Define the main function."""
-    n_samples = 1000
+    n_samples = 10000
     rng = np.random.default_rng(42)
-    ncols = 100
+    ncols = 10
     ingestor = Ingestor(
         pl.DataFrame(
             {
