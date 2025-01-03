@@ -6,6 +6,7 @@ __all__ = ["MatplotlibFigure", "MatplotlibFigureConfig"]
 
 import base64
 import io
+import sys
 from typing import Any
 
 import matplotlib.pyplot as plt
@@ -13,6 +14,13 @@ from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
 from arkas.figure.base import BaseFigure, BaseFigureConfig
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:  # pragma: no cover
+    from typing_extensions import (
+        Self,  # use backport because it was added in python 3.11
+    )
 
 
 class MatplotlibFigure(BaseFigure):
@@ -58,6 +66,9 @@ class MatplotlibFigure(BaseFigure):
             objects_are_equal(self.figure, other.figure, equal_nan=equal_nan)
             and self._reactive == other._reactive
         )
+
+    def set_reactive(self, reactive: bool) -> Self:
+        return self.__class__(figure=self.figure, reactive=reactive)
 
     def to_html(self) -> str:
         self._figure.tight_layout()
