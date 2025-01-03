@@ -24,6 +24,7 @@ from arkas.exporter import (
     ReportExporter,
     SequentialExporter,
 )
+from arkas.figure import MatplotlibFigureConfig
 from arkas.runner import AnalysisRunner
 from arkas.utils.logging import configure_logging
 
@@ -56,7 +57,9 @@ def main() -> None:
                 "group one": AccuracyAnalyzer(y_true="target", y_pred="pred"),
                 "group two": BalancedAccuracyAnalyzer(y_true="target", y_pred="pred"),
                 "co-occurrence": ColumnCooccurrenceAnalyzer(
-                    columns=[f"col{i}" for i in range(ncols)], ignore_self=True
+                    columns=[f"col{i}" for i in range(ncols)],
+                    ignore_self=True,
+                    figure_config=MatplotlibFigureConfig(dpi=500),
                 ),
             }
         ),

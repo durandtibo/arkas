@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
     import polars as pl
 
+    from arkas.figure import BaseFigureConfig
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,8 +26,22 @@ class ColumnCooccurrenceAnalyzer(BaseInNLazyAnalyzer):
     r"""Implement a pairwise column co-occurrence analyzer.
 
     Args:
+        columns: The columns to analyze. If ``None``, it analyzes all
+            the columns.
+        exclude_columns: The columns to exclude from the input
+            ``columns``. If any column is not found, it will be ignored
+            during the filtering process.
+        missing_policy: The policy on how to handle missing columns.
+            The following options are available: ``'ignore'``,
+            ``'warn'``, and ``'raise'``. If ``'raise'``, an exception
+            is raised if at least one column is missing.
+            If ``'warn'``, a warning is raised if at least one column
+            is missing and the missing columns are ignored.
+            If ``'ignore'``, the missing columns are ignored and
+            no warning message appears.
         ignore_self: If ``True``, the diagonal of the co-occurrence
             matrix (a.k.a. self-co-occurrence) is set to 0.
+        figure_config: The figure configuration.
 
     Example usage:
 
@@ -54,8 +70,9 @@ class ColumnCooccurrenceAnalyzer(BaseInNLazyAnalyzer):
         self,
         columns: Sequence[str] | None = None,
         exclude_columns: Sequence[str] = (),
-        ignore_self: bool = False,
         missing_policy: str = "raise",
+        ignore_self: bool = False,
+        figure_config: BaseFigureConfig | None = None,
     ) -> None:
         super().__init__(
             columns=columns,
@@ -63,9 +80,13 @@ class ColumnCooccurrenceAnalyzer(BaseInNLazyAnalyzer):
             missing_policy=missing_policy,
         )
         self._ignore_self = ignore_self
+        self._figure_config = figure_config
 
     def get_args(self) -> dict:
-        return super().get_args() | {"ignore_self": self._ignore_self}
+        return super().get_args() | {
+            "ignore_self": self._ignore_self,
+            "figure_config": self._figure_config,
+        }
 
     def _analyze(self, frame: pl.DataFrame) -> ColumnCooccurrenceOutput:
         logger.info(
@@ -75,4 +96,6 @@ class ColumnCooccurrenceAnalyzer(BaseInNLazyAnalyzer):
         columns = self.find_common_columns(frame)
         out = frame.select(columns)
         logger.info(str_shape_diff(orig=frame.shape, final=out.shape))
-        return ColumnCooccurrenceOutput(frame=out, ignore_self=self._ignore_self)
+        return ColumnCooccurrenceOutput(
+            frame=out, ignore_self=self._ignore_self, figure_config=self._figure_config
+        )

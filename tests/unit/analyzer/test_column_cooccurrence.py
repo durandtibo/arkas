@@ -8,6 +8,7 @@ from coola import objects_are_equal
 from grizz.exceptions import ColumnNotFoundError, ColumnNotFoundWarning
 
 from arkas.analyzer import ColumnCooccurrenceAnalyzer
+from arkas.figure import MatplotlibFigureConfig
 from arkas.output import ColumnCooccurrenceOutput, Output
 
 
@@ -58,6 +59,14 @@ def test_column_cooccurrence_analyzer_analyze_ignore_self(
                 ignore_self=ignore_self,
             )
         )
+    )
+
+
+def test_column_cooccurrence_analyzer_analyze_figure_config(dataframe: pl.DataFrame) -> None:
+    assert (
+        ColumnCooccurrenceAnalyzer(figure_config=MatplotlibFigureConfig(dpi=50))
+        .analyze(dataframe)
+        .equal(ColumnCooccurrenceOutput(dataframe, figure_config=MatplotlibFigureConfig(dpi=50)))
     )
 
 
@@ -149,5 +158,11 @@ def test_column_cooccurrence_analyzer_equal_false_different_type() -> None:
 def test_column_cooccurrence_analyzer_get_args() -> None:
     assert objects_are_equal(
         ColumnCooccurrenceAnalyzer().get_args(),
-        {"columns": None, "exclude_columns": (), "missing_policy": "raise", "ignore_self": False},
+        {
+            "columns": None,
+            "exclude_columns": (),
+            "missing_policy": "raise",
+            "ignore_self": False,
+            "figure_config": None,
+        },
     )
