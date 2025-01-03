@@ -196,8 +196,10 @@ class ColumnCooccurrencePlotter(BasePlotter):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self._ignore_self == other._ignore_self and objects_are_equal(
-            self._frame, other._frame, equal_nan=equal_nan
+        return (
+            self._ignore_self == other._ignore_self
+            and objects_are_equal(self._frame, other._frame, equal_nan=equal_nan)
+            and self._figure_config.equal(other._figure_config)
         )
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:

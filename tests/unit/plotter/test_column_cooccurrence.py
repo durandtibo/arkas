@@ -53,6 +53,22 @@ def test_column_cooccurrence_plotter_equal_false_different_frame(dataframe: pl.D
     assert not ColumnCooccurrencePlotter(dataframe).equal(ColumnCooccurrencePlotter(pl.DataFrame()))
 
 
+def test_column_cooccurrence_plotter_equal_false_different_ignore_self(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not ColumnCooccurrencePlotter(dataframe).equal(
+        ColumnCooccurrencePlotter(dataframe, ignore_self=True)
+    )
+
+
+def test_column_cooccurrence_plotter_equal_false_different_figure_config(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not ColumnCooccurrencePlotter(dataframe).equal(
+        ColumnCooccurrencePlotter(dataframe, figure_config=MatplotlibFigureConfig(dpi=100))
+    )
+
+
 def test_column_cooccurrence_plotter_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not ColumnCooccurrencePlotter(dataframe).equal(42)
 
@@ -134,6 +150,14 @@ def test_column_cooccurrence_plotter_cooccurrence_matrix_ignore_self(
         ColumnCooccurrencePlotter(dataframe, ignore_self=True).cooccurrence_matrix(),
         np.array([[0, 2, 1], [2, 0, 1], [1, 1, 0]], dtype=int),
     )
+
+
+def test_column_cooccurrence_plotter_plot_figure_config(dataframe: pl.DataFrame) -> None:
+    figures = ColumnCooccurrencePlotter(
+        dataframe, figure_config=MatplotlibFigureConfig(dpi=50)
+    ).plot()
+    assert len(figures) == 1
+    assert isinstance(figures["column_cooccurrence"], MatplotlibFigure)
 
 
 #############################################
