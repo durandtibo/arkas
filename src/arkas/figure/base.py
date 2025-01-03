@@ -96,10 +96,10 @@ class BaseFigure(ABC):
         >>> from arkas.figure import MatplotlibFigure
         >>> fig = MatplotlibFigure(plt.subplots()[0])
         >>> fig
-        fig
+        MatplotlibFigure(reactive=True)
         >>> fig2 = fig.set_reactive(False)
         >>> fig2
-        fig
+        MatplotlibFigure(reactive=False)
 
         ```
         """
