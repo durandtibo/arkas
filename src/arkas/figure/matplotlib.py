@@ -2,7 +2,7 @@ r"""Contain the implementation for matplotlib figures."""
 
 from __future__ import annotations
 
-__all__ = ["MatplotlibFigureConfig"]
+__all__ = ["MatplotlibFigure", "MatplotlibFigureConfig"]
 
 import base64
 import io
