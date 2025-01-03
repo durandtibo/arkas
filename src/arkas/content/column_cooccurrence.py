@@ -138,15 +138,40 @@ def create_template() -> str:
 
 
 def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> str:
+    r"""Return the HTML code of the table section.
+
+    Args:
+        matrix: The co-occurrence matrix.
+        columns: The column names.
+        top: The number of co-occurrence pairs to show in the table.
+
+    Returns:
+        The HTML code of the table section.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.content.column_cooccurrence import create_table_section
+    >>> section = create_table_section(
+    ...     matrix=np.array([[5, 7, 1], [0, 6, 3], [8, 2, 4]]), columns=["col1", "col2", "col3"]
+    ... )
+
+    ```
+    """
     if matrix.shape[0] == 0:
         return "<span>&#9888;</span> No table is generated because the column is empty"
 
     return Template(
         """<details>
-    <summary>[show top {{top}} pairwise column co-occurrence]</summary>
-
+    <summary>[show top-{{top}} pairwise column co-occurrence]</summary>
+    The following table shows the top-{{top}} pairwise column co-occurrences.
     <ul>
-      <li> <b>count</b>: is the number of occurrences of the value </li>
+      <li> <b>rank</b>: is the rank of the co-occurrence </li>
+      <li> <b>column (row)</b>: represents the first column of the co-occurrence matrix and corresponds to the row index </li>
+      <li> <b>column (col)</b>: represents the second column of the co-occurrence matrix and corresponds to the column index </li>
+      <li> <b>count</b>: is the number of co-occurrences </li>
+      <li> <b>percentage</b>: is the percentage of co-occurrences w.r.t. the total of co-occurrences </li>
     </ul>
 
     {{table}}
@@ -156,20 +181,42 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
 
 
 def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> str:
+    r"""Return the HTML code of the table.
+
+    Args:
+        matrix: The co-occurrence matrix.
+        columns: The column names.
+        top: The number of co-occurrence pairs to show in the table.
+
+    Returns:
+        The HTML code of the table.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.content.column_cooccurrence import create_table
+    >>> section = create_table(
+    ...     matrix=np.array([[5, 7, 1], [0, 6, 3], [8, 2, 4]]), columns=["col1", "col2", "col3"]
+    ... )
+
+    ```
+    """
+    total = matrix.sum().item()
     rows, cols = np.unravel_index(np.argsort(matrix, axis=None), matrix.shape)
-    rows, cols = rows[::-1], cols[::-1]
+    rows, cols = rows[: -top - 1 : -1], cols[: -top - 1 : -1]
     table_rows = []
     for i, (r, c) in enumerate(zip(rows, cols)):
         table_rows.append(
             create_table_row(
-                rank=i + 1, col1=columns[r], col2=columns[c], count=matrix[r, c].item()
+                rank=i + 1, col1=columns[r], col2=columns[c], count=matrix[r, c].item(), total=total
             )
         )
     table_rows = "\n".join(table_rows)
     return Template(
         """<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
-        <tr><th>rank</th><th>column (row)</th><th>column (col)</th><th>count</th></tr>
+        <tr><th>rank</th><th>column (row)</th><th>column (col)</th><th>count</th><th>percentage</th></tr>
     </thead>
     <tbody class="tbody table-group-divider">
         {{rows}}
@@ -180,14 +227,15 @@ def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> s
     ).render({"rows": str_indent(table_rows, num_spaces=8)})
 
 
-def create_table_row(rank: int, col1: str, col2: str, count: int) -> str:
+def create_table_row(rank: int, col1: str, col2: str, count: int, total: int) -> str:
     r"""Return the HTML code of a table row.
 
     Args:
         rank: The rank of the pair of columns.
         col1: The first column.
         col2:  The second column.
-        count: The number of co-occurrence.
+        count: The number of co-occurrences.
+        total: The total number of co-occurrences.
 
     Returns:
         The table row.
@@ -196,17 +244,18 @@ def create_table_row(rank: int, col1: str, col2: str, count: int) -> str:
 
     ```pycon
 
-    >>> import polars as pl
     >>> from arkas.content.column_cooccurrence import create_table_row
-    >>> row = create_table_row(rank=2, col1="cat", col2="meow", count=42)
+    >>> row = create_table_row(rank=2, col1="cat", col2="meow", count=42, total=100)
 
     ```
     """
+    pct = 100 * count / total if total > 0 else float("nan")
     return Template(
         "<tr><th>{{rank}}</th>"
         "<td>{{col1}}</td>"
         "<td>{{col2}}</td>"
         '<td style="text-align: right;">{{count}}</td>'
+        '<td style="text-align: right;">{{pct}}</td>'
         "</tr>"
     ).render(
         {
@@ -214,6 +263,7 @@ def create_table_row(rank: int, col1: str, col2: str, count: int) -> str:
             "rank": rank,
             "col1": col1,
             "col2": col2,
-            "count": count,
+            "count": f"{count:,}",
+            "pct": f"{pct:.4f} %",
         }
     )
