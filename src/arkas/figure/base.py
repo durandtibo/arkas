@@ -176,7 +176,7 @@ class BaseFigureConfig(ABC):
 
         >>> from arkas.figure import MatplotlibFigureConfig
         >>> config = MatplotlibFigureConfig()
-        ... cloned_config = config.clone()
+        >>> cloned_config = config.clone()
 
         ```
         """
