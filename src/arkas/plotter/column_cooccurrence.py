@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 from coola import objects_are_equal
-from grizz.utils.cooccurrence import compute_pairwise_cooccurrence
 
+from arkas.evaluator2 import ColumnCooccurrenceEvaluator
 from arkas.figure.creator import FigureCreatorRegistry
 from arkas.figure.html import HtmlFigure
 from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
@@ -165,7 +165,7 @@ class ColumnCooccurrencePlotter(BasePlotter):
     ```
     """
 
-    registry: FigureCreatorRegistry = FigureCreatorRegistry(
+    registry = FigureCreatorRegistry[BaseFigureCreator](
         {MatplotlibFigureConfig.backend(): MatplotlibFigureCreator()}
     )
 
@@ -199,16 +199,19 @@ class ColumnCooccurrencePlotter(BasePlotter):
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:
         figure = self.registry.find_creator(self._figure_config.backend()).create(
-            matrix=self.cooccurrence_matrix(),
+            matrix=self.compute_cooccurrence_matrix(),
             columns=self._frame.columns,
             config=self._figure_config,
         )
         return {f"{prefix}column_cooccurrence{suffix}": figure}
 
-    def cooccurrence_matrix(self) -> np.ndarray:
+    def compute_cooccurrence_matrix(self) -> np.ndarray:
         r"""Return the pairwise column co-occurrence matrix.
 
         Returns:
             The pairwise column co-occurrence.
         """
-        return compute_pairwise_cooccurrence(frame=self._frame, ignore_self=self._ignore_self)
+        metrics = ColumnCooccurrenceEvaluator(
+            frame=self._frame, ignore_self=self._ignore_self
+        ).evaluate()
+        return metrics["column_cooccurrence"]
