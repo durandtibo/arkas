@@ -75,6 +75,7 @@ class PlotColumnContentGenerator(BaseSectionContentGenerator):
             {
                 "nrows": f"{self._state.dataframe.shape[0]:,}",
                 "ncols": f"{self._state.dataframe.shape[1]:,}",
+                "columns": ", ".join(self._state.dataframe.columns),
                 "figure": figure2html(figures["plot_column"], close_fig=True),
             }
         )
@@ -95,9 +96,10 @@ def create_template() -> str:
 
     ```
     """
-    return """TODO.
+    return """This section plots the content of some columns.
+The x-axis is the row index and the y-axis shows the value.
 <ul>
-  <li> number of columns: {{ncols}} </li>
+  <li> {{ncols}} columns: {{columns}} </li>
   <li> number of rows: {{nrows}}</li>
 </ul>
 {{figure}}
