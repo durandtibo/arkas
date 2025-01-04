@@ -79,11 +79,6 @@ def test_plotly_figure_to_html(figure: Figure, reactive: bool) -> None:
 
 
 @plotly_available
-def test_plotly_figure_config_backend() -> None:
-    assert PlotlyFigureConfig.backend() == "plotly"
-
-
-@plotly_available
 def test_plotly_figure_config_repr() -> None:
     assert repr(PlotlyFigureConfig()) == "PlotlyFigureConfig()"
 
@@ -91,6 +86,18 @@ def test_plotly_figure_config_repr() -> None:
 @plotly_available
 def test_plotly_figure_config_str() -> None:
     assert str(PlotlyFigureConfig()) == "PlotlyFigureConfig()"
+
+
+@plotly_available
+def test_plotly_figure_config_backend() -> None:
+    assert PlotlyFigureConfig.backend() == "plotly"
+
+
+@plotly_available
+def test_plotly_figure_config_clone() -> None:
+    config = PlotlyFigureConfig(dpi=300)
+    cloned_config = config.clone()
+    assert config.equal(cloned_config)
 
 
 @plotly_available

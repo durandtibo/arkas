@@ -66,16 +66,24 @@ def test_matplotlib_figure_to_html(figure: plt.Figure, reactive: bool) -> None:
 ############################################
 
 
-def test_matplotlib_figure_config_backend() -> None:
-    assert MatplotlibFigureConfig.backend() == "matplotlib"
-
-
 def test_matplotlib_figure_config_repr() -> None:
     assert repr(MatplotlibFigureConfig()) == "MatplotlibFigureConfig(color_norm=None)"
 
 
 def test_matplotlib_figure_config_str() -> None:
     assert str(MatplotlibFigureConfig()) == "MatplotlibFigureConfig(color_norm=None)"
+
+
+def test_matplotlib_figure_config_backend() -> None:
+    assert MatplotlibFigureConfig.backend() == "matplotlib"
+
+
+def test_matplotlib_figure_config_clone() -> None:
+    config = MatplotlibFigureConfig(color_norm=LogNorm(), dpi=300)
+    cloned_config = config.clone()
+    assert config.equal(cloned_config)
+    assert isinstance(config.get_color_norm(), LogNorm)
+    assert isinstance(cloned_config.get_color_norm(), LogNorm)
 
 
 def test_matplotlib_figure_config_equal_true() -> None:

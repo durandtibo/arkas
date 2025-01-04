@@ -164,6 +164,24 @@ class BaseFigureConfig(ABC):
         """
 
     @abstractmethod
+    def clone(self) -> Self:
+        r"""Return a copy of the config.
+
+        Returns:
+            A copy of the config.
+
+         Example usage:
+
+        ```pycon
+
+        >>> from arkas.figure import MatplotlibFigureConfig
+        >>> config = MatplotlibFigureConfig()
+        ... cloned_config = config.clone()
+
+        ```
+        """
+
+    @abstractmethod
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         r"""Indicate if two configs are equal or not.
 
