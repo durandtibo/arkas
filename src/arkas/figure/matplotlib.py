@@ -5,6 +5,7 @@ from __future__ import annotations
 __all__ = ["MatplotlibFigure", "MatplotlibFigureConfig"]
 
 import base64
+import copy
 import io
 import sys
 from typing import TYPE_CHECKING, Any
@@ -143,4 +144,4 @@ class MatplotlibFigureConfig(BaseFigureConfig):
 
         ```
         """
-        return self._color_norm
+        return copy.copy(self._color_norm)
