@@ -3,7 +3,7 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from arkas.content import ContentGenerator
+from arkas.content import ContentGenerator, PlotColumnContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, PlotColumnOutput
 from arkas.plotter import PlotColumnPlotter, Plotter
@@ -52,15 +52,14 @@ def test_plot_column_output_get_content_generator_lazy_true(dataframe: pl.DataFr
     assert (
         PlotColumnOutput(DataFrameState(dataframe))
         .get_content_generator()
-        .equal(ContentGenerator())
+        .equal(PlotColumnContentGenerator(DataFrameState(dataframe)))
     )
 
 
 def test_plot_column_output_get_content_generator_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert (
-        PlotColumnOutput(DataFrameState(dataframe))
-        .get_content_generator(lazy=False)
-        .equal(ContentGenerator())
+    assert isinstance(
+        PlotColumnOutput(DataFrameState(dataframe)).get_content_generator(lazy=False),
+        ContentGenerator,
     )
 
 

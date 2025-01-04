@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.content import ContentGenerator
+from arkas.content.plot_column import PlotColumnContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.plot_column import PlotColumnPlotter
@@ -71,8 +71,8 @@ class PlotColumnOutput(BaseLazyOutput):
             return False
         return self._state.equal(self._state, equal_nan=equal_nan)
 
-    def _get_content_generator(self) -> ContentGenerator:
-        return ContentGenerator()
+    def _get_content_generator(self) -> PlotColumnContentGenerator:
+        return PlotColumnContentGenerator(self._state)
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
