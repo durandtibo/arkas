@@ -13,10 +13,9 @@ from coola import objects_are_equal
 from grizz.utils.cooccurrence import compute_pairwise_cooccurrence
 
 from arkas.figure.creator import FigureCreatorRegistry
-from arkas.figure.default import DefaultFigureConfig
 from arkas.figure.html import HtmlFigure
 from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
-from arkas.figure.utils import MISSING_FIGURE_MESSAGE
+from arkas.figure.utils import MISSING_FIGURE_MESSAGE, get_default_config
 from arkas.plot.utils import readable_xticklabels, readable_yticklabels
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
@@ -103,13 +102,13 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         return f"{self.__class__.__qualname__}()"
 
     def create(
-        self, matrix: np.ndarray, columns: Sequence[str], config: BaseFigureConfig
+        self, matrix: np.ndarray, columns: Sequence[str], config: MatplotlibFigureConfig
     ) -> BaseFigure:
         if matrix.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
         fig, ax = plt.subplots(**config.get_args())
-        im = ax.imshow(matrix)
+        im = ax.imshow(matrix, norm=config.get_color_norm())
         fig.colorbar(im)
         ax.set_xticks(
             range(len(columns)),
@@ -167,10 +166,7 @@ class ColumnCooccurrencePlotter(BasePlotter):
     """
 
     registry: FigureCreatorRegistry = FigureCreatorRegistry(
-        {
-            DefaultFigureConfig.backend(): MatplotlibFigureCreator(),
-            MatplotlibFigureConfig.backend(): MatplotlibFigureCreator(),
-        }
+        {MatplotlibFigureConfig.backend(): MatplotlibFigureCreator()}
     )
 
     def __init__(
@@ -181,7 +177,7 @@ class ColumnCooccurrencePlotter(BasePlotter):
     ) -> None:
         self._frame = frame
         self._ignore_self = bool(ignore_self)
-        self._figure_config = figure_config or DefaultFigureConfig()
+        self._figure_config = figure_config or get_default_config()
 
     def __repr__(self) -> str:
         return (
