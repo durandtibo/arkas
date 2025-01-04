@@ -2,7 +2,7 @@ r"""Contain the implementation of a DataFrame column plotter."""
 
 from __future__ import annotations
 
-__all__ = ["BaseFigureCreator", "MatplotlibFigureCreator", "PlotDataFramePlotter"]
+__all__ = ["BaseFigureCreator", "MatplotlibFigureCreator", "PlotColumnPlotter"]
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
@@ -126,7 +126,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         return MatplotlibFigure(fig)
 
 
-class PlotDataFramePlotter(BasePlotter):
+class PlotColumnPlotter(BasePlotter):
     r"""Implement a DataFrame column plotter.
 
     Args:
@@ -137,7 +137,7 @@ class PlotDataFramePlotter(BasePlotter):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.plotter import PlotDataFramePlotter
+    >>> from arkas.plotter import PlotColumnPlotter
     >>> from arkas.state import DataFrameState
     >>> frame = pl.DataFrame(
     ...     {
@@ -147,9 +147,9 @@ class PlotDataFramePlotter(BasePlotter):
     ...     },
     ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
     ... )
-    >>> plotter = PlotDataFramePlotter(DataFrameState(frame))
+    >>> plotter = PlotColumnPlotter(DataFrameState(frame))
     >>> plotter
-    PlotDataFramePlotter(
+    PlotColumnPlotter(
       (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
     )
 

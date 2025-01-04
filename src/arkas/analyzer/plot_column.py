@@ -2,7 +2,7 @@ r"""Implement an analyzer that plots the content of each column."""
 
 from __future__ import annotations
 
-__all__ = ["PlotDataFrameAnalyzer"]
+__all__ = ["PlotColumnAnalyzer"]
 
 import logging
 from typing import TYPE_CHECKING
@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from grizz.utils.format import str_shape_diff
 
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer
-from arkas.output.plot_frame import PlotDataFrameOutput
+from arkas.output.plot_column import PlotColumnOutput
 from arkas.state import DataFrameState
 
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class PlotDataFrameAnalyzer(BaseInNLazyAnalyzer):
+class PlotColumnAnalyzer(BaseInNLazyAnalyzer):
     r"""Implement an analyzer that plots the content of each column.
 
     Args:
@@ -47,10 +47,10 @@ class PlotDataFrameAnalyzer(BaseInNLazyAnalyzer):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.analyzer import PlotDataFrameAnalyzer
-    >>> analyzer = PlotDataFrameAnalyzer()
+    >>> from arkas.analyzer import PlotColumnAnalyzer
+    >>> analyzer = PlotColumnAnalyzer()
     >>> analyzer
-    PlotDataFrameAnalyzer(columns=None, exclude_columns=(), missing_policy='raise', figure_config=None)
+    PlotColumnAnalyzer(columns=None, exclude_columns=(), missing_policy='raise', figure_config=None)
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 0, 1],
@@ -61,7 +61,7 @@ class PlotDataFrameAnalyzer(BaseInNLazyAnalyzer):
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    PlotDataFrameOutput(
+    PlotColumnOutput(
       (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
     )
 
@@ -87,11 +87,11 @@ class PlotDataFrameAnalyzer(BaseInNLazyAnalyzer):
             "figure_config": self._figure_config,
         }
 
-    def _analyze(self, frame: pl.DataFrame) -> PlotDataFrameOutput:
+    def _analyze(self, frame: pl.DataFrame) -> PlotColumnOutput:
         logger.info(f"Plotting the content of {len(self.find_columns(frame)):,} columns...")
         columns = self.find_common_columns(frame)
         dataframe = frame.select(columns)
         logger.info(str_shape_diff(orig=frame.shape, final=dataframe.shape))
-        return PlotDataFrameOutput(
+        return PlotColumnOutput(
             state=DataFrameState(dataframe=dataframe, figure_config=self._figure_config)
         )

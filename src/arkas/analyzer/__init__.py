@@ -13,7 +13,7 @@ __all__ = [
     "ContentAnalyzer",
     "DataFrameSummaryAnalyzer",
     "MappingAnalyzer",
-    "PlotDataFrameAnalyzer",
+    "PlotColumnAnalyzer",
     "TransformAnalyzer",
     "is_analyzer_config",
     "setup_analyzer",
@@ -28,5 +28,5 @@ from arkas.analyzer.content import ContentAnalyzer
 from arkas.analyzer.frame_summary import DataFrameSummaryAnalyzer
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer, BaseLazyAnalyzer
 from arkas.analyzer.mapping import MappingAnalyzer
-from arkas.analyzer.plot_frame import PlotDataFrameAnalyzer
+from arkas.analyzer.plot_column import PlotColumnAnalyzer
 from arkas.analyzer.transform import TransformAnalyzer
