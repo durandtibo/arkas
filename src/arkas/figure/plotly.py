@@ -112,6 +112,9 @@ class PlotlyFigureConfig(BaseFigureConfig):
     def backend(cls) -> str:
         return "plotly"
 
+    def clone(self) -> Self:
+        return self.__class__(**self._kwargs)
+
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
