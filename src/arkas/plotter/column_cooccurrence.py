@@ -199,13 +199,13 @@ class ColumnCooccurrencePlotter(BasePlotter):
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:
         figure = self.registry.find_creator(self._figure_config.backend()).create(
-            matrix=self.compute_cooccurrence_matrix(),
+            matrix=self._compute_cooccurrence_matrix(),
             columns=self._frame.columns,
             config=self._figure_config,
         )
         return {f"{prefix}column_cooccurrence{suffix}": figure}
 
-    def compute_cooccurrence_matrix(self) -> np.ndarray:
+    def _compute_cooccurrence_matrix(self) -> np.ndarray:
         r"""Return the pairwise column co-occurrence matrix.
 
         Returns:

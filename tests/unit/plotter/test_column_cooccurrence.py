@@ -138,7 +138,7 @@ def test_column_cooccurrence_plotter_plot_prefix_suffix(dataframe: pl.DataFrame)
 
 def test_column_cooccurrence_plotter_compute_cooccurrence_matrix(dataframe: pl.DataFrame) -> None:
     assert objects_are_equal(
-        ColumnCooccurrencePlotter(dataframe).compute_cooccurrence_matrix(),
+        ColumnCooccurrencePlotter(dataframe)._compute_cooccurrence_matrix(),
         np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
     )
 
@@ -147,7 +147,7 @@ def test_column_cooccurrence_plotter_compute_cooccurrence_matrix_ignore_self(
     dataframe: pl.DataFrame,
 ) -> None:
     assert objects_are_equal(
-        ColumnCooccurrencePlotter(dataframe, ignore_self=True).compute_cooccurrence_matrix(),
+        ColumnCooccurrencePlotter(dataframe, ignore_self=True)._compute_cooccurrence_matrix(),
         np.array([[0, 2, 1], [2, 0, 1], [1, 1, 0]], dtype=int),
     )
 
