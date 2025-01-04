@@ -62,11 +62,23 @@ class DataFrameState(BaseState):
         self._figure_config = figure_config or get_default_config()
 
     def __repr__(self) -> str:
-        args = repr_mapping_line(self.get_args())
+        args = repr_mapping_line(
+            {
+                "dataframe": self._dataframe.shape,
+                "figure_config": self._figure_config,
+            }
+        )
         return f"{self.__class__.__qualname__}({args})"
 
     def __str__(self) -> str:
-        args = str_indent(str_mapping(self.get_args()))
+        args = str_indent(
+            str_mapping(
+                {
+                    "dataframe": self._dataframe.shape,
+                    "figure_config": self._figure_config,
+                }
+            )
+        )
         return f"{self.__class__.__qualname__}({args})"
 
     @property

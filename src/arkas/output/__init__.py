@@ -13,6 +13,7 @@ __all__ = [
     "EmptyOutput",
     "Output",
     "OutputDict",
+    "PlotDataFrameOutput",
 ]
 
 from arkas.output.accuracy import AccuracyOutput
@@ -24,4 +25,5 @@ from arkas.output.empty import EmptyOutput
 from arkas.output.frame_summary import DataFrameSummaryOutput
 from arkas.output.lazy import BaseLazyOutput
 from arkas.output.mapping import OutputDict
+from arkas.output.plot_frame import PlotDataFrameOutput
 from arkas.output.vanilla import Output
