@@ -34,7 +34,7 @@ class BaseFigureCreator(ABC):
 
     >>> import polars as pl
     >>> from arkas.figure import MatplotlibFigureConfig
-    >>> from arkas.plotter.plot_frame import MatplotlibFigureCreator
+    >>> from arkas.plotter.plot_column import MatplotlibFigureCreator
     >>> creator = MatplotlibFigureCreator()
     >>> creator
     MatplotlibFigureCreator()
@@ -69,7 +69,7 @@ class BaseFigureCreator(ABC):
 
         >>> import polars as pl
         >>> from arkas.figure import MatplotlibFigureConfig
-        >>> from arkas.plotter.plot_frame import MatplotlibFigureCreator
+        >>> from arkas.plotter.plot_column import MatplotlibFigureCreator
         >>> creator = MatplotlibFigureCreator()
         >>> frame = pl.DataFrame(
         ...     {
@@ -95,7 +95,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
 
     >>> import polars as pl
     >>> from arkas.figure import MatplotlibFigureConfig
-    >>> from arkas.plotter.plot_frame import MatplotlibFigureCreator
+    >>> from arkas.plotter.plot_column import MatplotlibFigureCreator
     >>> creator = MatplotlibFigureCreator()
     >>> creator
     MatplotlibFigureCreator()
