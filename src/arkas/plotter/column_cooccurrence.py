@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any
 import matplotlib.pyplot as plt
 from coola import objects_are_equal
 
-from arkas.evaluator2 import ColumnCooccurrenceEvaluator
+from arkas.evaluator2.column_cooccurrence import ColumnCooccurrenceEvaluator
 from arkas.figure.creator import FigureCreatorRegistry
 from arkas.figure.html import HtmlFigure
 from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
