@@ -111,7 +111,9 @@ class BaseInNLazyAnalyzer(BaseAnalyzer):
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    ColumnCooccurrenceOutput(shape=(7, 3), ignore_self=False)
+    ColumnCooccurrenceOutput(
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    )
 
     ```
     """

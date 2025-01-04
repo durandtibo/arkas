@@ -1,173 +1,134 @@
 from __future__ import annotations
 
 import numpy as np
-import polars as pl
-import pytest
 
 from arkas.content import ColumnCooccurrenceContentGenerator, ContentGenerator
 from arkas.evaluator2 import ColumnCooccurrenceEvaluator, Evaluator
-from arkas.figure import MatplotlibFigureConfig
 from arkas.output import ColumnCooccurrenceOutput, Output
 from arkas.plotter import Plotter
-
-
-@pytest.fixture
-def dataframe() -> pl.DataFrame:
-    return pl.DataFrame(
-        {
-            "col1": [0, 1, 1, 0, 0, 1, 0],
-            "col2": [0, 1, 0, 1, 0, 1, 0],
-            "col3": [0, 0, 0, 0, 1, 1, 1],
-        }
-    )
-
+from arkas.state import ColumnCooccurrenceState
 
 ##############################################
 #     Tests for ColumnCooccurrenceOutput     #
 ##############################################
 
 
-def test_column_cooccurrence_output_repr(dataframe: pl.DataFrame) -> None:
-    assert repr(ColumnCooccurrenceOutput(dataframe)).startswith("ColumnCooccurrenceOutput(")
+def test_column_cooccurrence_output_repr() -> None:
+    assert repr(
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+        )
+    ).startswith("ColumnCooccurrenceOutput(")
 
 
-def test_column_cooccurrence_output_str(dataframe: pl.DataFrame) -> None:
-    assert str(ColumnCooccurrenceOutput(dataframe)).startswith("ColumnCooccurrenceOutput(")
+def test_column_cooccurrence_output_str() -> None:
+    assert str(
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+        )
+    ).startswith("ColumnCooccurrenceOutput(")
 
 
-def test_balanced_accuracy_output_compute(dataframe: pl.DataFrame) -> None:
+def test__column_cooccurrence_output_compute() -> None:
     assert isinstance(
-        ColumnCooccurrenceOutput(dataframe).compute(),
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+        ).compute(),
         Output,
     )
 
 
-def test_column_cooccurrence_output_equal_true(dataframe: pl.DataFrame) -> None:
-    assert ColumnCooccurrenceOutput(dataframe).equal(ColumnCooccurrenceOutput(dataframe))
-
-
-def test_column_cooccurrence_output_equal_false_different_frame(dataframe: pl.DataFrame) -> None:
-    assert not ColumnCooccurrenceOutput(dataframe).equal(
+def test_column_cooccurrence_output_equal_true() -> None:
+    assert ColumnCooccurrenceOutput(
+        ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+    ).equal(
         ColumnCooccurrenceOutput(
-            pl.DataFrame(
-                {
-                    "float": [1.2, 4.2, None, 2.2, 1, 2.2],
-                    "int": [1, 1, 0, 1, 1, 1],
-                },
-                schema={"float": pl.Float64, "int": pl.Int64},
-            )
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
         )
     )
 
 
-def test_column_cooccurrence_output_equal_false_different_ignore_self(
-    dataframe: pl.DataFrame,
-) -> None:
-    assert not ColumnCooccurrenceOutput(dataframe, ignore_self=True).equal(
-        ColumnCooccurrenceOutput(dataframe)
+def test_column_cooccurrence_output_equal_false_different_state() -> None:
+    assert not ColumnCooccurrenceOutput(
+        ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+    ).equal(
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(matrix=np.zeros((3, 3)), columns=["a", "b", "c"])
+        )
     )
 
 
-def test_column_cooccurrence_output_equal_false_different_figure_config(
-    dataframe: pl.DataFrame,
-) -> None:
-    assert not ColumnCooccurrenceOutput(dataframe).equal(
-        ColumnCooccurrenceOutput(dataframe, figure_config=MatplotlibFigureConfig(dpi=50))
-    )
+def test_column_cooccurrence_output_equal_false_different_type() -> None:
+    assert not ColumnCooccurrenceOutput(
+        ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+    ).equal(42)
 
 
-def test_column_cooccurrence_output_equal_false_different_type(dataframe: pl.DataFrame) -> None:
-    assert not ColumnCooccurrenceOutput(dataframe).equal(42)
-
-
-@pytest.mark.parametrize("ignore_self", [True, False])
-def test_column_cooccurrence_output_get_content_generator_lazy_true(
-    dataframe: pl.DataFrame, ignore_self: bool
-) -> None:
+def test_column_cooccurrence_output_get_content_generator_lazy_true() -> None:
     assert (
         ColumnCooccurrenceOutput(
-            dataframe, ignore_self=ignore_self, figure_config=MatplotlibFigureConfig(dpi=50)
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
         )
         .get_content_generator()
         .equal(
             ColumnCooccurrenceContentGenerator(
-                dataframe, ignore_self=ignore_self, figure_config=MatplotlibFigureConfig(dpi=50)
+                ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
             )
         )
     )
 
 
-@pytest.mark.parametrize("ignore_self", [True, False])
-def test_column_cooccurrence_output_get_content_generator_lazy_false(
-    dataframe: pl.DataFrame, ignore_self: bool
-) -> None:
+def test_column_cooccurrence_output_get_content_generator_lazy_false() -> None:
     assert isinstance(
-        ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self).get_content_generator(
-            lazy=False
-        ),
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+        ).get_content_generator(lazy=False),
         ContentGenerator,
     )
 
 
-@pytest.mark.parametrize("ignore_self", [True, False])
-def test_column_cooccurrence_output_get_evaluator_lazy_true(
-    dataframe: pl.DataFrame, ignore_self: bool
-) -> None:
-    assert (
-        ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self)
-        .get_evaluator()
-        .equal(ColumnCooccurrenceEvaluator(dataframe, ignore_self=ignore_self))
-    )
-
-
-def test_column_cooccurrence_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert (
-        ColumnCooccurrenceOutput(dataframe)
-        .get_evaluator(lazy=False)
-        .equal(
-            Evaluator(
-                {"column_cooccurrence": np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int)}
-            )
-        )
-    )
-
-
-def test_column_cooccurrence_output_get_evaluator_lazy_false_ignore_self(
-    dataframe: pl.DataFrame,
-) -> None:
-    assert (
-        ColumnCooccurrenceOutput(dataframe, ignore_self=True)
-        .get_evaluator(lazy=False)
-        .equal(
-            Evaluator(
-                {"column_cooccurrence": np.array([[0, 2, 1], [2, 0, 1], [1, 1, 0]], dtype=int)}
-            )
-        )
-    )
-
-
-@pytest.mark.parametrize("ignore_self", [True, False])
-def test_column_cooccurrence_output_get_plotter_lazy_true(
-    dataframe: pl.DataFrame, ignore_self: bool
-) -> None:
+def test_column_cooccurrence_output_get_evaluator_lazy_true() -> None:
     assert (
         ColumnCooccurrenceOutput(
-            dataframe, ignore_self=ignore_self, figure_config=MatplotlibFigureConfig(dpi=30)
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+        )
+        .get_evaluator()
+        .equal(
+            ColumnCooccurrenceEvaluator(
+                ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+            )
+        )
+    )
+
+
+def test_column_cooccurrence_output_get_evaluator_lazy_false() -> None:
+    assert (
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+        )
+        .get_evaluator(lazy=False)
+        .equal(Evaluator({"column_cooccurrence": np.ones((3, 3))}))
+    )
+
+
+def test_column_cooccurrence_output_get_plotter_lazy_true() -> None:
+    assert (
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
         )
         .get_content_generator()
         .equal(
             ColumnCooccurrenceContentGenerator(
-                dataframe, ignore_self=ignore_self, figure_config=MatplotlibFigureConfig(dpi=30)
+                ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
             )
         )
     )
 
 
-@pytest.mark.parametrize("ignore_self", [True, False])
-def test_column_cooccurrence_output_get_plotter_lazy_false(
-    dataframe: pl.DataFrame, ignore_self: bool
-) -> None:
+def test_column_cooccurrence_output_get_plotter_lazy_false() -> None:
     assert isinstance(
-        ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self).get_plotter(lazy=False),
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+        ).get_plotter(lazy=False),
         Plotter,
     )

@@ -6,67 +6,55 @@ __all__ = ["ColumnCooccurrenceEvaluator"]
 
 from typing import TYPE_CHECKING, Any
 
-from coola import objects_are_equal
-from grizz.utils.cooccurrence import compute_pairwise_cooccurrence
+from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.evaluator2.base import BaseEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 
 if TYPE_CHECKING:
     import numpy as np
-    import polars as pl
+
+    from arkas.state.column_cooccurrence import ColumnCooccurrenceState
 
 
 class ColumnCooccurrenceEvaluator(BaseEvaluator):
     r"""Implement the pairwise column co-occurrence evaluator.
 
     Args:
-        frame: The DataFrame to analyze.
-        ignore_self: If ``True``, the diagonal of the co-occurrence
-            matrix (a.k.a. self-co-occurrence) is set to 0.
+        state: The state with the co-occurrence matrix.
 
     Example usage:
 
     ```pycon
 
-    >>> import polars as pl
+    >>> import numpy as np
     >>> from arkas.evaluator2 import ColumnCooccurrenceEvaluator
-    >>> dataframe = pl.DataFrame(
-    ...     {
-    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
-    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
-    ...         "col3": [0, 0, 0, 0, 1, 1, 1],
-    ...     }
+    >>> from arkas.state import ColumnCooccurrenceState
+    >>> evaluator = ColumnCooccurrenceEvaluator(
+    ...     ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
     ... )
-    >>> evaluator = ColumnCooccurrenceEvaluator(dataframe)
     >>> evaluator
-    ColumnCooccurrenceEvaluator(shape=(7, 3), ignore_self=False)
+    ColumnCooccurrenceEvaluator(
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    )
     >>> evaluator.evaluate()
-    {'column_cooccurrence': array([[3, 2, 1],
-           [2, 3, 1],
-           [1, 1, 3]])}
+    {'column_cooccurrence': array([[1., 1., 1.],
+           [1., 1., 1.],
+           [1., 1., 1.]])}
 
     ```
     """
 
-    def __init__(self, frame: pl.DataFrame, ignore_self: bool = False) -> None:
-        self._frame = frame
-        self._ignore_self = bool(ignore_self)
+    def __init__(self, state: ColumnCooccurrenceState) -> None:
+        self._state = state
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(shape={self._frame.shape}, "
-            f"ignore_self={self._ignore_self})"
-        )
+        args = repr_indent(repr_mapping({"state": self._state}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    @property
-    def frame(self) -> pl.DataFrame:
-        r"""The DataFrame to analyze."""
-        return self._frame
-
-    @property
-    def ignore_self(self) -> bool:
-        return self._ignore_self
+    def __str__(self) -> str:
+        args = str_indent(str_mapping({"state": self._state}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def compute(self) -> Evaluator:
         return Evaluator(metrics=self.evaluate())
@@ -74,13 +62,7 @@ class ColumnCooccurrenceEvaluator(BaseEvaluator):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self.ignore_self == other.ignore_self and objects_are_equal(
-            self.frame, other.frame, equal_nan=equal_nan
-        )
+        return self._state.equal(other._state, equal_nan=equal_nan)
 
     def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, np.ndarray]:
-        return {
-            f"{prefix}column_cooccurrence{suffix}": compute_pairwise_cooccurrence(
-                frame=self._frame, ignore_self=self._ignore_self
-            )
-        }
+        return {f"{prefix}column_cooccurrence{suffix}": self._state.matrix}
