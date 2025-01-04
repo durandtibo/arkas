@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import numpy as np
 import polars as pl
 import pytest
 
 from arkas.content import ColumnCooccurrenceContentGenerator, ContentGenerator
-from arkas.evaluator2 import Evaluator
+from arkas.evaluator2 import ColumnCooccurrenceEvaluator, Evaluator
 from arkas.figure import MatplotlibFigureConfig
 from arkas.output import ColumnCooccurrenceOutput, Output
 from arkas.plotter import Plotter
@@ -115,18 +116,33 @@ def test_column_cooccurrence_output_get_evaluator_lazy_true(
     assert (
         ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self)
         .get_evaluator()
-        .equal(Evaluator())
+        .equal(ColumnCooccurrenceEvaluator(dataframe, ignore_self=ignore_self))
     )
 
 
-@pytest.mark.parametrize("ignore_self", [True, False])
-def test_column_cooccurrence_output_get_evaluator_lazy_false(
-    dataframe: pl.DataFrame, ignore_self: bool
+def test_column_cooccurrence_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
+    assert (
+        ColumnCooccurrenceOutput(dataframe)
+        .get_evaluator(lazy=False)
+        .equal(
+            Evaluator(
+                {"column_cooccurrence": np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int)}
+            )
+        )
+    )
+
+
+def test_column_cooccurrence_output_get_evaluator_lazy_false_ignore_self(
+    dataframe: pl.DataFrame,
 ) -> None:
     assert (
-        ColumnCooccurrenceOutput(dataframe, ignore_self=ignore_self)
+        ColumnCooccurrenceOutput(dataframe, ignore_self=True)
         .get_evaluator(lazy=False)
-        .equal(Evaluator())
+        .equal(
+            Evaluator(
+                {"column_cooccurrence": np.array([[0, 2, 1], [2, 0, 1], [1, 1, 0]], dtype=int)}
+            )
+        )
     )
 
 
