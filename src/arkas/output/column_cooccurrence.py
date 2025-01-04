@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 
 from arkas.content.column_cooccurrence import ColumnCooccurrenceContentGenerator
-from arkas.evaluator2.vanilla import Evaluator
+from arkas.evaluator2.column_cooccurrence import ColumnCooccurrenceEvaluator
 from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.column_cooccurrence import ColumnCooccurrencePlotter
 
@@ -47,7 +47,7 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
     >>> output.get_content_generator()
     ColumnCooccurrenceContentGenerator(shape=(7, 3), ignore_self=False)
     >>> output.get_evaluator()
-    Evaluator(count=0)
+    ColumnCooccurrenceEvaluator(shape=(7, 3), ignore_self=False)
     >>> output.get_plotter()
     ColumnCooccurrencePlotter(shape=(7, 3), ignore_self=False)
 
@@ -84,8 +84,8 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
             frame=self._frame, ignore_self=self._ignore_self, figure_config=self._figure_config
         )
 
-    def _get_evaluator(self) -> Evaluator:
-        return Evaluator()
+    def _get_evaluator(self) -> ColumnCooccurrenceEvaluator:
+        return ColumnCooccurrenceEvaluator(frame=self._frame, ignore_self=self._ignore_self)
 
     def _get_plotter(self) -> ColumnCooccurrencePlotter:
         return ColumnCooccurrencePlotter(
