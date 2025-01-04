@@ -7,13 +7,16 @@ __all__ = ["MatplotlibFigure", "MatplotlibFigureConfig"]
 import base64
 import io
 import sys
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
 from arkas.figure.base import BaseFigure, BaseFigureConfig
+
+if TYPE_CHECKING:
+    from matplotlib.colors import Normalize
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -84,26 +87,28 @@ class MatplotlibFigureConfig(BaseFigureConfig):
     r"""Implement the matplotlib figure config.
 
     Args:
-        **kwargs: Additional keyword arguments to pass to matplotlib
-            functions. The valid arguments depend on the context.
+        color_norm: The color normalization.
+        **kwargs: Additional keyword arguments to pass to
+            ``matplotlib.pyplot.subplots``.
 
     Example usage:
 
     ```pycon
 
     >>> from arkas.figure import MatplotlibFigureConfig
-    >>> config = MatplotlibFigureConfig(dpi=300)
+    >>> config = MatplotlibFigureConfig()
     >>> config
-    MatplotlibFigureConfig(dpi=300)
+    MatplotlibFigureConfig(color_norm=None)
 
     ```
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, color_norm: Normalize | None = None, **kwargs: Any) -> None:
+        self._color_norm = color_norm
         self._kwargs = kwargs
 
     def __repr__(self) -> str:
-        args = repr_mapping_line(self.get_args())
+        args = repr_mapping_line({"color_norm": self._color_norm} | self.get_args())
         return f"{self.__class__.__qualname__}({args})"
 
     @classmethod
@@ -113,7 +118,12 @@ class MatplotlibFigureConfig(BaseFigureConfig):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
+        # color_norm is excluded from the comparison as it is not straightforward
+        # to compare to Normalize objects.
         return objects_are_equal(self.get_args(), other.get_args(), equal_nan=equal_nan)
 
     def get_args(self) -> dict:
         return self._kwargs
+
+    def get_color_norm(self) -> Normalize | None:
+        return self._color_norm
