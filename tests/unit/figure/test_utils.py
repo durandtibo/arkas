@@ -3,7 +3,12 @@ from __future__ import annotations
 import pytest
 from matplotlib import pyplot as plt
 
-from arkas.figure import MatplotlibFigure, figure2html
+from arkas.figure import (
+    MatplotlibFigure,
+    MatplotlibFigureConfig,
+    figure2html,
+    get_default_config,
+)
 
 
 @pytest.fixture
@@ -28,3 +33,12 @@ def test_figure2html_close_fig(close_fig: bool, figure: plt.Figure) -> None:
 @pytest.mark.parametrize("reactive", [True, False])
 def test_figure2html_reactive(reactive: bool, figure: plt.Figure) -> None:
     assert isinstance(figure2html(MatplotlibFigure(figure), reactive=reactive), str)
+
+
+########################################
+#     Tests for get_default_config     #
+########################################
+
+
+def test_get_default_config() -> None:
+    assert get_default_config().equal(MatplotlibFigureConfig())

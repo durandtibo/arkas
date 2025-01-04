@@ -40,9 +40,8 @@ class PlotlyFigure(BaseFigure):
 
     ```pycon
 
-    >>> from plotly import pyplot as plt
     >>> from arkas.figure import PlotlyFigure
-    >>> fig = PlotlyFigure(plt.subplots()[0])
+    >>> fig = PlotlyFigure(None)
     >>> fig
     PlotlyFigure(reactive=True)
 

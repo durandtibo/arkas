@@ -139,9 +139,9 @@ class BaseFigureConfig(ABC):
     ```pycon
 
     >>> from arkas.figure import MatplotlibFigureConfig
-    >>> config = MatplotlibFigureConfig(dpi=300)
+    >>> config = MatplotlibFigureConfig()
     >>> config
-    MatplotlibFigureConfig(dpi=300)
+    MatplotlibFigureConfig(color_norm=None)
 
     ```
     """
