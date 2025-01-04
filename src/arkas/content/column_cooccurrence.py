@@ -73,6 +73,7 @@ class ColumnCooccurrenceContentGenerator(BaseSectionContentGenerator):
         return Template(create_template()).render(
             {
                 "columns": ", ".join([f"{x!r}" for x in columns]),
+                "ncols": f"{len(columns):,}",
                 "figure": figure2html(figures["column_cooccurrence"], close_fig=True),
                 "table": create_table_section(
                     matrix=self._state.matrix,
@@ -100,7 +101,7 @@ def create_template() -> str:
     return """This section shows an analysis of the pairwise column co-occurrence.
 {{figure}}
 <details>
-    <summary>[show columns]</summary>
+    <summary>[show {{ncols}} columns]</summary>
     {{columns}}
 </details>
 <p style="margin-top: 1rem;">
