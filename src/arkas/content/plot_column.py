@@ -45,7 +45,9 @@ class PlotColumnContentGenerator(BaseSectionContentGenerator):
     ... )
     >>> content = PlotColumnContentGenerator(DataFrameState(dataframe))
     >>> content
-    PlotColumnContentGenerator(shape=(7, 3), ignore_self=False)
+    PlotColumnContentGenerator(
+      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    )
 
     ```
     """
