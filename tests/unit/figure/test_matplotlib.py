@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 from matplotlib import pyplot as plt
+from matplotlib.colors import LogNorm
 
 from arkas.figure import MatplotlibFigure, MatplotlibFigureConfig
 
@@ -70,11 +71,11 @@ def test_matplotlib_figure_config_backend() -> None:
 
 
 def test_matplotlib_figure_config_repr() -> None:
-    assert repr(MatplotlibFigureConfig()) == "MatplotlibFigureConfig()"
+    assert repr(MatplotlibFigureConfig()) == "MatplotlibFigureConfig(color_norm=None)"
 
 
 def test_matplotlib_figure_config_str() -> None:
-    assert str(MatplotlibFigureConfig()) == "MatplotlibFigureConfig()"
+    assert str(MatplotlibFigureConfig()) == "MatplotlibFigureConfig(color_norm=None)"
 
 
 def test_matplotlib_figure_config_equal_true() -> None:
@@ -91,3 +92,12 @@ def test_matplotlib_figure_config_equal_false_different_type() -> None:
 
 def test_matplotlib_figure_config_get_args() -> None:
     assert MatplotlibFigureConfig(dpi=300).get_args() == {"dpi": 300}
+
+
+def test_matplotlib_figure_config_get_color_norm() -> None:
+    color_norm = LogNorm()
+    assert MatplotlibFigureConfig(color_norm=color_norm).get_color_norm() is color_norm
+
+
+def test_matplotlib_figure_config_get_color_norm_default() -> None:
+    assert MatplotlibFigureConfig().get_color_norm() is None
