@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 def main() -> None:
     r"""Define the main function."""
-    n_samples = 10000
+    n_samples = 100
     rng = np.random.default_rng(42)
     ncols = 5
     ingestor = Ingestor(
@@ -43,6 +43,9 @@ def main() -> None:
                 "pred": rng.integers(0, 2, n_samples),
                 "score": rng.normal(0, 1, n_samples),
                 "target": rng.integers(0, 2, n_samples),
+                "normal": rng.normal(0, 1, n_samples),
+                "uniform": rng.uniform(0, 1, n_samples),
+                "cauchy": rng.standard_cauchy(n_samples),
             }
             | {f"col{i}": rng.integers(0, 2, n_samples) for i in range(ncols)}
         )
@@ -71,7 +74,7 @@ def main() -> None:
                 #     ),
                 # ),
                 "plot columns": PlotColumnAnalyzer(
-                    columns=[f"col{i}" for i in range(ncols)], figure_config=figure_config
+                    columns=["cauchy", "normal", "uniform"], figure_config=figure_config
                 ),
             }
         ),

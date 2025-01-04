@@ -44,7 +44,9 @@ class PlotColumnOutput(BaseLazyOutput):
       (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
     )
     >>> output.get_content_generator()
-    ContentGenerator()
+    PlotColumnContentGenerator(
+      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    )
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
