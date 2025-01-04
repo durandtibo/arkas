@@ -2,7 +2,7 @@ r"""Implement an output to plot each column of a DataFrame."""
 
 from __future__ import annotations
 
-__all__ = ["PlotDataFrameOutput"]
+__all__ = ["PlotColumnOutput"]
 
 from typing import TYPE_CHECKING, Any
 
@@ -11,13 +11,13 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content import ContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.plot_frame import PlotDataFramePlotter
+from arkas.plotter.plot_column import PlotColumnPlotter
 
 if TYPE_CHECKING:
     from arkas.state.dataframe import DataFrameState
 
 
-class PlotDataFrameOutput(BaseLazyOutput):
+class PlotColumnOutput(BaseLazyOutput):
     r"""Implement an output to plot each column of a DataFrame.
 
     Args:
@@ -28,7 +28,7 @@ class PlotDataFrameOutput(BaseLazyOutput):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.output import PlotDataFrameOutput
+    >>> from arkas.output import PlotColumnOutput
     >>> from arkas.state import DataFrameState
     >>> frame = pl.DataFrame(
     ...     {
@@ -38,9 +38,9 @@ class PlotDataFrameOutput(BaseLazyOutput):
     ...     },
     ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
     ... )
-    >>> output = PlotDataFrameOutput(DataFrameState(frame))
+    >>> output = PlotColumnOutput(DataFrameState(frame))
     >>> output
-    PlotDataFrameOutput(
+    PlotColumnOutput(
       (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
     )
     >>> output.get_content_generator()
@@ -48,7 +48,7 @@ class PlotDataFrameOutput(BaseLazyOutput):
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
-    PlotDataFramePlotter(
+    PlotColumnPlotter(
       (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
     )
 
@@ -77,5 +77,5 @@ class PlotDataFrameOutput(BaseLazyOutput):
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
 
-    def _get_plotter(self) -> PlotDataFramePlotter:
-        return PlotDataFramePlotter(self._state)
+    def _get_plotter(self) -> PlotColumnPlotter:
+        return PlotColumnPlotter(self._state)

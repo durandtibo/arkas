@@ -5,8 +5,8 @@ import pytest
 
 from arkas.figure import HtmlFigure, MatplotlibFigure, get_default_config
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
-from arkas.plotter import PlotDataFramePlotter, Plotter
-from arkas.plotter.plot_frame import MatplotlibFigureCreator
+from arkas.plotter import PlotColumnPlotter, Plotter
+from arkas.plotter.plot_column import MatplotlibFigureCreator
 from arkas.state import DataFrameState
 
 
@@ -21,41 +21,41 @@ def dataframe() -> pl.DataFrame:
     )
 
 
-##########################################
-#     Tests for PlotDataFramePlotter     #
-##########################################
+#######################################
+#     Tests for PlotColumnPlotter     #
+#######################################
 
 
-def test_plot_dataframe_plotter_repr(dataframe: pl.DataFrame) -> None:
-    assert repr(PlotDataFramePlotter(DataFrameState(dataframe))).startswith("PlotDataFramePlotter(")
+def test_plot_column_plotter_repr(dataframe: pl.DataFrame) -> None:
+    assert repr(PlotColumnPlotter(DataFrameState(dataframe))).startswith("PlotColumnPlotter(")
 
 
-def test_plot_dataframe_plotter_str(dataframe: pl.DataFrame) -> None:
-    assert str(PlotDataFramePlotter(DataFrameState(dataframe))).startswith("PlotDataFramePlotter(")
+def test_plot_column_plotter_str(dataframe: pl.DataFrame) -> None:
+    assert str(PlotColumnPlotter(DataFrameState(dataframe))).startswith("PlotColumnPlotter(")
 
 
-def test_plot_dataframe_plotter_compute(dataframe: pl.DataFrame) -> None:
-    assert isinstance(PlotDataFramePlotter(DataFrameState(dataframe)).compute(), Plotter)
+def test_plot_column_plotter_compute(dataframe: pl.DataFrame) -> None:
+    assert isinstance(PlotColumnPlotter(DataFrameState(dataframe)).compute(), Plotter)
 
 
-def test_plot_dataframe_plotter_equal_true(dataframe: pl.DataFrame) -> None:
-    assert PlotDataFramePlotter(DataFrameState(dataframe)).equal(
-        PlotDataFramePlotter(DataFrameState(dataframe))
+def test_plot_column_plotter_equal_true(dataframe: pl.DataFrame) -> None:
+    assert PlotColumnPlotter(DataFrameState(dataframe)).equal(
+        PlotColumnPlotter(DataFrameState(dataframe))
     )
 
 
-def test_plot_dataframe_plotter_equal_false_different_frame(dataframe: pl.DataFrame) -> None:
-    assert not PlotDataFramePlotter(DataFrameState(dataframe)).equal(
-        PlotDataFramePlotter(DataFrameState(pl.DataFrame()))
+def test_plot_column_plotter_equal_false_different_frame(dataframe: pl.DataFrame) -> None:
+    assert not PlotColumnPlotter(DataFrameState(dataframe)).equal(
+        PlotColumnPlotter(DataFrameState(pl.DataFrame()))
     )
 
 
-def test_plot_dataframe_plotter_equal_false_different_type(dataframe: pl.DataFrame) -> None:
-    assert not PlotDataFramePlotter(DataFrameState(dataframe)).equal(42)
+def test_plot_column_plotter_equal_false_different_type(dataframe: pl.DataFrame) -> None:
+    assert not PlotColumnPlotter(DataFrameState(dataframe)).equal(42)
 
 
-def test_plot_dataframe_plotter_equal_nan_true() -> None:
-    assert PlotDataFramePlotter(
+def test_plot_column_plotter_equal_nan_true() -> None:
+    assert PlotColumnPlotter(
         DataFrameState(
             pl.DataFrame(
                 {
@@ -66,7 +66,7 @@ def test_plot_dataframe_plotter_equal_nan_true() -> None:
             )
         )
     ).equal(
-        PlotDataFramePlotter(
+        PlotColumnPlotter(
             DataFrameState(
                 pl.DataFrame(
                     {
@@ -81,8 +81,8 @@ def test_plot_dataframe_plotter_equal_nan_true() -> None:
     )
 
 
-def test_plot_dataframe_plotter_equal_nan_false() -> None:
-    assert not PlotDataFramePlotter(
+def test_plot_column_plotter_equal_nan_false() -> None:
+    assert not PlotColumnPlotter(
         DataFrameState(
             pl.DataFrame(
                 {
@@ -93,7 +93,7 @@ def test_plot_dataframe_plotter_equal_nan_false() -> None:
             )
         )
     ).equal(
-        PlotDataFramePlotter(
+        PlotColumnPlotter(
             DataFrameState(
                 pl.DataFrame(
                     {
@@ -107,22 +107,20 @@ def test_plot_dataframe_plotter_equal_nan_false() -> None:
     )
 
 
-def test_plot_dataframe_plotter_plot(dataframe: pl.DataFrame) -> None:
-    figures = PlotDataFramePlotter(DataFrameState(dataframe)).plot()
+def test_plot_column_plotter_plot(dataframe: pl.DataFrame) -> None:
+    figures = PlotColumnPlotter(DataFrameState(dataframe)).plot()
     assert len(figures) == 1
     assert isinstance(figures["plot_column"], MatplotlibFigure)
 
 
-def test_plot_dataframe_plotter_plot_empty() -> None:
-    figures = PlotDataFramePlotter(DataFrameState(pl.DataFrame())).plot()
+def test_plot_column_plotter_plot_empty() -> None:
+    figures = PlotColumnPlotter(DataFrameState(pl.DataFrame())).plot()
     assert len(figures) == 1
     assert figures["plot_column"].equal(HtmlFigure(MISSING_FIGURE_MESSAGE))
 
 
-def test_plot_dataframe_plotter_plot_prefix_suffix(dataframe: pl.DataFrame) -> None:
-    figures = PlotDataFramePlotter(DataFrameState(dataframe)).plot(
-        prefix="prefix_", suffix="_suffix"
-    )
+def test_plot_column_plotter_plot_prefix_suffix(dataframe: pl.DataFrame) -> None:
+    figures = PlotColumnPlotter(DataFrameState(dataframe)).plot(prefix="prefix_", suffix="_suffix")
     assert len(figures) == 1
     assert isinstance(figures["prefix_plot_column_suffix"], MatplotlibFigure)
 

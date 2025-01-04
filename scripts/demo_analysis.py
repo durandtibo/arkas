@@ -10,7 +10,6 @@ import numpy as np
 import polars as pl
 from grizz.ingestor import Ingestor
 from grizz.transformer import SequentialTransformer
-from matplotlib.colors import LogNorm, SymLogNorm
 
 from arkas.analyzer import (
     AccuracyAnalyzer,
@@ -18,6 +17,7 @@ from arkas.analyzer import (
     ColumnCooccurrenceAnalyzer,
     DataFrameSummaryAnalyzer,
     MappingAnalyzer,
+    PlotColumnAnalyzer,
 )
 from arkas.exporter import (
     FigureExporter,
@@ -36,7 +36,7 @@ def main() -> None:
     r"""Define the main function."""
     n_samples = 10000
     rng = np.random.default_rng(42)
-    ncols = 100
+    ncols = 5
     ingestor = Ingestor(
         pl.DataFrame(
             {
@@ -63,19 +63,15 @@ def main() -> None:
                     ignore_self=True,
                     figure_config=figure_config,
                 ),
-                "co-occurrence (log)": ColumnCooccurrenceAnalyzer(
-                    columns=[f"col{i}" for i in range(ncols)],
-                    ignore_self=True,
-                    figure_config=MatplotlibFigureConfig(
-                        color_norm=LogNorm(), dpi=500, figsize=(13, 10)
-                    ),
-                ),
-                "co-occurrence (symlog)": ColumnCooccurrenceAnalyzer(
-                    columns=[f"col{i}" for i in range(ncols)],
-                    ignore_self=True,
-                    figure_config=MatplotlibFigureConfig(
-                        color_norm=SymLogNorm(linthresh=1), dpi=500, figsize=(13, 10)
-                    ),
+                # "co-occurrence (symlog)": ColumnCooccurrenceAnalyzer(
+                #     columns=[f"col{i}" for i in range(ncols)],
+                #     ignore_self=True,
+                #     figure_config=MatplotlibFigureConfig(
+                #         color_norm=SymLogNorm(linthresh=1), dpi=500, figsize=(13, 10)
+                #     ),
+                # ),
+                "plot columns": PlotColumnAnalyzer(
+                    columns=[f"col{i}" for i in range(ncols)], figure_config=figure_config
                 ),
             }
         ),
