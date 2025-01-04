@@ -11,6 +11,7 @@ from grizz.utils.format import str_shape_diff
 
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer
 from arkas.output.column_cooccurrence import ColumnCooccurrenceOutput
+from arkas.state.column_cooccurrence import ColumnCooccurrenceState
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -61,7 +62,9 @@ class ColumnCooccurrenceAnalyzer(BaseInNLazyAnalyzer):
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    ColumnCooccurrenceOutput(shape=(7, 3), ignore_self=False)
+    ColumnCooccurrenceOutput(
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    )
 
     ```
     """
@@ -97,5 +100,7 @@ class ColumnCooccurrenceAnalyzer(BaseInNLazyAnalyzer):
         out = frame.select(columns)
         logger.info(str_shape_diff(orig=frame.shape, final=out.shape))
         return ColumnCooccurrenceOutput(
-            frame=out, ignore_self=self._ignore_self, figure_config=self._figure_config
+            state=ColumnCooccurrenceState.from_dataframe(
+                frame=out, ignore_self=self._ignore_self, figure_config=self._figure_config
+            )
         )

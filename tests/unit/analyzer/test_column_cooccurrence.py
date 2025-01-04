@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import warnings
 
+import numpy as np
 import polars as pl
 import pytest
 from coola import objects_are_equal
@@ -10,6 +11,7 @@ from grizz.exceptions import ColumnNotFoundError, ColumnNotFoundWarning
 from arkas.analyzer import ColumnCooccurrenceAnalyzer
 from arkas.figure import MatplotlibFigureConfig
 from arkas.output import ColumnCooccurrenceOutput, Output
+from arkas.state import ColumnCooccurrenceState
 
 
 @pytest.fixture
@@ -38,7 +40,16 @@ def test_column_cooccurrence_analyzer_str() -> None:
 
 def test_column_cooccurrence_analyzer_analyze(dataframe: pl.DataFrame) -> None:
     assert (
-        ColumnCooccurrenceAnalyzer().analyze(dataframe).equal(ColumnCooccurrenceOutput(dataframe))
+        ColumnCooccurrenceAnalyzer()
+        .analyze(dataframe)
+        .equal(
+            ColumnCooccurrenceOutput(
+                ColumnCooccurrenceState(
+                    matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
+                    columns=["col1", "col2", "col3"],
+                )
+            )
+        )
     )
 
 
@@ -46,17 +57,16 @@ def test_column_cooccurrence_analyzer_analyze_lazy_false(dataframe: pl.DataFrame
     assert isinstance(ColumnCooccurrenceAnalyzer().analyze(dataframe, lazy=False), Output)
 
 
-@pytest.mark.parametrize("ignore_self", [True, False])
-def test_column_cooccurrence_analyzer_analyze_ignore_self(
-    ignore_self: bool, dataframe: pl.DataFrame
-) -> None:
+def test_column_cooccurrence_analyzer_analyze_ignore_self_true(dataframe: pl.DataFrame) -> None:
     assert (
-        ColumnCooccurrenceAnalyzer(ignore_self=ignore_self)
+        ColumnCooccurrenceAnalyzer(ignore_self=True)
         .analyze(dataframe)
         .equal(
             ColumnCooccurrenceOutput(
-                dataframe,
-                ignore_self=ignore_self,
+                ColumnCooccurrenceState(
+                    matrix=np.array([[0, 2, 1], [2, 0, 1], [1, 1, 0]], dtype=int),
+                    columns=["col1", "col2", "col3"],
+                )
             )
         )
     )
@@ -66,7 +76,15 @@ def test_column_cooccurrence_analyzer_analyze_figure_config(dataframe: pl.DataFr
     assert (
         ColumnCooccurrenceAnalyzer(figure_config=MatplotlibFigureConfig(dpi=50))
         .analyze(dataframe)
-        .equal(ColumnCooccurrenceOutput(dataframe, figure_config=MatplotlibFigureConfig(dpi=50)))
+        .equal(
+            ColumnCooccurrenceOutput(
+                ColumnCooccurrenceState(
+                    matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
+                    columns=["col1", "col2", "col3"],
+                    figure_config=MatplotlibFigureConfig(dpi=50),
+                )
+            )
+        )
     )
 
 
@@ -76,7 +94,9 @@ def test_column_cooccurrence_analyzer_analyze_columns(dataframe: pl.DataFrame) -
         .analyze(dataframe)
         .equal(
             ColumnCooccurrenceOutput(
-                pl.DataFrame({"col1": [0, 1, 1, 0, 0, 1, 0], "col2": [0, 1, 0, 1, 0, 1, 0]})
+                ColumnCooccurrenceState(
+                    matrix=np.array([[3, 2], [2, 3]], dtype=int), columns=["col1", "col2"]
+                )
             )
         )
     )
@@ -88,7 +108,9 @@ def test_column_cooccurrence_analyzer_analyze_exclude_columns(dataframe: pl.Data
         .analyze(dataframe)
         .equal(
             ColumnCooccurrenceOutput(
-                pl.DataFrame({"col1": [0, 1, 1, 0, 0, 1, 0], "col2": [0, 1, 0, 1, 0, 1, 0]})
+                ColumnCooccurrenceState(
+                    matrix=np.array([[3, 2], [2, 3]], dtype=int), columns=["col1", "col2"]
+                )
             )
         )
     )
@@ -103,7 +125,14 @@ def test_column_cooccurrence_analyzer_analyze_missing_policy_ignore(
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         out = analyzer.analyze(dataframe)
-    assert out.equal(ColumnCooccurrenceOutput(dataframe))
+    assert out.equal(
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(
+                matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
+                columns=["col1", "col2", "col3"],
+            )
+        )
+    )
 
 
 def test_column_cooccurrence_analyzer_analyze_missing_policy_raise(
@@ -124,7 +153,14 @@ def test_column_cooccurrence_analyzer_analyze_missing_policy_warn(
         ColumnNotFoundWarning, match="1 column is missing in the DataFrame and will be ignored:"
     ):
         out = analyzer.analyze(dataframe)
-    assert out.equal(ColumnCooccurrenceOutput(dataframe))
+    assert out.equal(
+        ColumnCooccurrenceOutput(
+            ColumnCooccurrenceState(
+                matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
+                columns=["col1", "col2", "col3"],
+            )
+        )
+    )
 
 
 def test_column_cooccurrence_analyzer_equal_true() -> None:

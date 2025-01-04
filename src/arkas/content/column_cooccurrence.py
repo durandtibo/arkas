@@ -9,9 +9,7 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
-from coola import objects_are_equal
-from coola.utils import str_indent
-from grizz.utils.cooccurrence import compute_pairwise_cooccurrence
+from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
@@ -21,9 +19,8 @@ from arkas.plotter import ColumnCooccurrencePlotter
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    import polars as pl
+    from arkas.state.column_cooccurrence import ColumnCooccurrenceState
 
-    from arkas.figure.base import BaseFigureConfig
 
 logger = logging.getLogger(__name__)
 
@@ -33,81 +30,52 @@ class ColumnCooccurrenceContentGenerator(BaseSectionContentGenerator):
     occurrence.
 
     Args:
-        frame: The DataFrame to analyze.
-        ignore_self: If ``True``, the diagonal of the co-occurrence
-            matrix (a.k.a. self-co-occurrence) is set to 0.
-        figure_config: The figure configuration.
+        state: The state with the co-occurrence matrix.
 
     Example usage:
 
     ```pycon
 
-    >>> import polars as pl
+    >>> import numpy as np
     >>> from arkas.content import ColumnCooccurrenceContentGenerator
-    >>> dataframe = pl.DataFrame(
-    ...     {
-    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
-    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
-    ...         "col3": [0, 0, 0, 0, 1, 1, 1],
-    ...     }
+    >>> from arkas.state import ColumnCooccurrenceState
+    >>> content = ColumnCooccurrenceContentGenerator(
+    ...     ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
     ... )
-    >>> content = ColumnCooccurrenceContentGenerator(dataframe)
     >>> content
-    ColumnCooccurrenceContentGenerator(shape=(7, 3), ignore_self=False)
+    ColumnCooccurrenceContentGenerator(
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    )
 
     ```
     """
 
-    def __init__(
-        self,
-        frame: pl.DataFrame,
-        ignore_self: bool = False,
-        figure_config: BaseFigureConfig | None = None,
-    ) -> None:
-        self._frame = frame
-        self._ignore_self = bool(ignore_self)
-        self._figure_config = figure_config
+    def __init__(self, state: ColumnCooccurrenceState) -> None:
+        self._state = state
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(shape={self._frame.shape}, "
-            f"ignore_self={self._ignore_self})"
-        )
+        args = repr_indent(repr_mapping({"state": self._state}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    @property
-    def frame(self) -> pl.DataFrame:
-        r"""The DataFrame to analyze."""
-        return self._frame
-
-    @property
-    def ignore_self(self) -> bool:
-        return self._ignore_self
+    def __str__(self) -> str:
+        args = str_indent(str_mapping({"state": self._state}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return (
-            self.ignore_self == other.ignore_self
-            and objects_are_equal(self.frame, other.frame, equal_nan=equal_nan)
-            and objects_are_equal(self._figure_config, other._figure_config, equal_nan=equal_nan)
-        )
+        return self._state.equal(other._state, equal_nan=equal_nan)
 
     def generate_content(self) -> str:
         logger.info("Generating the DataFrame summary content...")
-        figures = ColumnCooccurrencePlotter(
-            frame=self._frame, ignore_self=self._ignore_self, figure_config=self._figure_config
-        ).plot()
-        columns = list(self._frame.columns)
+        figures = ColumnCooccurrencePlotter(self._state).plot()
+        columns = self._state.columns
         return Template(create_template()).render(
             {
-                "nrows": f"{self._frame.shape[0]:,}",
-                "ncols": f"{self._frame.shape[1]:,}",
                 "columns": ", ".join([f"{x!r}" for x in columns]),
                 "figure": figure2html(figures["column_cooccurrence"], close_fig=True),
                 "table": create_table_section(
-                    matrix=compute_pairwise_cooccurrence(
-                        frame=self._frame, ignore_self=self._ignore_self
-                    ),
+                    matrix=self._state.matrix,
                     columns=columns,
                 ),
             }
@@ -130,10 +98,6 @@ def create_template() -> str:
     ```
     """
     return """This section shows an analysis of the pairwise column co-occurrence.
-<ul>
-  <li> number of columns: {{ncols}} </li>
-  <li> number of rows: {{nrows}}</li>
-</ul>
 {{figure}}
 <details>
     <summary>[show columns]</summary>
