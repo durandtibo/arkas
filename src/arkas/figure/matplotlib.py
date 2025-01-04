@@ -116,6 +116,9 @@ class MatplotlibFigureConfig(BaseFigureConfig):
     def backend(cls) -> str:
         return "matplotlib"
 
+    def clone(self) -> Self:
+        return self.__class__(color_norm=self._color_norm, **self._kwargs)
+
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
