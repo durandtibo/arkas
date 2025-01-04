@@ -26,7 +26,7 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
         frame: The DataFrame to analyze.
         ignore_self: If ``True``, the diagonal of the co-occurrence
             matrix (a.k.a. self-co-occurrence) is set to 0.
-        figure_config: The figure configuration.
+        figure_config: An optional figure configuration.
 
     Example usage:
 
