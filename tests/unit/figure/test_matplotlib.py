@@ -96,7 +96,9 @@ def test_matplotlib_figure_config_get_args() -> None:
 
 def test_matplotlib_figure_config_get_color_norm() -> None:
     color_norm = LogNorm()
-    assert MatplotlibFigureConfig(color_norm=color_norm).get_color_norm() is color_norm
+    color_norm2 = MatplotlibFigureConfig(color_norm=color_norm).get_color_norm()
+    assert color_norm is not color_norm2
+    assert isinstance(color_norm2, LogNorm)
 
 
 def test_matplotlib_figure_config_get_color_norm_default() -> None:
