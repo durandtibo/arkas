@@ -92,6 +92,6 @@ class DataFrameState(BaseState):
 
     def get_args(self) -> dict:
         return {
-            "dataframe": self._dataframe.shape,
+            "dataframe": self._dataframe,
             "figure_config": self._figure_config,
         }

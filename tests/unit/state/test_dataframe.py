@@ -84,3 +84,10 @@ def test_dataframe_state_equal_false_different_figure_config(dataframe: pl.DataF
 
 def test_dataframe_state_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not DataFrameState(dataframe).equal(42)
+
+
+def test_dataframe_state_get_args(dataframe: pl.DataFrame) -> None:
+    assert objects_are_equal(
+        DataFrameState(dataframe).get_args(),
+        {"dataframe": dataframe, "figure_config": MatplotlibFigureConfig()},
+    )
