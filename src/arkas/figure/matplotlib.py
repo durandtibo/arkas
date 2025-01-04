@@ -126,4 +126,21 @@ class MatplotlibFigureConfig(BaseFigureConfig):
         return self._kwargs
 
     def get_color_norm(self) -> Normalize | None:
+        r"""Get the color normalization.
+
+        Returns:
+            The color normalization.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from matplotlib.colors import LogNorm
+        >>> from arkas.figure import MatplotlibFigureConfig
+        >>> config = MatplotlibFigureConfig(color_norm=LogNorm())
+        >>> config.get_color_norm()
+        <matplotlib.colors.LogNorm object at 0x...>
+
+        ```
+        """
         return self._color_norm
