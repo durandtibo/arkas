@@ -10,6 +10,7 @@ import numpy as np
 import polars as pl
 from grizz.ingestor import Ingestor
 from grizz.transformer import SequentialTransformer
+from matplotlib.colors import LogNorm, SymLogNorm
 
 from arkas.analyzer import (
     AccuracyAnalyzer,
@@ -61,6 +62,20 @@ def main() -> None:
                     columns=[f"col{i}" for i in range(ncols)],
                     ignore_self=True,
                     figure_config=figure_config,
+                ),
+                "co-occurrence (log)": ColumnCooccurrenceAnalyzer(
+                    columns=[f"col{i}" for i in range(ncols)],
+                    ignore_self=True,
+                    figure_config=MatplotlibFigureConfig(
+                        color_norm=LogNorm(), dpi=500, figsize=(13, 10)
+                    ),
+                ),
+                "co-occurrence (symlog)": ColumnCooccurrenceAnalyzer(
+                    columns=[f"col{i}" for i in range(ncols)],
+                    ignore_self=True,
+                    figure_config=MatplotlibFigureConfig(
+                        color_norm=SymLogNorm(linthresh=1), dpi=500, figsize=(13, 10)
+                    ),
                 ),
             }
         ),
