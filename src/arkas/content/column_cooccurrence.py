@@ -44,14 +44,14 @@ class ColumnCooccurrenceContentGenerator(BaseSectionContentGenerator):
 
     >>> import polars as pl
     >>> from arkas.content import ColumnCooccurrenceContentGenerator
-    >>> frame = pl.DataFrame(
+    >>> dataframe = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 1, 0, 0, 1, 0],
     ...         "col2": [0, 1, 0, 1, 0, 1, 0],
     ...         "col3": [0, 0, 0, 0, 1, 1, 1],
     ...     }
     ... )
-    >>> content = ColumnCooccurrenceContentGenerator(frame)
+    >>> content = ColumnCooccurrenceContentGenerator(dataframe)
     >>> content
     ColumnCooccurrenceContentGenerator(shape=(7, 3), ignore_self=False)
 
