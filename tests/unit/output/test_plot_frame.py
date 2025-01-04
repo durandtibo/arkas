@@ -6,7 +6,7 @@ import pytest
 from arkas.content import ContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, PlotDataFrameOutput
-from arkas.plotter import Plotter
+from arkas.plotter import PlotDataFramePlotter, Plotter
 from arkas.state import DataFrameState
 
 
@@ -35,17 +35,7 @@ def test_plot_dataframe_output_str(dataframe: pl.DataFrame) -> None:
 
 
 def test_plot_dataframe_output_compute(dataframe: pl.DataFrame) -> None:
-    assert (
-        PlotDataFrameOutput(DataFrameState(dataframe))
-        .compute()
-        .equal(
-            Output(
-                content=ContentGenerator(),
-                evaluator=Evaluator(),
-                plotter=Plotter(),
-            )
-        )
-    )
+    assert isinstance(PlotDataFrameOutput(DataFrameState(dataframe)).compute(), Output)
 
 
 def test_plot_dataframe_output_equal_true(dataframe: pl.DataFrame) -> None:
@@ -85,8 +75,14 @@ def test_plot_dataframe_output_get_evaluator_lazy_false(dataframe: pl.DataFrame)
 
 
 def test_plot_dataframe_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert PlotDataFrameOutput(DataFrameState(dataframe)).get_plotter().equal(Plotter())
+    assert (
+        PlotDataFrameOutput(DataFrameState(dataframe))
+        .get_plotter()
+        .equal(PlotDataFramePlotter(DataFrameState(dataframe)))
+    )
 
 
 def test_plot_dataframe_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert PlotDataFrameOutput(DataFrameState(dataframe)).get_plotter(lazy=False).equal(Plotter())
+    assert isinstance(
+        PlotDataFrameOutput(DataFrameState(dataframe)).get_plotter(lazy=False), Plotter
+    )

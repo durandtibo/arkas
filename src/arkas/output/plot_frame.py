@@ -11,7 +11,7 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content import ContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.vanilla import Plotter
+from arkas.plotter.plot_frame import PlotDataFramePlotter
 
 if TYPE_CHECKING:
     from arkas.state.dataframe import DataFrameState
@@ -48,7 +48,9 @@ class PlotDataFrameOutput(BaseLazyOutput):
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
-    Plotter(count=0)
+    PlotDataFramePlotter(
+      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    )
 
     ```
     """
@@ -75,5 +77,5 @@ class PlotDataFrameOutput(BaseLazyOutput):
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
 
-    def _get_plotter(self) -> Plotter:
-        return Plotter()
+    def _get_plotter(self) -> PlotDataFramePlotter:
+        return PlotDataFramePlotter(self._state)
