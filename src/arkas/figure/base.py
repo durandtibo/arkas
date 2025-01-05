@@ -209,25 +209,6 @@ class BaseFigureConfig(ABC):
         ```
         """
 
-    @abstractmethod
-    def get_args(self) -> dict:
-        r"""Get the config arguments.
-
-        Returns:
-            The config arguments.
-
-        Example usage:
-
-        ```pycon
-
-        >>> from arkas.figure import MatplotlibFigureConfig
-        >>> config = MatplotlibFigureConfig(dpi=300)
-        >>> config.get_args()
-        {'dpi': 300}
-
-        ```
-        """
-
 
 class FigureEqualityComparator(BaseEqualityComparator[BaseFigure]):
     r"""Implement an equality comparator for ``BaseFigure`` and

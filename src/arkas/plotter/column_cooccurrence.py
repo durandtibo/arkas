@@ -98,7 +98,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         if state.matrix.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
-        fig, ax = plt.subplots(**state.figure_config.get_args())
+        fig, ax = plt.subplots(**state.figure_config.get_init_args())
         im = ax.imshow(state.matrix, norm=state.figure_config.get_color_norm())
         fig.colorbar(im)
         ax.set_xticks(
