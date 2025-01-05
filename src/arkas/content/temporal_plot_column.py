@@ -13,7 +13,7 @@ from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.figure.utils import figure2html
-from arkas.plotter.plot_column import PlotColumnPlotter
+from arkas.plotter.temporal_plot_column import TemporalPlotColumnPlotter
 
 if TYPE_CHECKING:
     from arkas.state.temporal_dataframe import TemporalDataFrameState
@@ -89,13 +89,13 @@ class TemporalPlotColumnContentGenerator(BaseSectionContentGenerator):
             f"Generating the temporal plot of {ncols} columns using the "
             f"temporal column {self._state.temporal_column!r}..."
         )
-        figures = PlotColumnPlotter(state=self._state).plot()
+        figures = TemporalPlotColumnPlotter(state=self._state).plot()
         return Template(create_template()).render(
             {
                 "nrows": f"{nrows:,}",
                 "ncols": f"{ncols:,}",
                 "columns": ", ".join(self._state.dataframe.columns),
-                "figure": figure2html(figures["plot_column"], close_fig=True),
+                "figure": figure2html(figures["temporal_plot_column"], close_fig=True),
             }
         )
 

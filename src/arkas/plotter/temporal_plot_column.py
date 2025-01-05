@@ -146,10 +146,12 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         if state.dataframe.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
-        fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
+        frame = state.dataframe.sort(state.temporal_column)
+        time = frame[state.temporal_column].to_numpy()
 
-        for col in state.dataframe:
-            ax.plot(col.to_numpy(), label=col.name)
+        fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
+        for col in state.dataframe.drop(state.temporal_column):
+            ax.plot(time, col.to_numpy(), label=col.name)
 
         if yscale := state.figure_config.get_arg("yscale"):
             ax.set_yscale(yscale)
