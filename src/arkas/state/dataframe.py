@@ -98,9 +98,7 @@ class DataFrameState(BaseState):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(
-            self.dataframe, other.dataframe, equal_nan=equal_nan
-        ) and objects_are_equal(self.figure_config, other.figure_config, equal_nan=equal_nan)
+        return objects_are_equal(self.get_args(), other.get_args(), equal_nan=equal_nan)
 
     def get_args(self) -> dict:
         return {
