@@ -136,6 +136,31 @@ def test_matplotlib_figure_creator_create(dataframe: pl.DataFrame) -> None:
     )
 
 
+def test_matplotlib_figure_creator_create_1_row() -> None:
+    assert isinstance(
+        MatplotlibFigureCreator().create(
+            TemporalDataFrameState(
+                pl.DataFrame(
+                    {
+                        "col1": [2],
+                        "col2": [0],
+                        "col3": [0],
+                        "datetime": [datetime(year=2020, month=1, day=1, tzinfo=timezone.utc)],
+                    },
+                    schema={
+                        "col1": pl.Int64,
+                        "col2": pl.Int64,
+                        "col3": pl.Int64,
+                        "datetime": pl.Datetime(time_unit="us", time_zone="UTC"),
+                    },
+                ),
+                temporal_column="datetime",
+            )
+        ),
+        MatplotlibFigure,
+    )
+
+
 def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         MatplotlibFigureCreator().create(
