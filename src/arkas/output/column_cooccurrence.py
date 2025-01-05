@@ -35,19 +35,19 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
     ... )
     >>> output
     ColumnCooccurrenceOutput(
-      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     ColumnCooccurrenceContentGenerator(
-      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     ColumnCooccurrenceEvaluator(
-      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_plotter()
     ColumnCooccurrencePlotter(
-      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
     )
 
     ```

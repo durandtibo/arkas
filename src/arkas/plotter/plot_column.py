@@ -120,7 +120,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         if frame.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
-        fig, ax = plt.subplots(**config.get_init_args())
+        fig, ax = plt.subplots(**config.get_arg("init", {}))
         for col in frame:
             ax.plot(col.to_numpy(), label=col.name)
 
@@ -153,7 +153,7 @@ class PlotColumnPlotter(BasePlotter):
     >>> plotter = PlotColumnPlotter(DataFrameState(frame))
     >>> plotter
     PlotColumnPlotter(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
     )
 
     ```

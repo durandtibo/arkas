@@ -47,7 +47,7 @@ class ColumnCooccurrenceState(BaseState):
     >>> from arkas.state import ColumnCooccurrenceState
     >>> state = ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
     >>> state
-    ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
 
     ```
     """
@@ -141,7 +141,7 @@ class ColumnCooccurrenceState(BaseState):
         ... )
         >>> state = ColumnCooccurrenceState.from_dataframe(frame)
         >>> state
-        ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+        ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
 
         ```
         """

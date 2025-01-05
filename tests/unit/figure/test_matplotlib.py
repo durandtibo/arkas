@@ -67,11 +67,11 @@ def test_matplotlib_figure_to_html(figure: plt.Figure, reactive: bool) -> None:
 
 
 def test_matplotlib_figure_config_repr() -> None:
-    assert repr(MatplotlibFigureConfig()) == "MatplotlibFigureConfig(color_norm=None)"
+    assert repr(MatplotlibFigureConfig()) == "MatplotlibFigureConfig()"
 
 
 def test_matplotlib_figure_config_str() -> None:
-    assert str(MatplotlibFigureConfig()) == "MatplotlibFigureConfig(color_norm=None)"
+    assert str(MatplotlibFigureConfig()) == "MatplotlibFigureConfig()"
 
 
 def test_matplotlib_figure_config_backend() -> None:
@@ -79,11 +79,9 @@ def test_matplotlib_figure_config_backend() -> None:
 
 
 def test_matplotlib_figure_config_clone() -> None:
-    config = MatplotlibFigureConfig(color_norm=LogNorm(), dpi=300)
+    config = MatplotlibFigureConfig(dpi=300)
     cloned_config = config.clone()
     assert config.equal(cloned_config)
-    assert isinstance(config.get_color_norm(), LogNorm)
-    assert isinstance(cloned_config.get_color_norm(), LogNorm)
 
 
 def test_matplotlib_figure_config_equal_true() -> None:
@@ -98,16 +96,19 @@ def test_matplotlib_figure_config_equal_false_different_type() -> None:
     assert not MatplotlibFigureConfig().equal(42)
 
 
-def test_matplotlib_figure_config_get_init_args() -> None:
-    assert MatplotlibFigureConfig(dpi=300).get_init_args() == {"dpi": 300}
-
-
-def test_matplotlib_figure_config_get_color_norm() -> None:
+def test_matplotlib_figure_config_get_arg() -> None:
     color_norm = LogNorm()
-    color_norm2 = MatplotlibFigureConfig(color_norm=color_norm).get_color_norm()
+    color_norm2 = MatplotlibFigureConfig(color_norm=color_norm).get_arg("color_norm")
     assert color_norm is not color_norm2
     assert isinstance(color_norm2, LogNorm)
 
 
-def test_matplotlib_figure_config_get_color_norm_default() -> None:
-    assert MatplotlibFigureConfig().get_color_norm() is None
+def test_matplotlib_figure_config_get_arg_missing() -> None:
+    assert MatplotlibFigureConfig().get_arg("color_norm") is None
+
+
+def test_matplotlib_figure_config_get_arg_default() -> None:
+    color_norm = LogNorm()
+    color_norm2 = MatplotlibFigureConfig().get_arg("color_norm", default=color_norm)
+    assert color_norm is not color_norm2
+    assert isinstance(color_norm2, LogNorm)
