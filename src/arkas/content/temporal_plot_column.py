@@ -3,7 +3,7 @@ the content of each column."""
 
 from __future__ import annotations
 
-__all__ = ["PlotColumnContentGenerator", "create_template"]
+__all__ = ["TemporalPlotColumnContentGenerator", "create_template"]
 
 import logging
 from typing import TYPE_CHECKING, Any
@@ -16,13 +16,13 @@ from arkas.figure.utils import figure2html
 from arkas.plotter.plot_column import PlotColumnPlotter
 
 if TYPE_CHECKING:
-    from arkas.state.dataframe import DataFrameState
+    from arkas.state.temporal_dataframe import TemporalDataFrameState
 
 
 logger = logging.getLogger(__name__)
 
 
-class PlotColumnContentGenerator(BaseSectionContentGenerator):
+class TemporalPlotColumnContentGenerator(BaseSectionContentGenerator):
     r"""Implement a content generator that plots the content of each
     column.
 
@@ -33,26 +33,41 @@ class PlotColumnContentGenerator(BaseSectionContentGenerator):
 
     ```pycon
 
+    >>> from datetime import datetime, timezone
     >>> import polars as pl
-    >>> from arkas.content import PlotColumnContentGenerator
-    >>> from arkas.state import DataFrameState
+    >>> from arkas.content import TemporalPlotColumnContentGenerator
+    >>> from arkas.state import TemporalDataFrameState
     >>> dataframe = pl.DataFrame(
     ...     {
-    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
-    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
-    ...         "col3": [0, 0, 0, 0, 1, 1, 1],
-    ...     }
+    ...         "col1": [0, 1, 1, 0],
+    ...         "col2": [0, 1, 0, 1],
+    ...         "col3": [1, 0, 0, 0],
+    ...         "datetime": [
+    ...             datetime(year=2020, month=1, day=3, tzinfo=timezone.utc),
+    ...             datetime(year=2020, month=2, day=3, tzinfo=timezone.utc),
+    ...             datetime(year=2020, month=3, day=3, tzinfo=timezone.utc),
+    ...             datetime(year=2020, month=4, day=3, tzinfo=timezone.utc),
+    ...         ],
+    ...     },
+    ...     schema={
+    ...         "col1": pl.Int64,
+    ...         "col2": pl.Int64,
+    ...         "col3": pl.Int64,
+    ...         "datetime": pl.Datetime(time_unit="us", time_zone="UTC"),
+    ...     },
     ... )
-    >>> content = PlotColumnContentGenerator(DataFrameState(dataframe))
+    >>> content = TemporalPlotColumnContentGenerator(
+    ...     TemporalDataFrameState(dataframe, temporal_column="datetime")
+    ... )
     >>> content
-    PlotColumnContentGenerator(
-      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+    TemporalPlotColumnContentGenerator(
+      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
 
     ```
     """
 
-    def __init__(self, state: DataFrameState) -> None:
+    def __init__(self, state: TemporalDataFrameState) -> None:
         self._state = state
 
     def __repr__(self) -> str:
@@ -70,7 +85,10 @@ class PlotColumnContentGenerator(BaseSectionContentGenerator):
 
     def generate_content(self) -> str:
         nrows, ncols = self._state.dataframe.shape
-        logger.info(f"Generating the plot of {ncols:,} columns...")
+        logger.info(
+            f"Generating the temporal plot of {ncols} columns using the "
+            f"temporal column {self._state.temporal_column!r}..."
+        )
         figures = PlotColumnPlotter(state=self._state).plot()
         return Template(create_template()).render(
             {
@@ -92,7 +110,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.content.plot_column import create_template
+    >>> from arkas.content.temporal_plot_column import create_template
     >>> template = create_template()
 
     ```
