@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 from coola.utils.format import repr_mapping_line, str_indent, str_mapping
 
 from arkas.state.dataframe import DataFrameState
+from arkas.utils.dataframe import check_column_exist
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -75,12 +76,7 @@ class TemporalDataFrameState(DataFrameState):
     ) -> None:
         super().__init__(dataframe=dataframe, figure_config=figure_config)
 
-        if temporal_column not in dataframe:
-            msg = (
-                f"The temporal column {temporal_column!r} is not in the DataFrame: "
-                f"{sorted(dataframe.columns)}"
-            )
-            raise ValueError(msg)
+        check_column_exist(dataframe, temporal_column)
         self._temporal_column = temporal_column
         self._period = period
 
