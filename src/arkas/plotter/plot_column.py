@@ -91,13 +91,14 @@ class MatplotlibFigureCreator(BaseFigureCreator):
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
-
         for col in state.dataframe:
             ax.plot(col.to_numpy(), label=col.name)
 
+        xmin, xmax = 0, state.dataframe.shape[0] - 1
+        if xmin < xmax:
+            ax.set_xlim(xmin, xmax)
         if yscale := state.figure_config.get_arg("yscale"):
             ax.set_yscale(yscale)
-
         ax.legend()
         fig.tight_layout()
         return MatplotlibFigure(fig)

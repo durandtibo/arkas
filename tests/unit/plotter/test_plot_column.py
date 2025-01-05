@@ -145,6 +145,15 @@ def test_matplotlib_figure_creator_create(dataframe: pl.DataFrame) -> None:
     )
 
 
+def test_matplotlib_figure_creator_create_1_row() -> None:
+    assert isinstance(
+        MatplotlibFigureCreator().create(
+            DataFrameState(pl.DataFrame({"col1": [0], "col2": [1], "col3": [0]}))
+        ),
+        MatplotlibFigure,
+    )
+
+
 def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         MatplotlibFigureCreator().create(
