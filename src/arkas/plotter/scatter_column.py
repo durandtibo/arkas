@@ -90,8 +90,19 @@ class MatplotlibFigureCreator(BaseFigureCreator):
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
-        ax.scatter(state.dataframe[state.x].to_numpy(), state.dataframe[state.y].to_numpy())
+        color = state.dataframe[state.color].to_numpy() if state.color else None
+        s = ax.scatter(
+            state.dataframe[state.x].to_numpy(),
+            state.dataframe[state.y].to_numpy(),
+            c=color,
+            label=state.color,
+        )
+        if color is not None:
+            fig.colorbar(s)
+            ax.legend()
 
+        ax.set_xlabel(state.x)
+        ax.set_ylabel(state.y)
         if xscale := state.figure_config.get_arg("xscale"):
             ax.set_xscale(xscale)
         if yscale := state.figure_config.get_arg("yscale"):
