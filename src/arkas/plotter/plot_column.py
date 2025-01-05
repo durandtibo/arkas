@@ -18,9 +18,8 @@ from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
-    import polars as pl
 
-    from arkas.figure.base import BaseFigure, BaseFigureConfig
+    from arkas.figure.base import BaseFigure
     from arkas.state.dataframe import DataFrameState
 
 
@@ -34,10 +33,8 @@ class BaseFigureCreator(ABC):
 
     >>> import polars as pl
     >>> from arkas.figure import MatplotlibFigureConfig
-    >>> from arkas.plotter.plot_column import MatplotlibFigureCreator
+    >>> from arkas.state import DataFrameState
     >>> creator = MatplotlibFigureCreator()
-    >>> creator
-    MatplotlibFigureCreator()
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.2, 4.2, 4.2, 2.2],
@@ -46,19 +43,17 @@ class BaseFigureCreator(ABC):
     ...     },
     ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
     ... )
-    >>> config = MatplotlibFigureConfig()
-    >>> fig = creator.create(frame=frame, config=config)
+    >>> fig = creator.create(DataFrameState(frame))
 
     ```
     """
 
     @abstractmethod
-    def create(self, frame: pl.DataFrame, config: BaseFigureConfig) -> BaseFigure:
+    def create(self, state: DataFrameState) -> BaseFigure:
         r"""Create a figure with the content of each column.
 
         Args:
-            frame: The input DataFrame.
-            config: The figure config.
+        state: The state containing the DataFrame to analyze.
 
         Returns:
             The generated figure.
@@ -69,7 +64,7 @@ class BaseFigureCreator(ABC):
 
         >>> import polars as pl
         >>> from arkas.figure import MatplotlibFigureConfig
-        >>> from arkas.plotter.plot_column import MatplotlibFigureCreator
+        >>> from arkas.state import DataFrameState
         >>> creator = MatplotlibFigureCreator()
         >>> frame = pl.DataFrame(
         ...     {
@@ -79,8 +74,7 @@ class BaseFigureCreator(ABC):
         ...     },
         ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
         ... )
-        >>> config = MatplotlibFigureConfig()
-        >>> fig = creator.create(frame=frame, config=config)
+        >>> fig = creator.create(DataFrameState(frame))
 
         ```
         """
@@ -95,10 +89,8 @@ class MatplotlibFigureCreator(BaseFigureCreator):
 
     >>> import polars as pl
     >>> from arkas.figure import MatplotlibFigureConfig
-    >>> from arkas.plotter.plot_column import MatplotlibFigureCreator
+    >>> from arkas.state import DataFrameState
     >>> creator = MatplotlibFigureCreator()
-    >>> creator
-    MatplotlibFigureCreator()
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.2, 4.2, 4.2, 2.2],
@@ -107,8 +99,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
     ...     },
     ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
     ... )
-    >>> config = MatplotlibFigureConfig()
-    >>> fig = creator.create(frame=frame, config=config)
+    >>> fig = creator.create(DataFrameState(frame))
 
     ```
     """
@@ -116,16 +107,16 @@ class MatplotlibFigureCreator(BaseFigureCreator):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"
 
-    def create(self, frame: pl.DataFrame, config: BaseFigureConfig) -> BaseFigure:
-        if frame.shape[0] == 0:
+    def create(self, state: DataFrameState) -> BaseFigure:
+        if state.dataframe.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
-        fig, ax = plt.subplots(**config.get_arg("init", {}))
+        fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
 
-        for col in frame:
+        for col in state.dataframe:
             ax.plot(col.to_numpy(), label=col.name)
 
-        if yscale := config.get_arg("yscale"):
+        if yscale := state.figure_config.get_arg("yscale"):
             ax.set_yscale(yscale)
 
         ax.legend()
@@ -187,8 +178,5 @@ class PlotColumnPlotter(BasePlotter):
         return self._state.equal(other._state, equal_nan=equal_nan)
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:
-        figure = self.registry.find_creator(self._state.figure_config.backend()).create(
-            frame=self._state.dataframe,
-            config=self._state.figure_config,
-        )
+        figure = self.registry.find_creator(self._state.figure_config.backend()).create(self._state)
         return {f"{prefix}plot_column{suffix}": figure}
