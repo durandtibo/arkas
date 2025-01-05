@@ -56,7 +56,7 @@ def main() -> None:
     ingestor = Ingestor(get_dataframe())
 
     path = Path.cwd().joinpath("tmp")
-    figure_config = MatplotlibFigureConfig(dpi=500, figsize=(13, 10))
+    figure_config = MatplotlibFigureConfig(init={"dpi": 500, "figsize": (13, 10)}, yscale="symlog")
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
