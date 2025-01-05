@@ -14,6 +14,7 @@ __all__ = [
     "Output",
     "OutputDict",
     "PlotColumnOutput",
+    "ScatterColumnOutput",
     "TemporalPlotColumnOutput",
 ]
 
@@ -27,5 +28,6 @@ from arkas.output.frame_summary import DataFrameSummaryOutput
 from arkas.output.lazy import BaseLazyOutput
 from arkas.output.mapping import OutputDict
 from arkas.output.plot_column import PlotColumnOutput
+from arkas.output.scatter_column import ScatterColumnOutput
 from arkas.output.temporal_plot_column import TemporalPlotColumnOutput
 from arkas.output.vanilla import Output
