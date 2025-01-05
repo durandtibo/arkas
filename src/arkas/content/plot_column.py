@@ -69,12 +69,13 @@ class PlotColumnContentGenerator(BaseSectionContentGenerator):
         return self._state.equal(other._state, equal_nan=equal_nan)
 
     def generate_content(self) -> str:
-        logger.info("Generating the DataFrame summary content...")
+        nrows, ncols = self._state.dataframe.shape
+        logger.info(f"Generating the plot of {ncols:,} columns...")
         figures = PlotColumnPlotter(state=self._state).plot()
         return Template(create_template()).render(
             {
-                "nrows": f"{self._state.dataframe.shape[0]:,}",
-                "ncols": f"{self._state.dataframe.shape[1]:,}",
+                "nrows": f"{nrows:,}",
+                "ncols": f"{ncols:,}",
                 "columns": ", ".join(self._state.dataframe.columns),
                 "figure": figure2html(figures["plot_column"], close_fig=True),
             }

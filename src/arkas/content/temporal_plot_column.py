@@ -1,26 +1,30 @@
-r"""Implement an output to plot each column of a DataFrame along a
-temporal dimension."""
+r"""Contain the implementation of a HTML content generator that plots
+the content of each column."""
 
 from __future__ import annotations
 
-__all__ = ["TemporalPlotColumnOutput"]
+__all__ = ["TemporalPlotColumnContentGenerator", "create_template"]
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
+from jinja2 import Template
 
-from arkas.content.temporal_plot_column import TemporalPlotColumnContentGenerator
-from arkas.evaluator2.vanilla import Evaluator
-from arkas.output.lazy import BaseLazyOutput
+from arkas.content.section import BaseSectionContentGenerator
+from arkas.figure.utils import figure2html
 from arkas.plotter.plot_column import PlotColumnPlotter
 
 if TYPE_CHECKING:
     from arkas.state.temporal_dataframe import TemporalDataFrameState
 
 
-class TemporalPlotColumnOutput(BaseLazyOutput):
-    r"""Implement an output to plot each column of a DataFrame along a
-    temporal dimension.
+logger = logging.getLogger(__name__)
+
+
+class TemporalPlotColumnContentGenerator(BaseSectionContentGenerator):
+    r"""Implement a content generator that plots the content of each
+    column.
 
     Args:
         state: The state containing the DataFrame to analyze.
@@ -31,9 +35,9 @@ class TemporalPlotColumnOutput(BaseLazyOutput):
 
     >>> from datetime import datetime, timezone
     >>> import polars as pl
-    >>> from arkas.output import TemporalPlotColumnOutput
+    >>> from arkas.content import TemporalPlotColumnContentGenerator
     >>> from arkas.state import TemporalDataFrameState
-    >>> frame = pl.DataFrame(
+    >>> dataframe = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 1, 0],
     ...         "col2": [0, 1, 0, 1],
@@ -52,21 +56,11 @@ class TemporalPlotColumnOutput(BaseLazyOutput):
     ...         "datetime": pl.Datetime(time_unit="us", time_zone="UTC"),
     ...     },
     ... )
-    >>> output = TemporalPlotColumnOutput(
-    ...     TemporalDataFrameState(frame, temporal_column="datetime")
+    >>> content = TemporalPlotColumnContentGenerator(
+    ...     TemporalDataFrameState(dataframe, temporal_column="datetime")
     ... )
-    >>> output
-    TemporalPlotColumnOutput(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
-    )
-    >>> output.get_content_generator()
+    >>> content
     TemporalPlotColumnContentGenerator(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
-    )
-    >>> output.get_evaluator()
-    Evaluator(count=0)
-    >>> output.get_plotter()
-    PlotColumnPlotter(
       (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
 
@@ -89,11 +83,43 @@ class TemporalPlotColumnOutput(BaseLazyOutput):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def _get_content_generator(self) -> TemporalPlotColumnContentGenerator:
-        return TemporalPlotColumnContentGenerator(self._state)
+    def generate_content(self) -> str:
+        nrows, ncols = self._state.dataframe.shape
+        logger.info(
+            f"Generating the temporal plot of {ncols} columns using the "
+            f"temporal column {self._state.temporal_column!r}..."
+        )
+        figures = PlotColumnPlotter(state=self._state).plot()
+        return Template(create_template()).render(
+            {
+                "nrows": f"{nrows:,}",
+                "ncols": f"{ncols:,}",
+                "columns": ", ".join(self._state.dataframe.columns),
+                "figure": figure2html(figures["plot_column"], close_fig=True),
+            }
+        )
 
-    def _get_evaluator(self) -> Evaluator:
-        return Evaluator()
 
-    def _get_plotter(self) -> PlotColumnPlotter:
-        return PlotColumnPlotter(self._state)
+def create_template() -> str:
+    r"""Return the template of the content.
+
+    Returns:
+        The content template.
+
+    Example usage:
+
+    ```pycon
+
+    >>> from arkas.content.temporal_plot_column import create_template
+    >>> template = create_template()
+
+    ```
+    """
+    return """This section plots the content of some columns.
+The x-axis is the row index and the y-axis shows the value.
+<ul>
+  <li> {{ncols}} columns: {{columns}} </li>
+  <li> number of rows: {{nrows}}</li>
+</ul>
+{{figure}}
+"""

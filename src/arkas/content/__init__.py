@@ -11,6 +11,7 @@ __all__ = [
     "ContentGeneratorDict",
     "DataFrameSummaryContentGenerator",
     "PlotColumnContentGenerator",
+    "TemporalPlotColumnContentGenerator",
 ]
 
 from arkas.content.accuracy import AccuracyContentGenerator
@@ -20,4 +21,5 @@ from arkas.content.column_cooccurrence import ColumnCooccurrenceContentGenerator
 from arkas.content.frame_summary import DataFrameSummaryContentGenerator
 from arkas.content.mapping import ContentGeneratorDict
 from arkas.content.plot_column import PlotColumnContentGenerator
+from arkas.content.temporal_plot_column import TemporalPlotColumnContentGenerator
 from arkas.content.vanilla import ContentGenerator

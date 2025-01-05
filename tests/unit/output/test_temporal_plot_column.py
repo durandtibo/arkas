@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import polars as pl
 import pytest
 
-from arkas.content import ContentGenerator, PlotColumnContentGenerator
+from arkas.content import ContentGenerator, TemporalPlotColumnContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, TemporalPlotColumnOutput
 from arkas.plotter import PlotColumnPlotter, Plotter
@@ -89,7 +89,7 @@ def test_temporal_plot_column_output_get_content_generator_lazy_true(
         TemporalPlotColumnOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
         .get_content_generator()
         .equal(
-            PlotColumnContentGenerator(
+            TemporalPlotColumnContentGenerator(
                 TemporalDataFrameState(dataframe, temporal_column="datetime")
             )
         )
