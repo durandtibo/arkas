@@ -71,7 +71,7 @@ class PlotColumnOutput(BaseLazyOutput):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self._state.equal(self._state, equal_nan=equal_nan)
+        return self._state.equal(other._state, equal_nan=equal_nan)
 
     def _get_content_generator(self) -> PlotColumnContentGenerator:
         return PlotColumnContentGenerator(self._state)

@@ -44,6 +44,10 @@ def test_plot_column_output_equal_true(dataframe: pl.DataFrame) -> None:
     )
 
 
+def test_plot_column_output_equal_false_different_state(dataframe: pl.DataFrame) -> None:
+    assert not PlotColumnOutput(DataFrameState(dataframe)).equal(DataFrameState(pl.DataFrame()))
+
+
 def test_plot_column_output_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not PlotColumnOutput(DataFrameState(dataframe)).equal(42)
 
