@@ -42,7 +42,7 @@ def dataframe() -> pl.DataFrame:
 
 
 def test_temporal_dataframe_state_init_temporal_column_incorrect(dataframe: pl.DataFrame) -> None:
-    with pytest.raises(ValueError, match="The temporal column 'time' is not in the DataFrame:"):
+    with pytest.raises(ValueError, match="The column 'time' is not in the DataFrame:"):
         TemporalDataFrameState(dataframe, temporal_column="time")
 
 
