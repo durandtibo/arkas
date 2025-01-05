@@ -6,7 +6,7 @@ import pytest
 from arkas.figure import HtmlFigure, MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plotter import Plotter, ScatterColumnPlotter
-from arkas.plotter.plot_column import MatplotlibFigureCreator
+from arkas.plotter.scatter_column import MatplotlibFigureCreator
 from arkas.state import ScatterDataFrameState
 
 

@@ -96,7 +96,6 @@ class MatplotlibFigureCreator(BaseFigureCreator):
             ax.set_xscale(xscale)
         if yscale := state.figure_config.get_arg("yscale"):
             ax.set_yscale(yscale)
-        ax.legend()
         fig.tight_layout()
         return MatplotlibFigure(fig)
 
