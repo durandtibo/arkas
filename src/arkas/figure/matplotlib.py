@@ -109,7 +109,7 @@ class MatplotlibFigureConfig(BaseFigureConfig):
         self._kwargs = kwargs
 
     def __repr__(self) -> str:
-        args = repr_mapping_line({"color_norm": self._color_norm} | self.get_args())
+        args = repr_mapping_line({"color_norm": self._color_norm} | self.get_init_args())
         return f"{self.__class__.__qualname__}({args})"
 
     @classmethod
@@ -124,9 +124,25 @@ class MatplotlibFigureConfig(BaseFigureConfig):
             return False
         # color_norm is excluded from the comparison as it is not straightforward
         # to compare to Normalize objects.
-        return objects_are_equal(self.get_args(), other.get_args(), equal_nan=equal_nan)
+        return objects_are_equal(self.get_init_args(), other.get_init_args(), equal_nan=equal_nan)
 
-    def get_args(self) -> dict:
+    def get_init_args(self) -> dict:
+        r"""Get the arguments to pass to ``matplotlib.pyplot.subplots``.
+
+        Returns:
+            The arguments.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.figure import MatplotlibFigureConfig
+        >>> config = MatplotlibFigureConfig(dpi=300)
+        >>> config.get_init_args()
+        {'dpi': 300}
+
+        ```
+        """
         return self._kwargs
 
     def get_color_norm(self) -> Normalize | None:

@@ -98,8 +98,8 @@ def test_matplotlib_figure_config_equal_false_different_type() -> None:
     assert not MatplotlibFigureConfig().equal(42)
 
 
-def test_matplotlib_figure_config_get_args() -> None:
-    assert MatplotlibFigureConfig(dpi=300).get_args() == {"dpi": 300}
+def test_matplotlib_figure_config_get_init_args() -> None:
+    assert MatplotlibFigureConfig(dpi=300).get_init_args() == {"dpi": 300}
 
 
 def test_matplotlib_figure_config_get_color_norm() -> None:

@@ -120,7 +120,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         if frame.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
-        fig, ax = plt.subplots(**config.get_args())
+        fig, ax = plt.subplots(**config.get_init_args())
         for col in frame:
             ax.plot(col.to_numpy(), label=col.name)
 
