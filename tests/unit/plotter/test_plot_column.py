@@ -150,7 +150,7 @@ def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame)
         MatplotlibFigureCreator().create(
             DataFrameState(
                 dataframe,
-                figure_config=MatplotlibFigureConfig(yscale="symlog", init={"figsize": (3, 3)}),
+                figure_config=MatplotlibFigureConfig(yscale="symlog", init={}),
             )
         ),
         MatplotlibFigure,

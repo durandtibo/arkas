@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
+import numpy as np
 import polars as pl
 import pytest
+from coola import objects_are_equal
 
 from arkas.figure import HtmlFigure, MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plotter import Plotter, TemporalPlotColumnPlotter
-from arkas.plotter.temporal_plot_column import MatplotlibFigureCreator
+from arkas.plotter.temporal_plot_column import MatplotlibFigureCreator, prepare_data
 from arkas.state import TemporalDataFrameState
 
 
@@ -16,17 +18,17 @@ from arkas.state import TemporalDataFrameState
 def dataframe() -> pl.DataFrame:
     return pl.DataFrame(
         {
-            "col1": [0, 1, 1, 0, 0, 1, 0],
+            "col1": [2, 3, 4, 5, 6, 7, 1],
             "col2": [0, 1, 0, 1, 0, 1, 0],
             "col3": [0, 0, 0, 0, 1, 1, 1],
             "datetime": [
-                datetime(year=2020, month=1, day=1, tzinfo=timezone.utc),
                 datetime(year=2020, month=1, day=2, tzinfo=timezone.utc),
                 datetime(year=2020, month=1, day=3, tzinfo=timezone.utc),
                 datetime(year=2020, month=1, day=4, tzinfo=timezone.utc),
                 datetime(year=2020, month=1, day=5, tzinfo=timezone.utc),
                 datetime(year=2020, month=1, day=6, tzinfo=timezone.utc),
                 datetime(year=2020, month=1, day=7, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=1, tzinfo=timezone.utc),
             ],
         },
         schema={
@@ -140,7 +142,7 @@ def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame)
             TemporalDataFrameState(
                 dataframe,
                 temporal_column="datetime",
-                figure_config=MatplotlibFigureConfig(yscale="symlog", init={"figsize": (3, 3)}),
+                figure_config=MatplotlibFigureConfig(yscale="symlog", init={}),
             )
         ),
         MatplotlibFigure,
@@ -152,4 +154,105 @@ def test_matplotlib_figure_creator_create_empty() -> None:
         MatplotlibFigureCreator()
         .create(TemporalDataFrameState(pl.DataFrame({"datetime": []}), temporal_column="datetime"))
         .equal(HtmlFigure(MISSING_FIGURE_MESSAGE))
+    )
+
+
+##################################
+#     Tests for prepare_data     #
+##################################
+
+
+@pytest.mark.filterwarnings(
+    "ignore:no explicit representation of timezones available for np.datetime64"
+)
+def test_prepare_data_no_period(dataframe: pl.DataFrame) -> None:
+    data, time = prepare_data(dataframe, temporal_column="datetime", period=None)
+    assert objects_are_equal(
+        data,
+        pl.DataFrame(
+            {
+                "col1": [1, 2, 3, 4, 5, 6, 7],
+                "col2": [0, 0, 1, 0, 1, 0, 1],
+                "col3": [1, 0, 0, 0, 0, 1, 1],
+            },
+            schema={"col1": pl.Int64, "col2": pl.Int64, "col3": pl.Int64},
+        ),
+    )
+    assert objects_are_equal(
+        time,
+        np.array(
+            [
+                datetime(year=2020, month=1, day=1, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=2, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=3, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=4, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=5, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=6, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=7, tzinfo=timezone.utc),
+            ],
+            dtype="datetime64[us]",
+        ),
+    )
+
+
+@pytest.mark.filterwarnings(
+    "ignore:no explicit representation of timezones available for np.datetime64"
+)
+def test_prepare_data_period_1d(dataframe: pl.DataFrame) -> None:
+    data, time = prepare_data(dataframe, temporal_column="datetime", period="1d")
+    assert objects_are_equal(
+        data,
+        pl.DataFrame(
+            {
+                "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+                "col2": [0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0],
+                "col3": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0],
+            },
+            schema={"col1": pl.Float64, "col2": pl.Float64, "col3": pl.Float64},
+        ),
+    )
+    assert objects_are_equal(
+        time,
+        np.array(
+            [
+                datetime(year=2020, month=1, day=1, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=2, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=3, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=4, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=5, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=6, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=7, tzinfo=timezone.utc),
+            ],
+            dtype="datetime64[us]",
+        ),
+    )
+
+
+@pytest.mark.filterwarnings(
+    "ignore:no explicit representation of timezones available for np.datetime64"
+)
+def test_prepare_data_period_2d(dataframe: pl.DataFrame) -> None:
+    data, time = prepare_data(dataframe, temporal_column="datetime", period="2d")
+    assert objects_are_equal(
+        data,
+        pl.DataFrame(
+            {
+                "col1": [1.5, 3.5, 5.5, 7.0],
+                "col2": [0.0, 0.5, 0.5, 1.0],
+                "col3": [0.5, 0.0, 0.5, 1.0],
+            },
+            schema={"col1": pl.Float64, "col2": pl.Float64, "col3": pl.Float64},
+        ),
+    )
+    assert objects_are_equal(
+        time,
+        np.array(
+            [
+                datetime(year=2020, month=1, day=1, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=3, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=5, tzinfo=timezone.utc),
+                datetime(year=2020, month=1, day=7, tzinfo=timezone.utc),
+            ],
+            dtype="datetime64[us]",
+        ),
     )
