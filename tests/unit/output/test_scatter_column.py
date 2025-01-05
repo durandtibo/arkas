@@ -3,11 +3,11 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from arkas.content import ContentGenerator
+from arkas.content import ContentGenerator, ScatterColumnContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, ScatterColumnOutput
-from arkas.plotter import Plotter
-from arkas.state import DataFrameState
+from arkas.plotter import Plotter, ScatterColumnPlotter
+from arkas.state import ScatterDataFrameState
 
 
 @pytest.fixture
@@ -27,61 +27,84 @@ def dataframe() -> pl.DataFrame:
 
 
 def test_scatter_column_output_repr(dataframe: pl.DataFrame) -> None:
-    assert repr(ScatterColumnOutput(DataFrameState(dataframe))).startswith("ScatterColumnOutput(")
+    assert repr(
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
+    ).startswith("ScatterColumnOutput(")
 
 
 def test_scatter_column_output_str(dataframe: pl.DataFrame) -> None:
-    assert str(ScatterColumnOutput(DataFrameState(dataframe))).startswith("ScatterColumnOutput(")
+    assert str(
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
+    ).startswith("ScatterColumnOutput(")
 
 
 def test_scatter_column_output_compute(dataframe: pl.DataFrame) -> None:
-    assert isinstance(ScatterColumnOutput(DataFrameState(dataframe)).compute(), Output)
+    assert isinstance(
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2")).compute(), Output
+    )
 
 
 def test_scatter_column_output_equal_true(dataframe: pl.DataFrame) -> None:
-    assert ScatterColumnOutput(DataFrameState(dataframe)).equal(
-        ScatterColumnOutput(DataFrameState(dataframe))
+    assert ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2")).equal(
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
     )
 
 
 def test_scatter_column_output_equal_false_different_state(dataframe: pl.DataFrame) -> None:
-    assert not ScatterColumnOutput(DataFrameState(dataframe)).equal(DataFrameState(pl.DataFrame()))
+    assert not ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2")).equal(
+        ScatterDataFrameState(pl.DataFrame({"col1": [], "col2": []}), x="col1", y="col2")
+    )
 
 
 def test_scatter_column_output_equal_false_different_type(dataframe: pl.DataFrame) -> None:
-    assert not ScatterColumnOutput(DataFrameState(dataframe)).equal(42)
+    assert not ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2")).equal(42)
 
 
 def test_scatter_column_output_get_content_generator_lazy_true(dataframe: pl.DataFrame) -> None:
     assert (
-        ScatterColumnOutput(DataFrameState(dataframe))
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
         .get_content_generator()
-        .equal(ContentGenerator())
+        .equal(ScatterColumnContentGenerator(ScatterDataFrameState(dataframe, x="col1", y="col2")))
     )
 
 
 def test_scatter_column_output_get_content_generator_lazy_false(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        ScatterColumnOutput(DataFrameState(dataframe)).get_content_generator(lazy=False),
+        ScatterColumnOutput(
+            ScatterDataFrameState(dataframe, x="col1", y="col2")
+        ).get_content_generator(lazy=False),
         ContentGenerator,
     )
 
 
 def test_scatter_column_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert ScatterColumnOutput(DataFrameState(dataframe)).get_evaluator().equal(Evaluator())
+    assert (
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
+        .get_evaluator()
+        .equal(Evaluator())
+    )
 
 
 def test_scatter_column_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
     assert (
-        ScatterColumnOutput(DataFrameState(dataframe)).get_evaluator(lazy=False).equal(Evaluator())
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
+        .get_evaluator(lazy=False)
+        .equal(Evaluator())
     )
 
 
 def test_scatter_column_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert ScatterColumnOutput(DataFrameState(dataframe)).get_plotter().equal(Plotter())
+    assert (
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
+        .get_plotter()
+        .equal(ScatterColumnPlotter(ScatterDataFrameState(dataframe, x="col1", y="col2")))
+    )
 
 
 def test_scatter_column_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        ScatterColumnOutput(DataFrameState(dataframe)).get_plotter(lazy=False), Plotter
+        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2")).get_plotter(
+            lazy=False
+        ),
+        Plotter,
     )
