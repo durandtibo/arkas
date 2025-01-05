@@ -12,7 +12,7 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.temporal_plot_column import TemporalPlotColumnContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.plot_column import PlotColumnPlotter
+from arkas.plotter.temporal_plot_column import TemporalPlotColumnPlotter
 
 if TYPE_CHECKING:
     from arkas.state.temporal_dataframe import TemporalDataFrameState
@@ -95,5 +95,5 @@ class TemporalPlotColumnOutput(BaseLazyOutput):
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
 
-    def _get_plotter(self) -> PlotColumnPlotter:
-        return PlotColumnPlotter(self._state)
+    def _get_plotter(self) -> TemporalPlotColumnPlotter:
+        return TemporalPlotColumnPlotter(self._state)
