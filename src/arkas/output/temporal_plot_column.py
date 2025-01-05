@@ -66,7 +66,7 @@ class TemporalPlotColumnOutput(BaseLazyOutput):
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
-    PlotColumnPlotter(
+    TemporalPlotColumnPlotter(
       (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
 

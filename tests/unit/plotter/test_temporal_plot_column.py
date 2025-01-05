@@ -134,7 +134,7 @@ def test_matplotlib_figure_creator_create(dataframe: pl.DataFrame) -> None:
     )
 
 
-def test_matplotlib_figure_creator_create_with_args(dataframe: pl.DataFrame) -> None:
+def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         MatplotlibFigureCreator().create(
             TemporalDataFrameState(

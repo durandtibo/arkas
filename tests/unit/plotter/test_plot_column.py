@@ -3,7 +3,7 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from arkas.figure import HtmlFigure, MatplotlibFigure, get_default_config
+from arkas.figure import HtmlFigure, MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plotter import PlotColumnPlotter, Plotter
 from arkas.plotter.plot_column import MatplotlibFigureCreator
@@ -140,7 +140,19 @@ def test_matplotlib_figure_creator_str() -> None:
 
 def test_matplotlib_figure_creator_create(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        MatplotlibFigureCreator().create(frame=dataframe, config=get_default_config()),
+        MatplotlibFigureCreator().create(DataFrameState(dataframe)),
+        MatplotlibFigure,
+    )
+
+
+def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame) -> None:
+    assert isinstance(
+        MatplotlibFigureCreator().create(
+            DataFrameState(
+                dataframe,
+                figure_config=MatplotlibFigureConfig(yscale="symlog", init={"figsize": (3, 3)}),
+            )
+        ),
         MatplotlibFigure,
     )
 
@@ -148,6 +160,6 @@ def test_matplotlib_figure_creator_create(dataframe: pl.DataFrame) -> None:
 def test_matplotlib_figure_creator_create_empty() -> None:
     assert (
         MatplotlibFigureCreator()
-        .create(frame=pl.DataFrame(), config=get_default_config())
+        .create(DataFrameState(pl.DataFrame()))
         .equal(HtmlFigure(MISSING_FIGURE_MESSAGE))
     )
