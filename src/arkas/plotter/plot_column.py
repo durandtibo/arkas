@@ -24,29 +24,8 @@ if TYPE_CHECKING:
 
 
 class BaseFigureCreator(ABC):
-    r"""Define the base class to create a figure with the content of each
-    column.
-
-    Example usage:
-
-    ```pycon
-
-    >>> import polars as pl
-    >>> from arkas.figure import MatplotlibFigureConfig
-    >>> from arkas.state import DataFrameState
-    >>> creator = MatplotlibFigureCreator()
-    >>> frame = pl.DataFrame(
-    ...     {
-    ...         "col1": [1.2, 4.2, 4.2, 2.2],
-    ...         "col2": [1, 1, 1, 1],
-    ...         "col3": [1, 2, 2, 2],
-    ...     },
-    ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
-    ... )
-    >>> fig = creator.create(DataFrameState(frame))
-
-    ```
-    """
+    r"""Define the base class to create a figure with the content of
+    each column."""
 
     @abstractmethod
     def create(self, state: DataFrameState) -> BaseFigure:

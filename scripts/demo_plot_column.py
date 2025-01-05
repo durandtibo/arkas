@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 def get_dataframe() -> pl.DataFrame:
     r"""Return a DataFrame."""
-    n_samples = 100
+    n_samples = 200
     rng = np.random.default_rng(42)
     frame = pl.DataFrame(
         {
@@ -68,6 +68,12 @@ def main() -> None:
                 ),
                 "temporal plot columns": aa.TemporalPlotColumnAnalyzer(
                     temporal_column="datetime",
+                    columns=["cauchy", "normal", "uniform"],
+                    figure_config=figure_config,
+                ),
+                "temporal plot columns (6h)": aa.TemporalPlotColumnAnalyzer(
+                    temporal_column="datetime",
+                    period="6h",
                     columns=["cauchy", "normal", "uniform"],
                     figure_config=figure_config,
                 ),
