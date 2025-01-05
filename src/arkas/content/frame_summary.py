@@ -135,7 +135,7 @@ def create_template() -> str:
 
     ```
     """
-    return """This content shows a short summary of each column.
+    return """This section shows a short summary of each column.
 
 <ul>
   <li> <b>column</b>: are the column names</li>
@@ -148,8 +148,8 @@ def create_template() -> str:
 <b>General statistics about the DataFrame</b>
 
 <ul>
-  <li> number of rows: {{nrows}}</li>
   <li> number of columns: {{ncols}} </li>
+  <li> number of rows: {{nrows}}</li>
 </ul>
 
 {{table}}
