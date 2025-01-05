@@ -35,6 +35,10 @@ def test_dataframe_state_figure_config(dataframe: pl.DataFrame) -> None:
     )
 
 
+def test_dataframe_state_figure_config_default(dataframe: pl.DataFrame) -> None:
+    assert objects_are_equal(DataFrameState(dataframe).figure_config, MatplotlibFigureConfig())
+
+
 def test_dataframe_state_repr(dataframe: pl.DataFrame) -> None:
     assert repr(DataFrameState(dataframe)).startswith("DataFrameState(")
 

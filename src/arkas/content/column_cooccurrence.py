@@ -3,7 +3,13 @@ the pairwise column co-occurrence."""
 
 from __future__ import annotations
 
-__all__ = ["ColumnCooccurrenceContentGenerator", "create_table", "create_template"]
+__all__ = [
+    "ColumnCooccurrenceContentGenerator",
+    "create_table",
+    "create_table_row",
+    "create_table_section",
+    "create_template",
+]
 
 import logging
 from typing import TYPE_CHECKING, Any
