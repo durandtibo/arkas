@@ -39,7 +39,7 @@ def test_dataframe_summary_output_incorrect_top(dataframe: pl.DataFrame) -> None
         DataFrameSummaryOutput(dataframe, top=-1)
 
 
-def test_balanced_accuracy_output_compute(dataframe: pl.DataFrame) -> None:
+def test_dataframe_summary_output_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         DataFrameSummaryOutput(dataframe).compute(),
         Output,
