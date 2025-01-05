@@ -121,8 +121,12 @@ class MatplotlibFigureCreator(BaseFigureCreator):
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
         fig, ax = plt.subplots(**config.get_arg("init", {}))
+
         for col in frame:
             ax.plot(col.to_numpy(), label=col.name)
+
+        if yscale := config.get_arg("yscale"):
+            ax.set_yscale(yscale)
 
         ax.legend()
         fig.tight_layout()

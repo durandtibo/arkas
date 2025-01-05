@@ -46,7 +46,7 @@ def main() -> None:
     )
 
     path = Path.cwd().joinpath("tmp")
-    figure_config = MatplotlibFigureConfig(dpi=500, figsize=(13, 10))
+    figure_config = MatplotlibFigureConfig(init={"dpi": 500, "figsize": (13, 10)})
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
@@ -64,7 +64,7 @@ def main() -> None:
                     columns=[f"col{i}" for i in range(ncols)],
                     ignore_self=True,
                     figure_config=MatplotlibFigureConfig(
-                        color_norm=SymLogNorm(linthresh=1), dpi=500, figsize=(13, 10)
+                        color_norm=SymLogNorm(linthresh=1), init={"dpi": 500, "figsize": (13, 10)}
                     ),
                 ),
             }
