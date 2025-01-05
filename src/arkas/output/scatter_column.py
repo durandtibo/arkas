@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.content.vanilla import ContentGenerator
+from arkas.content.scatter_column import ScatterColumnContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.vanilla import Plotter
+from arkas.plotter.scatter_column import ScatterColumnPlotter
 
 if TYPE_CHECKING:
     from arkas.state.temporal_dataframe import ScatterDataFrameState
@@ -44,11 +44,15 @@ class ScatterColumnOutput(BaseLazyOutput):
       (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
-    ContentGenerator()
+    ScatterColumnContentGenerator(
+      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+    )
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
-    Plotter(count=0)
+    ScatterColumnPlotter(
+      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+    )
 
     ```
     """
@@ -69,11 +73,11 @@ class ScatterColumnOutput(BaseLazyOutput):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def _get_content_generator(self) -> ContentGenerator:
-        return ContentGenerator()
+    def _get_content_generator(self) -> ScatterColumnContentGenerator:
+        return ScatterColumnContentGenerator(self._state)
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
 
-    def _get_plotter(self) -> Plotter:
-        return Plotter()
+    def _get_plotter(self) -> ScatterColumnPlotter:
+        return ScatterColumnPlotter(self._state)
