@@ -35,7 +35,7 @@ class ColumnCooccurrenceEvaluator(BaseEvaluator):
     ... )
     >>> evaluator
     ColumnCooccurrenceEvaluator(
-      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> evaluator.evaluate()
     {'column_cooccurrence': array([[1., 1., 1.],

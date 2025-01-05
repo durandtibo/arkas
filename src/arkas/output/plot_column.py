@@ -41,17 +41,17 @@ class PlotColumnOutput(BaseLazyOutput):
     >>> output = PlotColumnOutput(DataFrameState(frame))
     >>> output
     PlotColumnOutput(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     PlotColumnContentGenerator(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
     PlotColumnPlotter(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
     )
 
     ```

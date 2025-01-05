@@ -57,17 +57,17 @@ class TemporalPlotColumnOutput(BaseLazyOutput):
     ... )
     >>> output
     TemporalPlotColumnOutput(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     PlotColumnContentGenerator(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
     PlotColumnPlotter(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
 
     ```

@@ -116,5 +116,5 @@ def test_plotly_figure_config_equal_false_different_type() -> None:
 
 
 @plotly_available
-def test_plotly_figure_config_get_args() -> None:
-    assert PlotlyFigureConfig(dpi=300).get_args() == {"dpi": 300}
+def test_plotly_figure_config_get_arg() -> None:
+    assert PlotlyFigureConfig(dpi=300).get_arg("dpi") == 300

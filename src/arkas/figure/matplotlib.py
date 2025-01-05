@@ -8,16 +8,13 @@ import base64
 import copy
 import io
 import sys
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import matplotlib.pyplot as plt
 from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 
 from arkas.figure.base import BaseFigure, BaseFigureConfig
-
-if TYPE_CHECKING:
-    from matplotlib.colors import Normalize
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -99,17 +96,16 @@ class MatplotlibFigureConfig(BaseFigureConfig):
     >>> from arkas.figure import MatplotlibFigureConfig
     >>> config = MatplotlibFigureConfig()
     >>> config
-    MatplotlibFigureConfig(color_norm=None)
+    MatplotlibFigureConfig()
 
     ```
     """
 
-    def __init__(self, color_norm: Normalize | None = None, **kwargs: Any) -> None:
-        self._color_norm = color_norm
+    def __init__(self, **kwargs: Any) -> None:
         self._kwargs = kwargs
 
     def __repr__(self) -> str:
-        args = repr_mapping_line({"color_norm": self._color_norm} | self.get_init_args())
+        args = repr_mapping_line(self._kwargs)
         return f"{self.__class__.__qualname__}({args})"
 
     @classmethod
@@ -117,50 +113,12 @@ class MatplotlibFigureConfig(BaseFigureConfig):
         return "matplotlib"
 
     def clone(self) -> Self:
-        return self.__class__(color_norm=self._color_norm, **self._kwargs)
+        return self.__class__(**self._kwargs)
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        # color_norm is excluded from the comparison as it is not straightforward
-        # to compare to Normalize objects.
-        return objects_are_equal(self.get_init_args(), other.get_init_args(), equal_nan=equal_nan)
+        return objects_are_equal(self._kwargs, other._kwargs, equal_nan=equal_nan)
 
-    def get_init_args(self) -> dict:
-        r"""Get the arguments to pass to ``matplotlib.pyplot.subplots``.
-
-        Returns:
-            The arguments.
-
-        Example usage:
-
-        ```pycon
-
-        >>> from arkas.figure import MatplotlibFigureConfig
-        >>> config = MatplotlibFigureConfig(dpi=300)
-        >>> config.get_init_args()
-        {'dpi': 300}
-
-        ```
-        """
-        return self._kwargs
-
-    def get_color_norm(self) -> Normalize | None:
-        r"""Get the color normalization.
-
-        Returns:
-            The color normalization.
-
-        Example usage:
-
-        ```pycon
-
-        >>> from matplotlib.colors import LogNorm
-        >>> from arkas.figure import MatplotlibFigureConfig
-        >>> config = MatplotlibFigureConfig(color_norm=LogNorm())
-        >>> config.get_color_norm()
-        <matplotlib.colors.LogNorm object at 0x...>
-
-        ```
-        """
-        return copy.copy(self._color_norm)
+    def get_arg(self, name: str, default: Any = None) -> Any:
+        return copy.copy(self._kwargs.get(name, default))

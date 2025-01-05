@@ -76,7 +76,7 @@ class TemporalPlotColumnAnalyzer(BaseInNLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     TemporalPlotColumnOutput(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
 
     ```

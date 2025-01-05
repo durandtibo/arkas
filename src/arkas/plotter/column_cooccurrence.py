@@ -98,8 +98,8 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         if state.matrix.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
-        fig, ax = plt.subplots(**state.figure_config.get_init_args())
-        im = ax.imshow(state.matrix, norm=state.figure_config.get_color_norm())
+        fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
+        im = ax.imshow(state.matrix, norm=state.figure_config.get_arg("color_norm"))
         fig.colorbar(im)
         ax.set_xticks(
             range(len(state.columns)),
@@ -148,7 +148,7 @@ class ColumnCooccurrencePlotter(BasePlotter):
     ... )
     >>> plotter
     ColumnCooccurrencePlotter(
-      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
     )
 
     ```

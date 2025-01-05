@@ -141,7 +141,7 @@ class BaseFigureConfig(ABC):
     >>> from arkas.figure import MatplotlibFigureConfig
     >>> config = MatplotlibFigureConfig()
     >>> config
-    MatplotlibFigureConfig(color_norm=None)
+    MatplotlibFigureConfig()
 
     ```
     """
@@ -170,7 +170,7 @@ class BaseFigureConfig(ABC):
         Returns:
             A copy of the config.
 
-         Example usage:
+        Example usage:
 
         ```pycon
 
@@ -205,6 +205,29 @@ class BaseFigureConfig(ABC):
         True
         >>> config1.equal(config3)
         False
+
+        ```
+        """
+
+    @abstractmethod
+    def get_arg(self, name: str, default: Any = None) -> Any:
+        r"""Get a given argument from the config.
+
+        Args:
+            name: The argument name to get.
+            default: The default value to return if the argument is missing.
+
+        Returns:
+            The argument value or the default value.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.figure import MatplotlibFigureConfig
+        >>> config = MatplotlibFigureConfig(dpi=42)
+        >>> config.get_arg("dpi")
+        42
 
         ```
         """

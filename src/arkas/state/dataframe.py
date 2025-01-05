@@ -48,7 +48,7 @@ class DataFrameState(BaseState):
     ... )
     >>> state = DataFrameState(frame)
     >>> state
-    DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+    DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
 
     ```
     """

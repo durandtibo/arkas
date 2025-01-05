@@ -62,7 +62,7 @@ class PlotColumnAnalyzer(BaseInNLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     PlotColumnOutput(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig(color_norm=None))
+      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
     )
 
     ```

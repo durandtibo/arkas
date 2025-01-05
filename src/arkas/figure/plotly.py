@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __all__ = ["PlotlyFigure", "PlotlyFigureConfig"]
 
+import copy
 import sys
 from typing import Any
 
@@ -105,7 +106,7 @@ class PlotlyFigureConfig(BaseFigureConfig):
         self._kwargs = kwargs
 
     def __repr__(self) -> str:
-        args = repr_mapping_line(self.get_args())
+        args = repr_mapping_line(self._kwargs)
         return f"{self.__class__.__qualname__}({args})"
 
     @classmethod
@@ -118,7 +119,7 @@ class PlotlyFigureConfig(BaseFigureConfig):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(self.get_args(), other.get_args(), equal_nan=equal_nan)
+        return objects_are_equal(self._kwargs, other._kwargs, equal_nan=equal_nan)
 
-    def get_args(self) -> dict:
-        return self._kwargs
+    def get_arg(self, name: str, default: Any = None) -> Any:
+        return copy.copy(self._kwargs.get(name, default))

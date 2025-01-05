@@ -59,7 +59,7 @@ def get_default_config() -> BaseFigureConfig:
     >>> from arkas.figure import get_default_config
     >>> config = get_default_config()
     >>> config
-    MatplotlibFigureConfig(color_norm=None)
+    MatplotlibFigureConfig()
 
     ```
     """
