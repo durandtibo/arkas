@@ -14,6 +14,7 @@ __all__ = [
     "DataFrameSummaryAnalyzer",
     "MappingAnalyzer",
     "PlotColumnAnalyzer",
+    "TemporalPlotColumnAnalyzer",
     "TransformAnalyzer",
     "is_analyzer_config",
     "setup_analyzer",
@@ -29,4 +30,5 @@ from arkas.analyzer.frame_summary import DataFrameSummaryAnalyzer
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer, BaseLazyAnalyzer
 from arkas.analyzer.mapping import MappingAnalyzer
 from arkas.analyzer.plot_column import PlotColumnAnalyzer
+from arkas.analyzer.temporal_plot_column import TemporalPlotColumnAnalyzer
 from arkas.analyzer.transform import TransformAnalyzer

@@ -11,7 +11,7 @@ from grizz.utils.format import str_shape_diff
 
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer
 from arkas.output.plot_column import PlotColumnOutput
-from arkas.state import DataFrameState
+from arkas.state.dataframe import DataFrameState
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
