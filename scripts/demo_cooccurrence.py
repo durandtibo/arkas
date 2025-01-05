@@ -10,15 +10,9 @@ import numpy as np
 import polars as pl
 from grizz.ingestor import Ingestor
 from grizz.transformer import SequentialTransformer
+from matplotlib.colors import SymLogNorm
 
-from arkas.analyzer import (
-    AccuracyAnalyzer,
-    BalancedAccuracyAnalyzer,
-    ColumnCooccurrenceAnalyzer,
-    DataFrameSummaryAnalyzer,
-    MappingAnalyzer,
-    PlotColumnAnalyzer,
-)
+from arkas import analyzer as aa
 from arkas.exporter import (
     FigureExporter,
     MetricExporter,
@@ -34,9 +28,9 @@ logger = logging.getLogger(__name__)
 
 def main() -> None:
     r"""Define the main function."""
-    n_samples = 100
+    n_samples = 100000
     rng = np.random.default_rng(42)
-    ncols = 5
+    ncols = 100
     ingestor = Ingestor(
         pl.DataFrame(
             {
@@ -56,25 +50,22 @@ def main() -> None:
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
-        analyzer=MappingAnalyzer(
+        analyzer=aa.MappingAnalyzer(
             {
-                "summary": DataFrameSummaryAnalyzer(),
-                "group one": AccuracyAnalyzer(y_true="target", y_pred="pred"),
-                "group two": BalancedAccuracyAnalyzer(y_true="target", y_pred="pred"),
-                "co-occurrence": ColumnCooccurrenceAnalyzer(
+                "summary": aa.DataFrameSummaryAnalyzer(),
+                "group one": aa.AccuracyAnalyzer(y_true="target", y_pred="pred"),
+                "group two": aa.BalancedAccuracyAnalyzer(y_true="target", y_pred="pred"),
+                "co-occurrence": aa.ColumnCooccurrenceAnalyzer(
                     columns=[f"col{i}" for i in range(ncols)],
                     ignore_self=True,
                     figure_config=figure_config,
                 ),
-                # "co-occurrence (symlog)": ColumnCooccurrenceAnalyzer(
-                #     columns=[f"col{i}" for i in range(ncols)],
-                #     ignore_self=True,
-                #     figure_config=MatplotlibFigureConfig(
-                #         color_norm=SymLogNorm(linthresh=1), dpi=500, figsize=(13, 10)
-                #     ),
-                # ),
-                "plot columns": PlotColumnAnalyzer(
-                    columns=["cauchy", "normal", "uniform"], figure_config=figure_config
+                "co-occurrence (symlog)": aa.ColumnCooccurrenceAnalyzer(
+                    columns=[f"col{i}" for i in range(ncols)],
+                    ignore_self=True,
+                    figure_config=MatplotlibFigureConfig(
+                        color_norm=SymLogNorm(linthresh=1), dpi=500, figsize=(13, 10)
+                    ),
                 ),
             }
         ),
