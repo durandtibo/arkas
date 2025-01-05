@@ -6,7 +6,7 @@ import polars as pl
 import pytest
 
 from arkas.content import ContentGenerator, TemporalPlotColumnContentGenerator
-from arkas.content.plot_column import create_template
+from arkas.content.temporal_plot_column import create_template
 from arkas.state import TemporalDataFrameState
 
 
