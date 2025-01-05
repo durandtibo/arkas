@@ -22,6 +22,7 @@ from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
+from arkas.utils.range import find_range
 
 if TYPE_CHECKING:
     import numpy as np
@@ -128,6 +129,14 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
         for col in data:
             ax.plot(time, col.to_numpy(), label=col.name)
+
+        xmin, xmax = find_range(
+            time,
+            xmin=state.figure_config.get_arg("xmin"),
+            xmax=state.figure_config.get_arg("xmax"),
+        )
+        if xmin < xmax:
+            ax.set_xlim(xmin, xmax)
 
         if yscale := state.figure_config.get_arg("yscale"):
             ax.set_yscale(yscale)
