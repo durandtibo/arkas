@@ -1076,15 +1076,15 @@ colorama = ">=0.4"
 
 [[package]]
 name = "grizz"
-version = "0.2.0a15"
+version = "0.2.0a16"
 description = "A light library to preprocess data with polars"
 optional = false
 python-versions = "<3.14,>=3.9"
 groups = ["main"]
 markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
 files = [
-    {file = "grizz-0.2.0a15-py3-none-any.whl", hash = "sha256:f7eff6b5426f3091d55bee6a0e1c378c442f4c0d2a4781faa1a80782b83db412"},
-    {file = "grizz-0.2.0a15.tar.gz", hash = "sha256:0db947a12071fdc70d1e00b1eb5a0e1c23ce26bc12e282f2bd287f378c820563"},
+    {file = "grizz-0.2.0a16-py3-none-any.whl", hash = "sha256:1b1e321552794e23d203c4b9426b9f51d95133049c72519682cd017ceab40c5c"},
+    {file = "grizz-0.2.0a16.tar.gz", hash = "sha256:95b862826c21721579e725e1b1c82a97ab04f15bbf6bf35e3a81cc69e43074c6"},
 ]
 
 [package.dependencies]
@@ -4419,4 +4419,4 @@ cli = ["colorlog", "hya", "hydra-core", "omegaconf"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "07b3929654942af8292974ba1349cff30a80fedd5291be93b27b0c64baaff47a"
+content-hash = "4d6eb563e46666cc812990b8c25123e77101d031c784e698860da2d235b139fa"

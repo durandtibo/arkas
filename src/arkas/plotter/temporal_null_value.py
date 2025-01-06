@@ -127,7 +127,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         nulls, totals, labels = compute_temporal_null_count(
             frame=state.dataframe,
             columns=columns,
-            dt_column=state.temporal_column,
+            temporal_column=state.temporal_column,
             period=state.period,
         )
         plot_null_temporal(ax=ax, labels=labels, nulls=nulls, totals=totals)
