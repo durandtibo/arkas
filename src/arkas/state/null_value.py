@@ -9,6 +9,7 @@ import sys
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
+import polars as pl
 from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line
 from grizz.utils.null import compute_null_count
@@ -25,8 +26,6 @@ else:  # pragma: no cover
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
-
-    import polars as pl
 
 
 class NullValueState(BaseState):
@@ -122,6 +121,40 @@ class NullValueState(BaseState):
             and objects_are_equal(self.total_count, other.total_count, equal_nan=equal_nan)
             and objects_are_equal(self.columns, other.columns, equal_nan=equal_nan)
             and objects_are_equal(self.figure_config, other.figure_config, equal_nan=equal_nan)
+        )
+
+    def to_dataframe(self) -> pl.DataFrame:
+        r"""Export the content of the state to a DataFrame.
+
+        Returns:
+            The DataFrame.
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.state import NullValueState
+        >>> state = NullValueState(
+        ...     null_count=np.array([0, 1, 2]),
+        ...     total_count=np.array([5, 5, 5]),
+        ...     columns=["col1", "col2", "col3"],
+        ... )
+        >>> state.to_dataframe()
+        shape: (3, 3)
+        ┌────────┬──────┬───────┐
+        │ column ┆ null ┆ total │
+        │ ---    ┆ ---  ┆ ---   │
+        │ str    ┆ i64  ┆ i64   │
+        ╞════════╪══════╪═══════╡
+        │ col1   ┆ 0    ┆ 5     │
+        │ col2   ┆ 1    ┆ 5     │
+        │ col3   ┆ 2    ┆ 5     │
+        └────────┴──────┴───────┘
+
+        ```
+        """
+        return pl.DataFrame(
+            {"column": self._columns, "null": self._null_count, "total": self._total_count},
+            schema={"column": pl.String, "null": pl.Int64, "total": pl.Int64},
         )
 
     @classmethod
