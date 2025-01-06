@@ -4,13 +4,43 @@ import polars as pl
 import pytest
 
 from arkas.content import ContentGenerator, ContinuousSeriesContentGenerator
-from arkas.content.continuous_series import create_template
+from arkas.content.continuous_series import create_table, create_template
 from arkas.state import SeriesState
 
 
 @pytest.fixture
 def series() -> pl.Series:
     return pl.Series("col1", [1, 2, 3, 4, 5, 6, 7])
+
+
+@pytest.fixture
+def stats() -> dict:
+    return {
+        "count": 103,
+        "num_nulls": 2,
+        "num_non_nulls": 101,
+        "nunique": 102,
+        "mean": 50.0,
+        "std": 29.154759474226502,
+        "skewness": 0.0,
+        "kurtosis": -1.2,
+        "min": 0.0,
+        "q001": 0.1,
+        "q01": 1.0,
+        "q05": 5.0,
+        "q10": 10.0,
+        "q25": 25.0,
+        "median": 50.0,
+        "q75": 75.0,
+        "q90": 90.0,
+        "q95": 95.0,
+        "q99": 99.0,
+        "q999": 99.9,
+        "max": 100.0,
+        ">0": 100,
+        "<0": 0,
+        "=0": 1,
+    }
 
 
 ######################################################
@@ -106,3 +136,12 @@ def test_continuous_series_content_generator_generate_toc_args(series: pl.Series
 
 def test_create_template() -> None:
     assert isinstance(create_template(), str)
+
+
+#################################
+#    Tests for create_table     #
+#################################
+
+
+def test_create_table(stats: dict[str, float]) -> None:
+    assert isinstance(create_table(stats=stats), str)
