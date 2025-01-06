@@ -33,17 +33,17 @@ class ContinuousSeriesOutput(BaseLazyOutput):
     >>> output = ContinuousSeriesOutput(SeriesState(pl.Series("col1", [1, 2, 3, 4, 5, 6, 7])))
     >>> output
     ContinuousSeriesOutput(
-      (state): SeriesState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
+      (state): SeriesState(name='col1', values=(7,), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     ContinuousSeriesContentGenerator(
-      (state): SeriesState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
+      (state): SeriesState(name='col1', values=(7,), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
     ContinuousSeriesPlotter(
-      (state): SeriesState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
+      (state): SeriesState(name='col1', values=(7,), figure_config=MatplotlibFigureConfig())
     )
 
     ```
