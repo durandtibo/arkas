@@ -150,4 +150,4 @@ class ContinuousSeriesPlotter(BasePlotter):
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:
         figure = self.registry.find_creator(self._state.figure_config.backend()).create(self._state)
-        return {f"{prefix}plot_column{suffix}": figure}
+        return {f"{prefix}continuous_histogram{suffix}": figure}

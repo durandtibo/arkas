@@ -72,19 +72,19 @@ def test_continuous_series_plotter_equal_nan_false() -> None:
 def test_continuous_series_plotter_plot(series: pl.Series) -> None:
     figures = ContinuousSeriesPlotter(SeriesState(series)).plot()
     assert len(figures) == 1
-    assert isinstance(figures["plot_column"], MatplotlibFigure)
+    assert isinstance(figures["continuous_histogram"], MatplotlibFigure)
 
 
 def test_continuous_series_plotter_plot_empty() -> None:
     figures = ContinuousSeriesPlotter(SeriesState(pl.Series())).plot()
     assert len(figures) == 1
-    assert figures["plot_column"].equal(HtmlFigure(MISSING_FIGURE_MESSAGE))
+    assert figures["continuous_histogram"].equal(HtmlFigure(MISSING_FIGURE_MESSAGE))
 
 
 def test_continuous_series_plotter_plot_prefix_suffix(series: pl.Series) -> None:
     figures = ContinuousSeriesPlotter(SeriesState(series)).plot(prefix="prefix_", suffix="_suffix")
     assert len(figures) == 1
-    assert isinstance(figures["prefix_plot_column_suffix"], MatplotlibFigure)
+    assert isinstance(figures["prefix_continuous_histogram_suffix"], MatplotlibFigure)
 
 
 #############################################
