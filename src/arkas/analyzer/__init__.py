@@ -16,6 +16,7 @@ __all__ = [
     "NullValueAnalyzer",
     "PlotColumnAnalyzer",
     "ScatterColumnAnalyzer",
+    "TemporalNullValueAnalyzer",
     "TemporalPlotColumnAnalyzer",
     "TransformAnalyzer",
     "is_analyzer_config",
@@ -34,5 +35,6 @@ from arkas.analyzer.mapping import MappingAnalyzer
 from arkas.analyzer.null_value import NullValueAnalyzer
 from arkas.analyzer.plot_column import PlotColumnAnalyzer
 from arkas.analyzer.scatter_column import ScatterColumnAnalyzer
+from arkas.analyzer.temporal_null_value import TemporalNullValueAnalyzer
 from arkas.analyzer.temporal_plot_column import TemporalPlotColumnAnalyzer
 from arkas.analyzer.transform import TransformAnalyzer
