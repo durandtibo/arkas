@@ -18,6 +18,7 @@ __all__ = [
     "ScatterColumnOutput",
     "TemporalNullValueOutput",
     "TemporalPlotColumnOutput",
+    "ContinuousSeriesOutput",
 ]
 
 from arkas.output.accuracy import AccuracyOutput
@@ -25,6 +26,7 @@ from arkas.output.balanced_accuracy import BalancedAccuracyOutput
 from arkas.output.base import BaseOutput
 from arkas.output.column_cooccurrence import ColumnCooccurrenceOutput
 from arkas.output.content import ContentOutput
+from arkas.output.continuous_series import ContinuousSeriesOutput
 from arkas.output.empty import EmptyOutput
 from arkas.output.frame_summary import DataFrameSummaryOutput
 from arkas.output.lazy import BaseLazyOutput
