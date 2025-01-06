@@ -32,7 +32,7 @@ class BaseFigureCreator(ABC):
         r"""Create a figure with the content of each column.
 
         Args:
-        state: The state containing the DataFrame to analyze.
+            state: The state containing the DataFrame to analyze.
 
         Returns:
             The generated figure.
