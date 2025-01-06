@@ -227,6 +227,10 @@ def test_compute_statistics_continuous_array_with_null() -> None:
     )
 
 
+@pytest.mark.filterwarnings(
+    r"ignore:Precision loss occurred in moment calculation due to catastrophic cancellation. "
+    r"This occurs when the data are nearly identical. Results may be unreliable."
+)
 def test_compute_statistics_continuous_array_single_numeric_value() -> None:
     assert objects_are_allclose(
         compute_statistics_continuous_array(np.array([1, 1, 1, 1, 1])),
@@ -398,6 +402,10 @@ def test_compute_statistics_continuous_series_with_null() -> None:
     )
 
 
+@pytest.mark.filterwarnings(
+    r"ignore:Precision loss occurred in moment calculation due to catastrophic cancellation. "
+    r"This occurs when the data are nearly identical. Results may be unreliable."
+)
 def test_compute_statistics_continuous_series_single_numeric_value() -> None:
     assert objects_are_allclose(
         compute_statistics_continuous_series(pl.Series([1, 1, 1, 1, 1])),
