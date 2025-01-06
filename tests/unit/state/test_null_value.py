@@ -265,6 +265,21 @@ def test_null_value_state_equal_nan_false() -> None:
     )
 
 
+def test_null_value_state_to_dataframe() -> None:
+    state = NullValueState(
+        null_count=np.array([1, 2, 3]),
+        total_count=np.array([7, 7, 7]),
+        columns=["col1", "col2", "col3"],
+    )
+    assert objects_are_equal(
+        state.to_dataframe(),
+        pl.DataFrame(
+            {"column": ["col1", "col2", "col3"], "null": [1, 2, 3], "total": [7, 7, 7]},
+            schema={"column": pl.String, "null": pl.Int64, "total": pl.Int64},
+        ),
+    )
+
+
 def test_null_value_state_from_dataframe() -> None:
     assert NullValueState.from_dataframe(
         pl.DataFrame(
