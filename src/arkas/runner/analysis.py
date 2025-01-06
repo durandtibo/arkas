@@ -65,7 +65,7 @@ class AnalysisRunner(BaseRunner):
           (path): .../metrics.pkl
           (saver): PickleSaver(protocol=5)
           (exist_ok): False
-          (show_metrics): True
+          (show_metrics): False
         )
       (lazy): True
     )
