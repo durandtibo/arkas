@@ -137,7 +137,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         )
         if xmin < xmax:
             ax.set_xlim(xmin, xmax)
-
+        ax.set_xlabel(state.temporal_column)
         if yscale := state.figure_config.get_arg("yscale"):
             ax.set_yscale(yscale)
         ax.legend()

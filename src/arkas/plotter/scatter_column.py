@@ -16,6 +16,7 @@ from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
+from arkas.utils.range import find_range
 
 if TYPE_CHECKING:
     from arkas.figure.base import BaseFigure
@@ -91,16 +92,27 @@ class MatplotlibFigureCreator(BaseFigureCreator):
 
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
         color = state.dataframe[state.color].to_numpy() if state.color else None
-        s = ax.scatter(
-            state.dataframe[state.x].to_numpy(),
-            state.dataframe[state.y].to_numpy(),
-            c=color,
-            label=state.color,
-        )
+        x = state.dataframe[state.x].to_numpy()
+        y = state.dataframe[state.y].to_numpy()
+        s = ax.scatter(x=x, y=y, c=color, label=state.color)
         if color is not None:
             fig.colorbar(s)
             ax.legend()
 
+        xmin, xmax = find_range(
+            x,
+            xmin=state.figure_config.get_arg("xmin"),
+            xmax=state.figure_config.get_arg("xmax"),
+        )
+        if xmin < xmax:
+            ax.set_xlim(xmin, xmax)
+        ymin, ymax = find_range(
+            y,
+            xmin=state.figure_config.get_arg("ymin"),
+            xmax=state.figure_config.get_arg("ymax"),
+        )
+        if ymin < ymax:
+            ax.set_ylim(ymin, ymax)
         ax.set_xlabel(state.x)
         ax.set_ylabel(state.y)
         if xscale := state.figure_config.get_arg("xscale"):
