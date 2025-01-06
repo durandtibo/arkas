@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import numpy as np
+import polars as pl
 
 from arkas.content import ContentGenerator, NullValueContentGenerator
-from arkas.content.null_value import create_template
+from arkas.content.null_value import create_table, create_table_row, create_template
 from arkas.state import NullValueState
 
 ###############################################
@@ -171,3 +172,45 @@ def test_null_value_content_generator_generate_toc_args() -> None:
 
 def test_create_template() -> None:
     assert isinstance(create_template(), str)
+
+
+##################################
+#     Tests for create_table     #
+##################################
+
+
+def test_create_table() -> None:
+    assert isinstance(
+        create_table(
+            pl.DataFrame(
+                {"column": ["A", "B", "C"], "null": [0, 1, 2], "total": [4, 4, 4]},
+            )
+        ),
+        str,
+    )
+
+
+def test_create_table_empty() -> None:
+    assert isinstance(
+        create_table(pl.DataFrame({"column": [], "null": [], "total": []})),
+        str,
+    )
+
+
+######################################
+#     Tests for create_table_row     #
+######################################
+
+
+def test_create_table_row() -> None:
+    assert isinstance(
+        create_table_row(column="col", null_count=5, total_count=101),
+        str,
+    )
+
+
+def test_create_table_row_zero() -> None:
+    assert isinstance(
+        create_table_row(column="col", null_count=0, total_count=0),
+        str,
+    )
