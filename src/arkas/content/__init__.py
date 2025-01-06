@@ -13,6 +13,7 @@ __all__ = [
     "NullValueContentGenerator",
     "PlotColumnContentGenerator",
     "ScatterColumnContentGenerator",
+    "TemporalNullValueContentGenerator",
     "TemporalPlotColumnContentGenerator",
 ]
 
@@ -25,5 +26,6 @@ from arkas.content.mapping import ContentGeneratorDict
 from arkas.content.null_value import NullValueContentGenerator
 from arkas.content.plot_column import PlotColumnContentGenerator
 from arkas.content.scatter_column import ScatterColumnContentGenerator
+from arkas.content.temporal_null_value import TemporalNullValueContentGenerator
 from arkas.content.temporal_plot_column import TemporalPlotColumnContentGenerator
 from arkas.content.vanilla import ContentGenerator
