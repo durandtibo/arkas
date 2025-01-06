@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.content.temporal_plot_column import TemporalPlotColumnContentGenerator
+from arkas.content.temporal_null_value import TemporalNullValueContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.temporal_plot_column import TemporalPlotColumnPlotter
+from arkas.plotter.temporal_null_value import TemporalNullValuePlotter
 
 if TYPE_CHECKING:
     from arkas.state.temporal_dataframe import TemporalDataFrameState
@@ -60,13 +60,13 @@ class TemporalNullValueOutput(BaseLazyOutput):
       (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
-    TemporalPlotColumnContentGenerator(
+    TemporalNullValueContentGenerator(
       (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
-    TemporalPlotColumnPlotter(
+    TemporalNullValuePlotter(
       (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
     )
 
@@ -89,11 +89,11 @@ class TemporalNullValueOutput(BaseLazyOutput):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def _get_content_generator(self) -> TemporalPlotColumnContentGenerator:
-        return TemporalPlotColumnContentGenerator(self._state)
+    def _get_content_generator(self) -> TemporalNullValueContentGenerator:
+        return TemporalNullValueContentGenerator(self._state)
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
 
-    def _get_plotter(self) -> TemporalPlotColumnPlotter:
-        return TemporalPlotColumnPlotter(self._state)
+    def _get_plotter(self) -> TemporalNullValuePlotter:
+        return TemporalNullValuePlotter(self._state)

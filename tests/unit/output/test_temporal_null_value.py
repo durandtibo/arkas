@@ -5,10 +5,10 @@ from datetime import datetime, timezone
 import polars as pl
 import pytest
 
-from arkas.content import ContentGenerator, TemporalPlotColumnContentGenerator
+from arkas.content import ContentGenerator, TemporalNullValueContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, TemporalNullValueOutput
-from arkas.plotter import Plotter, TemporalPlotColumnPlotter
+from arkas.plotter import Plotter, TemporalNullValuePlotter
 from arkas.state import TemporalDataFrameState
 
 
@@ -45,20 +45,24 @@ def dataframe() -> pl.DataFrame:
 
 def test_temporal_null_value_output_repr(dataframe: pl.DataFrame) -> None:
     assert repr(
-        TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
     ).startswith("TemporalNullValueOutput(")
 
 
 def test_temporal_null_value_output_str(dataframe: pl.DataFrame) -> None:
     assert str(
-        TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
     ).startswith("TemporalNullValueOutput(")
 
 
 def test_temporal_null_value_output_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalNullValueOutput(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
         ).compute(),
         Output,
     )
@@ -66,19 +70,27 @@ def test_temporal_null_value_output_compute(dataframe: pl.DataFrame) -> None:
 
 def test_temporal_null_value_output_equal_true(dataframe: pl.DataFrame) -> None:
     assert TemporalNullValueOutput(
-        TemporalDataFrameState(dataframe, temporal_column="datetime")
-    ).equal(TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime")))
+        TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+    ).equal(
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
+    )
 
 
 def test_temporal_null_value_output_equal_false_different_state(dataframe: pl.DataFrame) -> None:
     assert not TemporalNullValueOutput(
-        TemporalDataFrameState(dataframe, temporal_column="datetime")
-    ).equal(TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="col1")))
+        TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+    ).equal(
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="col1", period="1d")
+        )
+    )
 
 
 def test_temporal_null_value_output_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not TemporalNullValueOutput(
-        TemporalDataFrameState(dataframe, temporal_column="datetime")
+        TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
     ).equal(42)
 
 
@@ -86,11 +98,13 @@ def test_temporal_null_value_output_get_content_generator_lazy_true(
     dataframe: pl.DataFrame,
 ) -> None:
     assert (
-        TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
         .get_content_generator()
         .equal(
-            TemporalPlotColumnContentGenerator(
-                TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalNullValueContentGenerator(
+                TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
             )
         )
     )
@@ -101,7 +115,7 @@ def test_temporal_null_value_output_get_content_generator_lazy_false(
 ) -> None:
     assert isinstance(
         TemporalNullValueOutput(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
         ).get_content_generator(lazy=False),
         ContentGenerator,
     )
@@ -109,7 +123,9 @@ def test_temporal_null_value_output_get_content_generator_lazy_false(
 
 def test_temporal_null_value_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> None:
     assert (
-        TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
         .get_evaluator()
         .equal(Evaluator())
     )
@@ -117,7 +133,9 @@ def test_temporal_null_value_output_get_evaluator_lazy_true(dataframe: pl.DataFr
 
 def test_temporal_null_value_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
     assert (
-        TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
         .get_evaluator(lazy=False)
         .equal(Evaluator())
     )
@@ -125,10 +143,14 @@ def test_temporal_null_value_output_get_evaluator_lazy_false(dataframe: pl.DataF
 
 def test_temporal_null_value_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
     assert (
-        TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
         .get_plotter()
         .equal(
-            TemporalPlotColumnPlotter(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+            TemporalNullValuePlotter(
+                TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+            )
         )
     )
 
@@ -136,7 +158,7 @@ def test_temporal_null_value_output_get_plotter_lazy_true(dataframe: pl.DataFram
 def test_temporal_null_value_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalNullValueOutput(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
         ).get_plotter(lazy=False),
         Plotter,
     )
