@@ -16,6 +16,7 @@ __all__ = [
     "OutputDict",
     "PlotColumnOutput",
     "ScatterColumnOutput",
+    "TemporalNullValueOutput",
     "TemporalPlotColumnOutput",
 ]
 
@@ -31,5 +32,6 @@ from arkas.output.mapping import OutputDict
 from arkas.output.null_value import NullValueOutput
 from arkas.output.plot_column import PlotColumnOutput
 from arkas.output.scatter_column import ScatterColumnOutput
+from arkas.output.temporal_null_value import TemporalNullValueOutput
 from arkas.output.temporal_plot_column import TemporalPlotColumnOutput
 from arkas.output.vanilla import Output
