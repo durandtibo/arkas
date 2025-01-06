@@ -43,7 +43,7 @@ def test_metric_exporter_str(tmp_path: Path) -> None:
 
 def test_metric_exporter_export(tmp_path: Path, output: BaseOutput) -> None:
     path = tmp_path.joinpath("metrics.pkl")
-    MetricExporter(path, show_metrics=False).export(output)
+    MetricExporter(path).export(output)
     assert path.is_file()
     assert objects_are_equal(
         load_pickle(path),
@@ -55,7 +55,7 @@ def test_metric_exporter_export_show_metrics(
     tmp_path: Path, output: BaseOutput, caplog: pytest.LogCaptureFixture
 ) -> None:
     path = tmp_path.joinpath("metrics.pkl")
-    exporter = MetricExporter(path)
+    exporter = MetricExporter(path, show_metrics=True)
     with caplog.at_level(level=logging.INFO):
         exporter.export(output)
         assert caplog.messages[-1].startswith("metrics:")

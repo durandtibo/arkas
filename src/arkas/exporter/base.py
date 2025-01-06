@@ -47,7 +47,7 @@ class BaseExporter(ABC, metaclass=AbstractFactory):
       (path): .../metrics.pkl
       (saver): PickleSaver(protocol=5)
       (exist_ok): False
-      (show_metrics): True
+      (show_metrics): False
     )
 
     ```
@@ -151,7 +151,7 @@ def setup_exporter(
       (path): /path/to/data.csv
       (saver): PickleSaver(protocol=5)
       (exist_ok): False
-      (show_metrics): True
+      (show_metrics): False
     )
 
     ```
