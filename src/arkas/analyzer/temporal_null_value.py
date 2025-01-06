@@ -29,7 +29,7 @@ class TemporalNullValueAnalyzer(BaseInNLazyAnalyzer):
 
     Args:
         temporal_column: The temporal column in the DataFrame.
-        period: An optional temporal period e.g. monthly or daily.
+        period: The temporal period e.g. monthly or daily.
         columns: The columns to analyze. If ``None``, it analyzes all
             the columns.
         exclude_columns: The columns to exclude from the input
@@ -52,9 +52,9 @@ class TemporalNullValueAnalyzer(BaseInNLazyAnalyzer):
     >>> from datetime import datetime, timezone
     >>> import polars as pl
     >>> from arkas.analyzer import TemporalNullValueAnalyzer
-    >>> analyzer = TemporalNullValueAnalyzer(temporal_column="datetime")
+    >>> analyzer = TemporalNullValueAnalyzer(temporal_column="datetime", period="1d")
     >>> analyzer
-    TemporalNullValueAnalyzer(columns=None, exclude_columns=(), missing_policy='raise', temporal_column='datetime', period=None, figure_config=None)
+    TemporalNullValueAnalyzer(columns=None, exclude_columns=(), missing_policy='raise', temporal_column='datetime', period='1d', figure_config=None)
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 1, 0],
@@ -77,7 +77,7 @@ class TemporalNullValueAnalyzer(BaseInNLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     TemporalNullValueOutput(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, figure_config=MatplotlibFigureConfig())
+      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period='1d', figure_config=MatplotlibFigureConfig())
     )
 
     ```
@@ -86,7 +86,7 @@ class TemporalNullValueAnalyzer(BaseInNLazyAnalyzer):
     def __init__(
         self,
         temporal_column: str,
-        period: str | None = None,
+        period: str,
         columns: Sequence[str] | None = None,
         exclude_columns: Sequence[str] = (),
         missing_policy: str = "raise",
