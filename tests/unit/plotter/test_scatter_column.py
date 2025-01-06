@@ -166,6 +166,17 @@ def test_matplotlib_figure_creator_create(dataframe: pl.DataFrame) -> None:
     )
 
 
+def test_matplotlib_figure_creator_create_1_row() -> None:
+    assert isinstance(
+        MatplotlibFigureCreator().create(
+            ScatterDataFrameState(
+                pl.DataFrame({"col1": [0], "col2": [1], "col3": [0]}), x="col1", y="col2"
+            )
+        ),
+        MatplotlibFigure,
+    )
+
+
 def test_matplotlib_figure_creator_create_color(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         MatplotlibFigureCreator().create(
