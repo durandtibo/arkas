@@ -46,30 +46,34 @@ def dataframe() -> pl.DataFrame:
 
 
 def test_temporal_null_value_analyzer_repr() -> None:
-    assert repr(TemporalNullValueAnalyzer(temporal_column="datetime")).startswith(
+    assert repr(TemporalNullValueAnalyzer(temporal_column="datetime", period="1d")).startswith(
         "TemporalNullValueAnalyzer("
     )
 
 
 def test_temporal_null_value_analyzer_str() -> None:
-    assert str(TemporalNullValueAnalyzer(temporal_column="datetime")).startswith(
+    assert str(TemporalNullValueAnalyzer(temporal_column="datetime", period="1d")).startswith(
         "TemporalNullValueAnalyzer("
     )
 
 
 def test_temporal_null_value_analyzer_analyze(dataframe: pl.DataFrame) -> None:
     assert (
-        TemporalNullValueAnalyzer(temporal_column="datetime")
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d")
         .analyze(dataframe)
         .equal(
-            TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+            TemporalNullValueOutput(
+                TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+            )
         )
     )
 
 
 def test_temporal_null_value_analyzer_analyze_lazy_false(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        TemporalNullValueAnalyzer(temporal_column="datetime").analyze(dataframe, lazy=False),
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").analyze(
+            dataframe, lazy=False
+        ),
         Output,
     )
 
@@ -77,7 +81,7 @@ def test_temporal_null_value_analyzer_analyze_lazy_false(dataframe: pl.DataFrame
 def test_temporal_null_value_analyzer_analyze_figure_config(dataframe: pl.DataFrame) -> None:
     assert (
         TemporalNullValueAnalyzer(
-            temporal_column="datetime", figure_config=MatplotlibFigureConfig(dpi=50)
+            temporal_column="datetime", period="1d", figure_config=MatplotlibFigureConfig(dpi=50)
         )
         .analyze(dataframe)
         .equal(
@@ -85,6 +89,7 @@ def test_temporal_null_value_analyzer_analyze_figure_config(dataframe: pl.DataFr
                 TemporalDataFrameState(
                     dataframe,
                     temporal_column="datetime",
+                    period="1d",
                     figure_config=MatplotlibFigureConfig(dpi=50),
                 )
             )
@@ -94,7 +99,7 @@ def test_temporal_null_value_analyzer_analyze_figure_config(dataframe: pl.DataFr
 
 def test_temporal_null_value_analyzer_analyze_columns(dataframe: pl.DataFrame) -> None:
     assert (
-        TemporalNullValueAnalyzer(temporal_column="datetime", columns=["col1", "col2"])
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d", columns=["col1", "col2"])
         .analyze(dataframe)
         .equal(
             TemporalNullValueOutput(
@@ -115,6 +120,7 @@ def test_temporal_null_value_analyzer_analyze_columns(dataframe: pl.DataFrame) -
                         }
                     ),
                     temporal_column="datetime",
+                    period="1d",
                 )
             )
         )
@@ -123,7 +129,7 @@ def test_temporal_null_value_analyzer_analyze_columns(dataframe: pl.DataFrame) -
 
 def test_temporal_null_value_analyzer_analyze_exclude_columns(dataframe: pl.DataFrame) -> None:
     assert (
-        TemporalNullValueAnalyzer(temporal_column="datetime", exclude_columns=["col3"])
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d", exclude_columns=["col3"])
         .analyze(dataframe)
         .equal(
             TemporalNullValueOutput(
@@ -144,6 +150,7 @@ def test_temporal_null_value_analyzer_analyze_exclude_columns(dataframe: pl.Data
                         }
                     ),
                     temporal_column="datetime",
+                    period="1d",
                 )
             )
         )
@@ -155,6 +162,7 @@ def test_temporal_null_value_analyzer_analyze_missing_policy_ignore(
 ) -> None:
     analyzer = TemporalNullValueAnalyzer(
         temporal_column="datetime",
+        period="1d",
         columns=["col1", "col2", "col3", "col5"],
         missing_policy="ignore",
     )
@@ -162,7 +170,9 @@ def test_temporal_null_value_analyzer_analyze_missing_policy_ignore(
         warnings.simplefilter("error")
         out = analyzer.analyze(dataframe)
     assert out.equal(
-        TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
     )
 
 
@@ -170,7 +180,7 @@ def test_temporal_null_value_analyzer_analyze_missing_policy_raise(
     dataframe: pl.DataFrame,
 ) -> None:
     analyzer = TemporalNullValueAnalyzer(
-        temporal_column="datetime", columns=["col1", "col2", "col3", "col5"]
+        temporal_column="datetime", period="1d", columns=["col1", "col2", "col3", "col5"]
     )
     with pytest.raises(ColumnNotFoundError, match="1 column is missing in the DataFrame:"):
         analyzer.analyze(dataframe)
@@ -180,66 +190,71 @@ def test_temporal_null_value_analyzer_analyze_missing_policy_warn(
     dataframe: pl.DataFrame,
 ) -> None:
     analyzer = TemporalNullValueAnalyzer(
-        temporal_column="datetime", columns=["col1", "col2", "col3", "col5"], missing_policy="warn"
+        temporal_column="datetime",
+        period="1d",
+        columns=["col1", "col2", "col3", "col5"],
+        missing_policy="warn",
     )
     with pytest.warns(
         ColumnNotFoundWarning, match="1 column is missing in the DataFrame and will be ignored:"
     ):
         out = analyzer.analyze(dataframe)
     assert out.equal(
-        TemporalNullValueOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+        TemporalNullValueOutput(
+            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+        )
     )
 
 
 def test_temporal_null_value_analyzer_equal_true() -> None:
-    assert TemporalNullValueAnalyzer(temporal_column="datetime").equal(
-        TemporalNullValueAnalyzer(temporal_column="datetime")
+    assert TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").equal(
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d")
     )
 
 
 def test_temporal_null_value_analyzer_equal_false_different_temporal_column() -> None:
-    assert not TemporalNullValueAnalyzer(temporal_column="datetime").equal(
-        TemporalNullValueAnalyzer(temporal_column="time")
+    assert not TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").equal(
+        TemporalNullValueAnalyzer(temporal_column="time", period="1d")
     )
 
 
 def test_temporal_null_value_analyzer_equal_false_different_period() -> None:
-    assert not TemporalNullValueAnalyzer(temporal_column="datetime").equal(
+    assert not TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").equal(
         TemporalNullValueAnalyzer(temporal_column="datetime", period="1mo")
     )
 
 
 def test_temporal_null_value_analyzer_equal_false_different_columns() -> None:
-    assert not TemporalNullValueAnalyzer(temporal_column="datetime").equal(
-        TemporalNullValueAnalyzer(temporal_column="datetime", columns=["col1", "col2"])
+    assert not TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").equal(
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d", columns=["col1", "col2"])
     )
 
 
 def test_temporal_null_value_analyzer_equal_false_different_exclude_columns() -> None:
-    assert not TemporalNullValueAnalyzer(temporal_column="datetime").equal(
-        TemporalNullValueAnalyzer(temporal_column="datetime", exclude_columns=["col2"])
+    assert not TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").equal(
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d", exclude_columns=["col2"])
     )
 
 
 def test_temporal_null_value_analyzer_equal_false_different_missing_policy() -> None:
-    assert not TemporalNullValueAnalyzer(temporal_column="datetime").equal(
-        TemporalNullValueAnalyzer(temporal_column="datetime", missing_policy="warn")
+    assert not TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").equal(
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d", missing_policy="warn")
     )
 
 
 def test_temporal_null_value_analyzer_equal_false_different_type() -> None:
-    assert not TemporalNullValueAnalyzer(temporal_column="datetime").equal(42)
+    assert not TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").equal(42)
 
 
 def test_temporal_null_value_analyzer_get_args() -> None:
     assert objects_are_equal(
-        TemporalNullValueAnalyzer(temporal_column="datetime").get_args(),
+        TemporalNullValueAnalyzer(temporal_column="datetime", period="1d").get_args(),
         {
             "columns": None,
             "exclude_columns": (),
             "missing_policy": "raise",
             "figure_config": None,
             "temporal_column": "datetime",
-            "period": None,
+            "period": "1d",
         },
     )
