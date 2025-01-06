@@ -44,7 +44,7 @@ def test_plot_column_plotter_equal_true(dataframe: pl.DataFrame) -> None:
     )
 
 
-def test_plot_column_plotter_equal_false_different_frame(dataframe: pl.DataFrame) -> None:
+def test_plot_column_plotter_equal_false_different_state(dataframe: pl.DataFrame) -> None:
     assert not PlotColumnPlotter(DataFrameState(dataframe)).equal(
         PlotColumnPlotter(DataFrameState(pl.DataFrame()))
     )

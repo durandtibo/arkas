@@ -15,6 +15,7 @@ from arkas.figure.creator import FigureCreatorRegistry
 from arkas.figure.html import HtmlFigure
 from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
+from arkas.plot.continuous import hist_continuous
 from arkas.plot.utils.hist import adjust_nbins
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
@@ -23,7 +24,7 @@ from arkas.utils.range import find_range
 
 if TYPE_CHECKING:
     from arkas.figure.base import BaseFigure
-    from arkas.state.dataframe import SeriesState
+    from arkas.state.series import SeriesState
 
 
 class BaseFigureCreator(ABC):
@@ -94,7 +95,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
             nbins=nbins,
             xmin=xmin,
             xmax=xmax,
-            yscale=state.figure_config.get_arg("yscale"),
+            yscale=state.figure_config.get_arg("yscale", default="linear"),
         )
         ax.set_title(f"data distribution for column {state.series.name!r}")
         fig.tight_layout()
@@ -118,7 +119,7 @@ class ContinuousSeriesPlotter(BasePlotter):
     >>> plotter = ContinuousSeriesPlotter(SeriesState(pl.Series("col1", [1, 2, 3, 4, 5, 6, 7])))
     >>> plotter
     ContinuousSeriesPlotter(
-      (state): SeriesState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
+      (state): SeriesState(name='col1', values=(7,), figure_config=MatplotlibFigureConfig())
     )
 
     ```
