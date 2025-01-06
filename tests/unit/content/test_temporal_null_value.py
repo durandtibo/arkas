@@ -6,7 +6,11 @@ import polars as pl
 import pytest
 
 from arkas.content import ContentGenerator, TemporalNullValueContentGenerator
-from arkas.content.temporal_null_value import create_template
+from arkas.content.temporal_null_value import (
+    create_table,
+    create_table_row,
+    create_template,
+)
 from arkas.state import TemporalDataFrameState
 
 
@@ -169,3 +173,42 @@ def test_temporal_null_value_content_generator_generate_toc_args(dataframe: pl.D
 
 def test_create_template() -> None:
     assert isinstance(create_template(), str)
+
+
+#################################
+#    Tests for create_table     #
+#################################
+
+
+def test_create_table(dataframe: pl.DataFrame) -> None:
+    assert isinstance(
+        create_table(frame=dataframe, temporal_column="datetime", period="1mo"),
+        str,
+    )
+
+
+def test_create_table_empty() -> None:
+    assert isinstance(
+        create_table(
+            frame=pl.DataFrame(
+                {"col1": [], "col2": [], "datetime": []},
+                schema={
+                    "col1": pl.Float64,
+                    "col2": pl.Int64,
+                    "datetime": pl.Datetime(time_unit="us", time_zone="UTC"),
+                },
+            ),
+            temporal_column="datetime",
+            period="1mo",
+        ),
+        str,
+    )
+
+
+#####################################
+#    Tests for create_table_row     #
+#####################################
+
+
+def test_create_table_row() -> None:
+    assert isinstance(create_table_row(label="meow", num_nulls=5, total=42), str)
