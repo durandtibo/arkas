@@ -92,7 +92,8 @@ class MatplotlibFigureCreator(BaseFigureCreator):
 
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
 
-        ax.bar(x=state.columns, height=state.null_count, color="tab:blue")
+        frame = state.to_dataframe().sort(by=["null", "column"])
+        ax.bar(x=frame["column"].to_list(), height=frame["null"].to_numpy(), color="tab:blue")
         ax.set_xlim(-0.5, len(state.columns) - 0.5)
         readable_xticklabels(ax, max_num_xticks=100)
         ax.set_xlabel("column")
