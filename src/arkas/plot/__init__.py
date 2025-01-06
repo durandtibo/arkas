@@ -3,6 +3,8 @@ r"""Contain plotting functionalities."""
 from __future__ import annotations
 
 __all__ = [
+    "bar_discrete",
+    "bar_discrete_temporal",
     "binary_precision_recall_curve",
     "binary_roc_curve",
     "boxplot_continuous",
@@ -20,6 +22,7 @@ from arkas.plot.continuous import (
     hist_continuous,
     hist_continuous2,
 )
+from arkas.plot.discrete import bar_discrete, bar_discrete_temporal
 from arkas.plot.null_temporal import plot_null_temporal
 from arkas.plot.pr import binary_precision_recall_curve
 from arkas.plot.roc import binary_roc_curve
