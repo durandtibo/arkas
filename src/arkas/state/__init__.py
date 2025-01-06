@@ -10,6 +10,7 @@ __all__ = [
     "NullValueState",
     "PrecisionRecallState",
     "ScatterDataFrameState",
+    "SeriesState",
     "TemporalDataFrameState",
 ]
 
@@ -20,4 +21,5 @@ from arkas.state.dataframe import DataFrameState
 from arkas.state.null_value import NullValueState
 from arkas.state.precision_recall import PrecisionRecallState
 from arkas.state.scatter_dataframe import ScatterDataFrameState
+from arkas.state.series import SeriesState
 from arkas.state.temporal_dataframe import TemporalDataFrameState
