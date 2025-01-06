@@ -10,6 +10,7 @@ __all__ = [
     "Plotter",
     "PlotterDict",
     "ScatterColumnPlotter",
+    "TemporalNullValuePlotter",
     "TemporalPlotColumnPlotter",
 ]
 
@@ -19,5 +20,6 @@ from arkas.plotter.mapping import PlotterDict
 from arkas.plotter.null_value import NullValuePlotter
 from arkas.plotter.plot_column import PlotColumnPlotter
 from arkas.plotter.scatter_column import ScatterColumnPlotter
+from arkas.plotter.temporal_null_value import TemporalNullValuePlotter
 from arkas.plotter.temporal_plot_column import TemporalPlotColumnPlotter
 from arkas.plotter.vanilla import Plotter
