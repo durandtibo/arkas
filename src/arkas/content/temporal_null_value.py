@@ -182,7 +182,7 @@ def create_table(frame: pl.DataFrame, temporal_column: str, period: str) -> str:
     columns = list(frame.columns)
     columns.remove(temporal_column)
     nulls, totals, labels = compute_temporal_null_count(
-        frame=frame, columns=columns, dt_column=temporal_column, period=period
+        frame=frame, columns=columns, temporal_column=temporal_column, period=period
     )
     rows = []
     for label, null, total in zip(labels, nulls, totals):
