@@ -34,7 +34,8 @@ class BaseFigureCreator(ABC):
         each column.
 
         Args:
-            state: The state containing the number of nulll values per column.
+            state: The state containing the number of null values per
+                column.
 
         Returns:
             The generated figure.
@@ -106,7 +107,8 @@ class NullValuePlotter(BasePlotter):
     column.
 
     Args:
-        state: The state containing the number of nulll values per column.
+        state: The state containing the number of null values per
+            column.
 
     Example usage:
 
