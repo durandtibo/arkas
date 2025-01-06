@@ -37,9 +37,9 @@ class ContinuousColumnAnalyzer(BaseLazyAnalyzer):
 
     >>> import polars as pl
     >>> from arkas.analyzer import ContinuousColumnAnalyzer
-    >>> analyzer = ContinuousColumnAnalyzer(col="col1")
+    >>> analyzer = ContinuousColumnAnalyzer(column="col1")
     >>> analyzer
-    ContinuousColumnAnalyzer(x='col1', y='col2', color=None, figure_config=None)
+    ContinuousColumnAnalyzer(column='col1', figure_config=None)
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 0, 1],
@@ -50,8 +50,8 @@ class ContinuousColumnAnalyzer(BaseLazyAnalyzer):
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    ContinuousColumnOutput(
-      (state): SeriesState(dataframe=(4, 2), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+    ContinuousSeriesOutput(
+      (state): SeriesState(name='col1', values=(4,), figure_config=MatplotlibFigureConfig())
     )
 
     ```

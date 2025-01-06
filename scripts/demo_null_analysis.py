@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 def get_dataframe() -> pl.DataFrame:
     r"""Return a DataFrame."""
-    n_samples = 1000
+    n_samples = 20000
     ncols = 10
     rng = np.random.default_rng(42)
     frame = pl.DataFrame(
@@ -71,7 +71,16 @@ def main() -> None:
                 "summary": aa.DataFrameSummaryAnalyzer(),
                 "null values": aa.NullValueAnalyzer(figure_config=figure_config),
                 "temporal null values": aa.TemporalNullValueAnalyzer(
-                    temporal_column="datetime", period="1d", figure_config=figure_config
+                    temporal_column="datetime", period="1mo", figure_config=figure_config
+                ),
+                "continuous": aa.ContinuousColumnAnalyzer(
+                    column="col1",
+                    figure_config=MatplotlibFigureConfig(
+                        init={"dpi": 500, "figsize": (14, 6)},
+                        nbins=201,
+                        xmin="q0.001",
+                        xmax="q0.999",
+                    ),
                 ),
             }
         ),
