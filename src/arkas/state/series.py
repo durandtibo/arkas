@@ -39,8 +39,7 @@ class SeriesState(BaseState):
 
     >>> import polars as pl
     >>> from arkas.state import SeriesState
-    >>> frame = pl.Series("col1", [1, 2, 3, 4, 5, 6, 7])
-    >>> state = SeriesState(frame)
+    >>> state = SeriesState(pl.Series("col1", [1, 2, 3, 4, 5, 6, 7]))
     >>> state
     SeriesState(name='col1', values=(7,), figure_config=MatplotlibFigureConfig())
 
