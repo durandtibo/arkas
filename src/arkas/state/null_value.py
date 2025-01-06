@@ -46,9 +46,9 @@ class NullValueState(BaseState):
     >>> import numpy as np
     >>> from arkas.state import NullValueState
     >>> state = NullValueState(
-    ...     columns=["col1", "col2", "col3"],
     ...     null_count=np.array([0, 1, 2]),
     ...     total_count=np.array([5, 5, 5]),
+    ...     columns=["col1", "col2", "col3"],
     ... )
     >>> state
     NullValueState(num_columns=3, figure_config=MatplotlibFigureConfig())
@@ -63,9 +63,9 @@ class NullValueState(BaseState):
         columns: Sequence[str],
         figure_config: BaseFigureConfig | None = None,
     ) -> None:
+        self._null_count = null_count.ravel()
+        self._total_count = total_count.ravel()
         self._columns = tuple(columns)
-        self._null_count = null_count.ravel().astype(int)
-        self._total_count = total_count.ravel().astype(int)
         self._figure_config = figure_config or get_default_config()
 
         if len(self._columns) != self._null_count.shape[0]:
