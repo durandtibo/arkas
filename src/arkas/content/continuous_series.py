@@ -75,7 +75,7 @@ class ContinuousSeriesContentGenerator(BaseSectionContentGenerator):
         xmin, xmax = find_range(
             self._state.series.drop_nulls().to_numpy(),
             xmin=self._state.figure_config.get_arg("xmin"),
-            xmax=self._state.figure_config.get_arg("xmin"),
+            xmax=self._state.figure_config.get_arg("xmax"),
         )
         return Template(create_template()).render(
             {
