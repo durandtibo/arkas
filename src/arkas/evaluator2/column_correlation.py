@@ -46,7 +46,7 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
     )
     >>> evaluator.evaluate()
     {'correlation_col1': {'count': 7, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0},
-     'correlation_col2': {'count': 7, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0}}
+     'correlation_col2': {'count': 7, 'pearson_coeff': -1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': -1.0, 'spearman_pvalue': 0.0}}
 
     ```
     """
@@ -71,17 +71,14 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
         return self._state.equal(other._state, equal_nan=equal_nan)
 
     def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, dict]:
-        dataframe = self._state.dataframe
         target_column = self._state.target_column
-        columns = list(dataframe.columns)
+        columns = list(self._state.dataframe.columns)
         columns.remove(target_column)
 
         out = {}
         for col in columns:
-            # TODO: add drop null
-            x = dataframe[target_column].to_numpy()
-            y = dataframe[target_column].to_numpy()
-
+            frame = self._state.dataframe.select([col, target_column]).drop_nulls().drop_nans()
+            x = frame[target_column].to_numpy()
+            y = frame[col].to_numpy()
             out[f"{prefix}correlation_{col}{suffix}"] = pearsonr(x, y) | spearmanr(x, y)
-
         return out
