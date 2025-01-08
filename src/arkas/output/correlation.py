@@ -2,22 +2,22 @@ r"""Implement an output to analyze the correlation between columns."""
 
 from __future__ import annotations
 
-__all__ = ["ColumnCorrelationOutput"]
+__all__ = ["CorrelationOutput"]
 
 from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.content.column_correlation import ColumnCorrelationContentGenerator
-from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
+from arkas.content.correlation import CorrelationContentGenerator
+from arkas.evaluator2.correlation import CorrelationEvaluator
 from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
-    from arkas.state.target_dataframe import TargetDataFrameState
+    from arkas.state.dataframe import DataFrameState
 
 
-class ColumnCorrelationOutput(BaseLazyOutput):
+class CorrelationOutput(BaseLazyOutput):
     r"""Implement an output to summarize the numeric columns of a
     DataFrame.
 
@@ -29,27 +29,26 @@ class ColumnCorrelationOutput(BaseLazyOutput):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.output import ColumnCorrelationOutput
-    >>> from arkas.state import TargetDataFrameState
+    >>> from arkas.output import CorrelationOutput
+    >>> from arkas.state import DataFrameState
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
     ...         "col2": [7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0],
-    ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
     ...     },
     ... )
-    >>> output = ColumnCorrelationOutput(TargetDataFrameState(frame, target_column="col3"))
+    >>> output = CorrelationOutput(DataFrameState(frame))
     >>> output
-    ColumnCorrelationOutput(
-      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', figure_config=MatplotlibFigureConfig())
+    CorrelationOutput(
+      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
-    ColumnCorrelationContentGenerator(
-      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', figure_config=MatplotlibFigureConfig())
+    CorrelationContentGenerator(
+      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
-    ColumnCorrelationEvaluator(
-      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', figure_config=MatplotlibFigureConfig())
+    CorrelationEvaluator(
+      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_plotter()
     Plotter(count=0)
@@ -57,7 +56,7 @@ class ColumnCorrelationOutput(BaseLazyOutput):
     ```
     """
 
-    def __init__(self, state: TargetDataFrameState) -> None:
+    def __init__(self, state: DataFrameState) -> None:
         self._state = state
 
     def __repr__(self) -> str:
@@ -73,11 +72,11 @@ class ColumnCorrelationOutput(BaseLazyOutput):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def _get_content_generator(self) -> ColumnCorrelationContentGenerator:
-        return ColumnCorrelationContentGenerator(self._state)
+    def _get_content_generator(self) -> CorrelationContentGenerator:
+        return CorrelationContentGenerator(self._state)
 
-    def _get_evaluator(self) -> ColumnCorrelationEvaluator:
-        return ColumnCorrelationEvaluator(self._state)
+    def _get_evaluator(self) -> CorrelationEvaluator:
+        return CorrelationEvaluator(self._state)
 
     def _get_plotter(self) -> Plotter:
         return Plotter()
