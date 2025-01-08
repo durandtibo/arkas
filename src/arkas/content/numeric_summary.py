@@ -3,7 +3,14 @@ summarizes the numeric columns of a DataFrame."""
 
 from __future__ import annotations
 
-__all__ = ["NumericSummaryContentGenerator", "create_template"]
+__all__ = [
+    "NumericSummaryContentGenerator",
+    "create_table",
+    "create_table_quantiles",
+    "create_table_quantiles_row",
+    "create_table_row",
+    "create_template",
+]
 
 import logging
 from typing import TYPE_CHECKING, Any
