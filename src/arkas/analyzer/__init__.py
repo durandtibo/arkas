@@ -13,6 +13,7 @@ __all__ = [
     "ColumnCorrelationAnalyzer",
     "ContentAnalyzer",
     "ContinuousColumnAnalyzer",
+    "CorrelationAnalyzer",
     "MappingAnalyzer",
     "NullValueAnalyzer",
     "NumericSummaryAnalyzer",
@@ -34,6 +35,7 @@ from arkas.analyzer.column_correlation import ColumnCorrelationAnalyzer
 from arkas.analyzer.columns import BaseTruePredAnalyzer
 from arkas.analyzer.content import ContentAnalyzer
 from arkas.analyzer.continuous_column import ContinuousColumnAnalyzer
+from arkas.analyzer.correlation import CorrelationAnalyzer
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer, BaseLazyAnalyzer
 from arkas.analyzer.mapping import MappingAnalyzer
 from arkas.analyzer.null_value import NullValueAnalyzer
