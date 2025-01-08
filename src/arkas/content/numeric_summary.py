@@ -1,5 +1,5 @@
-r"""Contain the implementation of a HTML content generator that plots
-the content of each column."""
+r"""Contain the implementation of a HTML content generator that
+summarizes the numeric columns of a DataFrame."""
 
 from __future__ import annotations
 
@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 
 
 class NumericSummaryContentGenerator(BaseSectionContentGenerator):
-    r"""Implement a content generator that summarizes some numeric
-    columns.
+    r"""Implement a content generator that summarizes the numeric columns
+    of a DataFrame.
 
     Args:
         state: The state containing the DataFrame to analyze.
@@ -89,7 +89,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.content.plot_column import create_template
+    >>> from arkas.content.numeric_summary import create_template
     >>> template = create_template()
 
     ```

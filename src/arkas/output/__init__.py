@@ -12,6 +12,7 @@ __all__ = [
     "ContinuousSeriesOutput",
     "EmptyOutput",
     "NullValueOutput",
+    "NumericSummaryOutput",
     "Output",
     "OutputDict",
     "PlotColumnOutput",
@@ -31,6 +32,7 @@ from arkas.output.empty import EmptyOutput
 from arkas.output.lazy import BaseLazyOutput
 from arkas.output.mapping import OutputDict
 from arkas.output.null_value import NullValueOutput
+from arkas.output.numeric_summary import NumericSummaryOutput
 from arkas.output.plot_column import PlotColumnOutput
 from arkas.output.scatter_column import ScatterColumnOutput
 from arkas.output.summary import SummaryOutput
