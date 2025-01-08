@@ -53,7 +53,7 @@ class ScatterDataFrameState(DataFrameState):
     ... )
     >>> state = ScatterDataFrameState(frame, x="col1", y="col2")
     >>> state
-    ScatterDataFrameState(dataframe=(7, 3), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+    ScatterDataFrameState(dataframe=(7, 3), x='col1', y='col2', color=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
 
     ```
     """

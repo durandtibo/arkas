@@ -41,19 +41,19 @@ class CorrelationOutput(BaseLazyOutput):
     >>> output = CorrelationOutput(DataFrameState(frame))
     >>> output
     CorrelationOutput(
-      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     CorrelationContentGenerator(
-      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     CorrelationEvaluator(
-      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_plotter()
     CorrelationPlotter(
-      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

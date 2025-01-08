@@ -53,7 +53,7 @@ class TargetDataFrameState(DataFrameState):
     ... )
     >>> state = TargetDataFrameState(frame, target_column="col3")
     >>> state
-    TargetDataFrameState(dataframe=(7, 3), target_column='col3', figure_config=MatplotlibFigureConfig())
+    TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
 
     ```
     """

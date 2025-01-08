@@ -52,7 +52,7 @@ class DataFrameState(BaseState):
     ... )
     >>> state = DataFrameState(frame)
     >>> state
-    DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+    DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
 
     ```
     """
