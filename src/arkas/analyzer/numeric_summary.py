@@ -12,7 +12,8 @@ from grizz.utils.format import str_shape_diff
 from polars import selectors as cs
 
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer
-from arkas.output.frame_summary import DataFrameSummaryOutput
+from arkas.output.numeric_summary import NumericSummaryOutput
+from arkas.state import DataFrameState
 
 if TYPE_CHECKING:
     import polars as pl
@@ -50,22 +51,24 @@ class NumericSummaryAnalyzer(BaseInNLazyAnalyzer):
     NumericSummaryAnalyzer(columns=None, exclude_columns=(), missing_policy='raise')
     >>> frame = pl.DataFrame(
     ...     {
-    ...         "col1": [0, 1, 0, 1],
-    ...         "col2": [1, 0, 1, 0],
-    ...         "col3": [1, 1, 1, 1],
+    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
+    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
+    ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
     ...     },
-    ...     schema={"col1": pl.Int64, "col2": pl.Int64, "col3": pl.Int64},
+    ...     schema={"col1": pl.Int64, "col2": pl.Int32, "col3": pl.Float64},
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    DataFrameSummaryOutput(shape=(4, 3), top=5)
+    NumericSummaryOutput(
+      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+    )
 
     ```
     """
 
-    def _analyze(self, frame: pl.DataFrame) -> DataFrameSummaryOutput:
+    def _analyze(self, frame: pl.DataFrame) -> NumericSummaryOutput:
         logger.info("Analyzing the numeric columns...")
         columns = self.find_common_columns(frame)
         out = frame.select(cs.by_name(columns) & cs.numeric())
         logger.info(str_shape_diff(orig=frame.shape, final=out.shape))
-        return DataFrameSummaryOutput(frame=frame)
+        return NumericSummaryOutput(state=DataFrameState(out))

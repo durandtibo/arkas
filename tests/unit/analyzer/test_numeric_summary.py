@@ -2,16 +2,14 @@ from __future__ import annotations
 
 import warnings
 
-import numpy as np
 import polars as pl
 import pytest
 from coola import objects_are_equal
 from grizz.exceptions import ColumnNotFoundError, ColumnNotFoundWarning
 
 from arkas.analyzer import NumericSummaryAnalyzer
-from arkas.figure import MatplotlibFigureConfig
-from arkas.output import ColumnCooccurrenceOutput, Output
-from arkas.state import ColumnCooccurrenceState
+from arkas.output import NumericSummaryOutput, Output
+from arkas.state import DataFrameState
 
 
 @pytest.fixture
@@ -20,8 +18,9 @@ def dataframe() -> pl.DataFrame:
         {
             "col1": [0, 1, 1, 0, 0, 1, 0],
             "col2": [0, 1, 0, 1, 0, 1, 0],
-            "col3": [0, 0, 0, 0, 1, 1, 1],
-        }
+            "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+        },
+        schema={"col1": pl.Int64, "col2": pl.Int32, "col3": pl.Float64},
     )
 
 
@@ -42,14 +41,7 @@ def test_numeric_summary_analyzer_analyze(dataframe: pl.DataFrame) -> None:
     assert (
         NumericSummaryAnalyzer()
         .analyze(dataframe)
-        .equal(
-            ColumnCooccurrenceOutput(
-                ColumnCooccurrenceState(
-                    matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
-                    columns=["col1", "col2", "col3"],
-                )
-            )
-        )
+        .equal(NumericSummaryOutput(DataFrameState(dataframe)))
     )
 
 
@@ -57,34 +49,13 @@ def test_numeric_summary_analyzer_analyze_lazy_false(dataframe: pl.DataFrame) ->
     assert isinstance(NumericSummaryAnalyzer().analyze(dataframe, lazy=False), Output)
 
 
-def test_numeric_summary_analyzer_analyze_ignore_self_true(dataframe: pl.DataFrame) -> None:
+def test_numeric_summary_analyzer_analyze_ignore_non_numeric_columns(
+    dataframe: pl.DataFrame,
+) -> None:
     assert (
-        NumericSummaryAnalyzer(ignore_self=True)
-        .analyze(dataframe)
-        .equal(
-            ColumnCooccurrenceOutput(
-                ColumnCooccurrenceState(
-                    matrix=np.array([[0, 2, 1], [2, 0, 1], [1, 1, 0]], dtype=int),
-                    columns=["col1", "col2", "col3"],
-                )
-            )
-        )
-    )
-
-
-def test_numeric_summary_analyzer_analyze_figure_config(dataframe: pl.DataFrame) -> None:
-    assert (
-        NumericSummaryAnalyzer(figure_config=MatplotlibFigureConfig(dpi=50))
-        .analyze(dataframe)
-        .equal(
-            ColumnCooccurrenceOutput(
-                ColumnCooccurrenceState(
-                    matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
-                    columns=["col1", "col2", "col3"],
-                    figure_config=MatplotlibFigureConfig(dpi=50),
-                )
-            )
-        )
+        NumericSummaryAnalyzer()
+        .analyze(dataframe.with_columns(pl.lit("abc").alias("col4")))
+        .equal(NumericSummaryOutput(DataFrameState(dataframe)))
     )
 
 
@@ -93,9 +64,15 @@ def test_numeric_summary_analyzer_analyze_columns(dataframe: pl.DataFrame) -> No
         NumericSummaryAnalyzer(columns=["col1", "col2"])
         .analyze(dataframe)
         .equal(
-            ColumnCooccurrenceOutput(
-                ColumnCooccurrenceState(
-                    matrix=np.array([[3, 2], [2, 3]], dtype=int), columns=["col1", "col2"]
+            NumericSummaryOutput(
+                DataFrameState(
+                    pl.DataFrame(
+                        {
+                            "col1": [0, 1, 1, 0, 0, 1, 0],
+                            "col2": [0, 1, 0, 1, 0, 1, 0],
+                        },
+                        schema={"col1": pl.Int64, "col2": pl.Int32},
+                    )
                 )
             )
         )
@@ -107,9 +84,15 @@ def test_numeric_summary_analyzer_analyze_exclude_columns(dataframe: pl.DataFram
         NumericSummaryAnalyzer(exclude_columns=["col3"])
         .analyze(dataframe)
         .equal(
-            ColumnCooccurrenceOutput(
-                ColumnCooccurrenceState(
-                    matrix=np.array([[3, 2], [2, 3]], dtype=int), columns=["col1", "col2"]
+            NumericSummaryOutput(
+                DataFrameState(
+                    pl.DataFrame(
+                        {
+                            "col1": [0, 1, 1, 0, 0, 1, 0],
+                            "col2": [0, 1, 0, 1, 0, 1, 0],
+                        },
+                        schema={"col1": pl.Int64, "col2": pl.Int32},
+                    )
                 )
             )
         )
@@ -125,14 +108,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_ignore(
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         out = analyzer.analyze(dataframe)
-    assert out.equal(
-        ColumnCooccurrenceOutput(
-            ColumnCooccurrenceState(
-                matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
-                columns=["col1", "col2", "col3"],
-            )
-        )
-    )
+    assert out.equal(NumericSummaryOutput(DataFrameState(dataframe)))
 
 
 def test_numeric_summary_analyzer_analyze_missing_policy_raise(
@@ -153,14 +129,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_warn(
         ColumnNotFoundWarning, match="1 column is missing in the DataFrame and will be ignored:"
     ):
         out = analyzer.analyze(dataframe)
-    assert out.equal(
-        ColumnCooccurrenceOutput(
-            ColumnCooccurrenceState(
-                matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
-                columns=["col1", "col2", "col3"],
-            )
-        )
-    )
+    assert out.equal(NumericSummaryOutput(DataFrameState(dataframe)))
 
 
 def test_numeric_summary_analyzer_equal_true() -> None:
@@ -168,23 +137,15 @@ def test_numeric_summary_analyzer_equal_true() -> None:
 
 
 def test_numeric_summary_analyzer_equal_false_different_columns() -> None:
-    assert not NumericSummaryAnalyzer().equal(
-        NumericSummaryAnalyzer(columns=["col1", "col2"])
-    )
+    assert not NumericSummaryAnalyzer().equal(NumericSummaryAnalyzer(columns=["col1", "col2"]))
 
 
 def test_numeric_summary_analyzer_equal_false_different_exclude_columns() -> None:
-    assert not NumericSummaryAnalyzer().equal(
-        NumericSummaryAnalyzer(exclude_columns=["col2"])
-    )
+    assert not NumericSummaryAnalyzer().equal(NumericSummaryAnalyzer(exclude_columns=["col2"]))
 
 
 def test_numeric_summary_analyzer_equal_false_different_missing_policy() -> None:
     assert not NumericSummaryAnalyzer().equal(NumericSummaryAnalyzer(missing_policy="warn"))
-
-
-def test_numeric_summary_analyzer_equal_false_different_ignore_self() -> None:
-    assert not NumericSummaryAnalyzer().equal(NumericSummaryAnalyzer(ignore_self=True))
 
 
 def test_numeric_summary_analyzer_equal_false_different_type() -> None:
