@@ -11,6 +11,7 @@ from coola import objects_are_equal
 from coola.utils.format import repr_mapping_line, str_indent, str_mapping
 
 from arkas.figure.utils import get_default_config
+from arkas.metric.utils import check_nan_policy
 from arkas.state.base import BaseState
 
 if sys.version_info >= (3, 11):
@@ -31,6 +32,9 @@ class DataFrameState(BaseState):
 
     Args:
         dataframe: The DataFrame.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
         figure_config: An optional figure configuration.
 
     Example usage:
@@ -56,15 +60,19 @@ class DataFrameState(BaseState):
     def __init__(
         self,
         dataframe: pl.DataFrame,
+        nan_policy: str = "propagate",
         figure_config: BaseFigureConfig | None = None,
     ) -> None:
         self._dataframe = dataframe
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
         self._figure_config = figure_config or get_default_config()
 
     def __repr__(self) -> str:
         args = repr_mapping_line(
             {
                 "dataframe": self._dataframe.shape,
+                "nan_policy": self._nan_policy,
                 "figure_config": self._figure_config,
             }
         )
@@ -75,6 +83,7 @@ class DataFrameState(BaseState):
             str_mapping(
                 {
                     "dataframe": self._dataframe.shape,
+                    "nan_policy": self._nan_policy,
                     "figure_config": self._figure_config,
                 }
             )
@@ -86,12 +95,17 @@ class DataFrameState(BaseState):
         return self._dataframe
 
     @property
+    def nan_policy(self) -> str:
+        return self._nan_policy
+
+    @property
     def figure_config(self) -> BaseFigureConfig | None:
         return self._figure_config
 
     def clone(self, deep: bool = True) -> Self:
         return self.__class__(
             dataframe=self._dataframe.clone() if deep else self._dataframe,
+            nan_policy=self._nan_policy,
             figure_config=self._figure_config.clone() if deep else self._figure_config,
         )
 
@@ -103,5 +117,6 @@ class DataFrameState(BaseState):
     def get_args(self) -> dict:
         return {
             "dataframe": self._dataframe,
+            "nan_policy": self._nan_policy,
             "figure_config": self._figure_config,
         }

@@ -32,6 +32,9 @@ class TemporalDataFrameState(DataFrameState):
         dataframe: The DataFrame.
         temporal_column: The temporal column in the DataFrame.
         period: An optional temporal period e.g. monthly or daily.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
         figure_config: An optional figure configuration.
 
     Example usage:
@@ -72,9 +75,10 @@ class TemporalDataFrameState(DataFrameState):
         dataframe: pl.DataFrame,
         temporal_column: str,
         period: str | None = None,
+        nan_policy: str = "propagate",
         figure_config: BaseFigureConfig | None = None,
     ) -> None:
-        super().__init__(dataframe=dataframe, figure_config=figure_config)
+        super().__init__(dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config)
 
         check_column_exist(dataframe, temporal_column)
         self._temporal_column = temporal_column
@@ -86,6 +90,7 @@ class TemporalDataFrameState(DataFrameState):
                 "dataframe": self._dataframe.shape,
                 "temporal_column": self._temporal_column,
                 "period": self._period,
+                "nan_policy": self._nan_policy,
                 "figure_config": self._figure_config,
             }
         )
@@ -98,6 +103,7 @@ class TemporalDataFrameState(DataFrameState):
                     "dataframe": self._dataframe.shape,
                     "temporal_column": self._temporal_column,
                     "period": self._period,
+                    "nan_policy": self._nan_policy,
                     "figure_config": self._figure_config,
                 }
             )
@@ -117,6 +123,7 @@ class TemporalDataFrameState(DataFrameState):
             dataframe=self._dataframe.clone() if deep else self._dataframe,
             temporal_column=self._temporal_column,
             period=self._period,
+            nan_policy=self._nan_policy,
             figure_config=self._figure_config.clone() if deep else self._figure_config,
         )
 

@@ -33,6 +33,9 @@ class ScatterDataFrameState(DataFrameState):
         x: The x-axis data column.
         y: The y-axis data column.
         color: An optional color axis data column.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
         figure_config: An optional figure configuration.
 
     Example usage:
@@ -61,9 +64,10 @@ class ScatterDataFrameState(DataFrameState):
         x: str,
         y: str,
         color: str | None = None,
+        nan_policy: str = "propagate",
         figure_config: BaseFigureConfig | None = None,
     ) -> None:
-        super().__init__(dataframe=dataframe, figure_config=figure_config)
+        super().__init__(dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config)
 
         check_column_exist(dataframe, x)
         check_column_exist(dataframe, y)
@@ -80,6 +84,7 @@ class ScatterDataFrameState(DataFrameState):
                 "x": self._x,
                 "y": self._y,
                 "color": self._color,
+                "nan_policy": self._nan_policy,
                 "figure_config": self._figure_config,
             }
         )
@@ -93,6 +98,7 @@ class ScatterDataFrameState(DataFrameState):
                     "x": self._x,
                     "y": self._y,
                     "color": self._color,
+                    "nan_policy": self._nan_policy,
                     "figure_config": self._figure_config,
                 }
             )
@@ -117,6 +123,7 @@ class ScatterDataFrameState(DataFrameState):
             x=self._x,
             y=self._y,
             color=self._color,
+            nan_policy=self._nan_policy,
             figure_config=self._figure_config.clone() if deep else self._figure_config,
         )
 

@@ -40,6 +40,17 @@ def test_target_dataframe_state_target_column(dataframe: pl.DataFrame) -> None:
     assert TargetDataFrameState(dataframe, target_column="col3").target_column == "col3"
 
 
+def test_target_dataframe_state_nan_policy(dataframe: pl.DataFrame) -> None:
+    assert (
+        TargetDataFrameState(dataframe, target_column="col3", nan_policy="raise").nan_policy
+        == "raise"
+    )
+
+
+def test_target_dataframe_state_nan_policy_default(dataframe: pl.DataFrame) -> None:
+    assert TargetDataFrameState(dataframe, target_column="col3").nan_policy == "propagate"
+
+
 def test_target_dataframe_state_figure_config(dataframe: pl.DataFrame) -> None:
     assert objects_are_equal(
         TargetDataFrameState(
@@ -69,7 +80,12 @@ def test_target_dataframe_state_str(dataframe: pl.DataFrame) -> None:
 
 
 def test_target_dataframe_state_clone(dataframe: pl.DataFrame) -> None:
-    state = TargetDataFrameState(dataframe, target_column="col3")
+    state = TargetDataFrameState(
+        dataframe,
+        target_column="col3",
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
+    )
     cloned_state = state.clone()
     assert state is not cloned_state
     assert state.equal(cloned_state)
@@ -79,7 +95,8 @@ def test_target_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
     state = TargetDataFrameState(
         dataframe,
         target_column="col3",
-        figure_config=MatplotlibFigureConfig(dpi=300),
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
     )
     cloned_state = state.clone()
 
@@ -87,14 +104,16 @@ def test_target_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
         TargetDataFrameState(
             dataframe,
             target_column="col3",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
         )
     )
     assert cloned_state.equal(
         TargetDataFrameState(
             dataframe,
             target_column="col3",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
         )
     )
     assert state.dataframe is not cloned_state.dataframe
@@ -104,7 +123,8 @@ def test_target_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
     state = TargetDataFrameState(
         dataframe,
         target_column="col3",
-        figure_config=MatplotlibFigureConfig(dpi=300),
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
     )
     cloned_state = state.clone(deep=False)
 
@@ -112,14 +132,16 @@ def test_target_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
         TargetDataFrameState(
             dataframe,
             target_column="col3",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
         )
     )
     assert cloned_state.equal(
         TargetDataFrameState(
             dataframe,
             target_column="col3",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
         )
     )
     assert state.dataframe is cloned_state.dataframe
@@ -145,6 +167,14 @@ def test_target_dataframe_state_equal_false_different_target_column(
     )
 
 
+def test_target_dataframe_state_equal_false_different_nan_policy(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not TargetDataFrameState(dataframe, target_column="col3").equal(
+        TargetDataFrameState(dataframe, target_column="col3", nan_policy="raise")
+    )
+
+
 def test_target_dataframe_state_equal_false_different_figure_config(
     dataframe: pl.DataFrame,
 ) -> None:
@@ -166,5 +196,6 @@ def test_target_dataframe_state_get_args(dataframe: pl.DataFrame) -> None:
             "dataframe": dataframe,
             "figure_config": MatplotlibFigureConfig(),
             "target_column": "col3",
+            "nan_policy": "propagate",
         },
     )
