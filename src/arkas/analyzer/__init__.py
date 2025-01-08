@@ -15,6 +15,7 @@ __all__ = [
     "DataFrameSummaryAnalyzer",
     "MappingAnalyzer",
     "NullValueAnalyzer",
+    "NumericSummaryAnalyzer",
     "PlotColumnAnalyzer",
     "ScatterColumnAnalyzer",
     "TemporalNullValueAnalyzer",
@@ -35,6 +36,7 @@ from arkas.analyzer.frame_summary import DataFrameSummaryAnalyzer
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer, BaseLazyAnalyzer
 from arkas.analyzer.mapping import MappingAnalyzer
 from arkas.analyzer.null_value import NullValueAnalyzer
+from arkas.analyzer.numeric_summary import NumericSummaryAnalyzer
 from arkas.analyzer.plot_column import PlotColumnAnalyzer
 from arkas.analyzer.scatter_column import ScatterColumnAnalyzer
 from arkas.analyzer.temporal_null_value import TemporalNullValueAnalyzer
