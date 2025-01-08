@@ -71,6 +71,9 @@ def main() -> None:
                 "summary": aa.SummaryAnalyzer(),
                 "numeric summary": aa.NumericSummaryAnalyzer(),
                 "correlation": aa.ColumnCorrelationAnalyzer(target_column="col1"),
+                "correlation col1 - col2": aa.CorrelationAnalyzer(
+                    x="col1", y="col2", figure_config=figure_config
+                ),
                 "null values": aa.NullValueAnalyzer(figure_config=figure_config),
                 "temporal null values": aa.TemporalNullValueAnalyzer(
                     temporal_column="datetime", period="1mo", figure_config=figure_config

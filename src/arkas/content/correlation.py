@@ -16,10 +16,11 @@ from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.evaluator2.correlation import CorrelationEvaluator
+from arkas.figure.utils import figure2html
+from arkas.plotter.correlation import CorrelationPlotter
 from arkas.utils.dataframe import check_num_columns
 
 if TYPE_CHECKING:
-
     from arkas.state.target_dataframe import DataFrameState
 
 logger = logging.getLogger(__name__)
@@ -77,14 +78,19 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
         xcol, ycol = self._state.dataframe.columns
         logger.info(f"Generating the correlation analysis between {xcol} and {ycol}...")
         metrics = CorrelationEvaluator(self._state).evaluate()
-
+        figures = CorrelationPlotter(self._state).plot()
         return Template(create_template()).render(
             {
                 "xcol": str(xcol),
                 "ycol": str(ycol),
                 "columns": ", ".join(self._state.dataframe.columns),
+                "count": f"{metrics['count']:,}",
+                "pearson_coeff": f"{metrics['pearson_coeff']:.4f}",
+                "pearson_pvalue": f"{metrics['pearson_pvalue']:.4f}",
+                "spearman_coeff": f"{metrics['spearman_coeff']:.4f}",
+                "spearman_pvalue": f"{metrics['spearman_pvalue']:.4f}",
+                "figure": figure2html(figures["correlation"], close_fig=True),
             }
-            | metrics
         )
 
 
@@ -107,14 +113,6 @@ def create_template() -> str:
 This section analyzes the correlation between <em>{{xcol}}</em> and <em>{{ycol}}</em>.
 The correlation coefficient is a statistical measure of the strength of a
 relationship between two variables. Its values can range from -1 to 1.
-<ul>
-  <li> A correlation coefficient of -1 describes a perfect negative, or inverse,
-correlation, with values in one series rising as those in the other decline,
-and vice versa. </li>
-  <li> A coefficient of 1 shows a perfect positive correlation, or a direct relationship. </li>
-  <li> A correlation coefficient of 0 means there is no direct relationship. </li>
-</ul>
-</p>
 
 <ul>
   <li> <b>pearson coefficient</b>: {{pearson_coeff}} </li>
@@ -123,4 +121,9 @@ and vice versa. </li>
   <li> <b>spearman p-value</b>: {{spearman_pvalue}} </li>
   <li> <b>num samples</b>: {{count}} </li>
 </ul>
+
+<p style="margin-top: 1rem;">
+The following figure shows the scatter plot between <em>{{xcol}}</em> and <em>{{ycol}}</em>.
+</p>
+{{figure}}
 """
