@@ -42,7 +42,7 @@ class CorrelationEvaluator(BaseEvaluator):
     >>> evaluator = CorrelationEvaluator(DataFrameState(frame))
     >>> evaluator
     CorrelationEvaluator(
-      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> evaluator.evaluate()
     {'count': 7, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0}

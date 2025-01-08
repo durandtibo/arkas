@@ -60,7 +60,7 @@ class NumericSummaryAnalyzer(BaseInNLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     NumericSummaryOutput(
-      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

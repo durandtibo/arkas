@@ -62,6 +62,17 @@ def test_scatter_dataframe_state_color_default(dataframe: pl.DataFrame) -> None:
     assert ScatterDataFrameState(dataframe, x="col1", y="col2").color is None
 
 
+def test_scatter_dataframe_state_nan_policy(dataframe: pl.DataFrame) -> None:
+    assert (
+        ScatterDataFrameState(dataframe, x="col1", y="col2", nan_policy="raise").nan_policy
+        == "raise"
+    )
+
+
+def test_scatter_dataframe_state_nan_policy_default(dataframe: pl.DataFrame) -> None:
+    assert ScatterDataFrameState(dataframe, x="col1", y="col2").nan_policy == "propagate"
+
+
 def test_scatter_dataframe_state_figure_config(dataframe: pl.DataFrame) -> None:
     assert objects_are_equal(
         ScatterDataFrameState(
@@ -91,7 +102,13 @@ def test_scatter_dataframe_state_str(dataframe: pl.DataFrame) -> None:
 
 
 def test_scatter_dataframe_state_clone(dataframe: pl.DataFrame) -> None:
-    state = ScatterDataFrameState(dataframe, x="col1", y="col2")
+    state = ScatterDataFrameState(
+        dataframe,
+        x="col1",
+        y="col2",
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
+    )
     cloned_state = state.clone()
     assert state is not cloned_state
     assert state.equal(cloned_state)
@@ -103,7 +120,8 @@ def test_scatter_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
         x="col1",
         y="col2",
         color="col3",
-        figure_config=MatplotlibFigureConfig(dpi=300),
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
     )
     cloned_state = state.clone()
 
@@ -113,7 +131,8 @@ def test_scatter_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
             x="col1",
             y="col2",
             color="col3",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
         )
     )
     assert cloned_state.equal(
@@ -122,7 +141,8 @@ def test_scatter_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
             x="col1",
             y="col2",
             color="col3",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
         )
     )
     assert state.dataframe is not cloned_state.dataframe
@@ -134,7 +154,8 @@ def test_scatter_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
         x="col1",
         y="col2",
         color="col3",
-        figure_config=MatplotlibFigureConfig(dpi=300),
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
     )
     cloned_state = state.clone(deep=False)
 
@@ -144,7 +165,8 @@ def test_scatter_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
             x="col1",
             y="col2",
             color="col3",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
         )
     )
     assert cloned_state.equal(
@@ -153,7 +175,8 @@ def test_scatter_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
             x="col1",
             y="col2",
             color="col3",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
         )
     )
     assert state.dataframe is cloned_state.dataframe
@@ -189,6 +212,12 @@ def test_scatter_dataframe_state_equal_false_different_color(dataframe: pl.DataF
     )
 
 
+def test_scatter_dataframe_state_equal_false_different_nan_policy(dataframe: pl.DataFrame) -> None:
+    assert not ScatterDataFrameState(dataframe, x="col1", y="col2").equal(
+        ScatterDataFrameState(dataframe, x="col1", y="col2", nan_policy="raise")
+    )
+
+
 def test_scatter_dataframe_state_equal_false_different_figure_config(
     dataframe: pl.DataFrame,
 ) -> None:
@@ -212,5 +241,6 @@ def test_scatter_dataframe_state_get_args(dataframe: pl.DataFrame) -> None:
             "x": "col1",
             "y": "col2",
             "color": "col3",
+            "nan_policy": "propagate",
         },
     )
