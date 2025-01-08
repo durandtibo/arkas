@@ -4,7 +4,7 @@ a summary of a DataFrame."""
 from __future__ import annotations
 
 __all__ = [
-    "DataFrameSummaryContentGenerator",
+    "SummaryContentGenerator",
     "create_table",
     "create_table_row",
     "create_template",
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class DataFrameSummaryContentGenerator(BaseSectionContentGenerator):
+class SummaryContentGenerator(BaseSectionContentGenerator):
     r"""Implement a content generator that returns a summary of a
     DataFrame.
 
@@ -43,8 +43,8 @@ class DataFrameSummaryContentGenerator(BaseSectionContentGenerator):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content import DataFrameSummaryContentGenerator
-    >>> content = DataFrameSummaryContentGenerator(
+    >>> from arkas.content import SummaryContentGenerator
+    >>> content = SummaryContentGenerator(
     ...     frame=pl.DataFrame(
     ...         {
     ...             "col1": [1.2, 4.2, 4.2, 2.2],
@@ -55,7 +55,7 @@ class DataFrameSummaryContentGenerator(BaseSectionContentGenerator):
     ...     )
     ... )
     >>> content
-    DataFrameSummaryContentGenerator(shape=(4, 3), top=5)
+    SummaryContentGenerator(shape=(4, 3), top=5)
 
     ```
     """
