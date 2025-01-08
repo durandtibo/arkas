@@ -51,7 +51,7 @@ class BaseLazyAnalyzer(BaseAnalyzer):
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    DataFrameSummaryOutput(shape=(4, 3), top=5)
+    SummaryOutput(shape=(4, 3), top=5)
 
     ```
     """

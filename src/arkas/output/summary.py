@@ -2,7 +2,7 @@ r"""Implement the DataFrame summary output."""
 
 from __future__ import annotations
 
-__all__ = ["DataFrameSummaryOutput"]
+__all__ = ["SummaryOutput"]
 
 from typing import TYPE_CHECKING, Any
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     import polars as pl
 
 
-class DataFrameSummaryOutput(BaseLazyOutput):
+class SummaryOutput(BaseLazyOutput):
     r"""Implement the DataFrame summary output.
 
     Args:
@@ -30,7 +30,7 @@ class DataFrameSummaryOutput(BaseLazyOutput):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.output import DataFrameSummaryOutput
+    >>> from arkas.output import SummaryOutput
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.2, 4.2, 4.2, 2.2],
@@ -39,9 +39,9 @@ class DataFrameSummaryOutput(BaseLazyOutput):
     ...     },
     ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
     ... )
-    >>> output = DataFrameSummaryOutput(frame)
+    >>> output = SummaryOutput(frame)
     >>> output
-    DataFrameSummaryOutput(shape=(4, 3), top=5)
+    SummaryOutput(shape=(4, 3), top=5)
     >>> output.get_content_generator()
     DataFrameSummaryContentGenerator(shape=(4, 3), top=5)
     >>> output.get_evaluator()

@@ -8,7 +8,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from arkas.analyzer.lazy import BaseLazyAnalyzer
-from arkas.output.frame_summary import DataFrameSummaryOutput
+from arkas.output.summary import SummaryOutput
 from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
@@ -43,7 +43,7 @@ class SummaryAnalyzer(BaseLazyAnalyzer):
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    DataFrameSummaryOutput(shape=(4, 3), top=5)
+    SummaryOutput(shape=(4, 3), top=5)
 
     ```
     """
@@ -56,8 +56,8 @@ class SummaryAnalyzer(BaseLazyAnalyzer):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(top={self._top:,}, sort={self._sort})"
 
-    def _analyze(self, frame: pl.DataFrame) -> DataFrameSummaryOutput:
+    def _analyze(self, frame: pl.DataFrame) -> SummaryOutput:
         logger.info("Analyzing the DataFrame...")
         if self._sort:
             frame = frame.select(sorted(frame.columns))
-        return DataFrameSummaryOutput(frame=frame, top=self._top)
+        return SummaryOutput(frame=frame, top=self._top)
