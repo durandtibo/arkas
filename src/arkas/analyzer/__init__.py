@@ -10,6 +10,7 @@ __all__ = [
     "BaseLazyAnalyzer",
     "BaseTruePredAnalyzer",
     "ColumnCooccurrenceAnalyzer",
+    "ColumnCorrelationAnalyzer",
     "ContentAnalyzer",
     "ContinuousColumnAnalyzer",
     "MappingAnalyzer",
@@ -29,6 +30,7 @@ from arkas.analyzer.accuracy import AccuracyAnalyzer
 from arkas.analyzer.balanced_accuracy import BalancedAccuracyAnalyzer
 from arkas.analyzer.base import BaseAnalyzer, is_analyzer_config, setup_analyzer
 from arkas.analyzer.column_cooccurrence import ColumnCooccurrenceAnalyzer
+from arkas.analyzer.column_correlation import ColumnCorrelationAnalyzer
 from arkas.analyzer.columns import BaseTruePredAnalyzer
 from arkas.analyzer.content import ContentAnalyzer
 from arkas.analyzer.continuous_column import ContinuousColumnAnalyzer

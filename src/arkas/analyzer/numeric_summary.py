@@ -13,7 +13,7 @@ from polars import selectors as cs
 
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer
 from arkas.output.numeric_summary import NumericSummaryOutput
-from arkas.state import DataFrameState
+from arkas.state.dataframe import DataFrameState
 
 if TYPE_CHECKING:
     import polars as pl
