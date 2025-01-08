@@ -7,6 +7,7 @@ __all__ = [
     "BalancedAccuracyContentGenerator",
     "BaseContentGenerator",
     "ColumnCooccurrenceContentGenerator",
+    "ColumnCorrelationContentGenerator",
     "ContentGenerator",
     "ContentGeneratorDict",
     "ContinuousSeriesContentGenerator",
@@ -23,6 +24,7 @@ from arkas.content.accuracy import AccuracyContentGenerator
 from arkas.content.balanced_accuracy import BalancedAccuracyContentGenerator
 from arkas.content.base import BaseContentGenerator
 from arkas.content.column_cooccurrence import ColumnCooccurrenceContentGenerator
+from arkas.content.column_correlation import ColumnCorrelationContentGenerator
 from arkas.content.continuous_series import ContinuousSeriesContentGenerator
 from arkas.content.mapping import ContentGeneratorDict
 from arkas.content.null_value import NullValueContentGenerator
