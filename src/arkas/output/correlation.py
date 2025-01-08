@@ -11,7 +11,8 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.correlation import CorrelationContentGenerator
 from arkas.evaluator2.correlation import CorrelationEvaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.vanilla import Plotter
+from arkas.plotter.correlation import CorrelationPlotter
+from arkas.utils.dataframe import check_num_columns
 
 if TYPE_CHECKING:
     from arkas.state.dataframe import DataFrameState
@@ -40,23 +41,26 @@ class CorrelationOutput(BaseLazyOutput):
     >>> output = CorrelationOutput(DataFrameState(frame))
     >>> output
     CorrelationOutput(
-      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     CorrelationContentGenerator(
-      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     CorrelationEvaluator(
-      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_plotter()
-    Plotter(count=0)
+    CorrelationPlotter(
+      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
+    )
 
     ```
     """
 
     def __init__(self, state: DataFrameState) -> None:
+        check_num_columns(state.dataframe, num_columns=2)
         self._state = state
 
     def __repr__(self) -> str:
@@ -78,5 +82,5 @@ class CorrelationOutput(BaseLazyOutput):
     def _get_evaluator(self) -> CorrelationEvaluator:
         return CorrelationEvaluator(self._state)
 
-    def _get_plotter(self) -> Plotter:
-        return Plotter()
+    def _get_plotter(self) -> CorrelationPlotter:
+        return CorrelationPlotter(self._state)
