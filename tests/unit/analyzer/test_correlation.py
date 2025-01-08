@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import warnings
 
-import numpy as np
 import polars as pl
 import pytest
 from grizz.exceptions import ColumnNotFoundError, ColumnNotFoundWarning
 
 from arkas.analyzer import CorrelationAnalyzer
+from arkas.figure import MatplotlibFigureConfig
 from arkas.output import CorrelationOutput, EmptyOutput, Output
 from arkas.state import DataFrameState
 
@@ -111,17 +111,10 @@ def test_correlation_analyzer_analyze_drop_nulls_false() -> None:
 
 
 @pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
-def test_correlation_analyzer_analyze_nan_policy(nan_policy: str) -> None:
+def test_correlation_analyzer_analyze_nan_policy(dataframe: pl.DataFrame, nan_policy: str) -> None:
     assert (
         CorrelationAnalyzer(x="col1", y="col2", nan_policy=nan_policy)
-        .analyze(
-            pl.DataFrame(
-                {
-                    "col2": [3, 2, 0, 1, 0, None],
-                    "col1": [1, 2, 3, 2, 1, None],
-                }
-            )
-        )
+        .analyze(dataframe)
         .equal(
             CorrelationOutput(
                 DataFrameState(
@@ -215,3 +208,43 @@ def test_correlation_analyzer_analyze_missing_warn_y(dataframe: pl.DataFrame) ->
     ):
         out = analyzer.analyze(dataframe)
     assert out.equal(EmptyOutput())
+
+
+def test_correlation_analyzer_equal_true() -> None:
+    assert CorrelationAnalyzer(x="col1", y="col2").equal(CorrelationAnalyzer(x="col1", y="col2"))
+
+
+def test_correlation_analyzer_equal_false_different_x() -> None:
+    assert not CorrelationAnalyzer(x="col1", y="col2").equal(CorrelationAnalyzer(x="col", y="col2"))
+
+
+def test_correlation_analyzer_equal_false_different_y() -> None:
+    assert not CorrelationAnalyzer(x="col1", y="col2").equal(CorrelationAnalyzer(x="col1", y="col"))
+
+
+def test_correlation_analyzer_equal_false_different_drop_nulls() -> None:
+    assert not CorrelationAnalyzer(x="col1", y="col2").equal(
+        CorrelationAnalyzer(x="col1", y="col2", drop_nulls=False)
+    )
+
+
+def test_correlation_analyzer_equal_false_different_missing_policy() -> None:
+    assert not CorrelationAnalyzer(x="col1", y="col2").equal(
+        CorrelationAnalyzer(x="col1", y="col2", missing_policy="warn")
+    )
+
+
+def test_correlation_analyzer_equal_false_different_nan_policy() -> None:
+    assert not CorrelationAnalyzer(x="col1", y="col2").equal(
+        CorrelationAnalyzer(x="col1", y="col2", nan_policy="raise")
+    )
+
+
+def test_correlation_analyzer_equal_false_different_figure_config() -> None:
+    assert not CorrelationAnalyzer(x="col1", y="col2").equal(
+        CorrelationAnalyzer(x="col1", y="col2", figure_config=MatplotlibFigureConfig())
+    )
+
+
+def test_correlation_analyzer_equal_false_different_type() -> None:
+    assert not CorrelationAnalyzer(x="col1", y="col2").equal(42)

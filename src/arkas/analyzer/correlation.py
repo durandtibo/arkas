@@ -129,7 +129,9 @@ class CorrelationAnalyzer(BaseLazyAnalyzer):
         dataframe = self._prepare_data(frame)
         logger.info(str_shape_diff(orig=frame.shape, final=dataframe.shape))
         return CorrelationOutput(
-            DataFrameState(dataframe=dataframe, figure_config=self._figure_config)
+            DataFrameState(
+                dataframe=dataframe, nan_policy=self._nan_policy, figure_config=self._figure_config
+            )
         )
 
     def _prepare_data(self, data: pl.DataFrame) -> pl.DataFrame:
