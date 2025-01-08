@@ -19,6 +19,7 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
+from arkas.content.utils import float_to_str
 from arkas.utils.stats import compute_statistics_continuous
 
 if TYPE_CHECKING:
@@ -369,7 +370,3 @@ def create_table_quantiles_row(series: pl.Series) -> str:
             "max": float_to_str(stats["max"]),
         }
     )
-
-
-def float_to_str(val: float) -> str:
-    return f"{val: 9.4g}"
