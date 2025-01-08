@@ -24,6 +24,13 @@ def dataframe() -> pl.DataFrame:
 ##########################################
 
 
+def test_correlation_evaluator_init_incorrect_state(dataframe: pl.DataFrame) -> None:
+    with pytest.raises(
+        ValueError, match="The DataFrame must have 2 columns but received a DataFrame"
+    ):
+        CorrelationEvaluator(DataFrameState(dataframe.with_columns(pl.lit(1).alias("col3"))))
+
+
 def test_correlation_evaluator_repr(dataframe: pl.DataFrame) -> None:
     assert repr(CorrelationEvaluator(DataFrameState(dataframe))).startswith("CorrelationEvaluator(")
 

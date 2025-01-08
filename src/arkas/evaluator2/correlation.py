@@ -51,8 +51,8 @@ class CorrelationEvaluator(BaseEvaluator):
     """
 
     def __init__(self, state: DataFrameState) -> None:
+        check_num_columns(state.dataframe, num_columns=2)
         self._state = state
-        check_num_columns(self._state.dataframe, num_columns=2)
 
     def __repr__(self) -> str:
         args = repr_indent(repr_mapping({"state": self._state}))
