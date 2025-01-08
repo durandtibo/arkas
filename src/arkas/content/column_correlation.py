@@ -77,15 +77,20 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
 
     def generate_content(self) -> str:
         logger.info(
-            f"Generating the correlation analysis between {self._state.target_column} and {list(self._state.dataframe.columns)}..."
+            f"Generating the correlation analysis between {self._state.target_column} "
+            f"and {list(self._state.dataframe.columns)}..."
         )
         metrics = ColumnCorrelationEvaluator(self._state).evaluate()
         columns = list(self._state.dataframe.columns)
         columns.remove(self._state.target_column)
+        nrows, ncols = self._state.dataframe.shape
         return Template(create_template()).render(
             {
+                "nrows": f"{nrows:,}",
+                "ncols": f"{ncols:,}",
                 "columns": ", ".join(self._state.dataframe.columns),
                 "table": create_table(metrics, columns=columns),
+                "target_column": f"{self._state.target_column}",
             }
         )
 
@@ -105,7 +110,20 @@ def create_template() -> str:
 
     ```
     """
-    return """<p style="margin-top: 1rem;"><b>Correlation between the columns</b>
+    return """<p style="margin-top: 1rem;">
+This section analyzes the correlation between <em>{{target_column}}</em> and other columns.
+The correlation coefficient is a statistical measure of the strength of a
+relationship between two variables. Its values can range from -1 to 1.
+<ul>
+  <li> A correlation coefficient of -1 describes a perfect negative, or inverse,
+correlation, with values in one series rising as those in the other decline,
+and vice versa. </li>
+  <li> A coefficient of 1 shows a perfect positive correlation, or a direct relationship. </li>
+  <li> A correlation coefficient of 0 means there is no direct relationship. </li>
+</ul>
+The DataFrame has {{nrows}} rows and {{ncols}} columns.
+</p>
+
 {{table}}
 """
 
@@ -157,6 +175,7 @@ def create_table(metrics: dict[str, dict], columns: Sequence[str]) -> str:
     <thead class="thead table-group-divider">
         <tr>
             <th>column</th>
+            <th>num samples</th>
             <th>pearson coefficient</th>
             <th>pearson p-value</th>
             <th>spearman coefficient</th>
@@ -204,6 +223,7 @@ def create_table_row(column: str, metrics: dict) -> str:
     return Template(
         """<tr>
     <th>{{column}}</th>
+    <td {{num_style}}>{{count}}</td>
     <td {{num_style}}>{{pearson_coeff}}</td>
     <td {{num_style}}>{{pearson_pvalue}}</td>
     <td {{num_style}}>{{spearman_coeff}}</td>
@@ -213,6 +233,7 @@ def create_table_row(column: str, metrics: dict) -> str:
         {
             "num_style": 'style="text-align: right;"',
             "column": column,
+            "count": f'{metrics.get("count", 0):,}',
             "pearson_coeff": f'{metrics.get("pearson_coeff", float("nan")):.4f}',
             "pearson_pvalue": f'{metrics.get("pearson_pvalue", float("nan")):.4f}',
             "spearman_coeff": f'{metrics.get("spearman_coeff", float("nan")):.4f}',
