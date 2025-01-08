@@ -21,7 +21,6 @@ from arkas.plotter.correlation import CorrelationPlotter
 from arkas.utils.dataframe import check_num_columns
 
 if TYPE_CHECKING:
-
     from arkas.state.target_dataframe import DataFrameState
 
 logger = logging.getLogger(__name__)
