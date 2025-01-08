@@ -128,7 +128,7 @@ class PlotColumnPlotter(BasePlotter):
     >>> plotter = PlotColumnPlotter(DataFrameState(frame))
     >>> plotter
     PlotColumnPlotter(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(4, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

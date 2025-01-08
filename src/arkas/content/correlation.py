@@ -50,7 +50,7 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
     >>> content = CorrelationContentGenerator(DataFrameState(frame))
     >>> content
     CorrelationContentGenerator(
-      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

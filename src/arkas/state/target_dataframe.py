@@ -31,6 +31,9 @@ class TargetDataFrameState(DataFrameState):
     Args:
         dataframe: The DataFrame.
         target_column: The target column in the DataFrame.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
         figure_config: An optional figure configuration.
 
     Example usage:
@@ -50,7 +53,7 @@ class TargetDataFrameState(DataFrameState):
     ... )
     >>> state = TargetDataFrameState(frame, target_column="col3")
     >>> state
-    TargetDataFrameState(dataframe=(7, 3), target_column='col3', figure_config=MatplotlibFigureConfig())
+    TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
 
     ```
     """
@@ -59,9 +62,10 @@ class TargetDataFrameState(DataFrameState):
         self,
         dataframe: pl.DataFrame,
         target_column: str,
+        nan_policy: str = "propagate",
         figure_config: BaseFigureConfig | None = None,
     ) -> None:
-        super().__init__(dataframe=dataframe, figure_config=figure_config)
+        super().__init__(dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config)
 
         check_column_exist(dataframe, target_column)
         self._target_column = target_column
@@ -71,6 +75,7 @@ class TargetDataFrameState(DataFrameState):
             {
                 "dataframe": self._dataframe.shape,
                 "target_column": self._target_column,
+                "nan_policy": self._nan_policy,
                 "figure_config": self._figure_config,
             }
         )
@@ -82,6 +87,7 @@ class TargetDataFrameState(DataFrameState):
                 {
                     "dataframe": self._dataframe.shape,
                     "target_column": self._target_column,
+                    "nan_policy": self._nan_policy,
                     "figure_config": self._figure_config,
                 }
             )
@@ -96,6 +102,7 @@ class TargetDataFrameState(DataFrameState):
         return self.__class__(
             dataframe=self._dataframe.clone() if deep else self._dataframe,
             target_column=self._target_column,
+            nan_policy=self._nan_policy,
             figure_config=self._figure_config.clone() if deep else self._figure_config,
         )
 

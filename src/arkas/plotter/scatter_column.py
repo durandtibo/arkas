@@ -149,7 +149,7 @@ class ScatterColumnPlotter(BasePlotter):
     ... )
     >>> plotter
     ScatterColumnPlotter(
-      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color='col3', figure_config=MatplotlibFigureConfig())
+      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

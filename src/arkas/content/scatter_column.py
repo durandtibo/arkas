@@ -48,7 +48,7 @@ class ScatterColumnContentGenerator(BaseSectionContentGenerator):
     ... )
     >>> content
     ScatterColumnContentGenerator(
-      (state): ScatterDataFrameState(dataframe=(7, 3), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+      (state): ScatterDataFrameState(dataframe=(7, 3), x='col1', y='col2', color=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

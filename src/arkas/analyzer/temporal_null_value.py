@@ -77,7 +77,7 @@ class TemporalNullValueAnalyzer(BaseInNLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     TemporalNullValueOutput(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period='1d', figure_config=MatplotlibFigureConfig())
+      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period='1d', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

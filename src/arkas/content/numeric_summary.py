@@ -54,7 +54,7 @@ class NumericSummaryContentGenerator(BaseSectionContentGenerator):
     >>> content = NumericSummaryContentGenerator(DataFrameState(dataframe))
     >>> content
     NumericSummaryContentGenerator(
-      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```
