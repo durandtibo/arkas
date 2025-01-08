@@ -4,7 +4,7 @@ import polars as pl
 import pytest
 
 from arkas.analyzer import SummaryAnalyzer
-from arkas.output import DataFrameSummaryOutput, Output
+from arkas.output import Output, SummaryOutput
 
 #####################################
 #     Tests for SummaryAnalyzer     #
@@ -23,11 +23,7 @@ def test_summary_analyzer_analyze() -> None:
     assert (
         SummaryAnalyzer()
         .analyze(pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]}))
-        .equal(
-            DataFrameSummaryOutput(
-                pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]})
-            )
-        )
+        .equal(SummaryOutput(pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]})))
     )
 
 
@@ -46,7 +42,7 @@ def test_summary_analyzer_analyze_top(top: int) -> None:
         SummaryAnalyzer(top=top)
         .analyze(pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]}))
         .equal(
-            DataFrameSummaryOutput(
+            SummaryOutput(
                 pl.DataFrame({"pred": [3, 2, 0, 1, 0], "target": [1, 2, 3, 2, 1]}), top=top
             )
         )
@@ -62,7 +58,5 @@ def test_summary_analyzer_analyze_sort_true() -> None:
     assert (
         SummaryAnalyzer(sort=True)
         .analyze(pl.DataFrame({"col2": [3, 2, 0, 1, 0], "col1": [1, 2, 3, 2, 1]}))
-        .equal(
-            DataFrameSummaryOutput(pl.DataFrame({"col1": [1, 2, 3, 2, 1], "col2": [3, 2, 0, 1, 0]}))
-        )
+        .equal(SummaryOutput(pl.DataFrame({"col1": [1, 2, 3, 2, 1], "col2": [3, 2, 0, 1, 0]})))
     )
