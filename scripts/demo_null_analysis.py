@@ -70,6 +70,7 @@ def main() -> None:
             {
                 "summary": aa.SummaryAnalyzer(),
                 "numeric summary": aa.NumericSummaryAnalyzer(),
+                "correlation": aa.ColumnCorrelationAnalyzer(target_column="col1"),
                 "null values": aa.NullValueAnalyzer(figure_config=figure_config),
                 "temporal null values": aa.TemporalNullValueAnalyzer(
                     temporal_column="datetime", period="1mo", figure_config=figure_config
