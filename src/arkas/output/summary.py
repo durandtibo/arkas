@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
 
-from arkas.content.frame_summary import DataFrameSummaryContentGenerator
+from arkas.content.summary import SummaryContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.vanilla import Plotter
@@ -43,7 +43,7 @@ class SummaryOutput(BaseLazyOutput):
     >>> output
     SummaryOutput(shape=(4, 3), top=5)
     >>> output.get_content_generator()
-    DataFrameSummaryContentGenerator(shape=(4, 3), top=5)
+    SummaryContentGenerator(shape=(4, 3), top=5)
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
@@ -67,8 +67,8 @@ class SummaryOutput(BaseLazyOutput):
             self._frame, other._frame, equal_nan=equal_nan
         )
 
-    def _get_content_generator(self) -> DataFrameSummaryContentGenerator:
-        return DataFrameSummaryContentGenerator(frame=self._frame, top=self._top)
+    def _get_content_generator(self) -> SummaryContentGenerator:
+        return SummaryContentGenerator(frame=self._frame, top=self._top)
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()

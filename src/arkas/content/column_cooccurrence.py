@@ -99,7 +99,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.content.frame_summary import create_template
+    >>> from arkas.content.summary import create_template
     >>> template = create_template()
 
     ```

@@ -10,10 +10,10 @@ __all__ = [
     "ContentGenerator",
     "ContentGeneratorDict",
     "ContinuousSeriesContentGenerator",
-    "DataFrameSummaryContentGenerator",
     "NullValueContentGenerator",
     "PlotColumnContentGenerator",
     "ScatterColumnContentGenerator",
+    "SummaryContentGenerator",
     "TemporalNullValueContentGenerator",
     "TemporalPlotColumnContentGenerator",
 ]
@@ -23,11 +23,11 @@ from arkas.content.balanced_accuracy import BalancedAccuracyContentGenerator
 from arkas.content.base import BaseContentGenerator
 from arkas.content.column_cooccurrence import ColumnCooccurrenceContentGenerator
 from arkas.content.continuous_series import ContinuousSeriesContentGenerator
-from arkas.content.frame_summary import DataFrameSummaryContentGenerator
 from arkas.content.mapping import ContentGeneratorDict
 from arkas.content.null_value import NullValueContentGenerator
 from arkas.content.plot_column import PlotColumnContentGenerator
 from arkas.content.scatter_column import ScatterColumnContentGenerator
+from arkas.content.summary import SummaryContentGenerator
 from arkas.content.temporal_null_value import TemporalNullValueContentGenerator
 from arkas.content.temporal_plot_column import TemporalPlotColumnContentGenerator
 from arkas.content.vanilla import ContentGenerator
