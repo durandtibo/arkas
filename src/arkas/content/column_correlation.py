@@ -17,7 +17,7 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
-from arkas.evaluator2 import ColumnCorrelationEvaluator
+from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
