@@ -12,12 +12,12 @@ __all__ = [
     "ColumnCooccurrenceAnalyzer",
     "ContentAnalyzer",
     "ContinuousColumnAnalyzer",
-    "DataFrameSummaryAnalyzer",
     "MappingAnalyzer",
     "NullValueAnalyzer",
     "NumericSummaryAnalyzer",
     "PlotColumnAnalyzer",
     "ScatterColumnAnalyzer",
+    "SummaryAnalyzer",
     "TemporalNullValueAnalyzer",
     "TemporalPlotColumnAnalyzer",
     "TransformAnalyzer",
@@ -32,13 +32,13 @@ from arkas.analyzer.column_cooccurrence import ColumnCooccurrenceAnalyzer
 from arkas.analyzer.columns import BaseTruePredAnalyzer
 from arkas.analyzer.content import ContentAnalyzer
 from arkas.analyzer.continuous_column import ContinuousColumnAnalyzer
-from arkas.analyzer.frame_summary import DataFrameSummaryAnalyzer
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer, BaseLazyAnalyzer
 from arkas.analyzer.mapping import MappingAnalyzer
 from arkas.analyzer.null_value import NullValueAnalyzer
 from arkas.analyzer.numeric_summary import NumericSummaryAnalyzer
 from arkas.analyzer.plot_column import PlotColumnAnalyzer
 from arkas.analyzer.scatter_column import ScatterColumnAnalyzer
+from arkas.analyzer.summary import SummaryAnalyzer
 from arkas.analyzer.temporal_null_value import TemporalNullValueAnalyzer
 from arkas.analyzer.temporal_plot_column import TemporalPlotColumnAnalyzer
 from arkas.analyzer.transform import TransformAnalyzer

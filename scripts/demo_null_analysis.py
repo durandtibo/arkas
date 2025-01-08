@@ -68,7 +68,7 @@ def main() -> None:
         transformer=SequentialTransformer(transformers=[]),
         analyzer=aa.MappingAnalyzer(
             {
-                "summary": aa.DataFrameSummaryAnalyzer(),
+                "summary": aa.SummaryAnalyzer(),
                 "null values": aa.NullValueAnalyzer(figure_config=figure_config),
                 "temporal null values": aa.TemporalNullValueAnalyzer(
                     temporal_column="datetime", period="1mo", figure_config=figure_config
