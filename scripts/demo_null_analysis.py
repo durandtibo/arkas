@@ -69,6 +69,7 @@ def main() -> None:
         analyzer=aa.MappingAnalyzer(
             {
                 "summary": aa.SummaryAnalyzer(),
+                "numeric summary": aa.NumericSummaryAnalyzer(),
                 "null values": aa.NullValueAnalyzer(figure_config=figure_config),
                 "temporal null values": aa.TemporalNullValueAnalyzer(
                     temporal_column="datetime", period="1mo", figure_config=figure_config

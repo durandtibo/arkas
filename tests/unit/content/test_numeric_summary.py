@@ -4,7 +4,13 @@ import polars as pl
 import pytest
 
 from arkas.content import ContentGenerator, NumericSummaryContentGenerator
-from arkas.content.numeric_summary import create_template
+from arkas.content.numeric_summary import (
+    create_table,
+    create_table_quantiles,
+    create_table_quantiles_row,
+    create_table_row,
+    create_template,
+)
 from arkas.state import DataFrameState
 
 
@@ -124,3 +130,55 @@ def test_numeric_summary_content_generator_generate_toc_args(dataframe: pl.DataF
 
 def test_create_template() -> None:
     assert isinstance(create_template(), str)
+
+
+##################################
+#     Tests for create_table     #
+##################################
+
+
+def test_create_table(dataframe: pl.DataFrame) -> None:
+    assert isinstance(create_table(dataframe), str)
+
+
+def test_create_table_empty() -> None:
+    assert isinstance(create_table(pl.DataFrame()), str)
+
+
+######################################
+#     Tests for create_table_row     #
+######################################
+
+
+def test_create_table_row() -> None:
+    assert isinstance(create_table_row(pl.Series("col", [1, 2, 3, 4, 5, 6, 7])), str)
+
+
+def test_create_table_row_empty() -> None:
+    assert isinstance(create_table_row(pl.Series("col", [])), str)
+
+
+############################################
+#     Tests for create_table_quantiles     #
+############################################
+
+
+def test_create_table_quantiles(dataframe: pl.DataFrame) -> None:
+    assert isinstance(create_table_quantiles(dataframe), str)
+
+
+def test_create_table_quantiles_empty() -> None:
+    assert isinstance(create_table_quantiles(pl.DataFrame()), str)
+
+
+################################################
+#     Tests for create_table_quantiles_row     #
+################################################
+
+
+def test_create_table_quantiles_row() -> None:
+    assert isinstance(create_table_quantiles_row(pl.Series("col", [1, 2, 3, 4, 5, 6, 7])), str)
+
+
+def test_create_table_quantiles_row_empty() -> None:
+    assert isinstance(create_table_quantiles_row(pl.Series("col", [])), str)

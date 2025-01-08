@@ -183,7 +183,7 @@ def create_table(
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content.summary import create_table_row
+    >>> from arkas.content.summary import create_table
     >>> row = create_table(
     ...     columns=["float", "int", "str"],
     ...     null_count=(1, 0, 2),
