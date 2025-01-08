@@ -52,7 +52,7 @@ def main() -> None:
         transformer=SequentialTransformer(transformers=[]),
         analyzer=aa.MappingAnalyzer(
             {
-                "summary": aa.DataFrameSummaryAnalyzer(),
+                "summary": aa.SummaryAnalyzer(),
                 "group one": aa.AccuracyAnalyzer(y_true="target", y_pred="pred"),
                 "group two": aa.BalancedAccuracyAnalyzer(y_true="target", y_pred="pred"),
                 "co-occurrence": aa.ColumnCooccurrenceAnalyzer(

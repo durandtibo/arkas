@@ -62,7 +62,7 @@ def main() -> None:
         transformer=SequentialTransformer(transformers=[]),
         analyzer=aa.MappingAnalyzer(
             {
-                "summary": aa.DataFrameSummaryAnalyzer(),
+                "summary": aa.SummaryAnalyzer(),
                 "plot columns": aa.PlotColumnAnalyzer(
                     columns=["cauchy", "normal", "uniform"], figure_config=figure_config
                 ),
