@@ -2,7 +2,7 @@ r"""Implement an analyzer that generates a summary of the DataFrame."""
 
 from __future__ import annotations
 
-__all__ = ["DataFrameSummaryAnalyzer"]
+__all__ = ["SummaryAnalyzer"]
 
 import logging
 from typing import TYPE_CHECKING
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class DataFrameSummaryAnalyzer(BaseLazyAnalyzer):
+class SummaryAnalyzer(BaseLazyAnalyzer):
     r"""Implement an analyzer to show a summary of the DataFrame.
 
     Args:
@@ -29,10 +29,10 @@ class DataFrameSummaryAnalyzer(BaseLazyAnalyzer):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.analyzer import DataFrameSummaryAnalyzer
-    >>> analyzer = DataFrameSummaryAnalyzer()
+    >>> from arkas.analyzer import SummaryAnalyzer
+    >>> analyzer = SummaryAnalyzer()
     >>> analyzer
-    DataFrameSummaryAnalyzer(top=5, sort=False)
+    SummaryAnalyzer(top=5, sort=False)
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 0, 1],
