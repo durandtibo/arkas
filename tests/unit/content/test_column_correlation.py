@@ -150,12 +150,33 @@ def test_create_template() -> None:
 ##################################
 
 
-def test_create_table(dataframe: pl.DataFrame) -> None:
-    assert isinstance(create_table(dataframe), str)
+def test_create_table() -> None:
+    assert isinstance(
+        create_table(
+            metrics={
+                "correlation_col1": {
+                    "count": 7,
+                    "pearson_coeff": 1.0,
+                    "pearson_pvalue": 0.0,
+                    "spearman_coeff": 1.0,
+                    "spearman_pvalue": 0.0,
+                },
+                "correlation_col2": {
+                    "count": 7,
+                    "pearson_coeff": -1.0,
+                    "pearson_pvalue": 0.0,
+                    "spearman_coeff": -1.0,
+                    "spearman_pvalue": 0.0,
+                },
+            },
+            columns=["col1", "col2"],
+        ),
+        str,
+    )
 
 
 def test_create_table_empty() -> None:
-    assert isinstance(create_table(pl.DataFrame()), str)
+    assert isinstance(create_table(metrics={}, columns=[]), str)
 
 
 ######################################
@@ -164,8 +185,20 @@ def test_create_table_empty() -> None:
 
 
 def test_create_table_row() -> None:
-    assert isinstance(create_table_row(pl.Series("col", [1, 2, 3, 4, 5, 6, 7])), str)
+    assert isinstance(
+        create_table_row(
+            column="col1",
+            metrics={
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+        ),
+        str,
+    )
 
 
 def test_create_table_row_empty() -> None:
-    assert isinstance(create_table_row(pl.Series("col", [], dtype=pl.Float64)), str)
+    assert isinstance(create_table_row(column="col1", metrics={}), str)

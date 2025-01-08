@@ -17,11 +17,10 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
-from arkas.content.utils import float_to_str
-from arkas.utils.stats import compute_statistics_continuous
+from arkas.evaluator2 import ColumnCorrelationEvaluator
 
 if TYPE_CHECKING:
-    import polars as pl
+    from collections.abc import Sequence
 
     from arkas.state.target_dataframe import TargetDataFrameState
 
@@ -80,10 +79,13 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
         logger.info(
             f"Generating the correlation analysis between {self._state.target_column} and {list(self._state.dataframe.columns)}..."
         )
+        metrics = ColumnCorrelationEvaluator(self._state).evaluate()
+        columns = list(self._state.dataframe.columns)
+        columns.remove(self._state.target_column)
         return Template(create_template()).render(
             {
                 "columns": ", ".join(self._state.dataframe.columns),
-                "table": create_table(self._state.dataframe),
+                "table": create_table(metrics, columns=columns),
             }
         )
 
@@ -103,33 +105,18 @@ def create_template() -> str:
 
     ```
     """
-    return """This section shows a short summary of each column.
-
-<ul>
-  <li> <b>column</b>: is the column name</li>
-  <li> <b>dtype</b>: is the column data type </li>
-  <li> <b>null</b>: is the number (and percentage) of null values in the column </li>
-  <li> <b>nan</b>: is the number (and percentage) of not a number (NaN) values in the column </li>
-  <li> <b>unique</b>: is the number (and percentage) of unique values in the column </li>
-  <li> <b>negative</b>: is the number (and percentage) of strictly negative values (<span>&#60;</span>0) in the column </li>
-  <li> <b>zero</b>: is the number (and percentage) of zero values (=0) in the column </li>
-  <li> <b>positive</b>: is the number (and percentage) of strictly positive values (<span>&#62;</span>0) in the column </li>
-</ul>
-
-<p style="margin-top: 1rem;">
-<b>General statistics about the DataFrame</b>
+    return """<p style="margin-top: 1rem;"><b>Correlation between the columns</b>
 {{table}}
 """
 
 
-def create_table(
-    frame: pl.DataFrame,
-) -> str:
+def create_table(metrics: dict[str, dict], columns: Sequence[str]) -> str:
     r"""Return a HTML representation of a table with some statisticts
     about each column.
 
     Args:
-        frame: The DataFrame to analyze.
+        metrics: The dictionary of metrics.
+        columns: The columns to show in the table.
 
     Returns:
         The HTML representation of the table.
@@ -140,37 +127,40 @@ def create_table(
 
     >>> import polars as pl
     >>> from arkas.content.column_correlation import create_table
-    >>> dataframe = pl.DataFrame(
-    ...     {
-    ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
-    ...         "col2": [7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0],
-    ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+    >>> row = create_table(
+    ...     metrics={
+    ...         "correlation_col1": {
+    ...             "count": 7,
+    ...             "pearson_coeff": 1.0,
+    ...             "pearson_pvalue": 0.0,
+    ...             "spearman_coeff": 1.0,
+    ...             "spearman_pvalue": 0.0,
+    ...         },
+    ...         "correlation_col2": {
+    ...             "count": 7,
+    ...             "pearson_coeff": -1.0,
+    ...             "pearson_pvalue": 0.0,
+    ...             "spearman_coeff": -1.0,
+    ...             "spearman_pvalue": 0.0,
+    ...         },
     ...     },
+    ...     columns=["col1", "col2"],
     ... )
-    >>> row = create_table(dataframe)
 
     ```
     """
-    rows = "\n".join([create_table_row(series=series) for series in frame])
+    rows = "\n".join(
+        [create_table_row(column=col, metrics=metrics[f"correlation_{col}"]) for col in columns]
+    )
     return Template(
         """<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr>
             <th>column</th>
-            <th>dtype</th>
-            <th>null</th>
-            <th>nan</th>
-            <th>unique</th>
-            <th>negative</th>
-            <th>zero</th>
-            <th>positive</th>
-            <th>mean</th>
-            <th>std</th>
-            <th>skewness</th>
-            <th>kurtosis</th>
-            <th>min</th>
-            <th>median</th>
-            <th>max</th>
+            <th>pearson coefficient</th>
+            <th>pearson p-value</th>
+            <th>spearman coefficient</th>
+            <th>spearman p-value</th>
         </tr>
     </thead>
     <tbody class="tbody table-group-divider">
@@ -182,11 +172,12 @@ def create_table(
     ).render({"rows": rows})
 
 
-def create_table_row(series: pl.Series) -> str:
+def create_table_row(column: str, metrics: dict) -> str:
     r"""Create the HTML code of a new table row.
 
     Args:
-        series: The series to analyze.
+        column: The column name
+        metrics: The dictionary of metrics with the correlation scores.
 
     Returns:
         The HTML code of a row.
@@ -197,53 +188,34 @@ def create_table_row(series: pl.Series) -> str:
 
     >>> import polars as pl
     >>> from arkas.content.column_correlation import create_table_row
-    >>> row = create_table_row(pl.Series("col1", [1, 2, 3, 4, 5, 6, 7]))
+    >>> row = create_table_row(
+    ...     column="col1",
+    ...     metrics={
+    ...         "count": 7,
+    ...         "pearson_coeff": 1.0,
+    ...         "pearson_pvalue": 0.0,
+    ...         "spearman_coeff": 1.0,
+    ...         "spearman_pvalue": 0.0,
+    ...     },
+    ... )
 
     ```
     """
-    stats = compute_statistics_continuous(series)
-    nan = int(series.is_nan().sum())
-    null = stats["num_nulls"]
-    nunique = stats["nunique"]
-    total = stats["count"]
-    negative = stats["<0"]
-    zero = stats["=0"]
-    positive = stats[">0"]
     return Template(
         """<tr>
     <th>{{column}}</th>
-    <td>{{dtype}}</td>
-    <td {{num_style}}>{{null}}</td>
-    <td {{num_style}}>{{nan}}</td>
-    <td {{num_style}}>{{nunique}}</td>
-    <td {{num_style}}>{{negative}}</td>
-    <td {{num_style}}>{{zero}}</td>
-    <td {{num_style}}>{{positive}}</td>
-    <td {{num_style}}>{{mean}}</td>
-    <td {{num_style}}>{{std}}</td>
-    <td {{num_style}}>{{skewness}}</td>
-    <td {{num_style}}>{{kurtosis}}</td>
-    <td {{num_style}}>{{min}}</td>
-    <td {{num_style}}>{{median}}</td>
-    <td {{num_style}}>{{max}}</td>
+    <td {{num_style}}>{{pearson_coeff}}</td>
+    <td {{num_style}}>{{pearson_pvalue}}</td>
+    <td {{num_style}}>{{spearman_coeff}}</td>
+    <td {{num_style}}>{{spearman_pvalue}}</td>
 </tr>"""
     ).render(
         {
             "num_style": 'style="text-align: right;"',
-            "column": series.name,
-            "dtype": series.dtype,
-            "null": f"{null:,} ({100 * null / total if total else float('nan'):.2f}%)",
-            "nan": f"{nan:,} ({100 * nan / total if total else float('nan'):.2f}%)",
-            "nunique": f"{nunique:,} ({100 * nunique / total if total else float('nan'):.2f}%)",
-            "mean": float_to_str(stats["mean"]),
-            "std": float_to_str(stats["std"]),
-            "skewness": float_to_str(stats["skewness"]),
-            "kurtosis": float_to_str(stats["kurtosis"]),
-            "min": float_to_str(stats["min"]),
-            "median": float_to_str(stats["median"]),
-            "max": float_to_str(stats["max"]),
-            "negative": f"{negative:,} ({100 * negative / total if total else float('nan'):.2f}%)",
-            "zero": f"{zero:,} ({100 * zero / total if total else float('nan'):.2f}%)",
-            "positive": f"{positive:,} ({100 * positive / total if total else float('nan'):.2f}%)",
+            "column": column,
+            "pearson_coeff": f'{metrics.get("pearson_coeff", float("nan")):.4f}',
+            "pearson_pvalue": f'{metrics.get("pearson_pvalue", float("nan")):.4f}',
+            "spearman_coeff": f'{metrics.get("spearman_coeff", float("nan")):.4f}',
+            "spearman_pvalue": f'{metrics.get("spearman_pvalue", float("nan")):.4f}',
         }
     )
