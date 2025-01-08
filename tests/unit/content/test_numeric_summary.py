@@ -87,7 +87,7 @@ def test_numeric_summary_content_generator_generate_content_empty_rows() -> None
             DataFrameState(
                 pl.DataFrame(
                     {"float": [], "int": [], "str": []},
-                    schema={"float": pl.Float64, "int": pl.Int64, "str": pl.String},
+                    schema={"float": pl.Float64, "int": pl.Int64, "str": pl.Float64},
                 )
             )
         ).generate_content(),
@@ -155,7 +155,7 @@ def test_create_table_row() -> None:
 
 
 def test_create_table_row_empty() -> None:
-    assert isinstance(create_table_row(pl.Series("col", [])), str)
+    assert isinstance(create_table_row(pl.Series("col", [], dtype=pl.Float64)), str)
 
 
 ############################################
@@ -181,4 +181,4 @@ def test_create_table_quantiles_row() -> None:
 
 
 def test_create_table_quantiles_row_empty() -> None:
-    assert isinstance(create_table_quantiles_row(pl.Series("col", [])), str)
+    assert isinstance(create_table_quantiles_row(pl.Series("col", [], dtype=pl.Float64)), str)
