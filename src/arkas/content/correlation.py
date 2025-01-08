@@ -16,7 +16,7 @@ from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.evaluator2.correlation import CorrelationEvaluator
-from arkas.figure import figure2html
+from arkas.figure.utils import figure2html
 from arkas.plotter.correlation import CorrelationPlotter
 from arkas.utils.dataframe import check_num_columns
 
