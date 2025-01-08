@@ -3,10 +3,7 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from arkas.content import (
-    ContentGenerator,
-    NumericSummaryContentGenerator,
-)
+from arkas.content import ContentGenerator, NumericSummaryContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import NumericSummaryOutput, Output
 from arkas.plotter import Plotter
