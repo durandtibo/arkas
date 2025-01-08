@@ -111,6 +111,7 @@ def create_template() -> str:
   <li> <b>column</b>: is the column name</li>
   <li> <b>dtype</b>: is the column data type </li>
   <li> <b>null</b>: is the number (and percentage) of null values in the column </li>
+  <li> <b>nan</b>: is the number (and percentage) of not a number (NaN) values in the column </li>
   <li> <b>unique</b>: is the number (and percentage) of unique values in the column </li>
   <li> <b>negative</b>: is the number (and percentage) of strictly negative values (<span>&#60;</span>0) in the column </li>
   <li> <b>zero</b>: is the number (and percentage) of zero values (=0) in the column </li>
@@ -169,6 +170,7 @@ def create_table(
             <th>column</th>
             <th>dtype</th>
             <th>null</th>
+            <th>nan</th>
             <th>unique</th>
             <th>negative</th>
             <th>zero</th>
@@ -211,6 +213,7 @@ def create_table_row(series: pl.Series) -> str:
     ```
     """
     stats = compute_statistics_continuous(series)
+    nan = int(series.is_nan().sum())
     null = stats["num_nulls"]
     nunique = stats["nunique"]
     total = stats["count"]
@@ -222,6 +225,7 @@ def create_table_row(series: pl.Series) -> str:
     <th>{{column}}</th>
     <td>{{dtype}}</td>
     <td {{num_style}}>{{null}}</td>
+    <td {{num_style}}>{{nan}}</td>
     <td {{num_style}}>{{nunique}}</td>
     <td {{num_style}}>{{negative}}</td>
     <td {{num_style}}>{{zero}}</td>
@@ -240,6 +244,7 @@ def create_table_row(series: pl.Series) -> str:
             "column": series.name,
             "dtype": series.dtype,
             "null": f"{null:,} ({100 * null / total if total else float('nan'):.2f}%)",
+            "nan": f"{nan:,} ({100 * nan / total if total else float('nan'):.2f}%)",
             "nunique": f"{nunique:,} ({100 * nunique / total if total else float('nan'):.2f}%)",
             "mean": float_to_str(stats["mean"]),
             "std": float_to_str(stats["std"]),
