@@ -147,7 +147,7 @@ class CorrelationPlotter(BasePlotter):
     >>> plotter = CorrelationPlotter(DataFrameState(frame))
     >>> plotter
     CorrelationPlotter(
-      (state): DataFrameState(dataframe=(4, 2), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
     )
 
     ```

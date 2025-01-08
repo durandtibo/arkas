@@ -14,7 +14,7 @@ from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
-    from arkas.state.dataframe import TargetDataFrameState
+    from arkas.state.target_dataframe import TargetDataFrameState
 
 
 class ColumnCorrelationOutput(BaseLazyOutput):

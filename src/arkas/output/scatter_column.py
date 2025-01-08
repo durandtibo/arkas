@@ -14,7 +14,7 @@ from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.scatter_column import ScatterColumnPlotter
 
 if TYPE_CHECKING:
-    from arkas.state.temporal_dataframe import ScatterDataFrameState
+    from arkas.state.scatter_dataframe import ScatterDataFrameState
 
 
 class ScatterColumnOutput(BaseLazyOutput):

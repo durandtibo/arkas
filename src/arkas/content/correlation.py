@@ -47,7 +47,7 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
     ...         "col2": [7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0],
     ...     },
     ... )
-    >>> content = CorrelationContentGenerator(DataFrameState(frame, target_column="col3"))
+    >>> content = CorrelationContentGenerator(DataFrameState(frame))
     >>> content
     CorrelationContentGenerator(
       (state): DataFrameState(dataframe=(7, 2), figure_config=MatplotlibFigureConfig())
