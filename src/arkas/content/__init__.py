@@ -11,6 +11,7 @@ __all__ = [
     "ContentGeneratorDict",
     "ContinuousSeriesContentGenerator",
     "NullValueContentGenerator",
+    "NumericSummaryContentGenerator",
     "PlotColumnContentGenerator",
     "ScatterColumnContentGenerator",
     "SummaryContentGenerator",
@@ -25,6 +26,7 @@ from arkas.content.column_cooccurrence import ColumnCooccurrenceContentGenerator
 from arkas.content.continuous_series import ContinuousSeriesContentGenerator
 from arkas.content.mapping import ContentGeneratorDict
 from arkas.content.null_value import NullValueContentGenerator
+from arkas.content.numeric_summary import NumericSummaryContentGenerator
 from arkas.content.plot_column import PlotColumnContentGenerator
 from arkas.content.scatter_column import ScatterColumnContentGenerator
 from arkas.content.summary import SummaryContentGenerator
