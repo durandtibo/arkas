@@ -1,8 +1,8 @@
-r"""Contain the implementation of a DataFrame column plotter."""
+r"""Contain the implementation of a correlation plotter."""
 
 from __future__ import annotations
 
-__all__ = ["BaseFigureCreator", "MatplotlibFigureCreator", "ScatterColumnPlotter"]
+__all__ = ["BaseFigureCreator", "CorrelationPlotter", "MatplotlibFigureCreator"]
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
@@ -16,11 +16,12 @@ from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
+from arkas.utils.dataframe import check_num_columns
 from arkas.utils.range import find_range
 
 if TYPE_CHECKING:
     from arkas.figure.base import BaseFigure
-    from arkas.state.scatter_dataframe import ScatterDataFrameState
+    from arkas.state.dataframe import DataFrameState
 
 
 class BaseFigureCreator(ABC):
@@ -28,11 +29,13 @@ class BaseFigureCreator(ABC):
     each column."""
 
     @abstractmethod
-    def create(self, state: ScatterDataFrameState) -> BaseFigure:
+    def create(self, state: DataFrameState) -> BaseFigure:
         r"""Create a figure with the content of each column.
 
         Args:
             state: The state containing the DataFrame to analyze.
+                The DataFrame must have only 2 columns, which are the
+                two columns to analyze.
 
         Returns:
             The generated figure.
@@ -43,17 +46,16 @@ class BaseFigureCreator(ABC):
 
         >>> import polars as pl
         >>> from arkas.figure import MatplotlibFigureConfig
-        >>> from arkas.state import ScatterDataFrameState
+        >>> from arkas.state import DataFrameState
+        >>> from arkas.plotter.correlation import MatplotlibFigureCreator
         >>> creator = MatplotlibFigureCreator()
         >>> frame = pl.DataFrame(
         ...     {
-        ...         "col1": [1.2, 4.2, 4.2, 2.2],
-        ...         "col2": [1, 1, 1, 1],
-        ...         "col3": [1, 2, 2, 2],
+        ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+        ...         "col3": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
         ...     },
-        ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
         ... )
-        >>> fig = creator.create(ScatterDataFrameState(frame, x="col1", y="col2", color="col3"))
+        >>> fig = creator.create(DataFrameState(frame))
 
         ```
         """
@@ -68,17 +70,16 @@ class MatplotlibFigureCreator(BaseFigureCreator):
 
     >>> import polars as pl
     >>> from arkas.figure import MatplotlibFigureConfig
-    >>> from arkas.state import ScatterDataFrameState
+    >>> from arkas.state import DataFrameState
+    >>> from arkas.plotter.correlation import MatplotlibFigureCreator
     >>> creator = MatplotlibFigureCreator()
     >>> frame = pl.DataFrame(
     ...     {
-    ...         "col1": [1.2, 4.2, 4.2, 2.2],
-    ...         "col2": [1, 1, 1, 1],
-    ...         "col3": [1, 2, 2, 2],
+    ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+    ...         "col3": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
     ...     },
-    ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
     ... )
-    >>> fig = creator.create(ScatterDataFrameState(frame, x="col1", y="col2", color="col3"))
+    >>> fig = creator.create(DataFrameState(frame))
 
     ```
     """
@@ -86,18 +87,17 @@ class MatplotlibFigureCreator(BaseFigureCreator):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"
 
-    def create(self, state: ScatterDataFrameState) -> BaseFigure:
+    def create(self, state: DataFrameState) -> BaseFigure:
         if state.dataframe.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
+        check_num_columns(state.dataframe, num_columns=2)
+        xcol, ycol = state.dataframe.columns
+
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
-        color = state.dataframe[state.color].to_numpy() if state.color else None
-        x = state.dataframe[state.x].to_numpy()
-        y = state.dataframe[state.y].to_numpy()
-        s = ax.scatter(x=x, y=y, c=color, label=state.color)
-        if color is not None:
-            fig.colorbar(s)
-            ax.legend()
+        x = state.dataframe[xcol].to_numpy()
+        y = state.dataframe[ycol].to_numpy()
+        ax.scatter(x=x, y=y)
 
         xmin, xmax = find_range(
             x,
@@ -113,8 +113,8 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         )
         if ymin < ymax:
             ax.set_ylim(ymin, ymax)
-        ax.set_xlabel(state.x)
-        ax.set_ylabel(state.y)
+        ax.set_xlabel(xcol)
+        ax.set_ylabel(ycol)
         if xscale := state.figure_config.get_arg("xscale"):
             ax.set_xscale(xscale)
         if yscale := state.figure_config.get_arg("yscale"):
@@ -123,33 +123,31 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         return MatplotlibFigure(fig)
 
 
-class ScatterColumnPlotter(BasePlotter):
+class CorrelationPlotter(BasePlotter):
     r"""Implement a DataFrame column plotter.
 
     Args:
         state: The state containing the DataFrame to analyze.
+            The DataFrame must have only 2 columns, which are the two
+            columns to analyze.
 
     Example usage:
 
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.plotter import ScatterColumnPlotter
-    >>> from arkas.state import ScatterDataFrameState
+    >>> from arkas.plotter import CorrelationPlotter
+    >>> from arkas.state import DataFrameState
     >>> frame = pl.DataFrame(
     ...     {
-    ...         "col1": [1.2, 4.2, 4.2, 2.2],
-    ...         "col2": [1, 1, 1, 1],
-    ...         "col3": [1, 2, 2, 2],
+    ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+    ...         "col3": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
     ...     },
-    ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
     ... )
-    >>> plotter = ScatterColumnPlotter(
-    ...     ScatterDataFrameState(frame, x="col1", y="col2", color="col3")
-    ... )
+    >>> plotter = CorrelationPlotter(DataFrameState(frame))
     >>> plotter
-    ScatterColumnPlotter(
-      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color='col3', figure_config=MatplotlibFigureConfig())
+    CorrelationPlotter(
+      (state): DataFrameState(dataframe=(4, 2), figure_config=MatplotlibFigureConfig())
     )
 
     ```
@@ -159,7 +157,8 @@ class ScatterColumnPlotter(BasePlotter):
         {MatplotlibFigureConfig.backend(): MatplotlibFigureCreator()}
     )
 
-    def __init__(self, state: ScatterDataFrameState) -> None:
+    def __init__(self, state: DataFrameState) -> None:
+        check_num_columns(state.dataframe, num_columns=2)
         self._state = state
 
     def __repr__(self) -> str:
@@ -180,4 +179,4 @@ class ScatterColumnPlotter(BasePlotter):
 
     def plot(self, prefix: str = "", suffix: str = "") -> dict:
         figure = self.registry.find_creator(self._state.figure_config.backend()).create(self._state)
-        return {f"{prefix}scatter_column{suffix}": figure}
+        return {f"{prefix}correlation{suffix}": figure}
