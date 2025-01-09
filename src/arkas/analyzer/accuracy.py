@@ -56,7 +56,7 @@ class AccuracyAnalyzer(BaseTruePredAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     AccuracyOutput(
-      (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred')
+      (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
       (nan_policy): propagate
     )
 
