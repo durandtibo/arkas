@@ -4,7 +4,7 @@ a summary of a DataFrame."""
 from __future__ import annotations
 
 __all__ = [
-    "DataFrameSummaryContentGenerator",
+    "SummaryContentGenerator",
     "create_table",
     "create_table_row",
     "create_template",
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class DataFrameSummaryContentGenerator(BaseSectionContentGenerator):
+class SummaryContentGenerator(BaseSectionContentGenerator):
     r"""Implement a content generator that returns a summary of a
     DataFrame.
 
@@ -43,8 +43,8 @@ class DataFrameSummaryContentGenerator(BaseSectionContentGenerator):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content import DataFrameSummaryContentGenerator
-    >>> content = DataFrameSummaryContentGenerator(
+    >>> from arkas.content import SummaryContentGenerator
+    >>> content = SummaryContentGenerator(
     ...     frame=pl.DataFrame(
     ...         {
     ...             "col1": [1.2, 4.2, 4.2, 2.2],
@@ -55,7 +55,7 @@ class DataFrameSummaryContentGenerator(BaseSectionContentGenerator):
     ...     )
     ... )
     >>> content
-    DataFrameSummaryContentGenerator(shape=(4, 3), top=5)
+    SummaryContentGenerator(shape=(4, 3), top=5)
 
     ```
     """
@@ -130,7 +130,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.content.frame_summary import create_template
+    >>> from arkas.content.summary import create_template
     >>> template = create_template()
 
     ```
@@ -183,7 +183,7 @@ def create_table(
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content.frame_summary import create_table_row
+    >>> from arkas.content.summary import create_table
     >>> row = create_table(
     ...     columns=["float", "int", "str"],
     ...     null_count=(1, 0, 2),
@@ -264,7 +264,7 @@ def create_table_row(
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content.frame_summary import create_table_row
+    >>> from arkas.content.summary import create_table_row
     >>> row = create_table_row(
     ...     column="col",
     ...     null=5,

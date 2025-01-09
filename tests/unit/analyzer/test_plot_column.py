@@ -132,6 +132,12 @@ def test_plot_column_analyzer_equal_false_different_missing_policy() -> None:
     assert not PlotColumnAnalyzer().equal(PlotColumnAnalyzer(missing_policy="warn"))
 
 
+def test_plot_column_analyzer_equal_false_different_figure_config() -> None:
+    assert not PlotColumnAnalyzer().equal(
+        PlotColumnAnalyzer(figure_config=MatplotlibFigureConfig(dpi=50))
+    )
+
+
 def test_plot_column_analyzer_equal_false_different_type() -> None:
     assert not PlotColumnAnalyzer().equal(42)
 

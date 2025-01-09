@@ -2,13 +2,13 @@ r"""Implement an analyzer that generates a summary of the DataFrame."""
 
 from __future__ import annotations
 
-__all__ = ["DataFrameSummaryAnalyzer"]
+__all__ = ["SummaryAnalyzer"]
 
 import logging
 from typing import TYPE_CHECKING
 
 from arkas.analyzer.lazy import BaseLazyAnalyzer
-from arkas.output.frame_summary import DataFrameSummaryOutput
+from arkas.output.summary import SummaryOutput
 from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class DataFrameSummaryAnalyzer(BaseLazyAnalyzer):
+class SummaryAnalyzer(BaseLazyAnalyzer):
     r"""Implement an analyzer to show a summary of the DataFrame.
 
     Args:
@@ -29,10 +29,10 @@ class DataFrameSummaryAnalyzer(BaseLazyAnalyzer):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.analyzer import DataFrameSummaryAnalyzer
-    >>> analyzer = DataFrameSummaryAnalyzer()
+    >>> from arkas.analyzer import SummaryAnalyzer
+    >>> analyzer = SummaryAnalyzer()
     >>> analyzer
-    DataFrameSummaryAnalyzer(top=5, sort=False)
+    SummaryAnalyzer(top=5, sort=False)
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 0, 1],
@@ -43,7 +43,7 @@ class DataFrameSummaryAnalyzer(BaseLazyAnalyzer):
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    DataFrameSummaryOutput(shape=(4, 3), top=5)
+    SummaryOutput(shape=(4, 3), top=5)
 
     ```
     """
@@ -56,8 +56,8 @@ class DataFrameSummaryAnalyzer(BaseLazyAnalyzer):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(top={self._top:,}, sort={self._sort})"
 
-    def _analyze(self, frame: pl.DataFrame) -> DataFrameSummaryOutput:
+    def _analyze(self, frame: pl.DataFrame) -> SummaryOutput:
         logger.info("Analyzing the DataFrame...")
         if self._sort:
             frame = frame.select(sorted(frame.columns))
-        return DataFrameSummaryOutput(frame=frame, top=self._top)
+        return SummaryOutput(frame=frame, top=self._top)

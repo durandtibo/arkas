@@ -56,13 +56,13 @@ def main() -> None:
     ingestor = Ingestor(get_dataframe())
 
     path = Path.cwd().joinpath("tmp")
-    figure_config = MatplotlibFigureConfig(init={"dpi": 500, "figsize": (13, 10)}, yscale="symlog")
+    figure_config = MatplotlibFigureConfig(init={"dpi": 500, "figsize": (14, 8)}, yscale="symlog")
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
         analyzer=aa.MappingAnalyzer(
             {
-                "summary": aa.DataFrameSummaryAnalyzer(),
+                "summary": aa.SummaryAnalyzer(),
                 "plot columns": aa.PlotColumnAnalyzer(
                     columns=["cauchy", "normal", "uniform"], figure_config=figure_config
                 ),
@@ -76,6 +76,9 @@ def main() -> None:
                     period="6h",
                     columns=["cauchy", "normal", "uniform"],
                     figure_config=figure_config,
+                ),
+                "scatter columns": aa.ScatterColumnAnalyzer(
+                    x="normal", y="cauchy", color="uniform", figure_config=figure_config
                 ),
             }
         ),

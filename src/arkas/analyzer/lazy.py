@@ -37,10 +37,10 @@ class BaseLazyAnalyzer(BaseAnalyzer):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.analyzer import DataFrameSummaryAnalyzer
-    >>> analyzer = DataFrameSummaryAnalyzer()
+    >>> from arkas.analyzer import SummaryAnalyzer
+    >>> analyzer = SummaryAnalyzer()
     >>> analyzer
-    DataFrameSummaryAnalyzer(top=5, sort=False)
+    SummaryAnalyzer(top=5, sort=False)
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 0, 1],
@@ -51,7 +51,7 @@ class BaseLazyAnalyzer(BaseAnalyzer):
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    DataFrameSummaryOutput(shape=(4, 3), top=5)
+    SummaryOutput(shape=(4, 3), top=5)
 
     ```
     """

@@ -32,7 +32,7 @@ class BaseFigureCreator(ABC):
         r"""Create a figure with the content of each column.
 
         Args:
-        state: The state containing the DataFrame to analyze.
+            state: The state containing the DataFrame to analyze.
 
         Returns:
             The generated figure.
@@ -91,13 +91,14 @@ class MatplotlibFigureCreator(BaseFigureCreator):
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
-
         for col in state.dataframe:
             ax.plot(col.to_numpy(), label=col.name)
 
+        xmin, xmax = 0, state.dataframe.shape[0] - 1
+        if xmin < xmax:
+            ax.set_xlim(xmin, xmax)
         if yscale := state.figure_config.get_arg("yscale"):
             ax.set_yscale(yscale)
-
         ax.legend()
         fig.tight_layout()
         return MatplotlibFigure(fig)
@@ -127,7 +128,7 @@ class PlotColumnPlotter(BasePlotter):
     >>> plotter = PlotColumnPlotter(DataFrameState(frame))
     >>> plotter
     PlotColumnPlotter(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(4, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```
