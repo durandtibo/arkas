@@ -117,8 +117,8 @@ def test_accuracy_content_generator_equal_false_different_nan_policy() -> None:
                 y_pred=np.array([1, 0, 1, 0, 1]),
                 y_true_name="target",
                 y_pred_name="pred",
+                nan_policy="omit",
             ),
-            nan_policy="omit",
         )
     )
 
