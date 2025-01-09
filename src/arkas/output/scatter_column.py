@@ -14,7 +14,7 @@ from arkas.output.lazy import BaseLazyOutput
 from arkas.plotter.scatter_column import ScatterColumnPlotter
 
 if TYPE_CHECKING:
-    from arkas.state.temporal_dataframe import ScatterDataFrameState
+    from arkas.state.scatter_dataframe import ScatterDataFrameState
 
 
 class ScatterColumnOutput(BaseLazyOutput):
@@ -41,17 +41,17 @@ class ScatterColumnOutput(BaseLazyOutput):
     >>> output = ScatterColumnOutput(ScatterDataFrameState(frame, x="col1", y="col2"))
     >>> output
     ScatterColumnOutput(
-      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     ScatterColumnContentGenerator(
-      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
     >>> output.get_plotter()
     ScatterColumnPlotter(
-      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

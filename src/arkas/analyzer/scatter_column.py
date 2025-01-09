@@ -53,7 +53,7 @@ class ScatterColumnAnalyzer(BaseLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     ScatterColumnOutput(
-      (state): ScatterDataFrameState(dataframe=(4, 2), x='col1', y='col2', color=None, figure_config=MatplotlibFigureConfig())
+      (state): ScatterDataFrameState(dataframe=(4, 2), x='col1', y='col2', color=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

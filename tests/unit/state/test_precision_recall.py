@@ -113,6 +113,78 @@ def test_precision_recall_state_y_pred_name() -> None:
     )
 
 
+def test_precision_recall_state_label_type() -> None:
+    assert (
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            label_type="multiclass",
+        ).label_type
+        == "multiclass"
+    )
+
+
+def test_precision_recall_state_label_type_default() -> None:
+    assert (
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        ).label_type
+        == "binary"
+    )
+
+
+def test_precision_recall_state_label_type_incorrect() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'label_type': incorrect"):
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            label_type="incorrect",
+        )
+
+
+def test_precision_recall_state_nan_policy() -> None:
+    assert (
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            nan_policy="raise",
+        ).nan_policy
+        == "raise"
+    )
+
+
+def test_precision_recall_state_nan_policy_default() -> None:
+    assert (
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_precision_recall_state_nan_policy_incorrect() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            nan_policy="incorrect",
+        )
+
+
 def test_precision_recall_state_repr() -> None:
     assert repr(
         PrecisionRecallState(
@@ -142,6 +214,7 @@ def test_precision_recall_state_clone() -> None:
         y_true_name="target",
         y_pred_name="pred",
         label_type="multiclass",
+        nan_policy="omit",
     )
     cloned_state = state.clone()
     assert state is not cloned_state
@@ -155,6 +228,7 @@ def test_precision_recall_state_clone_deep() -> None:
         y_true_name="target",
         y_pred_name="pred",
         label_type="multiclass",
+        nan_policy="omit",
     )
     cloned_state = state.clone()
 
@@ -166,6 +240,7 @@ def test_precision_recall_state_clone_deep() -> None:
             y_true_name="target",
             y_pred_name="pred",
             label_type="multiclass",
+            nan_policy="omit",
         )
     )
     assert cloned_state.equal(
@@ -175,6 +250,7 @@ def test_precision_recall_state_clone_deep() -> None:
             y_true_name="target",
             y_pred_name="pred",
             label_type="multiclass",
+            nan_policy="omit",
         )
     )
 
@@ -186,6 +262,7 @@ def test_precision_recall_state_clone_shallow() -> None:
         y_true_name="target",
         y_pred_name="pred",
         label_type="multiclass",
+        nan_policy="omit",
     )
     cloned_state = state.clone(deep=False)
 
@@ -197,6 +274,7 @@ def test_precision_recall_state_clone_shallow() -> None:
             y_true_name="target",
             y_pred_name="pred",
             label_type="multiclass",
+            nan_policy="omit",
         )
     )
     assert cloned_state.equal(
@@ -206,6 +284,7 @@ def test_precision_recall_state_clone_shallow() -> None:
             y_true_name="target",
             y_pred_name="pred",
             label_type="multiclass",
+            nan_policy="omit",
         )
     )
 
@@ -304,6 +383,23 @@ def test_precision_recall_state_equal_false_different_label_type() -> None:
             y_true_name="target",
             y_pred_name="pred",
             label_type="multiclass",
+        )
+    )
+
+
+def test_precision_recall_state_equal_false_different_nan_policy() -> None:
+    assert not PrecisionRecallState(
+        y_true=np.array([1, 0, 0, 1, 1]),
+        y_pred=np.array([1, 0, 0, 1, 1]),
+        y_true_name="target",
+        y_pred_name="pred",
+    ).equal(
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            nan_policy="omit",
         )
     )
 

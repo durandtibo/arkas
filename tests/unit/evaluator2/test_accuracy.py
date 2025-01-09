@@ -78,27 +78,6 @@ def test_accuracy_evaluator_equal_false_different_state() -> None:
     )
 
 
-def test_accuracy_evaluator_equal_false_different_nan_policy() -> None:
-    assert not AccuracyEvaluator(
-        AccuracyState(
-            y_true=np.array([1, 0, 0, 1, 1]),
-            y_pred=np.array([1, 0, 0, 1, 1]),
-            y_true_name="target",
-            y_pred_name="pred",
-        ),
-    ).equal(
-        AccuracyEvaluator(
-            AccuracyState(
-                y_true=np.array([1, 0, 0, 1, 2]),
-                y_pred=np.array([1, 0, 0, 1, 1]),
-                y_true_name="target",
-                y_pred_name="pred",
-            ),
-            nan_policy="raise",
-        )
-    )
-
-
 def test_accuracy_evaluator_equal_false_different_type() -> None:
     assert not AccuracyEvaluator(
         AccuracyState(
@@ -220,8 +199,8 @@ def test_accuracy_evaluator_evaluate_nan_omit() -> None:
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="omit",
         ),
-        nan_policy="omit",
     )
     assert objects_are_equal(
         evaluator.evaluate(),
@@ -236,8 +215,8 @@ def test_accuracy_evaluator_evaluate_nan_omit_y_true() -> None:
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="omit",
         ),
-        nan_policy="omit",
     )
     assert objects_are_equal(
         evaluator.evaluate(),
@@ -252,8 +231,8 @@ def test_accuracy_evaluator_evaluate_nan_omit_y_pred() -> None:
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="omit",
         ),
-        nan_policy="omit",
     )
     assert objects_are_equal(
         evaluator.evaluate(),
@@ -334,8 +313,8 @@ def test_accuracy_evaluator_evaluate_nan_raise() -> None:
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="raise",
         ),
-        nan_policy="raise",
     )
     with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
         evaluator.evaluate()
@@ -348,8 +327,8 @@ def test_accuracy_evaluator_evaluate_nan_raise_y_true() -> None:
             y_pred=np.array([1, 0, 0, 1, 1, 0]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="raise",
         ),
-        nan_policy="raise",
     )
     with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
         evaluator.evaluate()
@@ -362,8 +341,8 @@ def test_accuracy_evaluator_evaluate_nan_raise_y_pred() -> None:
             y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="raise",
         ),
-        nan_policy="raise",
     )
     with pytest.raises(ValueError, match="'y_pred' contains at least one NaN value"):
         evaluator.evaluate()

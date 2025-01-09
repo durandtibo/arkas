@@ -12,7 +12,6 @@ from coola.utils import repr_indent, repr_mapping
 from arkas.evaluator2.base import BaseEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import accuracy
-from arkas.metric.utils import check_nan_policy
 
 if TYPE_CHECKING:
     from arkas.state.accuracy import AccuracyState
@@ -24,9 +23,6 @@ class AccuracyEvaluator(BaseEvaluator):
     Args:
         state: The state containing the ground truth and predicted
             labels.
-        nan_policy: The policy on how to handle NaN values in the input
-            arrays. The following options are available: ``'omit'``,
-            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -45,8 +41,7 @@ class AccuracyEvaluator(BaseEvaluator):
     ... )
     >>> evaluator
     AccuracyEvaluator(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
-      (nan_policy): propagate
+      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
     )
     >>> evaluator.evaluate()
     {'accuracy': 1.0, 'count_correct': 5, 'count_incorrect': 0, 'count': 5, 'error': 0.0}
@@ -54,13 +49,11 @@ class AccuracyEvaluator(BaseEvaluator):
     ```
     """
 
-    def __init__(self, state: AccuracyState, nan_policy: str = "propagate") -> None:
+    def __init__(self, state: AccuracyState) -> None:
         self._state = state
-        check_nan_policy(nan_policy)
-        self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state, "nan_policy": self._nan_policy}))
+        args = repr_indent(repr_mapping({"state": self._state}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def compute(self) -> Evaluator:
@@ -69,10 +62,7 @@ class AccuracyEvaluator(BaseEvaluator):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return (
-            self._state.equal(other._state, equal_nan=equal_nan)
-            and self._nan_policy == other._nan_policy
-        )
+        return self._state.equal(other._state, equal_nan=equal_nan)
 
     def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return accuracy(
@@ -80,5 +70,5 @@ class AccuracyEvaluator(BaseEvaluator):
             y_pred=self._state.y_pred,
             prefix=prefix,
             suffix=suffix,
-            nan_policy=self._nan_policy,
+            nan_policy=self._state.nan_policy,
         )

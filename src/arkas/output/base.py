@@ -39,8 +39,7 @@ class BaseOutput(ABC):
     ... )
     >>> output
     AccuracyOutput(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
-      (nan_policy): propagate
+      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
     )
 
     ```
@@ -70,8 +69,7 @@ class BaseOutput(ABC):
         ... )
         >>> output
         AccuracyOutput(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
-          (nan_policy): propagate
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
         )
         >>> out = output.compute()
         >>> out
@@ -164,8 +162,7 @@ class BaseOutput(ABC):
         ... )
         >>> output.get_content_generator()
         AccuracyContentGenerator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
-          (nan_policy): propagate
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
         )
 
         ```
@@ -200,8 +197,7 @@ class BaseOutput(ABC):
         ... )
         >>> output.get_evaluator()
         AccuracyEvaluator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
-          (nan_policy): propagate
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
         )
 
         ```

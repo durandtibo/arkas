@@ -32,7 +32,7 @@ class BaseFigureCreator(ABC):
         r"""Create a figure with the content of each column.
 
         Args:
-        state: The state containing the DataFrame to analyze.
+            state: The state containing the DataFrame to analyze.
 
         Returns:
             The generated figure.
@@ -149,7 +149,7 @@ class ScatterColumnPlotter(BasePlotter):
     ... )
     >>> plotter
     ScatterColumnPlotter(
-      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color='col3', figure_config=MatplotlibFigureConfig())
+      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```

@@ -43,11 +43,11 @@ class NumericSummaryOutput(BaseLazyOutput):
     >>> output = NumericSummaryOutput(DataFrameState(frame))
     >>> output
     NumericSummaryOutput(
-      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     NumericSummaryContentGenerator(
-      (state): DataFrameState(dataframe=(7, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
