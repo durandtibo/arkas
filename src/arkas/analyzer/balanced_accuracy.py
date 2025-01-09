@@ -57,7 +57,6 @@ class BalancedAccuracyAnalyzer(BaseTruePredAnalyzer):
     >>> output
     BalancedAccuracyOutput(
       (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
-      (nan_policy): propagate
     )
 
     ```
@@ -101,6 +100,6 @@ class BalancedAccuracyAnalyzer(BaseTruePredAnalyzer):
                 y_pred=to_array(frame[self._y_pred]).ravel(),
                 y_true_name=self._y_true,
                 y_pred_name=self._y_pred,
+                nan_policy=self._nan_policy,
             ),
-            nan_policy=self._nan_policy,
         )
