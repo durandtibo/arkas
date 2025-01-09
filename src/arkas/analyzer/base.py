@@ -35,8 +35,7 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
     >>> output = analyzer.analyze(data)
     >>> output
     AccuracyOutput(
-      (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred')
-      (nan_policy): propagate
+      (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
     )
 
     ```
@@ -66,8 +65,7 @@ class BaseAnalyzer(ABC, metaclass=AbstractFactory):
         >>> output = analyzer.analyze(data)
         >>> output
         AccuracyOutput(
-          (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred')
-          (nan_policy): propagate
+          (state): AccuracyState(y_true=(6,), y_pred=(6,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
         )
 
         ```
