@@ -69,7 +69,60 @@ def test_correlation_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
     )
 
 
-def test_correlation_evaluator_evaluate_drop_null_nan() -> None:
+def test_correlation_evaluator_evaluate_nan_policy_omit() -> None:
+    evaluator = CorrelationEvaluator(
+        DataFrameState(
+            pl.DataFrame(
+                {
+                    "col1": [
+                        1.0,
+                        2.0,
+                        3.0,
+                        4.0,
+                        5.0,
+                        6.0,
+                        7.0,
+                        None,
+                        9.0,
+                        None,
+                        float("nan"),
+                        12.0,
+                        float("nan"),
+                    ],
+                    "col2": [
+                        1.0,
+                        2.0,
+                        3.0,
+                        4.0,
+                        5.0,
+                        6.0,
+                        7.0,
+                        8.0,
+                        None,
+                        None,
+                        11.0,
+                        float("nan"),
+                        float("nan"),
+                    ],
+                },
+                schema={"col1": pl.Float64, "col2": pl.Float64},
+            ),
+            nan_policy="omit",
+        )
+    )
+    assert objects_are_allclose(
+        evaluator.evaluate(),
+        {
+            "count": 7,
+            "pearson_coeff": 1.0,
+            "pearson_pvalue": 0.0,
+            "spearman_coeff": 1.0,
+            "spearman_pvalue": 0.0,
+        },
+    )
+
+
+def test_correlation_evaluator_evaluate_nan_policy_propagate() -> None:
     evaluator = CorrelationEvaluator(
         DataFrameState(
             pl.DataFrame(
@@ -112,13 +165,59 @@ def test_correlation_evaluator_evaluate_drop_null_nan() -> None:
     assert objects_are_allclose(
         evaluator.evaluate(),
         {
-            "count": 7,
-            "pearson_coeff": 1.0,
-            "pearson_pvalue": 0.0,
-            "spearman_coeff": 1.0,
-            "spearman_pvalue": 0.0,
+            "count": 13,
+            "pearson_coeff": float("nan"),
+            "pearson_pvalue": float("nan"),
+            "spearman_coeff": float("nan"),
+            "spearman_pvalue": float("nan"),
         },
+        equal_nan=True,
     )
+
+
+def test_correlation_evaluator_evaluate_nan_policy_raise() -> None:
+    evaluator = CorrelationEvaluator(
+        DataFrameState(
+            pl.DataFrame(
+                {
+                    "col1": [
+                        1.0,
+                        2.0,
+                        3.0,
+                        4.0,
+                        5.0,
+                        6.0,
+                        7.0,
+                        None,
+                        9.0,
+                        None,
+                        float("nan"),
+                        12.0,
+                        float("nan"),
+                    ],
+                    "col2": [
+                        1.0,
+                        2.0,
+                        3.0,
+                        4.0,
+                        5.0,
+                        6.0,
+                        7.0,
+                        8.0,
+                        None,
+                        None,
+                        11.0,
+                        float("nan"),
+                        float("nan"),
+                    ],
+                },
+                schema={"col1": pl.Float64, "col2": pl.Float64},
+            ),
+            nan_policy="raise",
+        )
+    )
+    with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
+        evaluator.evaluate()
 
 
 def test_correlation_evaluator_evaluate_empty() -> None:

@@ -71,9 +71,9 @@ class CorrelationEvaluator(BaseEvaluator):
         return self._state.equal(other._state, equal_nan=equal_nan)
 
     def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
-        frame = self._state.dataframe.drop_nulls().drop_nans()
+        frame = self._state.dataframe
         x = frame[frame.columns[0]].to_numpy()
         y = frame[frame.columns[1]].to_numpy()
-        return pearsonr(x=x, y=y, prefix=prefix, suffix=suffix) | spearmanr(
-            x=x, y=y, prefix=prefix, suffix=suffix
-        )
+        return pearsonr(
+            x=x, y=y, prefix=prefix, suffix=suffix, nan_policy=self._state.nan_policy
+        ) | spearmanr(x=x, y=y, prefix=prefix, suffix=suffix, nan_policy=self._state.nan_policy)
