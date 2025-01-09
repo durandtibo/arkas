@@ -100,6 +100,6 @@ class AccuracyAnalyzer(BaseTruePredAnalyzer):
                 y_pred=to_array(frame[self._y_pred]).ravel(),
                 y_true_name=self._y_true,
                 y_pred_name=self._y_pred,
+                nan_policy=self._nan_policy,
             ),
-            nan_policy=self._nan_policy,
         )
