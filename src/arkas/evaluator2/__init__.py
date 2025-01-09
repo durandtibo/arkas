@@ -11,9 +11,6 @@ __all__ = [
     "CorrelationEvaluator",
     "Evaluator",
     "EvaluatorDict",
-    "BinaryPrecisionEvaluator",
-    "MulticlassPrecisionEvaluator",
-    "MultilabelPrecisionEvaluator",
     "PrecisionEvaluator",
 ]
 
@@ -24,6 +21,5 @@ from arkas.evaluator2.column_cooccurrence import ColumnCooccurrenceEvaluator
 from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
 from arkas.evaluator2.correlation import CorrelationEvaluator
 from arkas.evaluator2.mapping import EvaluatorDict
-from arkas.evaluator2.precision import BinaryPrecisionEvaluator, MulticlassPrecisionEvaluator, \
-    MultilabelPrecisionEvaluator, PrecisionEvaluator
+from arkas.evaluator2.precision import PrecisionEvaluator
 from arkas.evaluator2.vanilla import Evaluator
