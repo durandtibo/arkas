@@ -124,8 +124,8 @@ def test_balanced_accuracy_analyzer_analyze_nan_policy(nan_policy: str) -> None:
                     y_pred=np.array([3, 2, 0, 1, 0]),
                     y_true_name="target",
                     y_pred_name="pred",
+                    nan_policy=nan_policy,
                 ),
-                nan_policy=nan_policy,
             )
         )
     )

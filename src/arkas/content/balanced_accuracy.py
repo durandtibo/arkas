@@ -13,7 +13,6 @@ from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.evaluator2.balanced_accuracy import BalancedAccuracyEvaluator
-from arkas.metric.utils import check_nan_policy
 
 if TYPE_CHECKING:
     from arkas.state import AccuracyState
@@ -47,37 +46,30 @@ class BalancedAccuracyContentGenerator(BaseSectionContentGenerator):
     >>> generator
     BalancedAccuracyContentGenerator(
       (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
-      (nan_policy): propagate
     )
 
     ```
     """
 
-    def __init__(self, state: AccuracyState, nan_policy: str = "propagate") -> None:
+    def __init__(self, state: AccuracyState) -> None:
         self._state = state
 
-        check_nan_policy(nan_policy)
-        self._nan_policy = nan_policy
-
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state, "nan_policy": self._nan_policy}))
+        args = repr_indent(repr_mapping({"state": self._state}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state, "nan_policy": self._nan_policy}))
+        args = str_indent(str_mapping({"state": self._state}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return (
-            self._state.equal(other._state, equal_nan=equal_nan)
-            and self._nan_policy == other._nan_policy
-        )
+        return self._state.equal(other._state, equal_nan=equal_nan)
 
     def generate_content(self) -> str:
         logger.info("Generating the balance accuracy content...")
-        metrics = BalancedAccuracyEvaluator(self._state, nan_policy=self._nan_policy).evaluate()
+        metrics = BalancedAccuracyEvaluator(self._state).evaluate()
         return Template(create_template()).render(
             {
                 "balanced_accuracy": f"{metrics.get('balanced_accuracy', float('nan')):.4f}",
