@@ -45,17 +45,17 @@ class BalancedAccuracyOutput(BaseLazyOutput):
     ... )
     >>> output
     BalancedAccuracyOutput(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
       (nan_policy): propagate
     )
     >>> output.get_content_generator()
     BalancedAccuracyContentGenerator(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
       (nan_policy): propagate
     )
     >>> output.get_evaluator()
     BalancedAccuracyEvaluator(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
       (nan_policy): propagate
     )
     >>> output.get_plotter()

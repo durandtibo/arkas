@@ -49,7 +49,7 @@ class EvaluatorDict(BaseEvaluator):
     >>> evaluator
     EvaluatorDict(
       (one): AccuracyEvaluator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
           (nan_policy): propagate
         )
       (two): Evaluator(count=2)
