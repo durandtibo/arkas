@@ -12,6 +12,7 @@ __all__ = [
 ]
 
 import logging
+import math
 from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
@@ -252,4 +253,10 @@ def sort_metrics(
     Returns:
         The sorted dictionary of metrics.
     """
-    return dict(sorted(metrics.items(), key=lambda item: item[1][key], reverse=True))
+    def get_metric(item: Any) -> float:
+        val = item[1][key]
+        if math.isnan(val):
+            val = float('-inf')
+        return val
+
+    return dict(sorted(metrics.items(), key=get_metric, reverse=True))
