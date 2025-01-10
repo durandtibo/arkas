@@ -42,7 +42,7 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
     ... )
     >>> evaluator
     ColumnCorrelationEvaluator(
-      (state): TargetDataFrameState(target_column='col3', dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> evaluator.evaluate()
     {'correlation_col1': {'count': 7, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0},

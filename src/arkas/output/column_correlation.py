@@ -41,15 +41,15 @@ class ColumnCorrelationOutput(BaseLazyOutput):
     >>> output = ColumnCorrelationOutput(TargetDataFrameState(frame, target_column="col3"))
     >>> output
     ColumnCorrelationOutput(
-      (state): TargetDataFrameState(target_column='col3', dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     ColumnCorrelationContentGenerator(
-      (state): TargetDataFrameState(target_column='col3', dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     ColumnCorrelationEvaluator(
-      (state): TargetDataFrameState(target_column='col3', dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_plotter()
     Plotter(count=0)
