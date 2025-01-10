@@ -20,6 +20,8 @@ from grizz.utils.null import compute_null_count
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
+from arkas.content.utils import to_str
+from arkas.utils.style import get_tab_number_style
 from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
@@ -279,7 +281,7 @@ def create_table_row(
     null = f"{null:,} ({100 * null / total if total else float('nan'):.2f}%)"
     nunique = f"{nunique:,} ({100 * nunique / total if total else float('nan'):.2f}%)"
     most_frequent_values = ", ".join(
-        [f"{val} ({100 * c / total:.2f}%)" for val, c in most_frequent_values]
+        [f"{to_str(val)} ({100 * c / total:.2f}%)" for val, c in most_frequent_values]
     )
     return Template(
         """<tr>
@@ -291,7 +293,7 @@ def create_table_row(
 </tr>"""
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "column": column,
             "null": null,
             "dtype": dtype,

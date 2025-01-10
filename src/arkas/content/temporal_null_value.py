@@ -15,6 +15,7 @@ from jinja2 import Template
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.figure.utils import figure2html
 from arkas.plotter.temporal_null_value import TemporalNullValuePlotter
+from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
     import polars as pl
@@ -240,7 +241,7 @@ def create_table_row(label: str, num_nulls: int, total: int) -> str:
 </tr>"""
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "label": label,
             "num_nulls": f"{num_nulls:,}",
             "num_non_nulls": f"{num_non_nulls:,}",
