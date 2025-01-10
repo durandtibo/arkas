@@ -62,7 +62,7 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     ColumnCorrelationOutput(
-      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TargetDataFrameState(target_column='col3', dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```
