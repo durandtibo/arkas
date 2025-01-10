@@ -4,21 +4,16 @@ from __future__ import annotations
 
 __all__ = ["TargetDataFrameState"]
 
-import copy
 import sys
 from typing import TYPE_CHECKING, Any
-
-from coola.utils.format import repr_mapping_line, str_indent, str_mapping
 
 from arkas.state.dataframe import DataFrameState
 from arkas.utils.dataframe import check_column_exist
 
 if sys.version_info >= (3, 11):
-    from typing import Self
+    pass
 else:  # pragma: no cover
-    from typing_extensions import (
-        Self,  # use backport because it was added in python 3.11
-    )
+    pass
 
 if TYPE_CHECKING:
     import polars as pl
@@ -55,7 +50,7 @@ class TargetDataFrameState(DataFrameState):
     ... )
     >>> state = TargetDataFrameState(frame, target_column="col3")
     >>> state
-    TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+    TargetDataFrameState(target_column='col3', dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
 
     ```
     """
@@ -68,85 +63,16 @@ class TargetDataFrameState(DataFrameState):
         figure_config: BaseFigureConfig | None = None,
         **kwargs: Any,
     ) -> None:
-        super().__init__(dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config)
+        super().__init__(
+            dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config, **kwargs
+        )
 
         check_column_exist(dataframe, target_column)
         self._target_column = target_column
-
-        self._kwargs = kwargs
-
-    def __repr__(self) -> str:
-        args = repr_mapping_line(
-            {
-                "dataframe": self._dataframe.shape,
-                "target_column": self._target_column,
-                "nan_policy": self._nan_policy,
-                "figure_config": self._figure_config,
-            }
-            | self._kwargs
-        )
-        return f"{self.__class__.__qualname__}({args})"
-
-    def __str__(self) -> str:
-        args = str_indent(
-            str_mapping(
-                {
-                    "dataframe": self._dataframe.shape,
-                    "target_column": self._target_column,
-                    "nan_policy": self._nan_policy,
-                    "figure_config": self._figure_config,
-                }
-                | self._kwargs
-            )
-        )
-        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def target_column(self) -> str:
         return self._target_column
 
-    def clone(self, deep: bool = True) -> Self:
-        kwargs = copy.deepcopy(self._kwargs) if deep else self._kwargs
-        return self.__class__(
-            dataframe=self._dataframe.clone() if deep else self._dataframe,
-            target_column=self._target_column,
-            nan_policy=self._nan_policy,
-            figure_config=self._figure_config.clone() if deep else self._figure_config,
-            **kwargs,
-        )
-
-    def get_arg(self, name: str, default: Any = None) -> Any:
-        r"""Get a given argument from the state.
-
-        Args:
-            name: The argument name to get.
-            default: The default value to return if the argument is missing.
-
-        Returns:
-            The argument value or the default value.
-
-        Example usage:
-
-        ```pycon
-
-        >>> from datetime import datetime, timezone
-        >>> import polars as pl
-        >>> from arkas.state import TargetDataFrameState
-        >>> frame = pl.DataFrame(
-        ...     {
-        ...         "col1": [0, 1, 1, 0, 0, 1, 0],
-        ...         "col2": [0, 1, 0, 1, 0, 1, 0],
-        ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
-        ...     },
-        ...     schema={"col1": pl.Int64, "col2": pl.Int32, "col3": pl.Float64},
-        ... )
-        >>> state = TargetDataFrameState(frame, target_column="col3", xcol="meow")
-        >>> state.get_arg("xcol")
-        meow
-
-        ```
-        """
-        return self._kwargs.get(name, default)
-
     def get_args(self) -> dict:
-        return super().get_args() | {"target_column": self._target_column} | self._kwargs
+        return {"target_column": self._target_column} | super().get_args()
