@@ -22,7 +22,6 @@ from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
 from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
-
     from arkas.state.target_dataframe import TargetDataFrameState
 
 logger = logging.getLogger(__name__)

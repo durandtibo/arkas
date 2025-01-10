@@ -16,7 +16,6 @@ from arkas.output.scatter_column import ScatterColumnOutput
 from arkas.state.scatter_dataframe import ScatterDataFrameState
 
 if TYPE_CHECKING:
-
     import polars as pl
 
     from arkas.figure import BaseFigureConfig
