@@ -4419,4 +4419,4 @@ cli = ["colorlog", "hya", "hydra-core", "omegaconf"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9,<3.13"
-content-hash = "4d6eb563e46666cc812990b8c25123e77101d031c784e698860da2d235b139fa"
+content-hash = "24374c687e2e65bd06daa159cede1576ed122cf79fe29513a8c6ad014b03865a"
