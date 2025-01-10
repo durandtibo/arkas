@@ -319,3 +319,73 @@ def test_sort_metrics_key() -> None:
             },
         },
     )
+
+
+def test_sort_metrics_with_nan() -> None:
+    metrics = sort_metrics(
+        {
+            "col0": {
+                "count": 0,
+                "pearson_coeff": float("nan"),
+                "pearson_pvalue": float("nan"),
+                "spearman_coeff": float("nan"),
+                "spearman_pvalue": float("nan"),
+            },
+            "col1": {
+                "count": 7,
+                "pearson_coeff": -0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 0.5,
+                "spearman_pvalue": 0.0,
+            },
+            "col2": {
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": -1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col3": {
+                "count": 7,
+                "pearson_coeff": 0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+        }
+    )
+    assert list(metrics.keys()) == ["col3", "col1", "col2", "col0"]
+    assert objects_are_equal(
+        metrics,
+        {
+            "col3": {
+                "count": 7,
+                "pearson_coeff": 0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col1": {
+                "count": 7,
+                "pearson_coeff": -0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 0.5,
+                "spearman_pvalue": 0.0,
+            },
+            "col2": {
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": -1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col0": {
+                "count": 0,
+                "pearson_coeff": float("nan"),
+                "pearson_pvalue": float("nan"),
+                "spearman_coeff": float("nan"),
+                "spearman_pvalue": float("nan"),
+            },
+        },
+        equal_nan=True,
+    )
