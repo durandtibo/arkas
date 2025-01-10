@@ -70,7 +70,10 @@ def main() -> None:
             {
                 "summary": aa.SummaryAnalyzer(),
                 "numeric summary": aa.NumericSummaryAnalyzer(),
-                "correlation": aa.ColumnCorrelationAnalyzer(target_column="col1"),
+                "correlation (spearman)": aa.ColumnCorrelationAnalyzer(target_column="col1"),
+                "correlation (pearson)": aa.ColumnCorrelationAnalyzer(
+                    target_column="col1", sork_key="pearson_coeff"
+                ),
                 "correlation col1 - col2": aa.CorrelationAnalyzer(
                     x="col1", y="col2", figure_config=figure_config
                 ),
