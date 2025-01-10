@@ -50,7 +50,7 @@ class TargetDataFrameState(DataFrameState):
     ... )
     >>> state = TargetDataFrameState(frame, target_column="col3")
     >>> state
-    TargetDataFrameState(target_column='col3', dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+    TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
 
     ```
     """
@@ -75,4 +75,8 @@ class TargetDataFrameState(DataFrameState):
         return self._target_column
 
     def get_args(self) -> dict:
-        return {"target_column": self._target_column} | super().get_args()
+        args = super().get_args()
+        return {
+            "dataframe": args.pop("dataframe"),
+            "target_column": self._target_column,
+        } | args
