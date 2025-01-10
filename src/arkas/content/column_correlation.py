@@ -165,7 +165,6 @@ def create_table(metrics: dict[str, dict]) -> str:
     ...             "spearman_pvalue": 0.0,
     ...         },
     ...     },
-    ...     columns=["col1", "col2"],
     ... )
 
     ```

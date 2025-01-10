@@ -42,6 +42,7 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
             is missing and the missing columns are ignored.
             If ``'ignore'``, the missing columns are ignored and
             no warning message appears.
+        sork_key: The key used to sort the correlation table.
 
     Example usage:
 
@@ -51,7 +52,7 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
     >>> from arkas.analyzer import ColumnCorrelationAnalyzer
     >>> analyzer = ColumnCorrelationAnalyzer(target_column="col3")
     >>> analyzer
-    ColumnCorrelationAnalyzer(target_column='col3', columns=None, exclude_columns=(), missing_policy='raise')
+    ColumnCorrelationAnalyzer(target_column='col3', sork_key='spearman_coeff', columns=None, exclude_columns=(), missing_policy='raise')
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
@@ -62,7 +63,7 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     ColumnCorrelationOutput(
-      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig(), sork_key='spearman_coeff')
     )
 
     ```
@@ -74,11 +75,13 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
         columns: Sequence[str] | None = None,
         exclude_columns: Sequence[str] = (),
         missing_policy: str = "raise",
+        sork_key: str = "spearman_coeff",
     ) -> None:
         super().__init__(
             columns=columns, exclude_columns=exclude_columns, missing_policy=missing_policy
         )
         self._target_column = target_column
+        self._sork_key = sork_key
 
     def find_columns(self, frame: pl.DataFrame) -> tuple[str, ...]:
         columns = list(super().find_columns(frame))
@@ -87,7 +90,10 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
         return tuple(columns)
 
     def get_args(self) -> dict:
-        return {"target_column": self._target_column} | super().get_args()
+        return {
+            "target_column": self._target_column,
+            "sork_key": self._sork_key,
+        } | super().get_args()
 
     def _analyze(self, frame: pl.DataFrame) -> ColumnCorrelationOutput | EmptyOutput:
         if self._target_column not in frame:
@@ -98,11 +104,14 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
             return EmptyOutput()
 
         logger.info(
-            f"Analyzing the correlation between {self._target_column} and {self._columns}..."
+            f"Analyzing the correlation between {self._target_column} and {self._columns} | "
+            f"sort_key={self._sork_key!r} ..."
         )
         columns = list(self.find_common_columns(frame))
         out = frame.select(cs.by_name(columns) & cs.numeric())
         logger.info(str_shape_diff(orig=frame.shape, final=out.shape))
         return ColumnCorrelationOutput(
-            state=TargetDataFrameState(dataframe=out, target_column=self._target_column)
+            state=TargetDataFrameState(
+                dataframe=out, target_column=self._target_column, sork_key=self._sork_key
+            )
         )
