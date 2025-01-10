@@ -70,7 +70,7 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, dict]:
+    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, dict[str, float]]:
         target_column = self._state.target_column
         columns = list(self._state.dataframe.columns)
         columns.remove(target_column)
