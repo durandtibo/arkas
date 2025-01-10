@@ -19,6 +19,7 @@ from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
+from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
 
@@ -178,10 +179,8 @@ def create_table(metrics: dict[str, dict]) -> str:
         <tr>
             <th>column</th>
             <th>num samples</th>
-            <th>pearson coefficient</th>
-            <th>pearson p-value</th>
-            <th>spearman coefficient</th>
-            <th>spearman p-value</th>
+            <th>pearson coefficient (p-value)</th>
+            <th>spearman coefficient (p-value)</th>
         </tr>
     </thead>
     <tbody class="tbody table-group-divider">
@@ -226,14 +225,12 @@ def create_table_row(column: str, metrics: dict) -> str:
         """<tr>
     <th>{{column}}</th>
     <td {{num_style}}>{{count}}</td>
-    <td {{num_style}}>{{pearson_coeff}}</td>
-    <td {{num_style}}>{{pearson_pvalue}}</td>
-    <td {{num_style}}>{{spearman_coeff}}</td>
-    <td {{num_style}}>{{spearman_pvalue}}</td>
+    <td {{num_style}}>{{pearson_coeff}} ({{pearson_pvalue}})</td>
+    <td {{num_style}}>{{spearman_coeff}} ({{spearman_pvalue}})</td>
 </tr>"""
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "column": column,
             "count": f'{metrics.get("count", 0):,}',
             "pearson_coeff": f'{metrics.get("pearson_coeff", float("nan")):.4f}',
