@@ -108,6 +108,7 @@ def test_scatter_dataframe_state_clone(dataframe: pl.DataFrame) -> None:
         y="col2",
         nan_policy="raise",
         figure_config=MatplotlibFigureConfig(xscale="linear"),
+        column="col",
     )
     cloned_state = state.clone()
     assert state is not cloned_state
@@ -122,6 +123,7 @@ def test_scatter_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
         color="col3",
         nan_policy="raise",
         figure_config=MatplotlibFigureConfig(xscale="linear"),
+        column="col",
     )
     cloned_state = state.clone()
 
@@ -133,6 +135,7 @@ def test_scatter_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
             color="col3",
             nan_policy="raise",
             figure_config=MatplotlibFigureConfig(xscale="linear"),
+            column="col",
         )
     )
     assert cloned_state.equal(
@@ -143,6 +146,7 @@ def test_scatter_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
             color="col3",
             nan_policy="raise",
             figure_config=MatplotlibFigureConfig(xscale="linear"),
+            column="col",
         )
     )
     assert state.dataframe is not cloned_state.dataframe
@@ -156,6 +160,7 @@ def test_scatter_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
         color="col3",
         nan_policy="raise",
         figure_config=MatplotlibFigureConfig(xscale="linear"),
+        column="col",
     )
     cloned_state = state.clone(deep=False)
 
@@ -167,6 +172,7 @@ def test_scatter_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
             color="col3",
             nan_policy="raise",
             figure_config=MatplotlibFigureConfig(xscale="linear"),
+            column="col",
         )
     )
     assert cloned_state.equal(
@@ -177,6 +183,7 @@ def test_scatter_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
             color="col3",
             nan_policy="raise",
             figure_config=MatplotlibFigureConfig(xscale="linear"),
+            column="col",
         )
     )
     assert state.dataframe is cloned_state.dataframe
@@ -228,13 +235,34 @@ def test_scatter_dataframe_state_equal_false_different_figure_config(
     )
 
 
+def test_scatter_dataframe_state_equal_false_different_kwargs(dataframe: pl.DataFrame) -> None:
+    assert not ScatterDataFrameState(dataframe, x="col1", y="col2").equal(
+        ScatterDataFrameState(dataframe, x="col1", y="col2", column="col")
+    )
+
+
 def test_scatter_dataframe_state_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not ScatterDataFrameState(dataframe, x="col1", y="col2").equal(42)
 
 
+def test_scatter_dataframe_state_get_arg(dataframe: pl.DataFrame) -> None:
+    assert (
+        ScatterDataFrameState(dataframe, x="col1", y="col2", column="col").get_arg("column")
+        == "col"
+    )
+
+
+def test_scatter_dataframe_state_get_arg_missing(dataframe: pl.DataFrame) -> None:
+    assert ScatterDataFrameState(dataframe, x="col1", y="col2").get_arg("x") is None
+
+
+def test_scatter_dataframe_state_get_arg_missing_default(dataframe: pl.DataFrame) -> None:
+    assert ScatterDataFrameState(dataframe, x="col1", y="col2").get_arg("x", 42) == 42
+
+
 def test_scatter_dataframe_state_get_args(dataframe: pl.DataFrame) -> None:
     assert objects_are_equal(
-        ScatterDataFrameState(dataframe, x="col1", y="col2", color="col3").get_args(),
+        ScatterDataFrameState(dataframe, x="col1", y="col2", color="col3", column="col").get_args(),
         {
             "dataframe": dataframe,
             "figure_config": MatplotlibFigureConfig(),
@@ -242,5 +270,6 @@ def test_scatter_dataframe_state_get_args(dataframe: pl.DataFrame) -> None:
             "y": "col2",
             "color": "col3",
             "nan_policy": "propagate",
+            "column": "col",
         },
     )
