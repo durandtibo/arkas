@@ -4,6 +4,7 @@ from __future__ import annotations
 
 __all__ = [
     "AccuracyState",
+    "BaseArgState",
     "BaseState",
     "ColumnCooccurrenceState",
     "DataFrameState",
@@ -16,6 +17,7 @@ __all__ = [
 ]
 
 from arkas.state.accuracy import AccuracyState
+from arkas.state.arg import BaseArgState
 from arkas.state.base import BaseState
 from arkas.state.column_cooccurrence import ColumnCooccurrenceState
 from arkas.state.dataframe import DataFrameState
