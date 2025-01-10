@@ -141,6 +141,38 @@ def test_column_correlation_evaluator_evaluate_drop_null_nan() -> None:
     )
 
 
+def test_column_correlation_evaluator_evaluate_one_row() -> None:
+    evaluator = ColumnCorrelationEvaluator(
+        TargetDataFrameState(
+            pl.DataFrame(
+                {"col1": [1.0], "col2": [7.0], "col3": [1.0]},
+                schema={"col1": pl.Float64, "col2": pl.Float64, "col3": pl.Float64},
+            ),
+            target_column="col3",
+        )
+    )
+    assert objects_are_allclose(
+        evaluator.evaluate(),
+        {
+            "correlation_col1": {
+                "count": 1,
+                "pearson_coeff": float("nan"),
+                "pearson_pvalue": float("nan"),
+                "spearman_coeff": float("nan"),
+                "spearman_pvalue": float("nan"),
+            },
+            "correlation_col2": {
+                "count": 1,
+                "pearson_coeff": float("nan"),
+                "pearson_pvalue": float("nan"),
+                "spearman_coeff": float("nan"),
+                "spearman_pvalue": float("nan"),
+            },
+        },
+        equal_nan=True,
+    )
+
+
 def test_column_correlation_evaluator_evaluate_empty() -> None:
     evaluator = ColumnCorrelationEvaluator(
         TargetDataFrameState(

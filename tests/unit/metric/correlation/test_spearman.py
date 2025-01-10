@@ -57,6 +57,33 @@ def test_spearmanr_constant() -> None:
 
 
 @scipy_available
+def test_spearmanr_constant_one_value() -> None:
+    assert objects_are_allclose(
+        spearmanr(x=np.array([1]), y=np.array([1])),
+        {"count": 1, "spearman_coeff": float("nan"), "spearman_pvalue": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
+def test_spearmanr_constant_two_values() -> None:
+    assert objects_are_allclose(
+        spearmanr(x=np.array([1, 2]), y=np.array([1, 2])),
+        {"count": 2, "spearman_coeff": 1.0, "spearman_pvalue": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
+def test_spearmanr_constant_three_values() -> None:
+    assert objects_are_allclose(
+        spearmanr(x=np.array([1, 2, 3]), y=np.array([1, 2, 3])),
+        {"count": 3, "spearman_coeff": 1.0, "spearman_pvalue": 0.0},
+        equal_nan=True,
+    )
+
+
+@scipy_available
 def test_spearmanr_empty() -> None:
     assert objects_are_allclose(
         spearmanr(x=np.array([]), y=np.array([])),
