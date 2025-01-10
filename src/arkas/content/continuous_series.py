@@ -16,6 +16,7 @@ from arkas.figure.utils import figure2html
 from arkas.plotter.continuous_series import ContinuousSeriesPlotter
 from arkas.utils.range import find_range
 from arkas.utils.stats import compute_statistics_continuous
+from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
     from arkas.state.series import SeriesState
@@ -210,7 +211,7 @@ def create_table(stats: dict) -> str:
 """
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "count": f"{stats['count']:,}",
             "mean": f"{stats['mean']:,.4f}",
             "std": f"{stats['std']:,.4f}",
