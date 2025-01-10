@@ -4,8 +4,9 @@ from __future__ import annotations
 
 __all__ = ["TargetDataFrameState"]
 
+import copy
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from coola.utils.format import repr_mapping_line, str_indent, str_mapping
 
@@ -35,6 +36,7 @@ class TargetDataFrameState(DataFrameState):
             arrays. The following options are available: ``'omit'``,
             ``'propagate'``, and ``'raise'``.
         figure_config: An optional figure configuration.
+        **kwargs: Additional keyword arguments.
 
     Example usage:
 
@@ -64,11 +66,14 @@ class TargetDataFrameState(DataFrameState):
         target_column: str,
         nan_policy: str = "propagate",
         figure_config: BaseFigureConfig | None = None,
+        **kwargs: Any,
     ) -> None:
         super().__init__(dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config)
 
         check_column_exist(dataframe, target_column)
         self._target_column = target_column
+
+        self._kwargs = kwargs
 
     def __repr__(self) -> str:
         args = repr_mapping_line(
@@ -78,6 +83,7 @@ class TargetDataFrameState(DataFrameState):
                 "nan_policy": self._nan_policy,
                 "figure_config": self._figure_config,
             }
+            | self._kwargs
         )
         return f"{self.__class__.__qualname__}({args})"
 
@@ -90,6 +96,7 @@ class TargetDataFrameState(DataFrameState):
                     "nan_policy": self._nan_policy,
                     "figure_config": self._figure_config,
                 }
+                | self._kwargs
             )
         )
         return f"{self.__class__.__qualname__}({args})"
@@ -99,12 +106,47 @@ class TargetDataFrameState(DataFrameState):
         return self._target_column
 
     def clone(self, deep: bool = True) -> Self:
+        kwargs = copy.deepcopy(self._kwargs) if deep else self._kwargs
         return self.__class__(
             dataframe=self._dataframe.clone() if deep else self._dataframe,
             target_column=self._target_column,
             nan_policy=self._nan_policy,
             figure_config=self._figure_config.clone() if deep else self._figure_config,
+            **kwargs,
         )
 
+    def get_arg(self, name: str, default: Any = None) -> Any:
+        r"""Get a given argument from the state.
+
+        Args:
+            name: The argument name to get.
+            default: The default value to return if the argument is missing.
+
+        Returns:
+            The argument value or the default value.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from datetime import datetime, timezone
+        >>> import polars as pl
+        >>> from arkas.state import TargetDataFrameState
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "col1": [0, 1, 1, 0, 0, 1, 0],
+        ...         "col2": [0, 1, 0, 1, 0, 1, 0],
+        ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+        ...     },
+        ...     schema={"col1": pl.Int64, "col2": pl.Int32, "col3": pl.Float64},
+        ... )
+        >>> state = TargetDataFrameState(frame, target_column="col3", xcol="meow")
+        >>> state.get_arg("xcol")
+        meow
+
+        ```
+        """
+        return self._kwargs.get(name, default)
+
     def get_args(self) -> dict:
-        return super().get_args() | {"target_column": self._target_column}
+        return super().get_args() | {"target_column": self._target_column} | self._kwargs
