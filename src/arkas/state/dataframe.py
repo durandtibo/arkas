@@ -11,7 +11,6 @@ from arkas.metric.utils import check_nan_policy
 from arkas.state.arg import BaseArgState
 
 if TYPE_CHECKING:
-
     import polars as pl
 
     from arkas.figure.base import BaseFigureConfig

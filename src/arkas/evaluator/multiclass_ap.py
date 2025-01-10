@@ -15,7 +15,6 @@ from arkas.result import MulticlassAveragePrecisionResult, Result
 from arkas.utils.array import to_array
 
 if TYPE_CHECKING:
-
     import polars as pl
 
 

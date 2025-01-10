@@ -14,7 +14,6 @@ from arkas.metric import pearsonr, spearmanr
 from arkas.utils.dataframe import check_num_columns
 
 if TYPE_CHECKING:
-
     from arkas.state.target_dataframe import DataFrameState
 
 

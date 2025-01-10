@@ -13,7 +13,6 @@ from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import pearsonr, spearmanr
 
 if TYPE_CHECKING:
-
     from arkas.state.target_dataframe import TargetDataFrameState
 
 

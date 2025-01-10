@@ -21,7 +21,6 @@ from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
-
     from arkas.figure.base import BaseFigure
     from arkas.state.temporal_dataframe import TemporalDataFrameState
 

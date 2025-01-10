@@ -194,6 +194,39 @@ def test_compute_statistics_continuous_array_empty() -> None:
     )
 
 
+def test_compute_statistics_continuous_array_one_value() -> None:
+    assert objects_are_allclose(
+        compute_statistics_continuous_array(np.array([1.0])),
+        {
+            "count": 1,
+            "num_nulls": 0,
+            "num_non_nulls": 1,
+            "nunique": 1,
+            "mean": 1.0,
+            "std": 0.0,
+            "skewness": float("nan"),
+            "kurtosis": float("nan"),
+            "min": 1.0,
+            "q001": 1.0,
+            "q01": 1.0,
+            "q05": 1.0,
+            "q10": 1.0,
+            "q25": 1.0,
+            "median": 1.0,
+            "q75": 1.0,
+            "q90": 1.0,
+            "q95": 1.0,
+            "q99": 1.0,
+            "q999": 1.0,
+            "max": 1.0,
+            ">0": 1,
+            "<0": 0,
+            "=0": 0,
+        },
+        equal_nan=True,
+    )
+
+
 def test_compute_statistics_continuous_array_with_null() -> None:
     assert objects_are_allclose(
         compute_statistics_continuous_array(np.array([np.nan, *list(range(101)), np.nan])),
