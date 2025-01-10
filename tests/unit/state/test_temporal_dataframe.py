@@ -246,6 +246,23 @@ def test_temporal_dataframe_state_equal_false_different_type(dataframe: pl.DataF
     assert not TemporalDataFrameState(dataframe, temporal_column="datetime").equal(42)
 
 
+def test_temporal_dataframe_state_get_arg(dataframe: pl.DataFrame) -> None:
+    assert (
+        TemporalDataFrameState(dataframe, temporal_column="datetime", column="col").get_arg(
+            "column"
+        )
+        == "col"
+    )
+
+
+def test_temporal_dataframe_state_get_arg_missing(dataframe: pl.DataFrame) -> None:
+    assert TemporalDataFrameState(dataframe, temporal_column="datetime").get_arg("x") is None
+
+
+def test_temporal_dataframe_state_get_arg_missing_default(dataframe: pl.DataFrame) -> None:
+    assert TemporalDataFrameState(dataframe, temporal_column="datetime").get_arg("x", 42) == 42
+
+
 def test_temporal_dataframe_state_get_args(dataframe: pl.DataFrame) -> None:
     assert objects_are_equal(
         TemporalDataFrameState(
