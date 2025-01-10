@@ -69,7 +69,7 @@ def spearmanr(
 
     count = x.size
     coeff, pvalue = float("nan"), float("nan")
-    if count > 0 and not x_nan and not y_nan:
+    if count > 1 and not x_nan and not y_nan:
         result = stats.spearmanr(x, y, alternative=alternative)
         coeff, pvalue = float(result.statistic), float(result.pvalue)
     return {

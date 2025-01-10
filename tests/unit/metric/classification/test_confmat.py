@@ -796,7 +796,6 @@ def test_multilabel_confusion_matrix_1_class_2d() -> None:
             "confusion_matrix": np.array([[[2, 0], [0, 3]]]),
             "count": 5,
         },
-        show_difference=True,
     )
 
 

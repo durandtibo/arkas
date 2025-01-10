@@ -294,7 +294,6 @@ def test_binary_classification_result_compute_metrics_incorrect() -> None:
             "average_precision": 0.41666666666666663,
             "roc_auc": 0.0,
         },
-        show_difference=True,
     )
 
 

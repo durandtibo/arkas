@@ -45,7 +45,11 @@ def test_numeric_summary_analyzer_analyze(dataframe: pl.DataFrame) -> None:
     assert (
         ColumnCorrelationAnalyzer(target_column="col3")
         .analyze(dataframe)
-        .equal(ColumnCorrelationOutput(TargetDataFrameState(dataframe, target_column="col3")))
+        .equal(
+            ColumnCorrelationOutput(
+                TargetDataFrameState(dataframe, target_column="col3", sork_key="spearman_coeff")
+            )
+        )
     )
 
 
@@ -61,7 +65,23 @@ def test_numeric_summary_analyzer_analyze_ignore_non_numeric_columns(
     assert (
         ColumnCorrelationAnalyzer(target_column="col3")
         .analyze(dataframe.with_columns(pl.lit("abc").alias("col4")))
-        .equal(ColumnCorrelationOutput(TargetDataFrameState(dataframe, target_column="col3")))
+        .equal(
+            ColumnCorrelationOutput(
+                TargetDataFrameState(dataframe, target_column="col3", sork_key="spearman_coeff")
+            )
+        )
+    )
+
+
+def test_numeric_summary_analyzer_analyze_sork_key(dataframe: pl.DataFrame) -> None:
+    assert (
+        ColumnCorrelationAnalyzer(target_column="col3", sork_key="pearson_coeff")
+        .analyze(dataframe)
+        .equal(
+            ColumnCorrelationOutput(
+                TargetDataFrameState(dataframe, target_column="col3", sork_key="pearson_coeff")
+            )
+        )
     )
 
 
@@ -80,6 +100,7 @@ def test_numeric_summary_analyzer_analyze_columns(dataframe: pl.DataFrame) -> No
                         schema={"col1": pl.Float64, "col2": pl.Float64},
                     ),
                     target_column="col2",
+                    sork_key="spearman_coeff",
                 )
             )
         )
@@ -92,7 +113,11 @@ def test_numeric_summary_analyzer_analyze_columns_add_target_column(
     assert (
         ColumnCorrelationAnalyzer(target_column="col3", columns=["col1", "col2"])
         .analyze(dataframe)
-        .equal(ColumnCorrelationOutput(TargetDataFrameState(dataframe, target_column="col3")))
+        .equal(
+            ColumnCorrelationOutput(
+                TargetDataFrameState(dataframe, target_column="col3", sork_key="spearman_coeff")
+            )
+        )
     )
 
 
@@ -111,6 +136,7 @@ def test_numeric_summary_analyzer_analyze_exclude_columns(dataframe: pl.DataFram
                         schema={"col1": pl.Float64, "col2": pl.Float64},
                     ),
                     target_column="col2",
+                    sork_key="spearman_coeff",
                 )
             )
         )
@@ -126,7 +152,11 @@ def test_numeric_summary_analyzer_analyze_missing_policy_ignore(
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         out = analyzer.analyze(dataframe)
-    assert out.equal(ColumnCorrelationOutput(TargetDataFrameState(dataframe, target_column="col3")))
+    assert out.equal(
+        ColumnCorrelationOutput(
+            TargetDataFrameState(dataframe, target_column="col3", sork_key="spearman_coeff")
+        )
+    )
 
 
 def test_numeric_summary_analyzer_analyze_missing_policy_ignore_target_column(
@@ -169,7 +199,11 @@ def test_numeric_summary_analyzer_analyze_missing_policy_warn(
         ColumnNotFoundWarning, match="1 column is missing in the DataFrame and will be ignored:"
     ):
         out = analyzer.analyze(dataframe)
-    assert out.equal(ColumnCorrelationOutput(TargetDataFrameState(dataframe, target_column="col3")))
+    assert out.equal(
+        ColumnCorrelationOutput(
+            TargetDataFrameState(dataframe, target_column="col3", sork_key="spearman_coeff")
+        )
+    )
 
 
 def test_numeric_summary_analyzer_analyze_missing_policy_warn_target_column(
@@ -215,6 +249,12 @@ def test_numeric_summary_analyzer_equal_false_different_missing_policy() -> None
     )
 
 
+def test_numeric_summary_analyzer_equal_false_different_sork_key() -> None:
+    assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
+        ColumnCorrelationAnalyzer(target_column="col3", sork_key="pearson_coeff")
+    )
+
+
 def test_numeric_summary_analyzer_equal_false_different_type() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(42)
 
@@ -227,5 +267,6 @@ def test_numeric_summary_analyzer_get_args() -> None:
             "columns": None,
             "exclude_columns": (),
             "missing_policy": "raise",
+            "sork_key": "spearman_coeff",
         },
     )

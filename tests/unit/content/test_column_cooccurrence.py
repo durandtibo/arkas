@@ -201,12 +201,12 @@ def test_create_table() -> None:
         "        <tr><th>rank</th><th>column 1</th><th>column 2</th><th>count</th><th>percentage</th></tr>\n"
         "    </thead>\n"
         '    <tbody class="tbody table-group-divider">\n'
-        '        <tr><th>1</th><td>col1</td><td>col1</td><td style="text-align: right;">80</td><td style="text-align: right;">80.0000 %</td></tr>\n'
-        '        <tr><th>2</th><td>col1</td><td>col3</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
-        '        <tr><th>3</th><td>col2</td><td>col3</td><td style="text-align: right;">5</td><td style="text-align: right;">5.0000 %</td></tr>\n'
-        '        <tr><th>4</th><td>col1</td><td>col2</td><td style="text-align: right;">4</td><td style="text-align: right;">4.0000 %</td></tr>\n'
-        '        <tr><th>5</th><td>col3</td><td>col3</td><td style="text-align: right;">3</td><td style="text-align: right;">3.0000 %</td></tr>\n'
-        '        <tr><th>6</th><td>col2</td><td>col2</td><td style="text-align: right;">2</td><td style="text-align: right;">2.0000 %</td></tr>\n'
+        '        <tr><th>1</th><td>col1</td><td>col1</td><td style="text-align: right; font-variant-numeric: tabular-nums;">80</td><td style="text-align: right; font-variant-numeric: tabular-nums;">80.0000 %</td></tr>\n'
+        '        <tr><th>2</th><td>col1</td><td>col3</td><td style="text-align: right; font-variant-numeric: tabular-nums;">6</td><td style="text-align: right; font-variant-numeric: tabular-nums;">6.0000 %</td></tr>\n'
+        '        <tr><th>3</th><td>col2</td><td>col3</td><td style="text-align: right; font-variant-numeric: tabular-nums;">5</td><td style="text-align: right; font-variant-numeric: tabular-nums;">5.0000 %</td></tr>\n'
+        '        <tr><th>4</th><td>col1</td><td>col2</td><td style="text-align: right; font-variant-numeric: tabular-nums;">4</td><td style="text-align: right; font-variant-numeric: tabular-nums;">4.0000 %</td></tr>\n'
+        '        <tr><th>5</th><td>col3</td><td>col3</td><td style="text-align: right; font-variant-numeric: tabular-nums;">3</td><td style="text-align: right; font-variant-numeric: tabular-nums;">3.0000 %</td></tr>\n'
+        '        <tr><th>6</th><td>col2</td><td>col2</td><td style="text-align: right; font-variant-numeric: tabular-nums;">2</td><td style="text-align: right; font-variant-numeric: tabular-nums;">2.0000 %</td></tr>\n'
         '        <tr class="table-group-divider"></tr>\n'
         "    </tbody>\n"
         "</table>"
@@ -222,8 +222,8 @@ def test_create_table_top_2() -> None:
         "        <tr><th>rank</th><th>column 1</th><th>column 2</th><th>count</th><th>percentage</th></tr>\n"
         "    </thead>\n"
         '    <tbody class="tbody table-group-divider">\n'
-        '        <tr><th>1</th><td>col1</td><td>col1</td><td style="text-align: right;">80</td><td style="text-align: right;">80.0000 %</td></tr>\n'
-        '        <tr><th>2</th><td>col1</td><td>col3</td><td style="text-align: right;">6</td><td style="text-align: right;">6.0000 %</td></tr>\n'
+        '        <tr><th>1</th><td>col1</td><td>col1</td><td style="text-align: right; font-variant-numeric: tabular-nums;">80</td><td style="text-align: right; font-variant-numeric: tabular-nums;">80.0000 %</td></tr>\n'
+        '        <tr><th>2</th><td>col1</td><td>col3</td><td style="text-align: right; font-variant-numeric: tabular-nums;">6</td><td style="text-align: right; font-variant-numeric: tabular-nums;">6.0000 %</td></tr>\n'
         '        <tr class="table-group-divider"></tr>\n'
         "    </tbody>\n"
         "</table>"
@@ -251,13 +251,15 @@ def test_create_table_empty() -> None:
 
 def test_create_table_row() -> None:
     assert create_table_row(rank=2, col1="cat", col2="meow", count=42, total=100) == (
-        '<tr><th>2</th><td>cat</td><td>meow</td><td style="text-align: right;">42</td>'
-        '<td style="text-align: right;">42.0000 %</td></tr>'
+        '<tr><th>2</th><td>cat</td><td>meow</td><td style="text-align: right; '
+        'font-variant-numeric: tabular-nums;">42</td>'
+        '<td style="text-align: right; font-variant-numeric: tabular-nums;">42.0000 %</td></tr>'
     )
 
 
 def test_create_table_row_empty() -> None:
     assert create_table_row(rank=2, col1="cat", col2="meow", count=0, total=0) == (
-        '<tr><th>2</th><td>cat</td><td>meow</td><td style="text-align: right;">0</td>'
-        '<td style="text-align: right;">nan %</td></tr>'
+        '<tr><th>2</th><td>cat</td><td>meow</td><td style="text-align: right; '
+        'font-variant-numeric: tabular-nums;">0</td>'
+        '<td style="text-align: right; font-variant-numeric: tabular-nums;">nan %</td></tr>'
     )

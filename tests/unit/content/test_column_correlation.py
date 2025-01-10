@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import polars as pl
 import pytest
+from coola import objects_are_equal
 
 from arkas.content import ColumnCorrelationContentGenerator, ContentGenerator
 from arkas.content.column_correlation import (
     create_table,
     create_table_row,
     create_template,
+    sort_metrics,
 )
 from arkas.state import TargetDataFrameState
 
@@ -154,14 +156,14 @@ def test_create_table() -> None:
     assert isinstance(
         create_table(
             metrics={
-                "correlation_col1": {
+                "col1": {
                     "count": 7,
                     "pearson_coeff": 1.0,
                     "pearson_pvalue": 0.0,
                     "spearman_coeff": 1.0,
                     "spearman_pvalue": 0.0,
                 },
-                "correlation_col2": {
+                "col2": {
                     "count": 7,
                     "pearson_coeff": -1.0,
                     "pearson_pvalue": 0.0,
@@ -169,14 +171,13 @@ def test_create_table() -> None:
                     "spearman_pvalue": 0.0,
                 },
             },
-            columns=["col1", "col2"],
         ),
         str,
     )
 
 
 def test_create_table_empty() -> None:
-    assert isinstance(create_table(metrics={}, columns=[]), str)
+    assert isinstance(create_table(metrics={}), str)
 
 
 ######################################
@@ -202,3 +203,189 @@ def test_create_table_row() -> None:
 
 def test_create_table_row_empty() -> None:
     assert isinstance(create_table_row(column="col1", metrics={}), str)
+
+
+##################################
+#     Tests for sort_metrics     #
+##################################
+
+
+def test_sort_metrics() -> None:
+    metrics = sort_metrics(
+        {
+            "col1": {
+                "count": 7,
+                "pearson_coeff": -0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 0.5,
+                "spearman_pvalue": 0.0,
+            },
+            "col2": {
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": -1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col3": {
+                "count": 7,
+                "pearson_coeff": 0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+        }
+    )
+    assert list(metrics.keys()) == ["col3", "col1", "col2"]
+    assert objects_are_equal(
+        metrics,
+        {
+            "col3": {
+                "count": 7,
+                "pearson_coeff": 0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col1": {
+                "count": 7,
+                "pearson_coeff": -0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 0.5,
+                "spearman_pvalue": 0.0,
+            },
+            "col2": {
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": -1.0,
+                "spearman_pvalue": 0.0,
+            },
+        },
+    )
+
+
+def test_sort_metrics_key() -> None:
+    metrics = sort_metrics(
+        {
+            "col1": {
+                "count": 7,
+                "pearson_coeff": -0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 0.5,
+                "spearman_pvalue": 0.0,
+            },
+            "col2": {
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": -1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col3": {
+                "count": 7,
+                "pearson_coeff": 0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+        },
+        key="pearson_coeff",
+    )
+    assert list(metrics.keys()) == ["col2", "col3", "col1"]
+    assert objects_are_equal(
+        metrics,
+        {
+            "col2": {
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": -1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col3": {
+                "count": 7,
+                "pearson_coeff": 0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col1": {
+                "count": 7,
+                "pearson_coeff": -0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 0.5,
+                "spearman_pvalue": 0.0,
+            },
+        },
+    )
+
+
+def test_sort_metrics_with_nan() -> None:
+    metrics = sort_metrics(
+        {
+            "col0": {
+                "count": 0,
+                "pearson_coeff": float("nan"),
+                "pearson_pvalue": float("nan"),
+                "spearman_coeff": float("nan"),
+                "spearman_pvalue": float("nan"),
+            },
+            "col1": {
+                "count": 7,
+                "pearson_coeff": -0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 0.5,
+                "spearman_pvalue": 0.0,
+            },
+            "col2": {
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": -1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col3": {
+                "count": 7,
+                "pearson_coeff": 0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+        }
+    )
+    assert list(metrics.keys()) == ["col3", "col1", "col2", "col0"]
+    assert objects_are_equal(
+        metrics,
+        {
+            "col3": {
+                "count": 7,
+                "pearson_coeff": 0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col1": {
+                "count": 7,
+                "pearson_coeff": -0.5,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": 0.5,
+                "spearman_pvalue": 0.0,
+            },
+            "col2": {
+                "count": 7,
+                "pearson_coeff": 1.0,
+                "pearson_pvalue": 0.0,
+                "spearman_coeff": -1.0,
+                "spearman_pvalue": 0.0,
+            },
+            "col0": {
+                "count": 0,
+                "pearson_coeff": float("nan"),
+                "pearson_pvalue": float("nan"),
+                "spearman_coeff": float("nan"),
+                "spearman_pvalue": float("nan"),
+            },
+        },
+        equal_nan=True,
+    )

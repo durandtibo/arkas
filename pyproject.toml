@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "arkas"
-version = "0.0.1a10"
+version = "0.0.1a11"
 description = "Library to evaluate ML model performances"
 readme = "README.md"
 authors = ["Thibaut Durand <durand.tibo+gh@gmail.com>"]
@@ -81,7 +81,7 @@ pygments = "^2.18"
 pytest = "^8.3"
 pytest-cov = ">=6,<7"
 pytest-timeout = "^2.3"
-ruff = ">=0.8,<1.0"
+ruff = ">=0.9,<1.0"
 xdoctest = "^1.2"
 
 

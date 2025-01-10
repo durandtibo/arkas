@@ -5,19 +5,15 @@ from __future__ import annotations
 __all__ = ["TemporalDataFrameState"]
 
 import sys
-from typing import TYPE_CHECKING
-
-from coola.utils.format import repr_mapping_line, str_indent, str_mapping
+from typing import TYPE_CHECKING, Any
 
 from arkas.state.dataframe import DataFrameState
 from arkas.utils.dataframe import check_column_exist
 
 if sys.version_info >= (3, 11):
-    from typing import Self
+    pass
 else:  # pragma: no cover
-    from typing_extensions import (
-        Self,  # use backport because it was added in python 3.11
-    )
+    pass
 
 if TYPE_CHECKING:
     import polars as pl
@@ -36,6 +32,7 @@ class TemporalDataFrameState(DataFrameState):
             arrays. The following options are available: ``'omit'``,
             ``'propagate'``, and ``'raise'``.
         figure_config: An optional figure configuration.
+        **kwargs: Additional keyword arguments.
 
     Example usage:
 
@@ -77,38 +74,15 @@ class TemporalDataFrameState(DataFrameState):
         period: str | None = None,
         nan_policy: str = "propagate",
         figure_config: BaseFigureConfig | None = None,
+        **kwargs: Any,
     ) -> None:
-        super().__init__(dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config)
+        super().__init__(
+            dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config, **kwargs
+        )
 
         check_column_exist(dataframe, temporal_column)
         self._temporal_column = temporal_column
         self._period = period
-
-    def __repr__(self) -> str:
-        args = repr_mapping_line(
-            {
-                "dataframe": self._dataframe.shape,
-                "temporal_column": self._temporal_column,
-                "period": self._period,
-                "nan_policy": self._nan_policy,
-                "figure_config": self._figure_config,
-            }
-        )
-        return f"{self.__class__.__qualname__}({args})"
-
-    def __str__(self) -> str:
-        args = str_indent(
-            str_mapping(
-                {
-                    "dataframe": self._dataframe.shape,
-                    "temporal_column": self._temporal_column,
-                    "period": self._period,
-                    "nan_policy": self._nan_policy,
-                    "figure_config": self._figure_config,
-                }
-            )
-        )
-        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def period(self) -> str | None:
@@ -118,17 +92,10 @@ class TemporalDataFrameState(DataFrameState):
     def temporal_column(self) -> str:
         return self._temporal_column
 
-    def clone(self, deep: bool = True) -> Self:
-        return self.__class__(
-            dataframe=self._dataframe.clone() if deep else self._dataframe,
-            temporal_column=self._temporal_column,
-            period=self._period,
-            nan_policy=self._nan_policy,
-            figure_config=self._figure_config.clone() if deep else self._figure_config,
-        )
-
     def get_args(self) -> dict:
-        return super().get_args() | {
+        args = super().get_args()
+        return {
+            "dataframe": args.pop("dataframe"),
             "temporal_column": self._temporal_column,
             "period": self._period,
-        }
+        } | args

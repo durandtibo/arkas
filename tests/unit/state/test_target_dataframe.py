@@ -85,6 +85,7 @@ def test_target_dataframe_state_clone(dataframe: pl.DataFrame) -> None:
         target_column="col3",
         nan_policy="raise",
         figure_config=MatplotlibFigureConfig(xscale="linear"),
+        x=42,
     )
     cloned_state = state.clone()
     assert state is not cloned_state
@@ -97,6 +98,7 @@ def test_target_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
         target_column="col3",
         nan_policy="raise",
         figure_config=MatplotlibFigureConfig(xscale="linear"),
+        x=42,
     )
     cloned_state = state.clone()
 
@@ -106,6 +108,7 @@ def test_target_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
             target_column="col3",
             nan_policy="raise",
             figure_config=MatplotlibFigureConfig(xscale="linear"),
+            x=42,
         )
     )
     assert cloned_state.equal(
@@ -114,6 +117,7 @@ def test_target_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
             target_column="col3",
             nan_policy="raise",
             figure_config=MatplotlibFigureConfig(xscale="linear"),
+            x=42,
         )
     )
     assert state.dataframe is not cloned_state.dataframe
@@ -125,6 +129,7 @@ def test_target_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
         target_column="col3",
         nan_policy="raise",
         figure_config=MatplotlibFigureConfig(xscale="linear"),
+        x=42,
     )
     cloned_state = state.clone(deep=False)
 
@@ -134,6 +139,7 @@ def test_target_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
             target_column="col3",
             nan_policy="raise",
             figure_config=MatplotlibFigureConfig(xscale="linear"),
+            x=42,
         )
     )
     assert cloned_state.equal(
@@ -142,6 +148,7 @@ def test_target_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None:
             target_column="col3",
             nan_policy="raise",
             figure_config=MatplotlibFigureConfig(xscale="linear"),
+            x=42,
         )
     )
     assert state.dataframe is cloned_state.dataframe
@@ -185,17 +192,38 @@ def test_target_dataframe_state_equal_false_different_figure_config(
     )
 
 
+def test_target_dataframe_state_equal_false_different_kwargs(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not TargetDataFrameState(dataframe, target_column="col3").equal(
+        TargetDataFrameState(dataframe, target_column="col3", x=42)
+    )
+
+
 def test_target_dataframe_state_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not TargetDataFrameState(dataframe, target_column="col3").equal(42)
 
 
+def test_target_dataframe_state_get_arg(dataframe: pl.DataFrame) -> None:
+    assert TargetDataFrameState(dataframe, target_column="col3", x=42).get_arg("x") == 42
+
+
+def test_target_dataframe_state_get_arg_missing(dataframe: pl.DataFrame) -> None:
+    assert TargetDataFrameState(dataframe, target_column="col3").get_arg("x") is None
+
+
+def test_target_dataframe_state_get_arg_missing_default(dataframe: pl.DataFrame) -> None:
+    assert TargetDataFrameState(dataframe, target_column="col3").get_arg("x", 42) == 42
+
+
 def test_target_dataframe_state_get_args(dataframe: pl.DataFrame) -> None:
     assert objects_are_equal(
-        TargetDataFrameState(dataframe, target_column="col3").get_args(),
+        TargetDataFrameState(dataframe, target_column="col3", x=42).get_args(),
         {
             "dataframe": dataframe,
             "figure_config": MatplotlibFigureConfig(),
             "target_column": "col3",
             "nan_policy": "propagate",
+            "x": 42,
         },
     )

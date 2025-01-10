@@ -8,9 +8,11 @@ __all__ = [
     "create_table",
     "create_table_row",
     "create_template",
+    "sort_metrics",
 ]
 
 import logging
+import math
 from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
@@ -18,10 +20,9 @@ from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
+from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-
     from arkas.state.target_dataframe import TargetDataFrameState
 
 logger = logging.getLogger(__name__)
@@ -81,6 +82,10 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
             f"and {list(self._state.dataframe.columns)}..."
         )
         metrics = ColumnCorrelationEvaluator(self._state).evaluate()
+        metrics = sort_metrics(
+            {key.split("_", maxsplit=1)[1]: val for key, val in metrics.items()},
+            key=self._state.get_arg("sort_metric", "spearman_coeff"),
+        )
         columns = list(self._state.dataframe.columns)
         columns.remove(self._state.target_column)
         nrows, ncols = self._state.dataframe.shape
@@ -89,7 +94,7 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
                 "nrows": f"{nrows:,}",
                 "ncols": f"{ncols:,}",
                 "columns": ", ".join(self._state.dataframe.columns),
-                "table": create_table(metrics, columns=columns),
+                "table": create_table(metrics),
                 "target_column": f"{self._state.target_column}",
             }
         )
@@ -128,13 +133,12 @@ The DataFrame has {{nrows}} rows and {{ncols}} columns.
 """
 
 
-def create_table(metrics: dict[str, dict], columns: Sequence[str]) -> str:
+def create_table(metrics: dict[str, dict]) -> str:
     r"""Return a HTML representation of a table with some statisticts
     about each column.
 
     Args:
         metrics: The dictionary of metrics.
-        columns: The columns to show in the table.
 
     Returns:
         The HTML representation of the table.
@@ -147,14 +151,14 @@ def create_table(metrics: dict[str, dict], columns: Sequence[str]) -> str:
     >>> from arkas.content.column_correlation import create_table
     >>> row = create_table(
     ...     metrics={
-    ...         "correlation_col1": {
+    ...         "col1": {
     ...             "count": 7,
     ...             "pearson_coeff": 1.0,
     ...             "pearson_pvalue": 0.0,
     ...             "spearman_coeff": 1.0,
     ...             "spearman_pvalue": 0.0,
     ...         },
-    ...         "correlation_col2": {
+    ...         "col2": {
     ...             "count": 7,
     ...             "pearson_coeff": -1.0,
     ...             "pearson_pvalue": 0.0,
@@ -162,13 +166,12 @@ def create_table(metrics: dict[str, dict], columns: Sequence[str]) -> str:
     ...             "spearman_pvalue": 0.0,
     ...         },
     ...     },
-    ...     columns=["col1", "col2"],
     ... )
 
     ```
     """
     rows = "\n".join(
-        [create_table_row(column=col, metrics=metrics[f"correlation_{col}"]) for col in columns]
+        [create_table_row(column=col, metrics=values) for col, values in metrics.items()]
     )
     return Template(
         """<table class="table table-hover table-responsive w-auto" >
@@ -176,10 +179,8 @@ def create_table(metrics: dict[str, dict], columns: Sequence[str]) -> str:
         <tr>
             <th>column</th>
             <th>num samples</th>
-            <th>pearson coefficient</th>
-            <th>pearson p-value</th>
-            <th>spearman coefficient</th>
-            <th>spearman p-value</th>
+            <th>pearson coefficient (p-value)</th>
+            <th>spearman coefficient (p-value)</th>
         </tr>
     </thead>
     <tbody class="tbody table-group-divider">
@@ -224,14 +225,12 @@ def create_table_row(column: str, metrics: dict) -> str:
         """<tr>
     <th>{{column}}</th>
     <td {{num_style}}>{{count}}</td>
-    <td {{num_style}}>{{pearson_coeff}}</td>
-    <td {{num_style}}>{{pearson_pvalue}}</td>
-    <td {{num_style}}>{{spearman_coeff}}</td>
-    <td {{num_style}}>{{spearman_pvalue}}</td>
+    <td {{num_style}}>{{pearson_coeff}} ({{pearson_pvalue}})</td>
+    <td {{num_style}}>{{spearman_coeff}} ({{spearman_pvalue}})</td>
 </tr>"""
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "column": column,
             "count": f'{metrics.get("count", 0):,}',
             "pearson_coeff": f'{metrics.get("pearson_coeff", float("nan")):.4f}',
@@ -240,3 +239,24 @@ def create_table_row(column: str, metrics: dict) -> str:
             "spearman_pvalue": f'{metrics.get("spearman_pvalue", float("nan")):.4f}',
         }
     )
+
+
+def sort_metrics(
+    metrics: dict[str, dict[str, float]], key: str = "spearman_coeff"
+) -> dict[str, dict[str, float]]:
+    r"""Sort the dictionary of metrics by a given key.
+
+    Args:
+        metrics: The dictionary of metrics to sort.
+        key: The key to use to sort the metrics.
+
+    Returns:
+        The sorted dictionary of metrics.
+    """
+    def get_metric(item: Any) -> float:
+        val = item[1][key]
+        if math.isnan(val):
+            val = float('-inf')
+        return val
+
+    return dict(sorted(metrics.items(), key=get_metric, reverse=True))

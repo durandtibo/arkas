@@ -21,6 +21,7 @@ from jinja2 import Template
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.content.utils import float_to_str
 from arkas.utils.stats import compute_statistics_continuous
+from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
     import polars as pl
@@ -240,7 +241,7 @@ def create_table_row(series: pl.Series) -> str:
 </tr>"""
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "column": series.name,
             "dtype": series.dtype,
             "null": f"{null:,} ({100 * null / total if total else float('nan'):.2f}%)",
@@ -358,7 +359,7 @@ def create_table_quantiles_row(series: pl.Series) -> str:
 </tr>"""
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "column": series.name,
             "min": float_to_str(stats["min"]),
             "q001": float_to_str(stats["q001"]),
