@@ -69,6 +69,27 @@ def test_correlation_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
     )
 
 
+def test_correlation_evaluator_evaluate_one_row() -> None:
+    evaluator = CorrelationEvaluator(
+        DataFrameState(
+            pl.DataFrame(
+                {"col1": [1.0], "col2": [7.0]}, schema={"col1": pl.Float64, "col2": pl.Float64}
+            )
+        )
+    )
+    assert objects_are_allclose(
+        evaluator.evaluate(),
+        {
+            "count": 1,
+            "pearson_coeff": float("nan"),
+            "pearson_pvalue": float("nan"),
+            "spearman_coeff": float("nan"),
+            "spearman_pvalue": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
 def test_correlation_evaluator_evaluate_nan_policy_omit() -> None:
     evaluator = CorrelationEvaluator(
         DataFrameState(
