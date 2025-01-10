@@ -253,10 +253,11 @@ def sort_metrics(
     Returns:
         The sorted dictionary of metrics.
     """
+
     def get_metric(item: Any) -> float:
         val = item[1][key]
         if math.isnan(val):
-            val = float('-inf')
+            val = float("-inf")
         return val
 
     return dict(sorted(metrics.items(), key=get_metric, reverse=True))
