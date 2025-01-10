@@ -47,7 +47,7 @@ def test_numeric_summary_analyzer_analyze(dataframe: pl.DataFrame) -> None:
         .analyze(dataframe)
         .equal(
             ColumnCorrelationOutput(
-                TargetDataFrameState(dataframe, target_column="col3", sort_key="spearman_coeff")
+                TargetDataFrameState(dataframe, target_column="col3", sort_metric="spearman_coeff")
             )
         )
     )
@@ -67,19 +67,19 @@ def test_numeric_summary_analyzer_analyze_ignore_non_numeric_columns(
         .analyze(dataframe.with_columns(pl.lit("abc").alias("col4")))
         .equal(
             ColumnCorrelationOutput(
-                TargetDataFrameState(dataframe, target_column="col3", sort_key="spearman_coeff")
+                TargetDataFrameState(dataframe, target_column="col3", sort_metric="spearman_coeff")
             )
         )
     )
 
 
-def test_numeric_summary_analyzer_analyze_sort_key(dataframe: pl.DataFrame) -> None:
+def test_numeric_summary_analyzer_analyze_sort_metric(dataframe: pl.DataFrame) -> None:
     assert (
-        ColumnCorrelationAnalyzer(target_column="col3", sort_key="pearson_coeff")
+        ColumnCorrelationAnalyzer(target_column="col3", sort_metric="pearson_coeff")
         .analyze(dataframe)
         .equal(
             ColumnCorrelationOutput(
-                TargetDataFrameState(dataframe, target_column="col3", sort_key="pearson_coeff")
+                TargetDataFrameState(dataframe, target_column="col3", sort_metric="pearson_coeff")
             )
         )
     )
@@ -100,7 +100,7 @@ def test_numeric_summary_analyzer_analyze_columns(dataframe: pl.DataFrame) -> No
                         schema={"col1": pl.Float64, "col2": pl.Float64},
                     ),
                     target_column="col2",
-                    sort_key="spearman_coeff",
+                    sort_metric="spearman_coeff",
                 )
             )
         )
@@ -115,7 +115,7 @@ def test_numeric_summary_analyzer_analyze_columns_add_target_column(
         .analyze(dataframe)
         .equal(
             ColumnCorrelationOutput(
-                TargetDataFrameState(dataframe, target_column="col3", sort_key="spearman_coeff")
+                TargetDataFrameState(dataframe, target_column="col3", sort_metric="spearman_coeff")
             )
         )
     )
@@ -136,7 +136,7 @@ def test_numeric_summary_analyzer_analyze_exclude_columns(dataframe: pl.DataFram
                         schema={"col1": pl.Float64, "col2": pl.Float64},
                     ),
                     target_column="col2",
-                    sort_key="spearman_coeff",
+                    sort_metric="spearman_coeff",
                 )
             )
         )
@@ -154,7 +154,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_ignore(
         out = analyzer.analyze(dataframe)
     assert out.equal(
         ColumnCorrelationOutput(
-            TargetDataFrameState(dataframe, target_column="col3", sort_key="spearman_coeff")
+            TargetDataFrameState(dataframe, target_column="col3", sort_metric="spearman_coeff")
         )
     )
 
@@ -201,7 +201,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_warn(
         out = analyzer.analyze(dataframe)
     assert out.equal(
         ColumnCorrelationOutput(
-            TargetDataFrameState(dataframe, target_column="col3", sort_key="spearman_coeff")
+            TargetDataFrameState(dataframe, target_column="col3", sort_metric="spearman_coeff")
         )
     )
 
@@ -249,9 +249,9 @@ def test_numeric_summary_analyzer_equal_false_different_missing_policy() -> None
     )
 
 
-def test_numeric_summary_analyzer_equal_false_different_sort_key() -> None:
+def test_numeric_summary_analyzer_equal_false_different_sort_metric() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
-        ColumnCorrelationAnalyzer(target_column="col3", sort_key="pearson_coeff")
+        ColumnCorrelationAnalyzer(target_column="col3", sort_metric="pearson_coeff")
     )
 
 
@@ -267,6 +267,6 @@ def test_numeric_summary_analyzer_get_args() -> None:
             "columns": None,
             "exclude_columns": (),
             "missing_policy": "raise",
-            "sort_key": "spearman_coeff",
+            "sort_metric": "spearman_coeff",
         },
     )
