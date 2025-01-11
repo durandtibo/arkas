@@ -6,6 +6,7 @@ from coola import objects_are_allclose
 
 from arkas.content import ContentGenerator, SummaryContentGenerator
 from arkas.content.summary import create_table, create_table_row, create_template
+from arkas.state import DataFrameState
 
 
 @pytest.fixture
@@ -26,89 +27,83 @@ def dataframe() -> pl.DataFrame:
 
 
 def test_summary_content_generator_repr(dataframe: pl.DataFrame) -> None:
-    assert repr(SummaryContentGenerator(dataframe)).startswith("SummaryContentGenerator(")
+    assert repr(SummaryContentGenerator(DataFrameState(dataframe))).startswith(
+        "SummaryContentGenerator("
+    )
 
 
 def test_summary_content_generator_str(dataframe: pl.DataFrame) -> None:
-    assert str(SummaryContentGenerator(dataframe)).startswith("SummaryContentGenerator(")
+    assert str(SummaryContentGenerator(DataFrameState(dataframe))).startswith(
+        "SummaryContentGenerator("
+    )
 
 
 def test_summary_content_generator_compute(dataframe: pl.DataFrame) -> None:
-    assert isinstance(SummaryContentGenerator(dataframe).compute(), ContentGenerator)
-
-
-def test_summary_content_generator_frame(dataframe: pl.DataFrame) -> None:
-    assert SummaryContentGenerator(dataframe).frame is dataframe
-
-
-@pytest.mark.parametrize("top", [0, 1, 2])
-def test_summary_content_generator_top(dataframe: pl.DataFrame, top: int) -> None:
-    assert SummaryContentGenerator(dataframe, top=top).top == top
-
-
-def test_summary_content_generator_top_incorrect(dataframe: pl.DataFrame) -> None:
-    with pytest.raises(ValueError, match=r"Incorrect 'top': -1. The value must be positive"):
-        SummaryContentGenerator(dataframe, top=-1)
+    assert isinstance(
+        SummaryContentGenerator(DataFrameState(dataframe)).compute(), ContentGenerator
+    )
 
 
 def test_summary_content_generator_equal_true(dataframe: pl.DataFrame) -> None:
-    assert SummaryContentGenerator(dataframe).equal(SummaryContentGenerator(dataframe))
+    assert SummaryContentGenerator(DataFrameState(dataframe)).equal(
+        SummaryContentGenerator(DataFrameState(dataframe))
+    )
 
 
-def test_summary_content_generator_equal_false_different_frame(
+def test_summary_content_generator_equal_false_different_state(
     dataframe: pl.DataFrame,
 ) -> None:
-    assert not SummaryContentGenerator(dataframe).equal(
+    assert not SummaryContentGenerator(DataFrameState(dataframe)).equal(
         SummaryContentGenerator(
-            pl.DataFrame(
-                {
-                    "float": [1.2, 4.2, None, 2.2, 1, 2.2],
-                    "int": [1, 1, 0, 1, 1, 1],
-                },
-                schema={"float": pl.Float64, "int": pl.Int64},
+            DataFrameState(
+                pl.DataFrame(
+                    {
+                        "float": [1.2, 4.2, None, 2.2, 1, 2.2],
+                        "int": [1, 1, 0, 1, 1, 1],
+                    },
+                    schema={"float": pl.Float64, "int": pl.Int64},
+                )
             )
         )
     )
 
 
-def test_summary_content_generator_equal_false_different_top(
-    dataframe: pl.DataFrame,
-) -> None:
-    assert not SummaryContentGenerator(dataframe, top=3).equal(SummaryContentGenerator(dataframe))
-
-
 def test_summary_content_generator_equal_false_different_type(
     dataframe: pl.DataFrame,
 ) -> None:
-    assert not SummaryContentGenerator(dataframe).equal(42)
+    assert not SummaryContentGenerator(DataFrameState(dataframe)).equal(42)
 
 
 def test_summary_content_generator_get_columns(dataframe: pl.DataFrame) -> None:
-    assert SummaryContentGenerator(dataframe).get_columns() == ("float", "int", "str")
+    assert SummaryContentGenerator(DataFrameState(dataframe)).get_columns() == (
+        "float",
+        "int",
+        "str",
+    )
 
 
 def test_summary_content_generator_get_columns_empty() -> None:
-    assert SummaryContentGenerator(pl.DataFrame({})).get_columns() == ()
+    assert SummaryContentGenerator(DataFrameState(pl.DataFrame({}))).get_columns() == ()
 
 
 def test_summary_content_generator_get_null_count(dataframe: pl.DataFrame) -> None:
-    assert SummaryContentGenerator(dataframe).get_null_count() == (1, 0, 2)
+    assert SummaryContentGenerator(DataFrameState(dataframe)).get_null_count() == (1, 0, 2)
 
 
 def test_summary_content_generator_get_null_count_empty() -> None:
-    assert SummaryContentGenerator(pl.DataFrame({})).get_null_count() == ()
+    assert SummaryContentGenerator(DataFrameState(pl.DataFrame({}))).get_null_count() == ()
 
 
 def test_summary_content_generator_get_nunique(dataframe: pl.DataFrame) -> None:
-    assert SummaryContentGenerator(dataframe).get_nunique() == (5, 2, 4)
+    assert SummaryContentGenerator(DataFrameState(dataframe)).get_nunique() == (5, 2, 4)
 
 
 def test_summary_content_generator_get_nunique_empty() -> None:
-    assert SummaryContentGenerator(pl.DataFrame({})).get_nunique() == ()
+    assert SummaryContentGenerator(DataFrameState(pl.DataFrame({}))).get_nunique() == ()
 
 
 def test_summary_content_generator_get_dtypes(dataframe: pl.DataFrame) -> None:
-    assert SummaryContentGenerator(dataframe).get_dtypes() == (
+    assert SummaryContentGenerator(DataFrameState(dataframe)).get_dtypes() == (
         pl.Float64(),
         pl.Int64(),
         pl.String(),
@@ -116,14 +111,14 @@ def test_summary_content_generator_get_dtypes(dataframe: pl.DataFrame) -> None:
 
 
 def test_summary_content_generator_get_dtypes_empty() -> None:
-    assert SummaryContentGenerator(pl.DataFrame({})).get_dtypes() == ()
+    assert SummaryContentGenerator(DataFrameState(pl.DataFrame({}))).get_dtypes() == ()
 
 
 def test_summary_content_generator_get_most_frequent_values(
     dataframe: pl.DataFrame,
 ) -> None:
     assert objects_are_allclose(
-        SummaryContentGenerator(dataframe).get_most_frequent_values(),
+        SummaryContentGenerator(DataFrameState(dataframe)).get_most_frequent_values(),
         (
             ((2.2, 2), (1.2, 1), (4.2, 1), (None, 1), (1.0, 1)),
             ((1, 5), (0, 1)),
@@ -133,23 +128,29 @@ def test_summary_content_generator_get_most_frequent_values(
 
 
 def test_summary_content_generator_get_most_frequent_values_empty() -> None:
-    assert SummaryContentGenerator(pl.DataFrame({})).get_most_frequent_values() == ()
+    assert (
+        SummaryContentGenerator(DataFrameState(pl.DataFrame({}))).get_most_frequent_values() == ()
+    )
 
 
 def test_summary_content_generator_generate_content(dataframe: pl.DataFrame) -> None:
-    assert isinstance(SummaryContentGenerator(dataframe).generate_content(), str)
+    assert isinstance(SummaryContentGenerator(DataFrameState(dataframe)).generate_content(), str)
 
 
 def test_summary_content_generator_generate_content_empty() -> None:
-    assert isinstance(SummaryContentGenerator(frame=pl.DataFrame()).generate_content(), str)
+    assert isinstance(
+        SummaryContentGenerator(DataFrameState(pl.DataFrame())).generate_content(), str
+    )
 
 
 def test_summary_content_generator_generate_content_empty_rows() -> None:
     assert isinstance(
         SummaryContentGenerator(
-            frame=pl.DataFrame(
-                {"float": [], "int": [], "str": []},
-                schema={"float": pl.Float64, "int": pl.Int64, "str": pl.String},
+            DataFrameState(
+                pl.DataFrame(
+                    {"float": [], "int": [], "str": []},
+                    schema={"float": pl.Float64, "int": pl.Int64, "str": pl.String},
+                )
             )
         ).generate_content(),
         str,
@@ -157,23 +158,27 @@ def test_summary_content_generator_generate_content_empty_rows() -> None:
 
 
 def test_summary_content_generator_generate_body(dataframe: pl.DataFrame) -> None:
-    assert isinstance(SummaryContentGenerator(dataframe).generate_body(), str)
+    assert isinstance(SummaryContentGenerator(DataFrameState(dataframe)).generate_body(), str)
 
 
 def test_summary_content_generator_generate_body_args(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        SummaryContentGenerator(dataframe).generate_body(number="1.", tags=["meow"], depth=1),
+        SummaryContentGenerator(DataFrameState(dataframe)).generate_body(
+            number="1.", tags=["meow"], depth=1
+        ),
         str,
     )
 
 
 def test_summary_content_generator_generate_toc(dataframe: pl.DataFrame) -> None:
-    assert isinstance(SummaryContentGenerator(dataframe).generate_toc(), str)
+    assert isinstance(SummaryContentGenerator(DataFrameState(dataframe)).generate_toc(), str)
 
 
 def test_summary_content_generator_generate_toc_args(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        SummaryContentGenerator(dataframe).generate_toc(number="1.", tags=["meow"], depth=1),
+        SummaryContentGenerator(DataFrameState(dataframe)).generate_toc(
+            number="1.", tags=["meow"], depth=1
+        ),
         str,
     )
 
