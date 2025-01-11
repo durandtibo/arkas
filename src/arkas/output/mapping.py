@@ -35,13 +35,10 @@ class OutputDict(BaseLazyOutput):
     >>> from arkas.output import OutputDict, Output, AccuracyOutput
     >>> from arkas.content import ContentGenerator
     >>> from arkas.evaluator2 import Evaluator
-    >>> from arkas.plotter import Plotter
     >>> from arkas.state import AccuracyState
     >>> output = OutputDict(
     ...     {
-    ...         "one": Output(
-    ...             content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-    ...         ),
+    ...         "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
     ...         "two": AccuracyOutput(
     ...             AccuracyState(
     ...                 y_true=np.array([1, 0, 0, 1, 1]),

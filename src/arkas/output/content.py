@@ -26,7 +26,6 @@ class ContentOutput(Output):
     ContentOutput(
       (content): ContentGenerator()
       (evaluator): Evaluator(count=0)
-      (plotter): Plotter(count=0)
     )
     >>> output.get_content_generator()
     ContentGenerator()

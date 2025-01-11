@@ -40,7 +40,6 @@ class ContentAnalyzer(BaseLazyAnalyzer):
     ContentOutput(
       (content): ContentGenerator()
       (evaluator): Evaluator(count=0)
-      (plotter): Plotter(count=0)
     )
 
     ```

@@ -75,7 +75,6 @@ class BaseOutput(ABC):
         Output(
           (content): ContentGenerator()
           (evaluator): Evaluator(count=5)
-          (plotter): Plotter(count=0)
         )
 
         ```

@@ -29,15 +29,11 @@ class Output(BaseLazyOutput):
     >>> from arkas.output import Output
     >>> from arkas.content import ContentGenerator
     >>> from arkas.evaluator2 import Evaluator
-    >>> from arkas.plotter import Plotter
-    >>> output = Output(
-    ...     content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-    ... )
+    >>> output = Output(content=ContentGenerator("meow"), evaluator=Evaluator())
     >>> output
     Output(
       (content): ContentGenerator()
       (evaluator): Evaluator(count=0)
-      (plotter): Plotter(count=0)
     )
     >>> output.get_content_generator()
     ContentGenerator()
