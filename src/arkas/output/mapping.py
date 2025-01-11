@@ -13,7 +13,6 @@ from coola.utils import str_indent, str_mapping
 from arkas.content.mapping import ContentGeneratorDict
 from arkas.evaluator2.mapping import EvaluatorDict
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.mapping import PlotterDict
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -69,11 +68,6 @@ class OutputDict(BaseLazyOutput):
           (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
         )
     )
-    >>> output.get_plotter()
-    PlotterDict(
-      (one): Plotter(count=0)
-      (two): Plotter(count=0)
-    )
 
     ```
     """
@@ -100,6 +94,3 @@ class OutputDict(BaseLazyOutput):
 
     def _get_evaluator(self) -> EvaluatorDict:
         return EvaluatorDict({key: output.get_evaluator() for key, output in self._outputs.items()})
-
-    def _get_plotter(self) -> PlotterDict:
-        return PlotterDict({key: output.get_plotter() for key, output in self._outputs.items()})

@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 
     from arkas.content.base import BaseContentGenerator
     from arkas.evaluator2.base import BaseEvaluator
-    from arkas.plotter.base import BasePlotter
 
 
 class BaseOutput(ABC):
@@ -199,39 +198,6 @@ class BaseOutput(ABC):
         AccuracyEvaluator(
           (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
         )
-
-        ```
-        """
-
-    @abstractmethod
-    def get_plotter(self, lazy: bool = True) -> BasePlotter:
-        r"""Get the plotter associated to the output.
-
-        Args:
-            lazy: If ``True``, it forces the computation of the
-                figures, otherwise it returns a plotter object
-                that contains the logic to generate the figures.
-
-        Returns:
-            The plotter.
-
-        Example usage:
-
-        ```pycon
-
-        >>> import numpy as np
-        >>> from arkas.output import AccuracyOutput
-        >>> from arkas.state import AccuracyState
-        >>> output = AccuracyOutput(
-        ...     AccuracyState(
-        ...         y_true=np.array([1, 0, 0, 1, 1]),
-        ...         y_pred=np.array([1, 0, 0, 1, 1]),
-        ...         y_true_name="target",
-        ...         y_pred_name="pred",
-        ...     )
-        ... )
-        >>> output.get_plotter()
-        Plotter(count=0)
 
         ```
         """

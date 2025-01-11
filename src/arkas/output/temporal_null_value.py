@@ -12,7 +12,6 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.temporal_null_value import TemporalNullValueContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.temporal_null_value import TemporalNullValuePlotter
 
 if TYPE_CHECKING:
     from arkas.state.temporal_dataframe import TemporalDataFrameState
@@ -65,10 +64,6 @@ class TemporalNullValueOutput(BaseLazyOutput):
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
-    >>> output.get_plotter()
-    TemporalNullValuePlotter(
-      (state): TemporalDataFrameState(dataframe=(4, 4), temporal_column='datetime', period=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
-    )
 
     ```
     """
@@ -94,6 +89,3 @@ class TemporalNullValueOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
-
-    def _get_plotter(self) -> TemporalNullValuePlotter:
-        return TemporalNullValuePlotter(self._state)

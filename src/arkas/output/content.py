@@ -8,7 +8,6 @@ __all__ = ["ContentOutput"]
 from arkas.content.vanilla import ContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.vanilla import Output
-from arkas.plotter.vanilla import Plotter
 
 
 class ContentOutput(Output):
@@ -33,13 +32,9 @@ class ContentOutput(Output):
     ContentGenerator()
     >>> output.get_evaluator()
     Evaluator(count=0)
-    >>> output.get_plotter()
-    Plotter(count=0)
 
     ```
     """
 
     def __init__(self, content: str) -> None:
-        super().__init__(
-            content=ContentGenerator(content), evaluator=Evaluator(), plotter=Plotter()
-        )
+        super().__init__(content=ContentGenerator(content), evaluator=Evaluator())

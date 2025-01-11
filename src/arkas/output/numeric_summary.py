@@ -12,7 +12,6 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.numeric_summary import NumericSummaryContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
     from arkas.state.dataframe import DataFrameState
@@ -51,8 +50,6 @@ class NumericSummaryOutput(BaseLazyOutput):
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
-    >>> output.get_plotter()
-    Plotter(count=0)
 
     ```
     """
@@ -78,6 +75,3 @@ class NumericSummaryOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
-
-    def _get_plotter(self) -> Plotter:
-        return Plotter()

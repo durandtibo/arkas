@@ -6,7 +6,6 @@ import pytest
 from arkas.content import ContentGenerator, ScatterColumnContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, ScatterColumnOutput
-from arkas.plotter import Plotter, ScatterColumnPlotter
 from arkas.state import ScatterDataFrameState
 
 
@@ -90,21 +89,4 @@ def test_scatter_column_output_get_evaluator_lazy_false(dataframe: pl.DataFrame)
         ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
         .get_evaluator(lazy=False)
         .equal(Evaluator())
-    )
-
-
-def test_scatter_column_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert (
-        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
-        .get_plotter()
-        .equal(ScatterColumnPlotter(ScatterDataFrameState(dataframe, x="col1", y="col2")))
-    )
-
-
-def test_scatter_column_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert isinstance(
-        ScatterColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2")).get_plotter(
-            lazy=False
-        ),
-        Plotter,
     )

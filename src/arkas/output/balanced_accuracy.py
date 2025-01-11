@@ -11,7 +11,6 @@ from coola.utils import repr_indent, repr_mapping
 from arkas.content.balanced_accuracy import BalancedAccuracyContentGenerator
 from arkas.evaluator2.balanced_accuracy import BalancedAccuracyEvaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
     from arkas.state.accuracy import AccuracyState
@@ -51,8 +50,6 @@ class BalancedAccuracyOutput(BaseLazyOutput):
     BalancedAccuracyEvaluator(
       (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
     )
-    >>> output.get_plotter()
-    Plotter(count=0)
 
     ```
     """
@@ -74,6 +71,3 @@ class BalancedAccuracyOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> BalancedAccuracyEvaluator:
         return BalancedAccuracyEvaluator(state=self._state)
-
-    def _get_plotter(self) -> Plotter:
-        return Plotter()

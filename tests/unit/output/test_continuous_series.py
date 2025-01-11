@@ -6,7 +6,6 @@ import pytest
 from arkas.content import ContentGenerator, ContinuousSeriesContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import ContinuousSeriesOutput, Output
-from arkas.plotter import ContinuousSeriesPlotter, Plotter
 from arkas.state import SeriesState
 
 
@@ -67,15 +66,3 @@ def test_continuous_series_output_get_evaluator_lazy_true(series: pl.Series) -> 
 
 def test_continuous_series_output_get_evaluator_lazy_false(series: pl.Series) -> None:
     assert ContinuousSeriesOutput(SeriesState(series)).get_evaluator(lazy=False).equal(Evaluator())
-
-
-def test_continuous_series_output_get_plotter_lazy_true(series: pl.Series) -> None:
-    assert (
-        ContinuousSeriesOutput(SeriesState(series))
-        .get_plotter()
-        .equal(ContinuousSeriesPlotter(SeriesState(series)))
-    )
-
-
-def test_continuous_series_output_get_plotter_lazy_false(series: pl.Series) -> None:
-    assert isinstance(ContinuousSeriesOutput(SeriesState(series)).get_plotter(lazy=False), Plotter)

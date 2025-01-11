@@ -6,7 +6,6 @@ import pytest
 from arkas.content import ContentGenerator, NumericSummaryContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import NumericSummaryOutput, Output
-from arkas.plotter import Plotter
 from arkas.state import DataFrameState
 
 
@@ -75,14 +74,4 @@ def test_numeric_summary_output_get_evaluator_lazy_true(dataframe: pl.DataFrame)
 def test_numeric_summary_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
     assert (
         NumericSummaryOutput(DataFrameState(dataframe)).get_evaluator(lazy=False).equal(Evaluator())
-    )
-
-
-def test_numeric_summary_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert NumericSummaryOutput(DataFrameState(dataframe)).get_plotter().equal(Plotter())
-
-
-def test_numeric_summary_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert isinstance(
-        NumericSummaryOutput(DataFrameState(dataframe)).get_plotter(lazy=False), Plotter
     )

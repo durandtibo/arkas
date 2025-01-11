@@ -5,7 +5,6 @@ import numpy as np
 from arkas.content import ColumnCooccurrenceContentGenerator, ContentGenerator
 from arkas.evaluator2 import ColumnCooccurrenceEvaluator, Evaluator
 from arkas.output import ColumnCooccurrenceOutput, Output
-from arkas.plotter import Plotter
 from arkas.state import ColumnCooccurrenceState
 
 ##############################################
@@ -108,27 +107,4 @@ def test_column_cooccurrence_output_get_evaluator_lazy_false() -> None:
         )
         .get_evaluator(lazy=False)
         .equal(Evaluator({"column_cooccurrence": np.ones((3, 3))}))
-    )
-
-
-def test_column_cooccurrence_output_get_plotter_lazy_true() -> None:
-    assert (
-        ColumnCooccurrenceOutput(
-            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
-        )
-        .get_content_generator()
-        .equal(
-            ColumnCooccurrenceContentGenerator(
-                ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
-            )
-        )
-    )
-
-
-def test_column_cooccurrence_output_get_plotter_lazy_false() -> None:
-    assert isinstance(
-        ColumnCooccurrenceOutput(
-            ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
-        ).get_plotter(lazy=False),
-        Plotter,
     )

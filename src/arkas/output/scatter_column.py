@@ -11,7 +11,6 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.scatter_column import ScatterColumnContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.scatter_column import ScatterColumnPlotter
 
 if TYPE_CHECKING:
     from arkas.state.scatter_dataframe import ScatterDataFrameState
@@ -49,10 +48,6 @@ class ScatterColumnOutput(BaseLazyOutput):
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
-    >>> output.get_plotter()
-    ScatterColumnPlotter(
-      (state): ScatterDataFrameState(dataframe=(4, 3), x='col1', y='col2', color=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
-    )
 
     ```
     """
@@ -78,6 +73,3 @@ class ScatterColumnOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
-
-    def _get_plotter(self) -> ScatterColumnPlotter:
-        return ScatterColumnPlotter(self._state)

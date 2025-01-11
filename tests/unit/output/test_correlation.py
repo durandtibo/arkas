@@ -6,7 +6,6 @@ import pytest
 from arkas.content import ContentGenerator, CorrelationContentGenerator
 from arkas.evaluator2 import CorrelationEvaluator, Evaluator
 from arkas.output import CorrelationOutput, Output
-from arkas.plotter import CorrelationPlotter, Plotter
 from arkas.state import DataFrameState
 
 
@@ -104,19 +103,4 @@ def test_correlation_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) ->
                 }
             )
         )
-    )
-
-
-def test_correlation_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert (
-        CorrelationOutput(DataFrameState(dataframe))
-        .get_plotter()
-        .equal(CorrelationPlotter(DataFrameState(dataframe)))
-    )
-
-
-def test_correlation_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert isinstance(
-        CorrelationOutput(DataFrameState(dataframe)).get_plotter(lazy=False),
-        Plotter,
     )

@@ -3,7 +3,6 @@ from __future__ import annotations
 from arkas.content import ContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import EmptyOutput
-from arkas.plotter import Plotter
 
 #################################
 #     Tests for EmptyOutput     #
@@ -44,11 +43,3 @@ def test_empty_output_get_evaluator_lazy_true() -> None:
 
 def test_empty_output_get_evaluator_lazy_false() -> None:
     assert EmptyOutput().get_evaluator(lazy=False).equal(Evaluator())
-
-
-def test_empty_output_get_plotter_lazy_true() -> None:
-    assert EmptyOutput().get_plotter().equal(Plotter())
-
-
-def test_empty_output_get_plotter_lazy_false() -> None:
-    assert EmptyOutput().get_plotter(lazy=False).equal(Plotter())

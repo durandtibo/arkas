@@ -6,7 +6,6 @@ import pytest
 from arkas.content import ContentGenerator, SummaryContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, SummaryOutput
-from arkas.plotter import Plotter
 
 
 @pytest.fixture
@@ -95,11 +94,3 @@ def test_summary_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> None
 
 def test_summary_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
     assert SummaryOutput(dataframe).get_evaluator(lazy=False).equal(Evaluator())
-
-
-def test_summary_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert SummaryOutput(dataframe).get_plotter().equal(Plotter())
-
-
-def test_summary_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert SummaryOutput(dataframe).get_plotter(lazy=False).equal(Plotter())

@@ -5,7 +5,6 @@ import numpy as np
 from arkas.content import ContentGenerator, NullValueContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import NullValueOutput, Output
-from arkas.plotter import NullValuePlotter, Plotter
 from arkas.state import NullValueState
 
 #####################################
@@ -148,39 +147,4 @@ def test_null_value_output_get_evaluator_lazy_false() -> None:
         )
         .get_evaluator(lazy=False)
         .equal(Evaluator())
-    )
-
-
-def test_null_value_output_get_plotter_lazy_true() -> None:
-    assert (
-        NullValueOutput(
-            NullValueState(
-                null_count=np.array([1, 2, 3]),
-                total_count=np.array([7, 7, 7]),
-                columns=["col1", "col2", "col3"],
-            )
-        )
-        .get_plotter()
-        .equal(
-            NullValuePlotter(
-                NullValueState(
-                    null_count=np.array([1, 2, 3]),
-                    total_count=np.array([7, 7, 7]),
-                    columns=["col1", "col2", "col3"],
-                )
-            )
-        )
-    )
-
-
-def test_null_value_output_get_plotter_lazy_false() -> None:
-    assert isinstance(
-        NullValueOutput(
-            NullValueState(
-                null_count=np.array([1, 2, 3]),
-                total_count=np.array([7, 7, 7]),
-                columns=["col1", "col2", "col3"],
-            )
-        ).get_plotter(lazy=False),
-        Plotter,
     )
