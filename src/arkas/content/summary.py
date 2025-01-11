@@ -22,6 +22,7 @@ from jinja2 import Template
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.content.utils import to_str
 from arkas.utils.style import get_tab_number_style
+from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -110,14 +111,14 @@ class SummaryContentGenerator(BaseSectionContentGenerator):
         )
 
     def _create_table(self) -> str:
+        top = self._state.get_arg("top", default=5)
+        check_positive(name="top", value=top)
         return create_table(
             columns=self.get_columns(),
             null_count=self.get_null_count(),
             nunique=self.get_nunique(),
             dtypes=self.get_dtypes(),
-            most_frequent_values=self.get_most_frequent_values(
-                top=self._state.get_arg("top", default=5)
-            ),
+            most_frequent_values=self.get_most_frequent_values(top=top),
             total=self._state.dataframe.shape[0],
         )
 
