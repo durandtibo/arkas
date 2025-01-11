@@ -99,14 +99,14 @@ def test_column_correlation_output_get_evaluator_lazy_false(dataframe: pl.DataFr
         .equal(
             Evaluator(
                 {
-                    "correlation_col1": {
+                    "col1": {
                         "count": 7,
                         "pearson_coeff": 1.0,
                         "pearson_pvalue": 0.0,
                         "spearman_coeff": 1.0,
                         "spearman_pvalue": 0.0,
                     },
-                    "correlation_col2": {
+                    "col2": {
                         "count": 7,
                         "pearson_coeff": -1.0,
                         "pearson_pvalue": 0.0,

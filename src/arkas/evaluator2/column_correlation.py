@@ -44,8 +44,8 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
       (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> evaluator.evaluate()
-    {'correlation_col1': {'count': 7, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0},
-     'correlation_col2': {'count': 7, 'pearson_coeff': -1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': -1.0, 'spearman_pvalue': 0.0}}
+    {'col1': {'count': 7, 'pearson_coeff': 1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': 1.0, 'spearman_pvalue': 0.0},
+     'col2': {'count': 7, 'pearson_coeff': -1.0, 'pearson_pvalue': 0.0, 'spearman_coeff': -1.0, 'spearman_pvalue': 0.0}}
 
     ```
     """
@@ -79,5 +79,5 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
             frame = self._state.dataframe.select([col, target_column]).drop_nulls().drop_nans()
             x = frame[target_column].to_numpy()
             y = frame[col].to_numpy()
-            out[f"{prefix}correlation_{col}{suffix}"] = pearsonr(x, y) | spearmanr(x, y)
+            out[f"{prefix}{col}{suffix}"] = pearsonr(x, y) | spearmanr(x, y)
         return out

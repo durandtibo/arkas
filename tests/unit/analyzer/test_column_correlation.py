@@ -29,19 +29,19 @@ def dataframe() -> pl.DataFrame:
 ###############################################
 
 
-def test_numeric_summary_analyzer_repr() -> None:
+def test_column_correlation_analyzer_repr() -> None:
     assert repr(ColumnCorrelationAnalyzer(target_column="col3")).startswith(
         "ColumnCorrelationAnalyzer("
     )
 
 
-def test_numeric_summary_analyzer_str() -> None:
+def test_column_correlation_analyzer_str() -> None:
     assert str(ColumnCorrelationAnalyzer(target_column="col3")).startswith(
         "ColumnCorrelationAnalyzer("
     )
 
 
-def test_numeric_summary_analyzer_analyze(dataframe: pl.DataFrame) -> None:
+def test_column_correlation_analyzer_analyze(dataframe: pl.DataFrame) -> None:
     assert (
         ColumnCorrelationAnalyzer(target_column="col3")
         .analyze(dataframe)
@@ -53,13 +53,13 @@ def test_numeric_summary_analyzer_analyze(dataframe: pl.DataFrame) -> None:
     )
 
 
-def test_numeric_summary_analyzer_analyze_lazy_false(dataframe: pl.DataFrame) -> None:
+def test_column_correlation_analyzer_analyze_lazy_false(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         ColumnCorrelationAnalyzer(target_column="col3").analyze(dataframe, lazy=False), Output
     )
 
 
-def test_numeric_summary_analyzer_analyze_ignore_non_numeric_columns(
+def test_column_correlation_analyzer_analyze_ignore_non_numeric_columns(
     dataframe: pl.DataFrame,
 ) -> None:
     assert (
@@ -73,7 +73,7 @@ def test_numeric_summary_analyzer_analyze_ignore_non_numeric_columns(
     )
 
 
-def test_numeric_summary_analyzer_analyze_sort_metric(dataframe: pl.DataFrame) -> None:
+def test_column_correlation_analyzer_analyze_sort_metric(dataframe: pl.DataFrame) -> None:
     assert (
         ColumnCorrelationAnalyzer(target_column="col3", sort_metric="pearson_coeff")
         .analyze(dataframe)
@@ -85,7 +85,7 @@ def test_numeric_summary_analyzer_analyze_sort_metric(dataframe: pl.DataFrame) -
     )
 
 
-def test_numeric_summary_analyzer_analyze_columns(dataframe: pl.DataFrame) -> None:
+def test_column_correlation_analyzer_analyze_columns(dataframe: pl.DataFrame) -> None:
     assert (
         ColumnCorrelationAnalyzer(target_column="col2", columns=["col1", "col2"])
         .analyze(dataframe)
@@ -107,7 +107,7 @@ def test_numeric_summary_analyzer_analyze_columns(dataframe: pl.DataFrame) -> No
     )
 
 
-def test_numeric_summary_analyzer_analyze_columns_add_target_column(
+def test_column_correlation_analyzer_analyze_columns_add_target_column(
     dataframe: pl.DataFrame,
 ) -> None:
     assert (
@@ -121,7 +121,7 @@ def test_numeric_summary_analyzer_analyze_columns_add_target_column(
     )
 
 
-def test_numeric_summary_analyzer_analyze_exclude_columns(dataframe: pl.DataFrame) -> None:
+def test_column_correlation_analyzer_analyze_exclude_columns(dataframe: pl.DataFrame) -> None:
     assert (
         ColumnCorrelationAnalyzer(target_column="col2", exclude_columns=["col3"])
         .analyze(dataframe)
@@ -143,7 +143,7 @@ def test_numeric_summary_analyzer_analyze_exclude_columns(dataframe: pl.DataFram
     )
 
 
-def test_numeric_summary_analyzer_analyze_missing_policy_ignore(
+def test_column_correlation_analyzer_analyze_missing_policy_ignore(
     dataframe: pl.DataFrame,
 ) -> None:
     analyzer = ColumnCorrelationAnalyzer(
@@ -159,7 +159,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_ignore(
     )
 
 
-def test_numeric_summary_analyzer_analyze_missing_policy_ignore_target_column(
+def test_column_correlation_analyzer_analyze_missing_policy_ignore_target_column(
     dataframe: pl.DataFrame,
 ) -> None:
     analyzer = ColumnCorrelationAnalyzer(
@@ -171,7 +171,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_ignore_target_column(
     assert out.equal(EmptyOutput())
 
 
-def test_numeric_summary_analyzer_analyze_missing_policy_raise(
+def test_column_correlation_analyzer_analyze_missing_policy_raise(
     dataframe: pl.DataFrame,
 ) -> None:
     analyzer = ColumnCorrelationAnalyzer(
@@ -181,7 +181,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_raise(
         analyzer.analyze(dataframe)
 
 
-def test_numeric_summary_analyzer_analyze_missing_policy_raise_target_column(
+def test_column_correlation_analyzer_analyze_missing_policy_raise_target_column(
     dataframe: pl.DataFrame,
 ) -> None:
     analyzer = ColumnCorrelationAnalyzer(target_column="col5", columns=["col1", "col2", "col3"])
@@ -189,7 +189,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_raise_target_column(
         analyzer.analyze(dataframe)
 
 
-def test_numeric_summary_analyzer_analyze_missing_policy_warn(
+def test_column_correlation_analyzer_analyze_missing_policy_warn(
     dataframe: pl.DataFrame,
 ) -> None:
     analyzer = ColumnCorrelationAnalyzer(
@@ -206,7 +206,7 @@ def test_numeric_summary_analyzer_analyze_missing_policy_warn(
     )
 
 
-def test_numeric_summary_analyzer_analyze_missing_policy_warn_target_column(
+def test_column_correlation_analyzer_analyze_missing_policy_warn_target_column(
     dataframe: pl.DataFrame,
 ) -> None:
     analyzer = ColumnCorrelationAnalyzer(
@@ -219,47 +219,47 @@ def test_numeric_summary_analyzer_analyze_missing_policy_warn_target_column(
     assert out.equal(EmptyOutput())
 
 
-def test_numeric_summary_analyzer_equal_true() -> None:
+def test_column_correlation_analyzer_equal_true() -> None:
     assert ColumnCorrelationAnalyzer(target_column="col3").equal(
         ColumnCorrelationAnalyzer(target_column="col3")
     )
 
 
-def test_numeric_summary_analyzer_equal_false_different_target_column() -> None:
+def test_column_correlation_analyzer_equal_false_different_target_column() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
         ColumnCorrelationAnalyzer(target_column="col1")
     )
 
 
-def test_numeric_summary_analyzer_equal_false_different_columns() -> None:
+def test_column_correlation_analyzer_equal_false_different_columns() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
         ColumnCorrelationAnalyzer(target_column="col3", columns=["col1", "col2"])
     )
 
 
-def test_numeric_summary_analyzer_equal_false_different_exclude_columns() -> None:
+def test_column_correlation_analyzer_equal_false_different_exclude_columns() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
         ColumnCorrelationAnalyzer(target_column="col3", exclude_columns=["col2"])
     )
 
 
-def test_numeric_summary_analyzer_equal_false_different_missing_policy() -> None:
+def test_column_correlation_analyzer_equal_false_different_missing_policy() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
         ColumnCorrelationAnalyzer(target_column="col3", missing_policy="warn")
     )
 
 
-def test_numeric_summary_analyzer_equal_false_different_sort_metric() -> None:
+def test_column_correlation_analyzer_equal_false_different_sort_metric() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
         ColumnCorrelationAnalyzer(target_column="col3", sort_metric="pearson_coeff")
     )
 
 
-def test_numeric_summary_analyzer_equal_false_different_type() -> None:
+def test_column_correlation_analyzer_equal_false_different_type() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(42)
 
 
-def test_numeric_summary_analyzer_get_args() -> None:
+def test_column_correlation_analyzer_get_args() -> None:
     assert objects_are_equal(
         ColumnCorrelationAnalyzer(target_column="col3").get_args(),
         {

@@ -60,14 +60,14 @@ def test_column_correlation_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
     assert objects_are_allclose(
         evaluator.evaluate(),
         {
-            "correlation_col1": {
+            "col1": {
                 "count": 7,
                 "pearson_coeff": 1.0,
                 "pearson_pvalue": 0.0,
                 "spearman_coeff": 1.0,
                 "spearman_pvalue": 0.0,
             },
-            "correlation_col2": {
+            "col2": {
                 "count": 7,
                 "pearson_coeff": -1.0,
                 "pearson_pvalue": 0.0,
@@ -123,14 +123,14 @@ def test_column_correlation_evaluator_evaluate_drop_null_nan() -> None:
     assert objects_are_allclose(
         evaluator.evaluate(),
         {
-            "correlation_col1": {
+            "col1": {
                 "count": 7,
                 "pearson_coeff": 1.0,
                 "pearson_pvalue": 0.0,
                 "spearman_coeff": 1.0,
                 "spearman_pvalue": 0.0,
             },
-            "correlation_col2": {
+            "col2": {
                 "count": 9,
                 "pearson_coeff": -1.0,
                 "pearson_pvalue": 0.0,
@@ -154,14 +154,14 @@ def test_column_correlation_evaluator_evaluate_one_row() -> None:
     assert objects_are_allclose(
         evaluator.evaluate(),
         {
-            "correlation_col1": {
+            "col1": {
                 "count": 1,
                 "pearson_coeff": float("nan"),
                 "pearson_pvalue": float("nan"),
                 "spearman_coeff": float("nan"),
                 "spearman_pvalue": float("nan"),
             },
-            "correlation_col2": {
+            "col2": {
                 "count": 1,
                 "pearson_coeff": float("nan"),
                 "pearson_pvalue": float("nan"),
@@ -182,14 +182,14 @@ def test_column_correlation_evaluator_evaluate_empty() -> None:
     assert objects_are_allclose(
         evaluator.evaluate(),
         {
-            "correlation_col1": {
+            "col1": {
                 "count": 0,
                 "pearson_coeff": float("nan"),
                 "pearson_pvalue": float("nan"),
                 "spearman_coeff": float("nan"),
                 "spearman_pvalue": float("nan"),
             },
-            "correlation_col2": {
+            "col2": {
                 "count": 0,
                 "pearson_coeff": float("nan"),
                 "pearson_pvalue": float("nan"),
@@ -206,14 +206,14 @@ def test_column_correlation_evaluator_evaluate_prefix_suffix(dataframe: pl.DataF
     assert objects_are_allclose(
         evaluator.evaluate(prefix="prefix_", suffix="_suffix"),
         {
-            "prefix_correlation_col1_suffix": {
+            "prefix_col1_suffix": {
                 "count": 7,
                 "pearson_coeff": 1.0,
                 "pearson_pvalue": 0.0,
                 "spearman_coeff": 1.0,
                 "spearman_pvalue": 0.0,
             },
-            "prefix_correlation_col2_suffix": {
+            "prefix_col2_suffix": {
                 "count": 7,
                 "pearson_coeff": -1.0,
                 "pearson_pvalue": 0.0,
@@ -231,14 +231,14 @@ def test_column_correlation_evaluator_compute(dataframe: pl.DataFrame) -> None:
         .equal(
             Evaluator(
                 {
-                    "correlation_col1": {
+                    "col1": {
                         "count": 7,
                         "pearson_coeff": 1.0,
                         "pearson_pvalue": 0.0,
                         "spearman_coeff": 1.0,
                         "spearman_pvalue": 0.0,
                     },
-                    "correlation_col2": {
+                    "col2": {
                         "count": 7,
                         "pearson_coeff": -1.0,
                         "pearson_pvalue": 0.0,
