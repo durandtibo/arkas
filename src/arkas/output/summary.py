@@ -6,15 +6,14 @@ __all__ = ["SummaryOutput"]
 
 from typing import TYPE_CHECKING, Any
 
-from coola import objects_are_equal
+from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.content.summary import SummaryContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
-    import polars as pl
+    from arkas.state.dataframe import DataFrameState
 
 
 class SummaryOutput(BaseLazyOutput):
@@ -30,42 +29,47 @@ class SummaryOutput(BaseLazyOutput):
 
     >>> import polars as pl
     >>> from arkas.output import SummaryOutput
+    >>> from arkas.state import DataFrameState
     >>> frame = pl.DataFrame(
     ...     {
-    ...         "col1": [1.2, 4.2, 4.2, 2.2],
-    ...         "col2": [1, 1, 1, 1],
-    ...         "col3": [1, 2, 2, 2],
-    ...     },
-    ...     schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
+    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
+    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
+    ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+    ...     }
     ... )
-    >>> output = SummaryOutput(frame)
+    >>> output = SummaryOutput(DataFrameState(frame))
     >>> output
-    SummaryOutput(shape=(4, 3), top=5)
+    SummaryOutput(
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+    )
     >>> output.get_content_generator()
-    SummaryContentGenerator(shape=(4, 3), top=5)
+    SummaryContentGenerator(
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+    )
     >>> output.get_evaluator()
     Evaluator(count=0)
 
     ```
     """
 
-    def __init__(self, frame: pl.DataFrame, top: int = 5) -> None:
-        self._frame = frame
-        check_positive(name="top", value=top)
-        self._top = top
+    def __init__(self, state: DataFrameState) -> None:
+        self._state = state
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(shape={self._frame.shape}, top={self._top})"
+        args = repr_indent(repr_mapping({"state": self._state}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping({"state": self._state}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self._top == other._top and objects_are_equal(
-            self._frame, other._frame, equal_nan=equal_nan
-        )
+        return self._state.equal(other._state, equal_nan=equal_nan)
 
     def _get_content_generator(self) -> SummaryContentGenerator:
-        return SummaryContentGenerator(frame=self._frame, top=self._top)
+        return SummaryContentGenerator(self._state)
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
