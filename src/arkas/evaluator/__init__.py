@@ -16,8 +16,16 @@ __all__ = [
     "BinaryPrecisionEvaluator",
     "BinaryRecallEvaluator",
     "BinaryRocAucEvaluator",
-    "MappingEvaluator",
+    "EnergyDistanceEvaluator",
+    "EvaluatorDict",
+    "JensenShannonDivergenceEvaluator",
+    "KLDivEvaluator",
     "MeanAbsoluteErrorEvaluator",
+    "MeanAbsolutePercentageErrorEvaluator",
+    "MeanSquaredErrorEvaluator",
+    "MeanSquaredLogErrorEvaluator",
+    "MeanTweedieDevianceEvaluator",
+    "MedianAbsoluteErrorEvaluator",
     "MulticlassAveragePrecisionEvaluator",
     "MulticlassConfusionMatrixEvaluator",
     "MulticlassFbetaScoreEvaluator",
@@ -32,7 +40,12 @@ __all__ = [
     "MultilabelPrecisionEvaluator",
     "MultilabelRecallEvaluator",
     "MultilabelRocAucEvaluator",
+    "PearsonCorrelationEvaluator",
+    "R2ScoreEvaluator",
+    "RootMeanSquaredErrorEvaluator",
     "SequentialEvaluator",
+    "SpearmanCorrelationEvaluator",
+    "WassersteinDistanceEvaluator",
     "is_evaluator_config",
     "setup_evaluator",
 ]
@@ -49,9 +62,16 @@ from arkas.evaluator.binary_jaccard import BinaryJaccardEvaluator
 from arkas.evaluator.binary_precision import BinaryPrecisionEvaluator
 from arkas.evaluator.binary_recall import BinaryRecallEvaluator
 from arkas.evaluator.binary_roc_auc import BinaryRocAucEvaluator
+from arkas.evaluator.energy import EnergyDistanceEvaluator
+from arkas.evaluator.jensen_shannon import JensenShannonDivergenceEvaluator
+from arkas.evaluator.kl import KLDivEvaluator
 from arkas.evaluator.lazy import BaseLazyEvaluator
 from arkas.evaluator.mae import MeanAbsoluteErrorEvaluator
-from arkas.evaluator.mapping import MappingEvaluator
+from arkas.evaluator.mape import MeanAbsolutePercentageErrorEvaluator
+from arkas.evaluator.mapping import EvaluatorDict
+from arkas.evaluator.median_error import MedianAbsoluteErrorEvaluator
+from arkas.evaluator.mse import MeanSquaredErrorEvaluator
+from arkas.evaluator.msle import MeanSquaredLogErrorEvaluator
 from arkas.evaluator.multiclass_ap import MulticlassAveragePrecisionEvaluator
 from arkas.evaluator.multiclass_confmat import MulticlassConfusionMatrixEvaluator
 from arkas.evaluator.multiclass_fbeta import MulticlassFbetaScoreEvaluator
@@ -66,4 +86,10 @@ from arkas.evaluator.multilabel_jaccard import MultilabelJaccardEvaluator
 from arkas.evaluator.multilabel_precision import MultilabelPrecisionEvaluator
 from arkas.evaluator.multilabel_recall import MultilabelRecallEvaluator
 from arkas.evaluator.multilabel_roc_auc import MultilabelRocAucEvaluator
+from arkas.evaluator.pearson import PearsonCorrelationEvaluator
+from arkas.evaluator.r2 import R2ScoreEvaluator
+from arkas.evaluator.rmse import RootMeanSquaredErrorEvaluator
 from arkas.evaluator.sequential import SequentialEvaluator
+from arkas.evaluator.spearman import SpearmanCorrelationEvaluator
+from arkas.evaluator.tweedie_deviance import MeanTweedieDevianceEvaluator
+from arkas.evaluator.wasserstein import WassersteinDistanceEvaluator

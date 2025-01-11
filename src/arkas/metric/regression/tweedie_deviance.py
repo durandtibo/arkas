@@ -1,4 +1,4 @@
-r"""Implement the mean squared error metrics."""
+r"""Implement the mean Tweedie deviance regression loss."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ def mean_tweedie_deviance(
     suffix: str = "",
     nan_policy: str = "propagate",
 ) -> dict[str, float]:
-    r"""Return the mean squared error (MSE).
+    r"""Return the mean Tweedie deviance regression loss.
 
     Args:
         y_true: The ground truth target values.

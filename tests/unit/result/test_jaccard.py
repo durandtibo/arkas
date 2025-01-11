@@ -56,6 +56,35 @@ def test_binary_jaccard_result_incorrect_shape() -> None:
         BinaryJaccardResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1, 0]))
 
 
+def test_binary_jaccard_result_nan_policy() -> None:
+    assert (
+        BinaryJaccardResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_binary_jaccard_result_nan_policy_default() -> None:
+    assert (
+        BinaryJaccardResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_binary_jaccard_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        BinaryJaccardResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_binary_jaccard_result_repr() -> None:
     assert repr(
         BinaryJaccardResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1]))
@@ -84,6 +113,18 @@ def test_binary_jaccard_result_equal_false_different_y_pred() -> None:
     assert not BinaryJaccardResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
     ).equal(BinaryJaccardResult(y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])))
+
+
+def test_binary_jaccard_result_equal_false_different_nan_policy() -> None:
+    assert not BinaryJaccardResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BinaryJaccardResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            nan_policy="omit",
+        )
+    )
 
 
 def test_binary_jaccard_result_equal_false_different_type() -> None:
@@ -130,6 +171,37 @@ def test_binary_jaccard_result_compute_metrics_prefix_suffix() -> None:
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {"prefix_count_suffix": 5, "prefix_jaccard_suffix": 1.0},
     )
+
+
+def test_binary_jaccard_result_compute_metrics_binary_nan_omit() -> None:
+    result = BinaryJaccardResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(result.compute_metrics(), {"count": 5, "jaccard": 1.0})
+
+
+def test_binary_jaccard_result_compute_metrics_binary_nan_propagate() -> None:
+    result = BinaryJaccardResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 6, "jaccard": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_binary_jaccard_result_compute_metrics_binary_nan_raise() -> None:
+    result = BinaryJaccardResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_binary_jaccard_result_generate_figures() -> None:
@@ -195,6 +267,35 @@ def test_multiclass_jaccard_result_incorrect_shape() -> None:
         )
 
 
+def test_multiclass_jaccard_result_nan_policy() -> None:
+    assert (
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multiclass_jaccard_result_nan_policy_default() -> None:
+    assert (
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multiclass_jaccard_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_multiclass_jaccard_result_repr() -> None:
     assert repr(
         MulticlassJaccardResult(
@@ -237,6 +338,18 @@ def test_multiclass_jaccard_result_equal_false_different_y_pred() -> None:
     ).equal(
         MulticlassJaccardResult(
             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
+        )
+    )
+
+
+def test_multiclass_jaccard_result_equal_false_different_nan_policy() -> None:
+    assert not MulticlassJaccardResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassJaccardResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="omit",
         )
     )
 
@@ -324,6 +437,52 @@ def test_multiclass_jaccard_result_compute_metrics_prefix_suffix() -> None:
     )
 
 
+def test_multiclass_jaccard_result_compute_metrics_multiclass_nan_omit() -> None:
+    result = MulticlassJaccardResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_multiclass_jaccard_result_compute_metrics_multiclass_nan_propagate() -> None:
+    result = MulticlassJaccardResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 7,
+            "macro_jaccard": float("nan"),
+            "micro_jaccard": float("nan"),
+            "jaccard": np.array([]),
+            "weighted_jaccard": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_jaccard_result_compute_metrics_multiclass_nan_raise() -> None:
+    result = MulticlassJaccardResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
+
+
 def test_multiclass_jaccard_result_generate_figures() -> None:
     result = MulticlassJaccardResult(
         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
@@ -366,6 +525,36 @@ def test_multilabel_jaccard_result_incorrect_shape() -> None:
         MultilabelJaccardResult(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0], [1, 1, 1]]),
+        )
+
+
+def test_multilabel_jaccard_result_nan_policy() -> None:
+    assert (
+        MultilabelJaccardResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multilabel_jaccard_result_nan_policy_default() -> None:
+    assert (
+        MultilabelJaccardResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multilabel_jaccard_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MultilabelJaccardResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="incorrect",
         )
 
 
@@ -419,6 +608,19 @@ def test_multilabel_jaccard_result_equal_false_different_y_pred() -> None:
         MultilabelJaccardResult(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 1, 1]]),
+        )
+    )
+
+
+def test_multilabel_jaccard_result_equal_false_different_nan_policy() -> None:
+    assert not MultilabelJaccardResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(
+        MultilabelJaccardResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="omit",
         )
     )
 
@@ -521,6 +723,64 @@ def test_multilabel_jaccard_result_compute_metrics_prefix_suffix() -> None:
             "prefix_weighted_jaccard_suffix": 1.0,
         },
     )
+
+
+def test_multilabel_jaccard_result_compute_metrics_nan_omit() -> None:
+    result = MultilabelJaccardResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 5,
+            "macro_jaccard": 1.0,
+            "micro_jaccard": 1.0,
+            "jaccard": np.array([1.0, 1.0, 1.0]),
+            "weighted_jaccard": 1.0,
+        },
+    )
+
+
+def test_multilabel_jaccard_result_compute_metrics_nan_propagate() -> None:
+    result = MultilabelJaccardResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 6,
+            "macro_jaccard": float("nan"),
+            "micro_jaccard": float("nan"),
+            "jaccard": np.array([]),
+            "weighted_jaccard": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_jaccard_result_compute_metrics_nan_raise() -> None:
+    result = MultilabelJaccardResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_multilabel_jaccard_result_generate_figures() -> None:

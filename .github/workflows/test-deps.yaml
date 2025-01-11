@@ -34,7 +34,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -83,7 +82,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -132,7 +130,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -161,7 +158,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        jinja2-version: [ 3.1.4, 3.0.3 ]
+        jinja2-version: [ 3.1.5, 3.0.3 ]
 
     steps:
       - name: Checkout
@@ -181,7 +178,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -210,7 +206,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        matplotlib-version: [ 3.9.2, 3.8.4, 3.7.4, 3.6.3 ]
+        matplotlib-version: [ 3.10.0, 3.9.2, 3.8.4, 3.7.4, 3.6.3 ]
 
     steps:
       - name: Checkout
@@ -230,7 +226,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -259,7 +254,15 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        numpy-version: [ 2.1.3, 2.0.2, 1.26.4, 1.25.2, 1.24.3, 1.23.5 ]
+        numpy-version: [
+          2.2.1,
+          2.1.3,
+          2.0.2,
+          1.26.4,
+          1.25.2,
+          1.24.3,
+          1.23.5,
+        ]
 
     steps:
       - name: Checkout
@@ -279,7 +282,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -328,7 +330,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -358,6 +359,10 @@ jobs:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
         polars-version: [
+          1.19.0,
+          1.18.0,
+          1.17.1,
+          1.16.0,
           1.15.0,
           1.14.0,
           1.12.0,
@@ -393,7 +398,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -422,7 +426,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        scikit-learn-version: [ 1.5.2, 1.4.2, 1.3.2, 1.3.0 ]
+        scikit-learn-version: [ 1.6.0, 1.5.2, 1.4.2, 1.3.2, 1.3.0 ]
 
     steps:
       - name: Checkout
@@ -442,7 +446,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -496,7 +499,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -545,7 +547,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -594,7 +595,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -643,7 +643,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -692,7 +691,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -721,7 +719,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        scipy-version: [ 1.14.1, 1.13.1, 1.12.0, 1.11.4, 1.10.1 ]
+        scipy-version: [ 1.15.0, 1.14.1, 1.13.1, 1.12.0, 1.11.4, 1.10.1 ]
 
     steps:
       - name: Checkout
@@ -741,7 +739,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version
@@ -770,7 +767,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        tqdm-version: [ 4.67.1, 4.66.5, 4.65.2, 4.65.0 ]
+        tqdm-version: [ 4.67.1, 4.66.6, 4.65.2, 4.65.0 ]
 
     steps:
       - name: Checkout
@@ -790,7 +787,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install
 
       - name: Install valid package version

@@ -25,7 +25,6 @@ jobs:
 
       - name: Install packages
         run: |
-          make config-poetry
           make install-all
 
       - name: Show installed packages
@@ -37,15 +36,30 @@ jobs:
         run: |
           python -c "import arkas"
 
+      - name: check arkas.analyzer
+        run: |
+          python -c "from arkas import analyzer"
+      - name: check arkas.content
+        run: |
+          python -c "from arkas import content"
       - name: check arkas.evaluator
         run: |
           python -c "from arkas import evaluator"
+      - name: check arkas.evaluator2
+        run: |
+          python -c "from arkas import evaluator2"
       - name: check arkas.metric
         run: |
           python -c "from arkas import metric"
+      - name: check arkas.output
+        run: |
+          python -c "from arkas import output"
       - name: check arkas.plot
         run: |
           python -c "from arkas import plot"
+      - name: check arkas.plotter
+        run: |
+          python -c "from arkas import plotter"
       - name: check arkas.reporter
         run: |
           python -c "from arkas import reporter"
@@ -58,6 +72,9 @@ jobs:
       - name: check arkas.section
         run: |
           python -c "from arkas import section"
+      - name: check arkas.state
+        run: |
+          python -c "from arkas import state"
       - name: check arkas.utils
         run: |
           python -c "from arkas import utils"

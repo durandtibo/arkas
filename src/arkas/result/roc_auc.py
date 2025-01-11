@@ -13,13 +13,14 @@ __all__ = [
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric.classification.roc_auc import (
     binary_roc_auc,
     multiclass_roc_auc,
     multilabel_roc_auc,
 )
-from arkas.metric.utils import check_same_shape_score
+from arkas.metric.utils import check_nan_policy, check_same_shape_score
 from arkas.result.base import BaseResult
 
 if TYPE_CHECKING:
@@ -36,6 +37,9 @@ class BaseRocAucResult(BaseResult):
         y_score: The target scores, can either be probability
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -47,22 +51,38 @@ class BaseRocAucResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryRocAucResult(y_true=(5,), y_score=(5,))
+    BinaryRocAucResult(y_true=(5,), y_score=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'roc_auc': 1.0}
 
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        nan_policy: str = "propagate",
+    ) -> None:
         self._y_true = y_true
         self._y_score = y_score
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_score={self._y_score.shape})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_score": self._y_score.shape,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
+
+    @property
+    def nan_policy(self) -> str:
+        return self._nan_policy
 
     @property
     def y_true(self) -> np.ndarray:
@@ -75,9 +95,11 @@ class BaseRocAucResult(BaseResult):
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return objects_are_equal(
-            self.y_true, other.y_true, equal_nan=equal_nan
-        ) and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
+        return (
+            objects_are_equal(self.y_true, other.y_true, equal_nan=equal_nan)
+            and objects_are_equal(self.y_score, other.y_score, equal_nan=equal_nan)
+            and self.nan_policy == other.nan_policy
+        )
 
 
 class BinaryRocAucResult(BaseRocAucResult):
@@ -92,6 +114,9 @@ class BinaryRocAucResult(BaseRocAucResult):
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
             be an array of shape ``(n_samples, *)``.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -103,16 +128,21 @@ class BinaryRocAucResult(BaseRocAucResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ... )
     >>> result
-    BinaryRocAucResult(y_true=(5,), y_score=(5,))
+    BinaryRocAucResult(y_true=(5,), y_score=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'roc_auc': 1.0}
 
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        nan_policy: str = "propagate",
+    ) -> None:
         check_same_shape_score(y_true, y_score)
-        super().__init__(y_true=y_true.ravel(), y_score=y_score.ravel())
+        super().__init__(y_true=y_true.ravel(), y_score=y_score.ravel(), nan_policy=nan_policy)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return binary_roc_auc(
@@ -120,6 +150,7 @@ class BinaryRocAucResult(BaseRocAucResult):
             y_score=self._y_score,
             prefix=prefix,
             suffix=suffix,
+            nan_policy=self._nan_policy,
         )
 
     def generate_figures(
@@ -140,6 +171,9 @@ class MulticlassRocAucResult(BaseRocAucResult):
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
             be an array of shape ``(n_samples, n_classes)``.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -161,7 +195,7 @@ class MulticlassRocAucResult(BaseRocAucResult):
     ...     ),
     ... )
     >>> result
-    MulticlassRocAucResult(y_true=(6,), y_score=(6, 3))
+    MulticlassRocAucResult(y_true=(6,), y_score=(6, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 6,
      'macro_roc_auc': 1.0,
@@ -172,7 +206,12 @@ class MulticlassRocAucResult(BaseRocAucResult):
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        nan_policy: str = "propagate",
+    ) -> None:
         y_true = y_true.ravel()
         if y_true.shape[0] != y_score.shape[0]:
             msg = (
@@ -180,7 +219,7 @@ class MulticlassRocAucResult(BaseRocAucResult):
                 f"{y_score.shape}"
             )
             raise RuntimeError(msg)
-        super().__init__(y_true=y_true, y_score=y_score)
+        super().__init__(y_true=y_true, y_score=y_score, nan_policy=nan_policy)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return multiclass_roc_auc(
@@ -188,6 +227,7 @@ class MulticlassRocAucResult(BaseRocAucResult):
             y_score=self._y_score,
             prefix=prefix,
             suffix=suffix,
+            nan_policy=self._nan_policy,
         )
 
     def generate_figures(
@@ -208,6 +248,9 @@ class MultilabelRocAucResult(BaseRocAucResult):
             estimates of the positive class, confidence values,
             or non-thresholded measure of decisions. This input must
             be an array of shape ``(n_samples, n_classes)``.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -220,7 +263,7 @@ class MultilabelRocAucResult(BaseRocAucResult):
     ...     y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
     ... )
     >>> result
-    MultilabelRocAucResult(y_true=(5, 3), y_score=(5, 3))
+    MultilabelRocAucResult(y_true=(5, 3), y_score=(5, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5,
      'macro_roc_auc': 1.0,
@@ -231,9 +274,14 @@ class MultilabelRocAucResult(BaseRocAucResult):
     ```
     """
 
-    def __init__(self, y_true: np.ndarray, y_score: np.ndarray) -> None:
+    def __init__(
+        self,
+        y_true: np.ndarray,
+        y_score: np.ndarray,
+        nan_policy: str = "propagate",
+    ) -> None:
         check_same_shape_score(y_true, y_score)
-        super().__init__(y_true=y_true, y_score=y_score)
+        super().__init__(y_true=y_true, y_score=y_score, nan_policy=nan_policy)
 
     def compute_metrics(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
         return multilabel_roc_auc(
@@ -241,6 +289,7 @@ class MultilabelRocAucResult(BaseRocAucResult):
             y_score=self._y_score,
             prefix=prefix,
             suffix=suffix,
+            nan_policy=self._nan_policy,
         )
 
     def generate_figures(

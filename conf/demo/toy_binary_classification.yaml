@@ -8,6 +8,10 @@ ingestor:
   _target_: grizz.ingestor.ParquetIngestor
   path: ${oc.env:PWD}/data/demo/toy_binary_classification.parquet
 
+transformer:
+  _target_: grizz.transformer.SequentialTransformer
+  transformers: []
+
 evaluator:
   _target_: arkas.evaluator.SequentialEvaluator
   evaluators:

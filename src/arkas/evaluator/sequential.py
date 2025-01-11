@@ -48,8 +48,8 @@ class SequentialEvaluator(BaseEvaluator):
     ... )
     >>> evaluator
     SequentialEvaluator(
-      (0): BinaryPrecisionEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
-      (1): BinaryRecallEvaluator(y_true=target, y_pred=pred, drop_nulls=True)
+      (0): BinaryPrecisionEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
+      (1): BinaryRecallEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
     )
     >>> data = pl.DataFrame({"pred": [1, 0, 0, 1, 1], "target": [1, 0, 0, 1, 1]})
     >>> result = evaluator.evaluate(data)

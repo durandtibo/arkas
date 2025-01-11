@@ -7,7 +7,10 @@ __all__ = ["BinaryClassificationEvaluator"]
 import logging
 from typing import TYPE_CHECKING
 
+from coola.utils.format import repr_mapping_line
+
 from arkas.evaluator.lazy import BaseLazyEvaluator
+from arkas.metric.utils import check_nan_policy
 from arkas.result import BinaryClassificationResult, Result
 from arkas.utils.array import to_array
 
@@ -30,6 +33,9 @@ class BinaryClassificationEvaluator(BaseLazyEvaluator[BinaryClassificationResult
             or non-thresholded measure of decisions.
         drop_nulls: If ``True``, the rows with null values in
             ``y_true`` or ``y_pred`` columns are dropped.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
 
     Example usage:
 
@@ -41,7 +47,7 @@ class BinaryClassificationEvaluator(BaseLazyEvaluator[BinaryClassificationResult
     ...     y_true="target", y_pred="pred", y_score="score"
     ... )
     >>> evaluator
-    BinaryClassificationEvaluator(y_true=target, y_pred=pred, y_score=score, drop_nulls=True)
+    BinaryClassificationEvaluator(y_true='target', y_pred='pred', y_score='score', drop_nulls=True, nan_policy='propagate')
     >>> data = pl.DataFrame(
     ...     {
     ...         "pred": [1, 0, 0, 1, 1],
@@ -51,31 +57,46 @@ class BinaryClassificationEvaluator(BaseLazyEvaluator[BinaryClassificationResult
     ... )
     >>> result = evaluator.evaluate(data)
     >>> result
-    BinaryClassificationResult(y_true=(5,), y_pred=(5,), y_score=(5,), betas=(1,))
+    BinaryClassificationResult(y_true=(5,), y_pred=(5,), y_score=(5,), betas=(1,), nan_policy='propagate')
 
     ```
     """
 
     def __init__(
-        self, y_true: str, y_pred: str, y_score: str | None = None, drop_nulls: bool = True
+        self,
+        y_true: str,
+        y_pred: str,
+        y_score: str | None = None,
+        drop_nulls: bool = True,
+        nan_policy: str = "propagate",
     ) -> None:
         super().__init__(drop_nulls=drop_nulls)
         self._y_true = y_true
         self._y_pred = y_pred
         self._y_score = y_score
 
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
+
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true}, y_pred={self._y_pred}, "
-            f"y_score={self._y_score}, drop_nulls={self._drop_nulls})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true,
+                "y_pred": self._y_pred,
+                "y_score": self._y_score,
+                "drop_nulls": self._drop_nulls,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     def evaluate(
         self, data: pl.DataFrame, lazy: bool = True
     ) -> BinaryClassificationResult | Result:
         logger.info(
-            f"Evaluating the binary classification metrics | y_true={self._y_true} | "
-            f"y_pred={self._y_pred} | y_score={self._y_score} | drop_nulls={self._drop_nulls}"
+            f"Evaluating the binary classification metrics | y_true={self._y_true!r} | "
+            f"y_pred={self._y_pred!r} | y_score={self._y_score!r} | "
+            f"drop_nulls={self._drop_nulls} | nan_policy={self._nan_policy!r}"
         )
         return self._evaluate(data, lazy)
 
@@ -84,6 +105,7 @@ class BinaryClassificationEvaluator(BaseLazyEvaluator[BinaryClassificationResult
             y_true=to_array(data[self._y_true]).ravel(),
             y_pred=to_array(data[self._y_pred]).ravel(),
             y_score=to_array(data[self._y_score]).ravel() if self._y_score is not None else None,
+            nan_policy=self._nan_policy,
         )
 
     def _get_columns(self) -> tuple[str, ...]:

@@ -57,6 +57,24 @@ def test_pearsonr_constant() -> None:
 
 
 @scipy_available
+def test_pearsonr_constant_one_value() -> None:
+    assert objects_are_allclose(
+        pearsonr(x=np.array([1]), y=np.array([1])),
+        {"count": 1, "pearson_coeff": float("nan"), "pearson_pvalue": float("nan")},
+        equal_nan=True,
+    )
+
+
+@scipy_available
+def test_pearsonr_constant_two_values() -> None:
+    assert objects_are_allclose(
+        pearsonr(x=np.array([1, 2]), y=np.array([1, 2])),
+        {"count": 2, "pearson_coeff": 1.0, "pearson_pvalue": 1.0},
+        equal_nan=True,
+    )
+
+
+@scipy_available
 def test_pearsonr_empty() -> None:
     assert objects_are_allclose(
         pearsonr(x=np.array([]), y=np.array([])),

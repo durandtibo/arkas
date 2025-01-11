@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import polars as pl
+import pytest
 
 from arkas.evaluator import MulticlassConfusionMatrixEvaluator
 from arkas.result import EmptyResult, MulticlassConfusionMatrixResult, Result
@@ -110,5 +111,28 @@ def test_multiclass_confusion_matrix_evaluator_evaluate_drop_nulls_false() -> No
                 y_pred=np.array([3.0, 2.0, 0.0, 1.0, 0.0, float("nan"), 1.0, float("nan")]),
             ),
             equal_nan=True,
+        )
+    )
+
+
+@pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
+def test_multiclass_confusion_matrix_evaluator_evaluate_nan_policy(nan_policy: str) -> None:
+    assert (
+        MulticlassConfusionMatrixEvaluator(y_true="target", y_pred="pred", nan_policy=nan_policy)
+        .evaluate(
+            pl.DataFrame(
+                {
+                    "pred": [3, 2, 0, 1, 0, None, 1, None],
+                    "target": [1, 2, 3, 2, 1, 2, None, None],
+                    "col": [1, None, 3, 4, 5, None, 7, None],
+                }
+            )
+        )
+        .equal(
+            MulticlassConfusionMatrixResult(
+                y_true=np.array([1, 2, 3, 2, 1]),
+                y_pred=np.array([3, 2, 0, 1, 0]),
+                nan_policy=nan_policy,
+            ),
         )
     )

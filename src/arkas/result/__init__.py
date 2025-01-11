@@ -17,11 +17,15 @@ __all__ = [
     "BinaryRocAucResult",
     "EmptyResult",
     "EnergyDistanceResult",
-    "JSDivResult",
+    "JensenShannonDivergenceResult",
     "KLDivResult",
     "MappingResult",
     "MeanAbsoluteErrorResult",
+    "MeanAbsolutePercentageErrorResult",
     "MeanSquaredErrorResult",
+    "MeanSquaredLogErrorResult",
+    "MeanTweedieDevianceResult",
+    "MedianAbsoluteErrorResult",
     "MulticlassAveragePrecisionResult",
     "MulticlassConfusionMatrixResult",
     "MulticlassFbetaScoreResult",
@@ -48,13 +52,14 @@ __all__ = [
     "WassersteinDistanceResult",
 ]
 
-from arkas.result.accuracy import AccuracyResult, BalancedAccuracyResult
+from arkas.result.accuracy import AccuracyResult
 from arkas.result.ap import (
     AveragePrecisionResult,
     BinaryAveragePrecisionResult,
     MulticlassAveragePrecisionResult,
     MultilabelAveragePrecisionResult,
 )
+from arkas.result.balanced_accuracy import BalancedAccuracyResult
 from arkas.result.base import BaseResult
 from arkas.result.binary_classification import BinaryClassificationResult
 from arkas.result.confmat import (
@@ -73,11 +78,14 @@ from arkas.result.jaccard import (
     MulticlassJaccardResult,
     MultilabelJaccardResult,
 )
-from arkas.result.js import JSDivResult
+from arkas.result.jensen_shannon import JensenShannonDivergenceResult
 from arkas.result.kl import KLDivResult
 from arkas.result.mae import MeanAbsoluteErrorResult
+from arkas.result.mape import MeanAbsolutePercentageErrorResult
 from arkas.result.mapping import MappingResult
+from arkas.result.median_error import MedianAbsoluteErrorResult
 from arkas.result.mse import MeanSquaredErrorResult
+from arkas.result.msle import MeanSquaredLogErrorResult
 from arkas.result.pearson import PearsonCorrelationResult
 from arkas.result.precision import (
     BinaryPrecisionResult,
@@ -101,5 +109,6 @@ from arkas.result.roc_auc import (
 )
 from arkas.result.sequential import SequentialResult
 from arkas.result.spearman import SpearmanCorrelationResult
+from arkas.result.tweedie_deviance import MeanTweedieDevianceResult
 from arkas.result.vanilla import EmptyResult, Result
 from arkas.result.wasserstein import WassersteinDistanceResult

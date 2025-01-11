@@ -18,7 +18,7 @@ __all__ = [
     "energy_distance",
     "fbeta_score",
     "jaccard",
-    "js_div",
+    "jensen_shannon_divergence",
     "kl_div",
     "mean_absolute_error",
     "mean_absolute_percentage_error",
@@ -54,13 +54,15 @@ __all__ = [
     "wasserstein_distance",
 ]
 
-from arkas.metric.classification.accuracy import accuracy, balanced_accuracy
+
+from arkas.metric.classification.accuracy import accuracy
 from arkas.metric.classification.ap import (
     average_precision,
     binary_average_precision,
     multiclass_average_precision,
     multilabel_average_precision,
 )
+from arkas.metric.classification.balanced_accuracy import balanced_accuracy
 from arkas.metric.classification.confmat import (
     binary_confusion_matrix,
     confusion_matrix,
@@ -106,7 +108,7 @@ from arkas.metric.classification.topk_accuracy import (
 from arkas.metric.correlation.pearson import pearsonr
 from arkas.metric.correlation.spearman import spearmanr
 from arkas.metric.distribution.energy import energy_distance
-from arkas.metric.distribution.js import js_div
+from arkas.metric.distribution.jensen_shannon import jensen_shannon_divergence
 from arkas.metric.distribution.kl import kl_div
 from arkas.metric.distribution.wasserstein import wasserstein_distance
 from arkas.metric.regression.abs_error import mean_absolute_error, median_absolute_error

@@ -7,6 +7,7 @@ __all__ = ["RootMeanSquaredErrorResult"]
 from typing import TYPE_CHECKING, Any
 
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric.regression.rmse import root_mean_squared_error
 from arkas.metric.utils import check_nan_policy, check_same_shape_pred
@@ -36,7 +37,7 @@ class RootMeanSquaredErrorResult(BaseResult):
     ...     y_true=np.array([1, 2, 3, 4, 5]), y_pred=np.array([1, 2, 3, 4, 5])
     ... )
     >>> result
-    RootMeanSquaredErrorResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+    RootMeanSquaredErrorResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'count': 5, 'root_mean_squared_error': 0.0}
 
@@ -55,10 +56,14 @@ class RootMeanSquaredErrorResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_pred={self._y_pred.shape}, nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_pred": self._y_pred.shape,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:

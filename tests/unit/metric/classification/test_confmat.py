@@ -194,7 +194,6 @@ def test_confusion_matrix_multiclass_nan_propagate() -> None:
             "confusion_matrix": np.zeros((0, 0), dtype=np.int64),
             "count": 7,
         },
-        equal_nan=True,
     )
 
 
@@ -288,7 +287,6 @@ def test_confusion_matrix_multilabel_nan_propagate() -> None:
             "confusion_matrix": np.zeros((0, 0, 0), dtype=np.int64),
             "count": 6,
         },
-        equal_nan=True,
     )
 
 
@@ -701,7 +699,6 @@ def test_multiclass_confusion_matrix_nan_propagate() -> None:
             "confusion_matrix": np.zeros((0, 0), dtype=np.int64),
             "count": 7,
         },
-        equal_nan=True,
     )
 
 
@@ -715,7 +712,6 @@ def test_multiclass_confusion_matrix_nan_propagate_y_true() -> None:
             "confusion_matrix": np.zeros((0, 0), dtype=np.int64),
             "count": 7,
         },
-        equal_nan=True,
     )
 
 
@@ -729,7 +725,6 @@ def test_multiclass_confusion_matrix_nan_propagate_y_pred() -> None:
             "confusion_matrix": np.zeros((0, 0), dtype=np.int64),
             "count": 7,
         },
-        equal_nan=True,
     )
 
 
@@ -801,7 +796,6 @@ def test_multilabel_confusion_matrix_1_class_2d() -> None:
             "confusion_matrix": np.array([[[2, 0], [0, 3]]]),
             "count": 5,
         },
-        show_difference=True,
     )
 
 
@@ -907,7 +901,6 @@ def test_multilabel_confusion_matrix_nan_propagate() -> None:
             "confusion_matrix": np.zeros((0, 0, 0), dtype=np.int64),
             "count": 5,
         },
-        equal_nan=True,
     )
 
 
@@ -921,7 +914,6 @@ def test_multilabel_confusion_matrix_nan_propagate_y_true() -> None:
             "confusion_matrix": np.zeros((0, 0, 0), dtype=np.int64),
             "count": 5,
         },
-        equal_nan=True,
     )
 
 
@@ -935,7 +927,6 @@ def test_multilabel_confusion_matrix_nan_propagate_y_pred() -> None:
             "confusion_matrix": np.zeros((0, 0, 0), dtype=np.int64),
             "count": 5,
         },
-        equal_nan=True,
     )
 
 

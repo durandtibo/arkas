@@ -12,13 +12,7 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
 from arkas.section.base import BaseSection
-from arkas.section.utils import (
-    GO_TO_TOP,
-    render_html_toc,
-    tags2id,
-    tags2title,
-    valid_h_tag,
-)
+from arkas.utils.html import GO_TO_TOP, render_toc, tags2id, tags2title, valid_h_tag
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -49,7 +43,7 @@ class AccuracySection(BaseSection):
     ... )
     >>> section
     AccuracySection(
-      (result): AccuracyResult(y_true=(5,), y_pred=(5,), nan_policy=propagate)
+      (result): AccuracyResult(y_true=(5,), y_pred=(5,), nan_policy='propagate')
     )
     >>> section.generate_html_body()
 
@@ -93,7 +87,7 @@ class AccuracySection(BaseSection):
     def generate_html_toc(
         self, number: str = "", tags: Sequence[str] = (), depth: int = 0, max_depth: int = 1
     ) -> str:
-        return render_html_toc(number=number, tags=tags, depth=depth, max_depth=max_depth)
+        return render_toc(number=number, tags=tags, depth=depth, max_depth=max_depth)
 
 
 def create_section_template() -> str:

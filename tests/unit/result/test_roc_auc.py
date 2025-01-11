@@ -56,6 +56,36 @@ def test_binary_roc_auc_result_incorrect_shape() -> None:
         BinaryRocAucResult(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1, 4]))
 
 
+def test_binary_roc_auc_result_nan_policy() -> None:
+    assert (
+        BinaryRocAucResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_binary_roc_auc_result_nan_policy_default() -> None:
+    assert (
+        BinaryRocAucResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_binary_roc_auc_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        BinaryRocAucResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_binary_roc_auc_result_repr() -> None:
     assert repr(
         BinaryRocAucResult(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1]))
@@ -88,6 +118,18 @@ def test_binary_roc_auc_result_equal_false_different_y_score() -> None:
     assert not BinaryRocAucResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ).equal(BinaryRocAucResult(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 0])))
+
+
+def test_binary_roc_auc_result_equal_false_different_nan_policy() -> None:
+    assert not BinaryRocAucResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
+    ).equal(
+        BinaryRocAucResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_score=np.array([2, -1, 0, 3, 1]),
+            nan_policy="omit",
+        )
+    )
 
 
 def test_binary_roc_auc_result_equal_false_different_type() -> None:
@@ -133,6 +175,40 @@ def test_binary_roc_auc_result_compute_metrics_prefix_suffix() -> None:
         result.compute_metrics(prefix="prefix_", suffix="_suffix"),
         {"prefix_count_suffix": 5, "prefix_roc_auc_suffix": 1.0},
     )
+
+
+def test_binary_roc_auc_result_compute_metrics_nan_omit() -> None:
+    result = BinaryRocAucResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]),
+        y_score=np.array([float("nan"), -1, 0, 3, 1]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 3, "roc_auc": 1.0},
+    )
+
+
+def test_binary_roc_auc_result_compute_metrics_nan_propagate() -> None:
+    result = BinaryRocAucResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]),
+        y_score=np.array([float("nan"), -1, 0, 3, 1]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {"count": 5, "roc_auc": float("nan")},
+        equal_nan=True,
+    )
+
+
+def test_binary_roc_auc_result_compute_metrics_nan_raise() -> None:
+    result = BinaryRocAucResult(
+        y_true=np.array([1, 0, 0, 1, float("nan")]),
+        y_score=np.array([float("nan"), -1, 0, 3, 1]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_binary_roc_auc_result_generate_figures() -> None:
@@ -241,6 +317,63 @@ def test_multiclass_roc_auc_result_incorrect_shape() -> None:
         )
 
 
+def test_multiclass_roc_auc_result_nan_policy() -> None:
+    assert (
+        MulticlassRocAucResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multiclass_roc_auc_result_nan_policy_default() -> None:
+    assert (
+        MulticlassRocAucResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multiclass_roc_auc_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MulticlassRocAucResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+            nan_policy="incorrect",
+        )
+
+
 def test_multiclass_roc_auc_result_repr() -> None:
     assert repr(
         MulticlassRocAucResult(
@@ -340,6 +473,37 @@ def test_multiclass_roc_auc_result_equal_false_different_y_score() -> None:
         ),
     ).equal(
         MulticlassRocAucResult(y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 0]))
+    )
+
+
+def test_multiclass_roc_auc_result_equal_false_different_nan_policy() -> None:
+    assert not MulticlassRocAucResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, 0.3],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [0.1, 0.2, 0.7],
+            ]
+        ),
+    ).equal(
+        MulticlassRocAucResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_score=np.array(
+                [
+                    [0.7, 0.2, 0.1],
+                    [0.4, 0.3, 0.3],
+                    [0.1, 0.8, 0.1],
+                    [0.2, 0.5, 0.3],
+                    [0.3, 0.2, 0.5],
+                    [0.1, 0.2, 0.7],
+                ]
+            ),
+            nan_policy="omit",
+        )
     )
 
 
@@ -483,6 +647,82 @@ def test_multiclass_roc_auc_result_compute_metrics_prefix_suffix() -> None:
     )
 
 
+def test_multiclass_roc_auc_result_compute_metrics_nan_omit() -> None:
+    result = MulticlassRocAucResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, float("nan")],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [float("nan"), float("nan"), float("nan")],
+                [0.7, 0.2, 0.1],
+            ]
+        ),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 4,
+            "macro_roc_auc": 1.0,
+            "micro_roc_auc": 1.0,
+            "roc_auc": np.array([1.0, 1.0, 1.0]),
+            "weighted_roc_auc": 1.0,
+        },
+    )
+
+
+def test_multiclass_roc_auc_result_compute_metrics_nan_propagate() -> None:
+    result = MulticlassRocAucResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, float("nan")],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [float("nan"), float("nan"), float("nan")],
+                [0.7, 0.2, 0.1],
+            ]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 7,
+            "macro_roc_auc": float("nan"),
+            "micro_roc_auc": float("nan"),
+            "roc_auc": np.array([]),
+            "weighted_roc_auc": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multiclass_roc_auc_result_compute_metrics_nan_raise() -> None:
+    result = MulticlassRocAucResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2, float("nan")]),
+        y_score=np.array(
+            [
+                [0.7, 0.2, 0.1],
+                [0.4, 0.3, float("nan")],
+                [0.1, 0.8, 0.1],
+                [0.2, 0.5, 0.3],
+                [0.3, 0.2, 0.5],
+                [float("nan"), float("nan"), float("nan")],
+                [0.7, 0.2, 0.1],
+            ]
+        ),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
+
+
 def test_multiclass_roc_auc_result_generate_figures() -> None:
     result = MulticlassRocAucResult(
         y_true=np.array([0, 0, 1, 1, 2, 2]),
@@ -555,6 +795,36 @@ def test_multilabel_roc_auc_result_incorrect_shape() -> None:
         )
 
 
+def test_multilabel_roc_auc_result_nan_policy() -> None:
+    assert (
+        MultilabelRocAucResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multilabel_roc_auc_result_nan_policy_default() -> None:
+    assert (
+        MultilabelRocAucResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multilabel_roc_auc_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MultilabelRocAucResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+            nan_policy="incorrect",
+        )
+
+
 def test_multilabel_roc_auc_result_repr() -> None:
     assert repr(
         MultilabelRocAucResult(
@@ -605,6 +875,19 @@ def test_multilabel_roc_auc_result_equal_false_different_y_score() -> None:
         MultilabelRocAucResult(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [5, 5, 5]]),
+        )
+    )
+
+
+def test_multilabel_roc_auc_result_equal_false_different_nan_policy() -> None:
+    assert not MultilabelRocAucResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    ).equal(
+        MultilabelRocAucResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+            nan_policy="omit",
         )
     )
 
@@ -712,6 +995,52 @@ def test_multilabel_roc_auc_result_compute_metrics_prefix_suffix() -> None:
             "prefix_weighted_roc_auc_suffix": 1.0,
         },
     )
+
+
+def test_multilabel_roc_auc_result_compute_metrics_nan_omit() -> None:
+    result = MultilabelRocAucResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+        y_score=np.array([[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 3,
+            "macro_roc_auc": 1.0,
+            "micro_roc_auc": 1.0,
+            "roc_auc": np.array([1.0, 1.0, 1.0]),
+            "weighted_roc_auc": 1.0,
+        },
+    )
+
+
+def test_multilabel_roc_auc_result_compute_metrics_nan_propagate() -> None:
+    result = MultilabelRocAucResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+        y_score=np.array([[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "count": 5,
+            "macro_roc_auc": float("nan"),
+            "micro_roc_auc": float("nan"),
+            "roc_auc": np.array([]),
+            "weighted_roc_auc": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_multilabel_roc_auc_result_compute_metrics_nan_raise() -> None:
+    result = MultilabelRocAucResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, float("nan")]]),
+        y_score=np.array([[float("nan"), -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_multilabel_roc_auc_result_generate_figures() -> None:

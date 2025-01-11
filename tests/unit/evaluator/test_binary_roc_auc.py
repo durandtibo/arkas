@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import polars as pl
+import pytest
 
 from arkas.evaluator import BinaryRocAucEvaluator
 from arkas.result import BinaryRocAucResult, EmptyResult, Result
@@ -93,5 +94,27 @@ def test_binary_roc_auc_evaluator_evaluate_drop_nulls_false() -> None:
                 y_score=np.array([2.0, -1.0, 0.0, 3.0, 1.0, float("nan"), 1.0, float("nan")]),
             ),
             equal_nan=True,
+        )
+    )
+
+
+@pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])
+def test_binary_roc_auc_evaluator_evaluate_nan_policy(nan_policy: str) -> None:
+    assert (
+        BinaryRocAucEvaluator(y_true="target", y_score="pred", nan_policy=nan_policy)
+        .evaluate(
+            pl.DataFrame(
+                {
+                    "pred": [1.0, 2.0, 3.0, 4.0, 5.0, None],
+                    "target": [5.0, 4.0, 3.0, 2.0, 1.0, None],
+                }
+            )
+        )
+        .equal(
+            BinaryRocAucResult(
+                y_true=np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
+                y_score=np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
+                nan_policy=nan_policy,
+            ),
         )
     )

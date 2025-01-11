@@ -58,6 +58,35 @@ def test_binary_confusion_matrix_result_incorrect_shape() -> None:
         )
 
 
+def test_binary_confusion_matrix_result_nan_policy() -> None:
+    assert (
+        BinaryConfusionMatrixResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_binary_confusion_matrix_result_nan_policy_default() -> None:
+    assert (
+        BinaryConfusionMatrixResult(
+            y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_binary_confusion_matrix_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        BinaryConfusionMatrixResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_binary_confusion_matrix_result_repr() -> None:
     assert repr(
         BinaryConfusionMatrixResult(
@@ -100,6 +129,18 @@ def test_binary_confusion_matrix_result_equal_false_different_y_pred() -> None:
     ).equal(
         BinaryConfusionMatrixResult(
             y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 0])
+        )
+    )
+
+
+def test_binary_confusion_matrix_result_equal_false_different_nan_policy() -> None:
+    assert not BinaryConfusionMatrixResult(
+        y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 0, 1, 1])
+    ).equal(
+        BinaryConfusionMatrixResult(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            nan_policy="omit",
         )
     )
 
@@ -205,6 +246,64 @@ def test_binary_confusion_matrix_result_compute_metrics_prefix_suffix() -> None:
     )
 
 
+def test_binary_confusion_matrix_result_compute_metrics_binary_nan_omit() -> None:
+    result = BinaryConfusionMatrixResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.array([[2, 0], [0, 3]]),
+            "count": 5,
+            "false_negative_rate": 0.0,
+            "false_negative": 0,
+            "false_positive_rate": 0.0,
+            "false_positive": 0,
+            "true_negative_rate": 1.0,
+            "true_negative": 2,
+            "true_positive_rate": 1.0,
+            "true_positive": 3,
+        },
+    )
+
+
+def test_binary_confusion_matrix_result_compute_metrics_binary_nan_propagate() -> None:
+    result = BinaryConfusionMatrixResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.array(
+                [[float("nan"), float("nan")], [float("nan"), float("nan")]]
+            ),
+            "count": 6,
+            "false_negative_rate": float("nan"),
+            "false_negative": float("nan"),
+            "false_positive_rate": float("nan"),
+            "false_positive": float("nan"),
+            "true_negative_rate": float("nan"),
+            "true_negative": float("nan"),
+            "true_positive_rate": float("nan"),
+            "true_positive": float("nan"),
+        },
+        equal_nan=True,
+    )
+
+
+def test_binary_confusion_matrix_result_compute_metrics_binary_nan_raise() -> None:
+    result = BinaryConfusionMatrixResult(
+        y_true=np.array([1, 0, 0, 1, 1, float("nan")]),
+        y_pred=np.array([1, 0, 0, 1, 1, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
+
+
 def test_binary_confusion_matrix_result_generate_figures() -> None:
     result = BinaryConfusionMatrixResult(
         y_true=np.array([1, 0, 0, 1, 1]), y_pred=np.array([1, 0, 1, 0, 1])
@@ -272,6 +371,35 @@ def test_multiclass_confusion_matrix_result_incorrect_shape() -> None:
         )
 
 
+def test_multiclass_confusion_matrix_result_nan_policy() -> None:
+    assert (
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multiclass_confusion_matrix_result_nan_policy_default() -> None:
+    assert (
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multiclass_confusion_matrix_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="incorrect",
+        )
+
+
 def test_multiclass_confusion_matrix_result_repr() -> None:
     assert repr(
         MulticlassConfusionMatrixResult(
@@ -314,6 +442,18 @@ def test_multiclass_confusion_matrix_result_equal_false_different_y_pred() -> No
     ).equal(
         MulticlassConfusionMatrixResult(
             y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 3])
+        )
+    )
+
+
+def test_multiclass_confusion_matrix_result_equal_false_different_nan_policy() -> None:
+    assert not MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 1])
+    ).equal(
+        MulticlassConfusionMatrixResult(
+            y_true=np.array([0, 0, 1, 1, 2, 2]),
+            y_pred=np.array([0, 0, 1, 1, 2, 1]),
+            nan_policy="omit",
         )
     )
 
@@ -388,6 +528,45 @@ def test_multiclass_confusion_matrix_result_compute_metrics_prefix_suffix() -> N
     )
 
 
+def test_multiclass_confusion_matrix_result_compute_metrics_multiclass_nan_omit() -> None:
+    result = MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.array([[1, 0, 0], [0, 2, 0], [0, 0, 3]]),
+            "count": 6,
+        },
+    )
+
+
+def test_multiclass_confusion_matrix_result_compute_metrics_multiclass_nan_propagate() -> None:
+    result = MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.zeros((0, 0), dtype=np.int64),
+            "count": 7,
+        },
+    )
+
+
+def test_multiclass_confusion_matrix_result_compute_metrics_multiclass_nan_raise() -> None:
+    result = MulticlassConfusionMatrixResult(
+        y_true=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        y_pred=np.array([0, 1, 1, 2, 2, 2, float("nan")]),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
+
+
 def test_multiclass_confusion_matrix_result_generate_figures() -> None:
     result = MulticlassConfusionMatrixResult(
         y_true=np.array([0, 0, 1, 1, 2, 2]), y_pred=np.array([0, 0, 1, 1, 2, 2])
@@ -430,6 +609,36 @@ def test_multilabel_confusion_matrix_result_incorrect_shape() -> None:
         MultilabelConfusionMatrixResult(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0], [1, 1, 1]]),
+        )
+
+
+def test_multilabel_confusion_matrix_result_nan_policy() -> None:
+    assert (
+        MultilabelConfusionMatrixResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_multilabel_confusion_matrix_result_nan_policy_default() -> None:
+    assert (
+        MultilabelConfusionMatrixResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_multilabel_confusion_matrix_result_incorrect_nan_policy() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        MultilabelConfusionMatrixResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="incorrect",
         )
 
 
@@ -483,6 +692,19 @@ def test_multilabel_confusion_matrix_result_equal_false_different_y_pred() -> No
         MultilabelConfusionMatrixResult(
             y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
             y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 1, 1]]),
+        )
+    )
+
+
+def test_multilabel_confusion_matrix_result_equal_false_different_nan_policy() -> None:
+    assert not MultilabelConfusionMatrixResult(
+        y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+        y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+    ).equal(
+        MultilabelConfusionMatrixResult(
+            y_true=np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1]]),
+            y_pred=np.array([[1, 0, 0], [0, 1, 1], [0, 1, 1], [1, 0, 0], [1, 0, 0]]),
+            nan_policy="omit",
         )
     )
 
@@ -571,6 +793,57 @@ def test_multilabel_confusion_matrix_result_compute_metrics_prefix_suffix() -> N
             "prefix_count_suffix": 5,
         },
     )
+
+
+def test_multilabel_confusion_matrix_result_compute_metrics_nan_omit() -> None:
+    result = MultilabelConfusionMatrixResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        nan_policy="omit",
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.array([[[2, 0], [0, 3]], [[3, 0], [0, 2]], [[2, 0], [0, 3]]]),
+            "count": 5,
+        },
+    )
+
+
+def test_multilabel_confusion_matrix_result_compute_metrics_nan_propagate() -> None:
+    result = MultilabelConfusionMatrixResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+    )
+    assert objects_are_equal(
+        result.compute_metrics(),
+        {
+            "confusion_matrix": np.zeros((0, 0, 0), dtype=np.int64),
+            "count": 6,
+        },
+    )
+
+
+def test_multilabel_confusion_matrix_result_compute_metrics_nan_raise() -> None:
+    result = MultilabelConfusionMatrixResult(
+        y_true=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [float("nan"), 0, 1]]
+        ),
+        y_pred=np.array(
+            [[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1], [1, 0, 1], [1, 0, float("nan")]]
+        ),
+        nan_policy="raise",
+    )
+    with pytest.raises(ValueError, match="'y_true' contains at least one NaN value"):
+        result.compute_metrics()
 
 
 def test_multilabel_confusion_matrix_result_generate_figures() -> None:

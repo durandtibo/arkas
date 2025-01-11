@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from coola import objects_are_equal
+from coola.utils.format import repr_mapping_line
 
 from arkas.metric.classification.ap import (
     average_precision,
@@ -81,7 +82,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="binary",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary, nan_policy=propagate)
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type='binary', nan_policy='propagate')
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
     >>> # multilabel
@@ -91,7 +92,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="multilabel",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), label_type=multilabel, nan_policy=propagate)
+    AveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), label_type='multilabel', nan_policy='propagate')
     >>> result.compute_metrics()
     {'average_precision': array([1. , 1. , 0.477...]),
      'count': 5,
@@ -114,7 +115,7 @@ class AveragePrecisionResult(BaseResult):
     ...     label_type="multiclass",
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(6,), y_score=(6, 3), label_type=multiclass, nan_policy=propagate)
+    AveragePrecisionResult(y_true=(6,), y_score=(6, 3), label_type='multiclass', nan_policy='propagate')
     >>> result.compute_metrics()
     {'average_precision': array([0.833..., 0.75 , 0.75 ]),
      'count': 6,
@@ -127,7 +128,7 @@ class AveragePrecisionResult(BaseResult):
     ...     y_score=np.array([2, -1, 0, 3, 1]),
     ... )
     >>> result
-    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type=binary, nan_policy=propagate)
+    AveragePrecisionResult(y_true=(5,), y_score=(5,), label_type='binary', nan_policy='propagate')
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
 
@@ -153,11 +154,15 @@ class AveragePrecisionResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_score={self._y_score.shape}, label_type={self._label_type}, "
-            f"nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_score": self._y_score.shape,
+                "label_type": self._label_type,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:
@@ -245,7 +250,7 @@ class BaseAveragePrecisionResult(BaseResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([1, 0, 0, 1, 1])
     ... )
     >>> result
-    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,), nan_policy=propagate)
+    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
 
@@ -265,10 +270,14 @@ class BaseAveragePrecisionResult(BaseResult):
         self._nan_policy = nan_policy
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__qualname__}(y_true={self._y_true.shape}, "
-            f"y_score={self._y_score.shape}, nan_policy={self._nan_policy})"
+        args = repr_mapping_line(
+            {
+                "y_true": self._y_true.shape,
+                "y_score": self._y_score.shape,
+                "nan_policy": self._nan_policy,
+            }
         )
+        return f"{self.__class__.__qualname__}({args})"
 
     @property
     def nan_policy(self) -> str:
@@ -317,7 +326,7 @@ class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
     ...     y_true=np.array([1, 0, 0, 1, 1]), y_score=np.array([2, -1, 0, 3, 1])
     ... )
     >>> result
-    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,), nan_policy=propagate)
+    BinaryAveragePrecisionResult(y_true=(5,), y_score=(5,), nan_policy='propagate')
     >>> result.compute_metrics()
     {'average_precision': 1.0, 'count': 5}
 
@@ -383,7 +392,7 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
     ...     ),
     ... )
     >>> result
-    MulticlassAveragePrecisionResult(y_true=(6,), y_score=(6, 3), nan_policy=propagate)
+    MulticlassAveragePrecisionResult(y_true=(6,), y_score=(6, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'average_precision': array([1., 1., 1.]),
      'count': 6,
@@ -450,7 +459,7 @@ class MultilabelAveragePrecisionResult(BaseAveragePrecisionResult):
     ...     y_score=np.array([[2, -1, 1], [-1, 1, -2], [0, 2, -3], [3, -2, 4], [1, -3, 5]]),
     ... )
     >>> result
-    MultilabelAveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), nan_policy=propagate)
+    MultilabelAveragePrecisionResult(y_true=(5, 3), y_score=(5, 3), nan_policy='propagate')
     >>> result.compute_metrics()
     {'average_precision': array([1., 1., 1.]),
      'count': 5,
