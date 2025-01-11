@@ -13,12 +13,7 @@ from grizz.transformer import SequentialTransformer
 from matplotlib.colors import SymLogNorm
 
 from arkas import analyzer as aa
-from arkas.exporter import (
-    FigureExporter,
-    MetricExporter,
-    ReportExporter,
-    SequentialExporter,
-)
+from arkas.exporter import MetricExporter, ReportExporter, SequentialExporter
 from arkas.figure import MatplotlibFigureConfig
 from arkas.runner import AnalysisRunner
 from arkas.utils.logging import configure_logging
@@ -71,7 +66,6 @@ def main() -> None:
         ),
         exporter=SequentialExporter(
             [
-                FigureExporter(path=path.joinpath("figures.pkl"), exist_ok=True),
                 ReportExporter(path=path.joinpath("report.html"), exist_ok=True),
                 MetricExporter(path=path.joinpath("metrics.pkl"), exist_ok=True),
             ]
