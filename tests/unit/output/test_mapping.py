@@ -9,7 +9,6 @@ from arkas.content import (
 )
 from arkas.evaluator2 import AccuracyEvaluator, Evaluator, EvaluatorDict
 from arkas.output import AccuracyOutput, Output, OutputDict
-from arkas.plotter import Plotter, PlotterDict
 from arkas.state import AccuracyState
 
 ################################
@@ -29,9 +28,7 @@ def test_output_dict_compute() -> None:
     assert (
         OutputDict(
             {
-                "one": Output(
-                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-                ),
+                "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
                 "two": AccuracyOutput(
                     AccuracyState(
                         y_true=np.array([1, 0, 0, 1, 1]),
@@ -71,7 +68,6 @@ def test_output_dict_compute() -> None:
                         },
                     }
                 ),
-                plotter=Plotter({"one": {}, "two": {}}),
             )
         )
     )
@@ -80,9 +76,7 @@ def test_output_dict_compute() -> None:
 def test_output_dict_equal_true() -> None:
     assert OutputDict(
         {
-            "one": Output(
-                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-            ),
+            "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
             "two": AccuracyOutput(
                 AccuracyState(
                     y_true=np.array([1, 0, 0, 1, 1]),
@@ -95,9 +89,7 @@ def test_output_dict_equal_true() -> None:
     ).equal(
         OutputDict(
             {
-                "one": Output(
-                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-                ),
+                "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
                 "two": AccuracyOutput(
                     AccuracyState(
                         y_true=np.array([1, 0, 0, 1, 1]),
@@ -114,9 +106,7 @@ def test_output_dict_equal_true() -> None:
 def test_output_dict_equal_false_different_outputs() -> None:
     assert not OutputDict(
         {
-            "one": Output(
-                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-            ),
+            "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
             "two": AccuracyOutput(
                 AccuracyState(
                     y_true=np.array([1, 0, 0, 1, 1]),
@@ -126,19 +116,13 @@ def test_output_dict_equal_false_different_outputs() -> None:
                 )
             ),
         }
-    ).equal(
-        OutputDict(
-            {"one": Output(content=ContentGenerator(), evaluator=Evaluator(), plotter=Plotter())}
-        )
-    )
+    ).equal(OutputDict({"one": Output(content=ContentGenerator(), evaluator=Evaluator())}))
 
 
 def test_output_dict_equal_false_different_types() -> None:
     assert not OutputDict(
         {
-            "one": Output(
-                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-            ),
+            "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
             "two": AccuracyOutput(
                 AccuracyState(
                     y_true=np.array([1, 0, 0, 1, 1]),
@@ -157,12 +141,10 @@ def test_output_dict_equal_nan_true() -> None:
             "one": Output(
                 content=ContentGenerator("meow"),
                 evaluator=Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
-                plotter=Plotter(),
             ),
             "two": Output(
                 content=ContentGenerator(),
                 evaluator=Evaluator(metrics={"f1": float("nan")}),
-                plotter=Plotter(),
             ),
         }
     ).equal(
@@ -171,12 +153,10 @@ def test_output_dict_equal_nan_true() -> None:
                 "one": Output(
                     content=ContentGenerator("meow"),
                     evaluator=Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
-                    plotter=Plotter(),
                 ),
                 "two": Output(
                     content=ContentGenerator(),
                     evaluator=Evaluator(metrics={"f1": float("nan")}),
-                    plotter=Plotter(),
                 ),
             }
         ),
@@ -190,12 +170,10 @@ def test_output_dict_equal_nan_false() -> None:
             "one": Output(
                 content=ContentGenerator("meow"),
                 evaluator=Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
-                plotter=Plotter(),
             ),
             "two": Output(
                 content=ContentGenerator(),
                 evaluator=Evaluator(metrics={"f1": float("nan")}),
-                plotter=Plotter(),
             ),
         }
     ).equal(
@@ -204,12 +182,10 @@ def test_output_dict_equal_nan_false() -> None:
                 "one": Output(
                     content=ContentGenerator("meow"),
                     evaluator=Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
-                    plotter=Plotter(),
                 ),
                 "two": Output(
                     content=ContentGenerator(),
                     evaluator=Evaluator(metrics={"f1": float("nan")}),
-                    plotter=Plotter(),
                 ),
             }
         ),
@@ -220,9 +196,7 @@ def test_output_dict_get_content_generator_lazy_true() -> None:
     assert (
         OutputDict(
             {
-                "one": Output(
-                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-                ),
+                "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
                 "two": AccuracyOutput(
                     AccuracyState(
                         y_true=np.array([1, 0, 0, 1, 1]),
@@ -256,9 +230,7 @@ def test_output_dict_get_content_generator_lazy_false() -> None:
     assert (
         OutputDict(
             {
-                "one": Output(
-                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-                ),
+                "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
                 "two": AccuracyOutput(
                     AccuracyState(
                         y_true=np.array([1, 0, 0, 1, 1]),
@@ -297,9 +269,7 @@ def test_output_dict_plot_get_evaluator_lazy_true() -> None:
     assert (
         OutputDict(
             {
-                "one": Output(
-                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-                ),
+                "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
                 "two": AccuracyOutput(
                     AccuracyState(
                         y_true=np.array([1, 0, 0, 1, 1]),
@@ -333,9 +303,7 @@ def test_output_dict_plot_get_evaluator_lazy_false() -> None:
     assert (
         OutputDict(
             {
-                "one": Output(
-                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-                ),
+                "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
                 "two": AccuracyOutput(
                     AccuracyState(
                         y_true=np.array([1, 0, 0, 1, 1]),
@@ -366,51 +334,3 @@ def test_output_dict_plot_get_evaluator_lazy_false() -> None:
 
 def test_output_dict_plot_get_evaluator_empty() -> None:
     assert OutputDict({}).get_evaluator().equal(EvaluatorDict({}))
-
-
-def test_output_dict_plot_get_plotter_lazy_true() -> None:
-    assert (
-        OutputDict(
-            {
-                "one": Output(
-                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-                ),
-                "two": AccuracyOutput(
-                    AccuracyState(
-                        y_true=np.array([1, 0, 0, 1, 1]),
-                        y_pred=np.array([1, 0, 0, 1, 1]),
-                        y_true_name="target",
-                        y_pred_name="pred",
-                    )
-                ),
-            }
-        )
-        .get_plotter()
-        .equal(PlotterDict({"one": Plotter(), "two": Plotter()}))
-    )
-
-
-def test_output_dict_plot_get_plotter_lazy_false() -> None:
-    assert (
-        OutputDict(
-            {
-                "one": Output(
-                    content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-                ),
-                "two": AccuracyOutput(
-                    AccuracyState(
-                        y_true=np.array([1, 0, 0, 1, 1]),
-                        y_pred=np.array([1, 0, 0, 1, 1]),
-                        y_true_name="target",
-                        y_pred_name="pred",
-                    )
-                ),
-            }
-        )
-        .get_plotter(lazy=False)
-        .equal(Plotter({"one": {}, "two": {}}))
-    )
-
-
-def test_output_dict_plot_get_plotter_empty() -> None:
-    assert OutputDict({}).get_plotter().equal(PlotterDict({}))

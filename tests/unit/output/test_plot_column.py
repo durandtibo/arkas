@@ -6,7 +6,6 @@ import pytest
 from arkas.content import ContentGenerator, PlotColumnContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, PlotColumnOutput
-from arkas.plotter import PlotColumnPlotter, Plotter
 from arkas.state import DataFrameState
 
 
@@ -73,15 +72,3 @@ def test_plot_column_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> 
 
 def test_plot_column_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
     assert PlotColumnOutput(DataFrameState(dataframe)).get_evaluator(lazy=False).equal(Evaluator())
-
-
-def test_plot_column_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert (
-        PlotColumnOutput(DataFrameState(dataframe))
-        .get_plotter()
-        .equal(PlotColumnPlotter(DataFrameState(dataframe)))
-    )
-
-
-def test_plot_column_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert isinstance(PlotColumnOutput(DataFrameState(dataframe)).get_plotter(lazy=False), Plotter)

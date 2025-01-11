@@ -14,7 +14,6 @@ if TYPE_CHECKING:
     from arkas.content.base import BaseContentGenerator
     from arkas.evaluator2.base import BaseEvaluator
     from arkas.output.vanilla import Output
-    from arkas.plotter.base import BasePlotter
 
 
 class BaseLazyOutput(BaseOutput):
@@ -27,7 +26,6 @@ class BaseLazyOutput(BaseOutput):
         return Output(
             content=self.get_content_generator().compute(),
             evaluator=self.get_evaluator().compute(),
-            plotter=self.get_plotter().compute(),
         )
 
     def get_content_generator(self, lazy: bool = True) -> BaseContentGenerator:
@@ -41,12 +39,6 @@ class BaseLazyOutput(BaseOutput):
         if not lazy:
             evaluator = evaluator.compute()
         return evaluator
-
-    def get_plotter(self, lazy: bool = True) -> BasePlotter:
-        plotter = self._get_plotter()
-        if not lazy:
-            plotter = plotter.compute()
-        return plotter
 
     @abstractmethod
     def _get_content_generator(self) -> BaseContentGenerator:
@@ -62,12 +54,4 @@ class BaseLazyOutput(BaseOutput):
 
         Returns:
             The evaluator.
-        """
-
-    @abstractmethod
-    def _get_plotter(self) -> BasePlotter:
-        r"""Get the plotter associated to the output.
-
-        Returns:
-            The plotter.
         """

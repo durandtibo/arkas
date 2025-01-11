@@ -12,7 +12,6 @@ from arkas.content import ContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import AccuracyOutput, Output
 from arkas.output.base import OutputEqualityComparator
-from arkas.plotter import Plotter
 from arkas.state import AccuracyState
 from tests.unit.helpers import COMPARATOR_FUNCTIONS, ExamplePair
 
@@ -30,12 +29,8 @@ def config() -> EqualityConfig:
 OUTPUT_EQUAL = [
     pytest.param(
         ExamplePair(
-            actual=Output(
-                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-            ),
-            expected=Output(
-                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-            ),
+            actual=Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
+            expected=Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
         ),
         id="output",
     ),
@@ -65,9 +60,7 @@ OUTPUT_EQUAL = [
 OUTPUT_NOT_EQUAL = [
     pytest.param(
         ExamplePair(
-            actual=Output(
-                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-            ),
+            actual=Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
             expected=AccuracyOutput(
                 state=AccuracyState(
                     y_true=np.array([1, 0, 0, 1, 1]),
@@ -82,12 +75,8 @@ OUTPUT_NOT_EQUAL = [
     ),
     pytest.param(
         ExamplePair(
-            actual=Output(
-                content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-            ),
-            expected=Output(
-                content=ContentGenerator("miaou"), evaluator=Evaluator(), plotter=Plotter()
-            ),
+            actual=Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
+            expected=Output(content=ContentGenerator("miaou"), evaluator=Evaluator()),
             expected_message="objects are not equal:",
         ),
         id="different elements",
@@ -119,7 +108,7 @@ def test_output_equality_comparator_clone() -> None:
 
 
 def test_output_equality_comparator_equal_true_same_object(config: EqualityConfig) -> None:
-    x = Output(content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter())
+    x = Output(content=ContentGenerator("meow"), evaluator=Evaluator())
     assert OutputEqualityComparator().equal(x, x, config)
 
 

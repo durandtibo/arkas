@@ -11,7 +11,6 @@ from coola import objects_are_equal
 from arkas.content.summary import SummaryContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.vanilla import Plotter
 from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
@@ -46,8 +45,6 @@ class SummaryOutput(BaseLazyOutput):
     SummaryContentGenerator(shape=(4, 3), top=5)
     >>> output.get_evaluator()
     Evaluator(count=0)
-    >>> output.get_plotter()
-    Plotter(count=0)
 
     ```
     """
@@ -72,6 +69,3 @@ class SummaryOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
-
-    def _get_plotter(self) -> Plotter:
-        return Plotter()

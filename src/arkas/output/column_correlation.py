@@ -11,7 +11,6 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.column_correlation import ColumnCorrelationContentGenerator
 from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
     from arkas.state.target_dataframe import TargetDataFrameState
@@ -51,8 +50,6 @@ class ColumnCorrelationOutput(BaseLazyOutput):
     ColumnCorrelationEvaluator(
       (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
-    >>> output.get_plotter()
-    Plotter(count=0)
 
     ```
     """
@@ -78,6 +75,3 @@ class ColumnCorrelationOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> ColumnCorrelationEvaluator:
         return ColumnCorrelationEvaluator(self._state)
-
-    def _get_plotter(self) -> Plotter:
-        return Plotter()
