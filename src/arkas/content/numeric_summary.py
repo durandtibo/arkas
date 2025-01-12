@@ -24,7 +24,6 @@ from arkas.evaluator2.numeric_stats import NumericStatisticsEvaluator
 from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
-
     from arkas.state.dataframe import DataFrameState
 
 logger = logging.getLogger(__name__)
