@@ -69,9 +69,7 @@ class BaseExporter(ABC, metaclass=AbstractFactory):
 
         ```pycon
 
-        >>> import numpy as np
         >>> from arkas.exporter import MetricExporter
-        >>> from arkas.state import AccuracyState
         >>> exporter1 = MetricExporter(path="/data/metrics.pkl")
         >>> exporter2 = MetricExporter(path="/data/metrics.pkl")
         >>> exporter3 = MetricExporter(path="/data/metrics.pkl", exist_ok=True)

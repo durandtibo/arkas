@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 from coola import objects_are_equal
-from iden.io import load_pickle, save_pickle
+from iden.io import JsonSaver, load_pickle, save_pickle
 
 from arkas.exporter import MetricExporter
 from arkas.output import AccuracyOutput, BaseOutput
@@ -39,6 +39,40 @@ def test_metric_exporter_repr(tmp_path: Path) -> None:
 
 def test_metric_exporter_str(tmp_path: Path) -> None:
     assert str(MetricExporter(tmp_path.joinpath("metrics.pkl"))).startswith("MetricExporter(")
+
+
+def test_metric_exporter_equal_true(tmp_path: Path) -> None:
+    assert MetricExporter(tmp_path.joinpath("metrics.pkl")).equal(
+        MetricExporter(tmp_path.joinpath("metrics.pkl"))
+    )
+
+
+def test_metric_exporter_equal_false_different_path(tmp_path: Path) -> None:
+    assert not MetricExporter(tmp_path.joinpath("metrics.pkl")).equal(
+        MetricExporter(tmp_path.joinpath("my_metrics.pkl"))
+    )
+
+
+def test_metric_exporter_equal_false_different_saver(tmp_path: Path) -> None:
+    assert not MetricExporter(tmp_path.joinpath("metrics.pkl")).equal(
+        MetricExporter(tmp_path.joinpath("metrics.pkl"), saver=JsonSaver())
+    )
+
+
+def test_metric_exporter_equal_false_different_exist_ok(tmp_path: Path) -> None:
+    assert not MetricExporter(tmp_path.joinpath("metrics.pkl")).equal(
+        MetricExporter(tmp_path.joinpath("metrics.pkl"), exist_ok=True)
+    )
+
+
+def test_metric_exporter_equal_false_different_show_metrics(tmp_path: Path) -> None:
+    assert not MetricExporter(tmp_path.joinpath("metrics.pkl")).equal(
+        MetricExporter(tmp_path.joinpath("metrics.pkl"), show_metrics=True)
+    )
+
+
+def test_metric_exporter_equal_false_different_type(tmp_path: Path) -> None:
+    assert not MetricExporter(tmp_path.joinpath("metrics.pkl")).equal(42)
 
 
 def test_metric_exporter_export(tmp_path: Path, output: BaseOutput) -> None:
