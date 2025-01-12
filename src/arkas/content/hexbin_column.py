@@ -1,9 +1,9 @@
-r"""Contain the implementation of a HTML content generator that plots
-the content of each column."""
+r"""Contain the implementation of a HTML content generator that makes a
+2D hexagonal binning plot of data points."""
 
 from __future__ import annotations
 
-__all__ = ["ScatterColumnContentGenerator", "create_template"]
+__all__ = ["HexbinColumnContentGenerator", "create_template"]
 
 import logging
 from typing import TYPE_CHECKING, Any
@@ -13,7 +13,7 @@ from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.figure.utils import figure2html
-from arkas.plotter.scatter_column import ScatterColumnPlotter
+from arkas.plotter.hexbin_column import HexbinColumnPlotter
 
 if TYPE_CHECKING:
     from arkas.state.scatter_dataframe import ScatterDataFrameState
@@ -22,9 +22,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class ScatterColumnContentGenerator(BaseSectionContentGenerator):
-    r"""Implement a content generator that plots the content of each
-    column.
+class HexbinColumnContentGenerator(BaseSectionContentGenerator):
+    r"""Implement a content generator that makes a 2D hexagonal binning
+    plot of data points.
 
     Args:
         state: The state containing the DataFrame to analyze.
@@ -34,7 +34,7 @@ class ScatterColumnContentGenerator(BaseSectionContentGenerator):
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content import ScatterColumnContentGenerator
+    >>> from arkas.content import HexbinColumnContentGenerator
     >>> from arkas.state import ScatterDataFrameState
     >>> dataframe = pl.DataFrame(
     ...     {
@@ -43,11 +43,11 @@ class ScatterColumnContentGenerator(BaseSectionContentGenerator):
     ...         "col3": [0, 0, 0, 0, 1, 1, 1],
     ...     }
     ... )
-    >>> content = ScatterColumnContentGenerator(
+    >>> content = HexbinColumnContentGenerator(
     ...     ScatterDataFrameState(dataframe, x="col1", y="col2")
     ... )
     >>> content
-    ScatterColumnContentGenerator(
+    HexbinColumnContentGenerator(
       (state): ScatterDataFrameState(dataframe=(7, 3), x='col1', y='col2', color=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
@@ -73,11 +73,11 @@ class ScatterColumnContentGenerator(BaseSectionContentGenerator):
     def generate_content(self) -> str:
         nrows, ncols = self._state.dataframe.shape
         logger.info(f"Generating the plot of {ncols:,} columns...")
-        figures = ScatterColumnPlotter(state=self._state).plot()
+        figures = HexbinColumnPlotter(state=self._state).plot()
         return Template(create_template()).render(
             {
                 "color": self._state.color,
-                "figure": figure2html(figures["scatter_column"], close_fig=True),
+                "figure": figure2html(figures["hexbin_column"], close_fig=True),
                 "n_samples": f"{nrows:,}",
                 "x": self._state.x,
                 "y": self._state.y,
@@ -95,12 +95,12 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.content.scatter_column import create_template
+    >>> from arkas.content.hexbin_column import create_template
     >>> template = create_template()
 
     ```
     """
-    return """This section plots a scatter plot for the following columns.
+    return """This section shows a 2D hexagonal binning plot of data points.
 <ul>
   <li> x: {{x}} </li>
   <li> y: {{y}} </li>
