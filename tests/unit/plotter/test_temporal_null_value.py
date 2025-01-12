@@ -177,7 +177,7 @@ def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame)
                 dataframe,
                 temporal_column="datetime",
                 period="1d",
-                figure_config=MatplotlibFigureConfig(yscale="symlog", init={}),
+                figure_config=MatplotlibFigureConfig(yscale="linear", init={}),
             )
         ),
         MatplotlibFigure,
