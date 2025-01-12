@@ -12,6 +12,7 @@ __all__ = [
     "ContentGeneratorDict",
     "ContinuousSeriesContentGenerator",
     "CorrelationContentGenerator",
+    "HexbinColumnContentGenerator",
     "NullValueContentGenerator",
     "NumericSummaryContentGenerator",
     "PlotColumnContentGenerator",
@@ -28,6 +29,7 @@ from arkas.content.column_cooccurrence import ColumnCooccurrenceContentGenerator
 from arkas.content.column_correlation import ColumnCorrelationContentGenerator
 from arkas.content.continuous_series import ContinuousSeriesContentGenerator
 from arkas.content.correlation import CorrelationContentGenerator
+from arkas.content.hexbin_column import HexbinColumnContentGenerator
 from arkas.content.mapping import ContentGeneratorDict
 from arkas.content.null_value import NullValueContentGenerator
 from arkas.content.numeric_summary import NumericSummaryContentGenerator
