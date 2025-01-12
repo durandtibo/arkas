@@ -119,7 +119,7 @@ def test_matplotlib_figure_creator_create_figure_config(series: pl.Series) -> No
         MatplotlibFigureCreator().create(
             SeriesState(
                 series,
-                figure_config=MatplotlibFigureConfig(yscale="symlog", init={}),
+                figure_config=MatplotlibFigureConfig(yscale="linear", init={}),
             )
         ),
         MatplotlibFigure,

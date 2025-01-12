@@ -193,7 +193,7 @@ def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame)
                 dataframe,
                 x="col1",
                 y="col2",
-                figure_config=MatplotlibFigureConfig(xscale="linear", yscale="symlog", init={}),
+                figure_config=MatplotlibFigureConfig(xscale="linear", yscale="linear", init={}),
             )
         ),
         MatplotlibFigure,
