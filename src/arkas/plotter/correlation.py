@@ -14,6 +14,7 @@ from arkas.figure.creator import FigureCreatorRegistry
 from arkas.figure.html import HtmlFigure
 from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
+from arkas.plot.utils.scatter import find_alpha_from_size, find_marker_size_from_size
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
 from arkas.utils.dataframe import check_num_columns
@@ -97,7 +98,11 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
         x = state.dataframe[xcol].to_numpy()
         y = state.dataframe[ycol].to_numpy()
-        ax.scatter(x=x, y=y)
+
+        n = x.size
+        marker_alpha = state.get_arg("marker_alpha", default=find_alpha_from_size(n))
+        marker_scale = state.get_arg("marker_scale", default=find_marker_size_from_size(n))
+        ax.scatter(x=x, y=y, s=marker_scale, alpha=marker_alpha)
 
         xmin, xmax = find_range(
             x,
