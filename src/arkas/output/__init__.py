@@ -22,6 +22,7 @@ __all__ = [
     "SummaryOutput",
     "TemporalNullValueOutput",
     "TemporalPlotColumnOutput",
+    "HexbinColumnOutput",
 ]
 
 from arkas.output.accuracy import AccuracyOutput
@@ -33,6 +34,7 @@ from arkas.output.content import ContentOutput
 from arkas.output.continuous_series import ContinuousSeriesOutput
 from arkas.output.correlation import CorrelationOutput
 from arkas.output.empty import EmptyOutput
+from arkas.output.hexbin_column import HexbinColumnOutput
 from arkas.output.lazy import BaseLazyOutput
 from arkas.output.mapping import OutputDict
 from arkas.output.null_value import NullValueOutput
