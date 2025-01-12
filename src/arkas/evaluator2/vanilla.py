@@ -6,7 +6,7 @@ __all__ = ["Evaluator"]
 
 from typing import Any
 
-from coola import objects_are_equal
+from coola import objects_are_allclose, objects_are_equal
 
 from arkas.evaluator2.base import BaseEvaluator
 
@@ -37,6 +37,15 @@ class Evaluator(BaseEvaluator):
 
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}(count={len(self._metrics):,})"
+
+    def allclose(
+        self, other: Any, rtol: float = 1e-5, atol: float = 1e-8, equal_nan: bool = False
+    ) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_allclose(
+            self._metrics, other._metrics, rtol=rtol, atol=atol, equal_nan=equal_nan
+        )
 
     def compute(self) -> Evaluator:
         return Evaluator(metrics=self._metrics)

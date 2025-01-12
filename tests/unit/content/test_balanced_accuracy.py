@@ -101,27 +101,6 @@ def test_balanced_accuracy_content_generator_equal_false_different_state() -> No
     )
 
 
-def test_balanced_accuracy_content_generator_equal_false_different_nan_policy() -> None:
-    assert not BalancedAccuracyContentGenerator(
-        state=AccuracyState(
-            y_true=np.array([1, 0, 0, 1, 1]),
-            y_pred=np.array([1, 0, 1, 0, 1]),
-            y_true_name="target",
-            y_pred_name="pred",
-        )
-    ).equal(
-        BalancedAccuracyContentGenerator(
-            state=AccuracyState(
-                y_true=np.array([1, 0, 0, 1, 1]),
-                y_pred=np.array([1, 0, 1, 0, 1]),
-                y_true_name="target",
-                y_pred_name="pred",
-            ),
-            nan_policy="omit",
-        )
-    )
-
-
 def test_balanced_accuracy_content_generator_equal_false_different_type() -> None:
     assert not BalancedAccuracyContentGenerator(
         state=AccuracyState(

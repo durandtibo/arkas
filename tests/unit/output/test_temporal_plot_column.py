@@ -8,7 +8,6 @@ import pytest
 from arkas.content import ContentGenerator, TemporalPlotColumnContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, TemporalPlotColumnOutput
-from arkas.plotter import Plotter, TemporalPlotColumnPlotter
 from arkas.state import TemporalDataFrameState
 
 
@@ -120,23 +119,4 @@ def test_temporal_plot_column_output_get_evaluator_lazy_false(dataframe: pl.Data
         TemporalPlotColumnOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
         .get_evaluator(lazy=False)
         .equal(Evaluator())
-    )
-
-
-def test_temporal_plot_column_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert (
-        TemporalPlotColumnOutput(TemporalDataFrameState(dataframe, temporal_column="datetime"))
-        .get_plotter()
-        .equal(
-            TemporalPlotColumnPlotter(TemporalDataFrameState(dataframe, temporal_column="datetime"))
-        )
-    )
-
-
-def test_temporal_plot_column_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert isinstance(
-        TemporalPlotColumnOutput(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
-        ).get_plotter(lazy=False),
-        Plotter,
     )

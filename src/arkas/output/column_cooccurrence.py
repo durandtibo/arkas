@@ -11,7 +11,6 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.column_cooccurrence import ColumnCooccurrenceContentGenerator
 from arkas.evaluator2.column_cooccurrence import ColumnCooccurrenceEvaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.column_cooccurrence import ColumnCooccurrencePlotter
 
 if TYPE_CHECKING:
     from arkas.state.column_cooccurrence import ColumnCooccurrenceState
@@ -45,10 +44,6 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
     ColumnCooccurrenceEvaluator(
       (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
     )
-    >>> output.get_plotter()
-    ColumnCooccurrencePlotter(
-      (state): ColumnCooccurrenceState(matrix=(3, 3), figure_config=MatplotlibFigureConfig())
-    )
 
     ```
     """
@@ -74,6 +69,3 @@ class ColumnCooccurrenceOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> ColumnCooccurrenceEvaluator:
         return ColumnCooccurrenceEvaluator(state=self._state)
-
-    def _get_plotter(self) -> ColumnCooccurrencePlotter:
-        return ColumnCooccurrencePlotter(state=self._state)

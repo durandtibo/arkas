@@ -44,7 +44,7 @@ def test_plot_column_plotter_equal_true(dataframe: pl.DataFrame) -> None:
     )
 
 
-def test_plot_column_plotter_equal_false_different_frame(dataframe: pl.DataFrame) -> None:
+def test_plot_column_plotter_equal_false_different_state(dataframe: pl.DataFrame) -> None:
     assert not PlotColumnPlotter(DataFrameState(dataframe)).equal(
         PlotColumnPlotter(DataFrameState(pl.DataFrame()))
     )
@@ -145,12 +145,21 @@ def test_matplotlib_figure_creator_create(dataframe: pl.DataFrame) -> None:
     )
 
 
+def test_matplotlib_figure_creator_create_1_row() -> None:
+    assert isinstance(
+        MatplotlibFigureCreator().create(
+            DataFrameState(pl.DataFrame({"col1": [0], "col2": [1], "col3": [0]}))
+        ),
+        MatplotlibFigure,
+    )
+
+
 def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         MatplotlibFigureCreator().create(
             DataFrameState(
                 dataframe,
-                figure_config=MatplotlibFigureConfig(yscale="symlog", init={}),
+                figure_config=MatplotlibFigureConfig(yscale="linear", init={}),
             )
         ),
         MatplotlibFigure,

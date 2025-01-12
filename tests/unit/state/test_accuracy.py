@@ -93,6 +93,42 @@ def test_accuracy_state_y_pred_name() -> None:
     )
 
 
+def test_accuracy_state_nan_policy() -> None:
+    assert (
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            nan_policy="omit",
+        ).nan_policy
+        == "omit"
+    )
+
+
+def test_accuracy_state_nan_policy_default() -> None:
+    assert (
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        ).nan_policy
+        == "propagate"
+    )
+
+
+def test_accuracy_state_nan_policy_incorrect() -> None:
+    with pytest.raises(ValueError, match="Incorrect 'nan_policy': incorrect"):
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 1, 0, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            nan_policy="incorrect",
+        )
+
+
 def test_accuracy_state_repr() -> None:
     assert repr(
         AccuracyState(
@@ -121,6 +157,8 @@ def test_accuracy_state_clone() -> None:
         y_pred=np.array([1, 0, 0, 1, 1]),
         y_true_name="target",
         y_pred_name="pred",
+        nan_policy="omit",
+        column="col",
     )
     cloned_state = state.clone()
     assert state is not cloned_state
@@ -133,6 +171,8 @@ def test_accuracy_state_clone_deep() -> None:
         y_pred=np.array([1, 0, 0, 1, 1]),
         y_true_name="target",
         y_pred_name="pred",
+        nan_policy="omit",
+        column="col",
     )
     cloned_state = state.clone()
 
@@ -143,6 +183,8 @@ def test_accuracy_state_clone_deep() -> None:
             y_pred=np.array([1, 0, 0, 1, 1]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="omit",
+            column="col",
         )
     )
     assert cloned_state.equal(
@@ -151,6 +193,8 @@ def test_accuracy_state_clone_deep() -> None:
             y_pred=np.array([1, 0, 0, 1, 1]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="omit",
+            column="col",
         )
     )
 
@@ -161,6 +205,8 @@ def test_accuracy_state_clone_shallow() -> None:
         y_pred=np.array([1, 0, 0, 1, 1]),
         y_true_name="target",
         y_pred_name="pred",
+        nan_policy="omit",
+        column="col",
     )
     cloned_state = state.clone(deep=False)
 
@@ -171,6 +217,8 @@ def test_accuracy_state_clone_shallow() -> None:
             y_pred=np.array([1, 0, 0, 1, 1]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="omit",
+            column="col",
         )
     )
     assert cloned_state.equal(
@@ -179,6 +227,8 @@ def test_accuracy_state_clone_shallow() -> None:
             y_pred=np.array([1, 0, 0, 1, 1]),
             y_true_name="target",
             y_pred_name="pred",
+            nan_policy="omit",
+            column="col",
         )
     )
 
@@ -263,6 +313,40 @@ def test_accuracy_state_equal_false_different_y_pred_name() -> None:
     )
 
 
+def test_accuracy_state_equal_false_different_nan_policy() -> None:
+    assert not AccuracyState(
+        y_true=np.array([1, 0, 0, 1, 1]),
+        y_pred=np.array([1, 0, 0, 1, 1]),
+        y_true_name="target",
+        y_pred_name="pred",
+    ).equal(
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            nan_policy="omit",
+        )
+    )
+
+
+def test_accuracy_state_equal_false_different_kwargs() -> None:
+    assert not AccuracyState(
+        y_true=np.array([1, 0, 0, 1, 1]),
+        y_pred=np.array([1, 0, 0, 1, 1]),
+        y_true_name="target",
+        y_pred_name="pred",
+    ).equal(
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            column="col",
+        )
+    )
+
+
 def test_accuracy_state_equal_false_different_type() -> None:
     assert not AccuracyState(
         y_true=np.array([1, 0, 0, 1, 1]),
@@ -270,3 +354,61 @@ def test_accuracy_state_equal_false_different_type() -> None:
         y_true_name="target",
         y_pred_name="pred",
     ).equal(42)
+
+
+def test_accuracy_state_get_arg() -> None:
+    assert (
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            column="col",
+        ).get_arg("column")
+        == "col"
+    )
+
+
+def test_accuracy_state_get_arg_missing() -> None:
+    assert (
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        ).get_arg("x")
+        is None
+    )
+
+
+def test_accuracy_state_get_arg_missing_default() -> None:
+    assert (
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        ).get_arg("x", 42)
+        == 42
+    )
+
+
+def test_accuracy_state_get_args() -> None:
+    assert objects_are_equal(
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+            nan_policy="omit",
+            column="col",
+        ).get_args(),
+        {
+            "y_true": np.array([1, 0, 0, 1, 1]),
+            "y_pred": np.array([1, 0, 0, 1, 1]),
+            "y_true_name": "target",
+            "y_pred_name": "pred",
+            "nan_policy": "omit",
+            "column": "col",
+        },
+    )

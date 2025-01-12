@@ -14,12 +14,7 @@ from grizz.transformer import SequentialTransformer
 from grizz.utils.datetime import find_end_datetime
 
 from arkas import analyzer as aa
-from arkas.exporter import (
-    FigureExporter,
-    MetricExporter,
-    ReportExporter,
-    SequentialExporter,
-)
+from arkas.exporter import MetricExporter, ReportExporter, SequentialExporter
 from arkas.figure import MatplotlibFigureConfig
 from arkas.runner import AnalysisRunner
 from arkas.utils.logging import configure_logging
@@ -56,13 +51,13 @@ def main() -> None:
     ingestor = Ingestor(get_dataframe())
 
     path = Path.cwd().joinpath("tmp")
-    figure_config = MatplotlibFigureConfig(init={"dpi": 500, "figsize": (13, 10)}, yscale="symlog")
+    figure_config = MatplotlibFigureConfig(init={"dpi": 500, "figsize": (14, 8)}, yscale="symlog")
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
         analyzer=aa.MappingAnalyzer(
             {
-                "summary": aa.DataFrameSummaryAnalyzer(),
+                "summary": aa.SummaryAnalyzer(),
                 "plot columns": aa.PlotColumnAnalyzer(
                     columns=["cauchy", "normal", "uniform"], figure_config=figure_config
                 ),
@@ -77,11 +72,13 @@ def main() -> None:
                     columns=["cauchy", "normal", "uniform"],
                     figure_config=figure_config,
                 ),
+                "scatter columns": aa.ScatterColumnAnalyzer(
+                    x="normal", y="cauchy", color="uniform", figure_config=figure_config
+                ),
             }
         ),
         exporter=SequentialExporter(
             [
-                FigureExporter(path=path.joinpath("figures.pkl"), exist_ok=True),
                 ReportExporter(path=path.joinpath("report.html"), exist_ok=True),
                 MetricExporter(path=path.joinpath("metrics.pkl"), exist_ok=True),
             ]

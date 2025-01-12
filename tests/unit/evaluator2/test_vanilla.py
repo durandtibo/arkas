@@ -17,6 +17,47 @@ def test_evaluator_str() -> None:
     assert str(Evaluator()) == "Evaluator(count=0)"
 
 
+def test_evaluator_allclose_true() -> None:
+    assert Evaluator(metrics={"accuracy": 1.0, "count": 42}).allclose(
+        Evaluator(metrics={"accuracy": 1.0, "count": 42})
+    )
+
+
+def test_evaluator_allclose_true_atol() -> None:
+    assert Evaluator(metrics={"accuracy": 1.0, "count": 42}).allclose(
+        Evaluator(metrics={"accuracy": 0.99, "count": 42}), atol=0.02
+    )
+
+
+def test_evaluator_allclose_true_rtol() -> None:
+    assert Evaluator(metrics={"accuracy": 1.0, "count": 42}).allclose(
+        Evaluator(metrics={"accuracy": 0.99, "count": 42}), rtol=0.02
+    )
+
+
+def test_evaluator_allclose_false_different_metrics() -> None:
+    assert not Evaluator(metrics={"accuracy": 1.0, "count": 42}).allclose(
+        Evaluator(metrics={"accuracy": 1.0})
+    )
+
+
+def test_evaluator_allclose_false_different_type() -> None:
+    assert not Evaluator().allclose(42)
+
+
+def test_evaluator_allclose_equal_nan_true() -> None:
+    assert Evaluator(metrics={"accuracy": float("nan"), "count": 42}).allclose(
+        Evaluator(metrics={"accuracy": float("nan"), "count": 42}),
+        equal_nan=True,
+    )
+
+
+def test_evaluator_allclose_equal_nan_false() -> None:
+    assert not Evaluator(metrics={"accuracy": float("nan"), "count": 42}).allclose(
+        Evaluator(metrics={"accuracy": float("nan"), "count": 42})
+    )
+
+
 def test_evaluator_equal_true() -> None:
     assert Evaluator(metrics={"accuracy": 1.0, "count": 42}).equal(
         Evaluator(metrics={"accuracy": 1.0, "count": 42})

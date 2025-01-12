@@ -65,7 +65,7 @@ class MetricExporter(BaseExporter):
         path: Path | str,
         saver: BaseSaver | dict | None = None,
         exist_ok: bool = False,
-        show_metrics: bool = True,
+        show_metrics: bool = False,
     ) -> None:
         self._path = sanitize_path(path)
         self._saver = setup_saver(saver or PickleSaver())

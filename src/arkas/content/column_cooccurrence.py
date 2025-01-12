@@ -21,6 +21,7 @@ from jinja2 import Template
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.figure.utils import figure2html
 from arkas.plotter import ColumnCooccurrencePlotter
+from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -99,7 +100,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.content.frame_summary import create_template
+    >>> from arkas.content.summary import create_template
     >>> template = create_template()
 
     ```
@@ -237,12 +238,12 @@ def create_table_row(rank: int, col1: str, col2: str, count: int, total: int) ->
         "<tr><th>{{rank}}</th>"
         "<td>{{col1}}</td>"
         "<td>{{col2}}</td>"
-        '<td style="text-align: right;">{{count}}</td>'
-        '<td style="text-align: right;">{{pct}}</td>'
+        "<td {{num_style}}>{{count}}</td>"
+        "<td {{num_style}}>{{pct}}</td>"
         "</tr>"
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "rank": rank,
             "col1": col1,
             "col2": col2,

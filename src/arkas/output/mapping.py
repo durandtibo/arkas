@@ -13,7 +13,6 @@ from coola.utils import str_indent, str_mapping
 from arkas.content.mapping import ContentGeneratorDict
 from arkas.evaluator2.mapping import EvaluatorDict
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.mapping import PlotterDict
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -36,13 +35,10 @@ class OutputDict(BaseLazyOutput):
     >>> from arkas.output import OutputDict, Output, AccuracyOutput
     >>> from arkas.content import ContentGenerator
     >>> from arkas.evaluator2 import Evaluator
-    >>> from arkas.plotter import Plotter
     >>> from arkas.state import AccuracyState
     >>> output = OutputDict(
     ...     {
-    ...         "one": Output(
-    ...             content=ContentGenerator("meow"), evaluator=Evaluator(), plotter=Plotter()
-    ...         ),
+    ...         "one": Output(content=ContentGenerator("meow"), evaluator=Evaluator()),
     ...         "two": AccuracyOutput(
     ...             AccuracyState(
     ...                 y_true=np.array([1, 0, 0, 1, 1]),
@@ -59,22 +55,15 @@ class OutputDict(BaseLazyOutput):
     ContentGeneratorDict(
       (one): ContentGenerator()
       (two): AccuracyContentGenerator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
-          (nan_policy): propagate
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
         )
     )
     >>> output.get_evaluator()
     EvaluatorDict(
       (one): Evaluator(count=0)
       (two): AccuracyEvaluator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred')
-          (nan_policy): propagate
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
         )
-    )
-    >>> output.get_plotter()
-    PlotterDict(
-      (one): Plotter(count=0)
-      (two): Plotter(count=0)
     )
 
     ```
@@ -102,6 +91,3 @@ class OutputDict(BaseLazyOutput):
 
     def _get_evaluator(self) -> EvaluatorDict:
         return EvaluatorDict({key: output.get_evaluator() for key, output in self._outputs.items()})
-
-    def _get_plotter(self) -> PlotterDict:
-        return PlotterDict({key: output.get_plotter() for key, output in self._outputs.items()})

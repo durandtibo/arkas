@@ -964,7 +964,6 @@ def test_preprocess_score_multilabel_remove_y_score_nan() -> None:
             np.array([[1, 0, 1], [0, 1, 0], [0, 1, 0], [1, 0, 1]]),
             np.array([[2.0, -1.0, -1.0], [-1.0, 1.0, 2.0], [0.0, 2.0, 3.0], [3.0, -2.0, -4.0]]),
         ),
-        show_difference=True,
     )
 
 

@@ -6,7 +6,7 @@ import polars as pl
 import pytest
 
 from arkas.content import ContentGenerator, TemporalPlotColumnContentGenerator
-from arkas.content.plot_column import create_template
+from arkas.content.temporal_plot_column import create_template
 from arkas.state import TemporalDataFrameState
 
 
@@ -41,7 +41,7 @@ def dataframe() -> pl.DataFrame:
 ########################################################
 
 
-def test_plot_column_content_generator_repr(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_repr(dataframe: pl.DataFrame) -> None:
     assert repr(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(dataframe, temporal_column="datetime")
@@ -49,7 +49,7 @@ def test_plot_column_content_generator_repr(dataframe: pl.DataFrame) -> None:
     ).startswith("TemporalPlotColumnContentGenerator(")
 
 
-def test_plot_column_content_generator_str(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_str(dataframe: pl.DataFrame) -> None:
     assert str(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(dataframe, temporal_column="datetime")
@@ -57,7 +57,7 @@ def test_plot_column_content_generator_str(dataframe: pl.DataFrame) -> None:
     ).startswith("TemporalPlotColumnContentGenerator(")
 
 
-def test_plot_column_content_generator_compute(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(dataframe, temporal_column="datetime")
@@ -66,7 +66,7 @@ def test_plot_column_content_generator_compute(dataframe: pl.DataFrame) -> None:
     )
 
 
-def test_plot_column_content_generator_equal_true(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_equal_true(dataframe: pl.DataFrame) -> None:
     assert TemporalPlotColumnContentGenerator(
         TemporalDataFrameState(dataframe, temporal_column="datetime")
     ).equal(
@@ -76,7 +76,7 @@ def test_plot_column_content_generator_equal_true(dataframe: pl.DataFrame) -> No
     )
 
 
-def test_plot_column_content_generator_equal_false_different_state(
+def test_temporal_plot_column_content_generator_equal_false_different_state(
     dataframe: pl.DataFrame,
 ) -> None:
     assert not TemporalPlotColumnContentGenerator(
@@ -93,7 +93,7 @@ def test_plot_column_content_generator_equal_false_different_state(
     )
 
 
-def test_plot_column_content_generator_equal_false_different_type(
+def test_temporal_plot_column_content_generator_equal_false_different_type(
     dataframe: pl.DataFrame,
 ) -> None:
     assert not TemporalPlotColumnContentGenerator(
@@ -101,7 +101,7 @@ def test_plot_column_content_generator_equal_false_different_type(
     ).equal(42)
 
 
-def test_plot_column_content_generator_generate_content(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_generate_content(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(dataframe, temporal_column="datetime")
@@ -110,7 +110,7 @@ def test_plot_column_content_generator_generate_content(dataframe: pl.DataFrame)
     )
 
 
-def test_plot_column_content_generator_generate_content_empty() -> None:
+def test_temporal_plot_column_content_generator_generate_content_empty() -> None:
     assert isinstance(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(
@@ -124,7 +124,7 @@ def test_plot_column_content_generator_generate_content_empty() -> None:
     )
 
 
-def test_plot_column_content_generator_generate_body(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_generate_body(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(dataframe, temporal_column="datetime")
@@ -133,7 +133,7 @@ def test_plot_column_content_generator_generate_body(dataframe: pl.DataFrame) ->
     )
 
 
-def test_plot_column_content_generator_generate_body_args(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_generate_body_args(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(dataframe, temporal_column="datetime")
@@ -142,7 +142,7 @@ def test_plot_column_content_generator_generate_body_args(dataframe: pl.DataFram
     )
 
 
-def test_plot_column_content_generator_generate_toc(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_generate_toc(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(dataframe, temporal_column="datetime")
@@ -151,7 +151,7 @@ def test_plot_column_content_generator_generate_toc(dataframe: pl.DataFrame) -> 
     )
 
 
-def test_plot_column_content_generator_generate_toc_args(dataframe: pl.DataFrame) -> None:
+def test_temporal_plot_column_content_generator_generate_toc_args(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalPlotColumnContentGenerator(
             TemporalDataFrameState(dataframe, temporal_column="datetime")

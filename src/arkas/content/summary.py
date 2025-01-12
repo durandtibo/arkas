@@ -4,7 +4,7 @@ a summary of a DataFrame."""
 from __future__ import annotations
 
 __all__ = [
-    "DataFrameSummaryContentGenerator",
+    "SummaryContentGenerator",
     "create_table",
     "create_table_row",
     "create_template",
@@ -14,12 +14,14 @@ import logging
 from collections import Counter
 from typing import TYPE_CHECKING, Any
 
-from coola import objects_are_equal
+from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from grizz.utils.count import compute_nunique
 from grizz.utils.null import compute_null_count
 from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
+from arkas.content.utils import to_str
+from arkas.utils.style import get_tab_number_style
 from arkas.utils.validation import check_positive
 
 if TYPE_CHECKING:
@@ -27,96 +29,97 @@ if TYPE_CHECKING:
 
     import polars as pl
 
+    from arkas.state import DataFrameState
+
 logger = logging.getLogger(__name__)
 
 
-class DataFrameSummaryContentGenerator(BaseSectionContentGenerator):
+class SummaryContentGenerator(BaseSectionContentGenerator):
     r"""Implement a content generator that returns a summary of a
     DataFrame.
 
     Args:
-        frame: The DataFrame to analyze.
-        top: The number of most frequent values to show.
+        state: The state containing the DataFrame to analyze.
 
     Example usage:
 
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content import DataFrameSummaryContentGenerator
-    >>> content = DataFrameSummaryContentGenerator(
-    ...     frame=pl.DataFrame(
-    ...         {
-    ...             "col1": [1.2, 4.2, 4.2, 2.2],
-    ...             "col2": [1, 1, 1, 1],
-    ...             "col3": [1, 2, 2, 2],
-    ...         },
-    ...         schema={"col1": pl.Float64, "col2": pl.Int64, "col3": pl.Int64},
+    >>> from arkas.content import SummaryContentGenerator
+    >>> from arkas.state import DataFrameState
+    >>> content = SummaryContentGenerator(
+    ...     DataFrameState(
+    ...         pl.DataFrame(
+    ...             {
+    ...                 "col1": [0, 1, 1, 0, 0, 1, 0],
+    ...                 "col2": [0, 1, 0, 1, 0, 1, 0],
+    ...                 "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+    ...             }
+    ...         )
     ...     )
     ... )
     >>> content
-    DataFrameSummaryContentGenerator(shape=(4, 3), top=5)
+    SummaryContentGenerator(
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+    )
 
     ```
     """
 
-    def __init__(self, frame: pl.DataFrame, top: int = 5) -> None:
-        self._frame = frame
-        check_positive(name="top", value=top)
-        self._top = top
+    def __init__(self, state: DataFrameState) -> None:
+        self._state = state
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__qualname__}(shape={self._frame.shape}, top={self._top})"
+        args = repr_indent(repr_mapping({"state": self._state}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
-    @property
-    def frame(self) -> pl.DataFrame:
-        r"""The DataFrame to analyze."""
-        return self._frame
-
-    @property
-    def top(self) -> int:
-        return self._top
+    def __str__(self) -> str:
+        args = str_indent(str_mapping({"state": self._state}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self.top == other.top and objects_are_equal(
-            self.frame, other.frame, equal_nan=equal_nan
-        )
+        return self._state.equal(other._state, equal_nan=equal_nan)
 
     def get_columns(self) -> tuple[str, ...]:
-        return tuple(self._frame.columns)
+        return tuple(self._state.dataframe.columns)
 
     def get_null_count(self) -> tuple[int, ...]:
-        return tuple(compute_null_count(self._frame).tolist())
+        return tuple(compute_null_count(self._state.dataframe).tolist())
 
     def get_nunique(self) -> tuple[int, ...]:
-        return tuple(compute_nunique(self._frame).tolist())
+        return tuple(compute_nunique(self._state.dataframe).tolist())
 
     def get_dtypes(self) -> tuple[pl.DataType, ...]:
-        return tuple(self._frame.schema.dtypes())
+        return tuple(self._state.dataframe.schema.dtypes())
 
     def get_most_frequent_values(self, top: int = 5) -> tuple[tuple[tuple[Any, int], ...], ...]:
-        return tuple(tuple(Counter(series.to_list()).most_common(top)) for series in self.frame)
+        return tuple(
+            tuple(Counter(series.to_list()).most_common(top)) for series in self._state.dataframe
+        )
 
     def generate_content(self) -> str:
         logger.info("Generating the DataFrame summary content...")
         return Template(create_template()).render(
             {
                 "table": self._create_table(),
-                "nrows": f"{self._frame.shape[0]:,}",
-                "ncols": f"{self._frame.shape[1]:,}",
+                "nrows": f"{self._state.dataframe.shape[0]:,}",
+                "ncols": f"{self._state.dataframe.shape[1]:,}",
             }
         )
 
     def _create_table(self) -> str:
+        top = self._state.get_arg("top", default=5)
+        check_positive(name="top", value=top)
         return create_table(
             columns=self.get_columns(),
             null_count=self.get_null_count(),
             nunique=self.get_nunique(),
             dtypes=self.get_dtypes(),
-            most_frequent_values=self.get_most_frequent_values(top=self._top),
-            total=self._frame.shape[0],
+            most_frequent_values=self.get_most_frequent_values(top=top),
+            total=self._state.dataframe.shape[0],
         )
 
 
@@ -130,7 +133,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.content.frame_summary import create_template
+    >>> from arkas.content.summary import create_template
     >>> template = create_template()
 
     ```
@@ -183,7 +186,7 @@ def create_table(
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content.frame_summary import create_table_row
+    >>> from arkas.content.summary import create_table
     >>> row = create_table(
     ...     columns=["float", "int", "str"],
     ...     null_count=(1, 0, 2),
@@ -264,7 +267,7 @@ def create_table_row(
     ```pycon
 
     >>> import polars as pl
-    >>> from arkas.content.frame_summary import create_table_row
+    >>> from arkas.content.summary import create_table_row
     >>> row = create_table_row(
     ...     column="col",
     ...     null=5,
@@ -279,7 +282,7 @@ def create_table_row(
     null = f"{null:,} ({100 * null / total if total else float('nan'):.2f}%)"
     nunique = f"{nunique:,} ({100 * nunique / total if total else float('nan'):.2f}%)"
     most_frequent_values = ", ".join(
-        [f"{val} ({100 * c / total:.2f}%)" for val, c in most_frequent_values]
+        [f"{to_str(val)} ({100 * c / total:.2f}%)" for val, c in most_frequent_values]
     )
     return Template(
         """<tr>
@@ -291,7 +294,7 @@ def create_table_row(
 </tr>"""
     ).render(
         {
-            "num_style": 'style="text-align: right;"',
+            "num_style": f'style="{get_tab_number_style()}"',
             "column": column,
             "null": null,
             "dtype": dtype,

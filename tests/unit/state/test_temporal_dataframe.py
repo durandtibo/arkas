@@ -42,7 +42,7 @@ def dataframe() -> pl.DataFrame:
 
 
 def test_temporal_dataframe_state_init_temporal_column_incorrect(dataframe: pl.DataFrame) -> None:
-    with pytest.raises(ValueError, match="The temporal column 'time' is not in the DataFrame:"):
+    with pytest.raises(ValueError, match="The column 'time' is not in the DataFrame:"):
         TemporalDataFrameState(dataframe, temporal_column="time")
 
 
@@ -66,6 +66,17 @@ def test_temporal_dataframe_state_period(dataframe: pl.DataFrame) -> None:
 
 def test_temporal_dataframe_state_period_default(dataframe: pl.DataFrame) -> None:
     assert TemporalDataFrameState(dataframe, temporal_column="datetime").period is None
+
+
+def test_temporal_dataframe_state_nan_policy(dataframe: pl.DataFrame) -> None:
+    assert (
+        TemporalDataFrameState(dataframe, temporal_column="datetime", nan_policy="raise").nan_policy
+        == "raise"
+    )
+
+
+def test_temporal_dataframe_state_nan_policy_default(dataframe: pl.DataFrame) -> None:
+    assert TemporalDataFrameState(dataframe, temporal_column="datetime").nan_policy == "propagate"
 
 
 def test_temporal_dataframe_state_figure_config(dataframe: pl.DataFrame) -> None:
@@ -97,7 +108,13 @@ def test_temporal_dataframe_state_str(dataframe: pl.DataFrame) -> None:
 
 
 def test_temporal_dataframe_state_clone(dataframe: pl.DataFrame) -> None:
-    state = TemporalDataFrameState(dataframe, temporal_column="datetime")
+    state = TemporalDataFrameState(
+        dataframe,
+        temporal_column="datetime",
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
+        column="col",
+    )
     cloned_state = state.clone()
     assert state is not cloned_state
     assert state.equal(cloned_state)
@@ -108,7 +125,9 @@ def test_temporal_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
         dataframe,
         temporal_column="datetime",
         period="1mo",
-        figure_config=MatplotlibFigureConfig(dpi=300),
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
+        column="col",
     )
     cloned_state = state.clone()
 
@@ -117,7 +136,9 @@ def test_temporal_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
             dataframe,
             temporal_column="datetime",
             period="1mo",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
+            column="col",
         )
     )
     assert cloned_state.equal(
@@ -125,7 +146,9 @@ def test_temporal_dataframe_state_clone_deep(dataframe: pl.DataFrame) -> None:
             dataframe,
             temporal_column="datetime",
             period="1mo",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
+            column="col",
         )
     )
     assert state.dataframe is not cloned_state.dataframe
@@ -136,7 +159,9 @@ def test_temporal_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None
         dataframe,
         temporal_column="datetime",
         period="1mo",
-        figure_config=MatplotlibFigureConfig(dpi=300),
+        nan_policy="raise",
+        figure_config=MatplotlibFigureConfig(xscale="linear"),
+        column="col",
     )
     cloned_state = state.clone(deep=False)
 
@@ -145,7 +170,9 @@ def test_temporal_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None
             dataframe,
             temporal_column="datetime",
             period="1mo",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
+            column="col",
         )
     )
     assert cloned_state.equal(
@@ -153,7 +180,9 @@ def test_temporal_dataframe_state_clone_shallow(dataframe: pl.DataFrame) -> None
             dataframe,
             temporal_column="datetime",
             period="1mo",
-            figure_config=MatplotlibFigureConfig(dpi=300),
+            nan_policy="raise",
+            figure_config=MatplotlibFigureConfig(xscale="linear"),
+            column="col",
         )
     )
     assert state.dataframe is cloned_state.dataframe
@@ -187,6 +216,14 @@ def test_temporal_dataframe_state_equal_false_different_period(
     )
 
 
+def test_temporal_dataframe_state_equal_false_different_nan_policy(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not TemporalDataFrameState(dataframe, temporal_column="datetime").equal(
+        TemporalDataFrameState(dataframe, temporal_column="datetime", nan_policy="raise")
+    )
+
+
 def test_temporal_dataframe_state_equal_false_different_figure_config(
     dataframe: pl.DataFrame,
 ) -> None:
@@ -197,17 +234,46 @@ def test_temporal_dataframe_state_equal_false_different_figure_config(
     )
 
 
+def test_temporal_dataframe_state_equal_false_different_kwargs(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert not TemporalDataFrameState(dataframe, temporal_column="datetime").equal(
+        TemporalDataFrameState(dataframe, temporal_column="datetime", column="col")
+    )
+
+
 def test_temporal_dataframe_state_equal_false_different_type(dataframe: pl.DataFrame) -> None:
     assert not TemporalDataFrameState(dataframe, temporal_column="datetime").equal(42)
 
 
+def test_temporal_dataframe_state_get_arg(dataframe: pl.DataFrame) -> None:
+    assert (
+        TemporalDataFrameState(dataframe, temporal_column="datetime", column="col").get_arg(
+            "column"
+        )
+        == "col"
+    )
+
+
+def test_temporal_dataframe_state_get_arg_missing(dataframe: pl.DataFrame) -> None:
+    assert TemporalDataFrameState(dataframe, temporal_column="datetime").get_arg("x") is None
+
+
+def test_temporal_dataframe_state_get_arg_missing_default(dataframe: pl.DataFrame) -> None:
+    assert TemporalDataFrameState(dataframe, temporal_column="datetime").get_arg("x", 42) == 42
+
+
 def test_temporal_dataframe_state_get_args(dataframe: pl.DataFrame) -> None:
     assert objects_are_equal(
-        TemporalDataFrameState(dataframe, temporal_column="datetime", period="1mo").get_args(),
+        TemporalDataFrameState(
+            dataframe, temporal_column="datetime", period="1mo", column="col"
+        ).get_args(),
         {
             "dataframe": dataframe,
             "figure_config": MatplotlibFigureConfig(),
             "temporal_column": "datetime",
             "period": "1mo",
+            "nan_policy": "propagate",
+            "column": "col",
         },
     )

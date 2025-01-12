@@ -39,7 +39,7 @@ class SequentialExporter(BaseExporter):
     >>> from arkas.state import AccuracyState
     >>> from arkas.exporter import (
     ...     SequentialExporter,
-    ...     FigureExporter,
+    ...     ReportExporter,
     ...     MetricExporter,
     ... )
     >>> output = AccuracyOutput(
@@ -55,7 +55,7 @@ class SequentialExporter(BaseExporter):
     ...     exporter = SequentialExporter(
     ...         [
     ...             MetricExporter(path.joinpath("metrics.pkl")),
-    ...             FigureExporter(path.joinpath("figures.pkl")),
+    ...             ReportExporter(path.joinpath("report.html")),
     ...         ]
     ...     )
     ...     print(exporter)
@@ -66,12 +66,13 @@ class SequentialExporter(BaseExporter):
           (path): .../metrics.pkl
           (saver): PickleSaver(protocol=5)
           (exist_ok): False
-          (show_metrics): True
+          (show_metrics): False
         )
-      (1): FigureExporter(
-          (path): .../figures.pkl
-          (saver): PickleSaver(protocol=5)
+      (1): ReportExporter(
+          (path): .../report.html
+          (saver): TextSaver()
           (exist_ok): False
+          (max_toc_depth): 6
         )
     )
 

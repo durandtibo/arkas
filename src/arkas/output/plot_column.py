@@ -11,7 +11,6 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.plot_column import PlotColumnContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.plot_column import PlotColumnPlotter
 
 if TYPE_CHECKING:
     from arkas.state.dataframe import DataFrameState
@@ -41,18 +40,14 @@ class PlotColumnOutput(BaseLazyOutput):
     >>> output = PlotColumnOutput(DataFrameState(frame))
     >>> output
     PlotColumnOutput(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(4, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     PlotColumnContentGenerator(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
+      (state): DataFrameState(dataframe=(4, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
-    >>> output.get_plotter()
-    PlotColumnPlotter(
-      (state): DataFrameState(dataframe=(4, 3), figure_config=MatplotlibFigureConfig())
-    )
 
     ```
     """
@@ -78,6 +73,3 @@ class PlotColumnOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
-
-    def _get_plotter(self) -> PlotColumnPlotter:
-        return PlotColumnPlotter(self._state)

@@ -37,8 +37,8 @@ def test_metric_exporter_repr(tmp_path: Path) -> None:
             [
                 MetricExporter(tmp_path.joinpath("metrics.pkl")),
                 {
-                    OBJECT_TARGET: "arkas.exporter.FigureExporter",
-                    "path": tmp_path.joinpath("figures.pkl"),
+                    OBJECT_TARGET: "arkas.exporter.ReportExporter",
+                    "path": tmp_path.joinpath("report.html"),
                 },
             ]
         )
@@ -51,8 +51,8 @@ def test_metric_exporter_str(tmp_path: Path) -> None:
             [
                 MetricExporter(tmp_path.joinpath("metrics.pkl")),
                 {
-                    OBJECT_TARGET: "arkas.exporter.FigureExporter",
-                    "path": tmp_path.joinpath("figures.pkl"),
+                    OBJECT_TARGET: "arkas.exporter.ReportExporter",
+                    "path": tmp_path.joinpath("report.html"),
                 },
             ]
         )
@@ -64,13 +64,13 @@ def test_metric_exporter_export(tmp_path: Path, output: BaseOutput) -> None:
         [
             MetricExporter(tmp_path.joinpath("metrics.pkl")),
             {
-                OBJECT_TARGET: "arkas.exporter.FigureExporter",
-                "path": tmp_path.joinpath("figures.pkl"),
+                OBJECT_TARGET: "arkas.exporter.ReportExporter",
+                "path": tmp_path.joinpath("report.html"),
             },
         ]
     ).export(output)
     assert tmp_path.joinpath("metrics.pkl").is_file()
-    assert tmp_path.joinpath("figures.pkl").is_file()
+    assert tmp_path.joinpath("report.html").is_file()
 
 
 def test_metric_exporter_export_empty(output: BaseOutput) -> None:
