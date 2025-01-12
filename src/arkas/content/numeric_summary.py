@@ -214,7 +214,7 @@ def create_table_row(series: pl.Series) -> str:
     ```
     """
     stats = compute_statistics_continuous(series)
-    nan = int(series.is_nan().sum())
+    nan = stats["num_nans"]
     null = stats["num_nulls"]
     nunique = stats["nunique"]
     total = stats["count"]

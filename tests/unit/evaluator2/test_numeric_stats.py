@@ -61,7 +61,7 @@ def test_numeric_statistics_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
             "col1": {
                 "count": 7,
                 "nunique": 7,
-                "num_non_nulls": 7,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": 4.0,
                 "std": 2.0,
@@ -87,7 +87,7 @@ def test_numeric_statistics_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
             "col2": {
                 "count": 7,
                 "nunique": 7,
-                "num_non_nulls": 7,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": 4.0,
                 "std": 2.0,
@@ -113,7 +113,7 @@ def test_numeric_statistics_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
             "col3": {
                 "count": 7,
                 "nunique": 3,
-                "num_non_nulls": 7,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": 2.0,
                 "std": 0.7559289460184544,
@@ -154,7 +154,7 @@ def test_numeric_statistics_evaluator_evaluate_one_row() -> None:
             "col1": {
                 "count": 1,
                 "nunique": 1,
-                "num_non_nulls": 1,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": 1.0,
                 "std": 0.0,
@@ -180,7 +180,7 @@ def test_numeric_statistics_evaluator_evaluate_one_row() -> None:
             "col2": {
                 "count": 1,
                 "nunique": 1,
-                "num_non_nulls": 1,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": 7.0,
                 "std": 0.0,
@@ -216,7 +216,7 @@ def test_numeric_statistics_evaluator_evaluate_empty() -> None:
             "col1": {
                 "count": 0,
                 "nunique": 0,
-                "num_non_nulls": 0,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": float("nan"),
                 "std": float("nan"),
@@ -242,7 +242,7 @@ def test_numeric_statistics_evaluator_evaluate_empty() -> None:
             "col2": {
                 "count": 0,
                 "nunique": 0,
-                "num_non_nulls": 0,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": float("nan"),
                 "std": float("nan"),
@@ -278,7 +278,7 @@ def test_numeric_statistics_evaluator_evaluate_prefix_suffix(dataframe: pl.DataF
             "prefix_col1_suffix": {
                 "count": 7,
                 "nunique": 7,
-                "num_non_nulls": 7,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": 4.0,
                 "std": 2.0,
@@ -304,7 +304,7 @@ def test_numeric_statistics_evaluator_evaluate_prefix_suffix(dataframe: pl.DataF
             "prefix_col2_suffix": {
                 "count": 7,
                 "nunique": 7,
-                "num_non_nulls": 7,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": 4.0,
                 "std": 2.0,
@@ -330,7 +330,7 @@ def test_numeric_statistics_evaluator_evaluate_prefix_suffix(dataframe: pl.DataF
             "prefix_col3_suffix": {
                 "count": 7,
                 "nunique": 3,
-                "num_non_nulls": 7,
+                "num_nans": 0,
                 "num_nulls": 0,
                 "mean": 2.0,
                 "std": 0.7559289460184544,
@@ -367,7 +367,7 @@ def test_numeric_statistics_evaluator_compute(dataframe: pl.DataFrame) -> None:
                     "col1": {
                         "count": 7,
                         "nunique": 7,
-                        "num_non_nulls": 7,
+                        "num_nans": 0,
                         "num_nulls": 0,
                         "mean": 4.0,
                         "std": 2.0,
@@ -393,7 +393,7 @@ def test_numeric_statistics_evaluator_compute(dataframe: pl.DataFrame) -> None:
                     "col2": {
                         "count": 7,
                         "nunique": 7,
-                        "num_non_nulls": 7,
+                        "num_nans": 0,
                         "num_nulls": 0,
                         "mean": 4.0,
                         "std": 2.0,
@@ -419,7 +419,7 @@ def test_numeric_statistics_evaluator_compute(dataframe: pl.DataFrame) -> None:
                     "col3": {
                         "count": 7,
                         "nunique": 3,
-                        "num_non_nulls": 7,
+                        "num_nans": 0,
                         "num_nulls": 0,
                         "mean": 2.0,
                         "std": 0.7559289460184544,
