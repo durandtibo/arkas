@@ -91,7 +91,7 @@ class MetricExporter(BaseExporter):
         return objects_are_equal(
             (self._path, self._saver, self._exist_ok, self._show_metrics),
             (other._path, other._saver, other._exist_ok, other._show_metrics),
-            equal_nan=equal_nan,show_difference=True
+            equal_nan=equal_nan,
         )
 
     def export(self, output: BaseOutput) -> None:
