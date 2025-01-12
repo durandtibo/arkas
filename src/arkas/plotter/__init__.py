@@ -7,6 +7,7 @@ __all__ = [
     "ColumnCooccurrencePlotter",
     "ContinuousSeriesPlotter",
     "CorrelationPlotter",
+    "HexbinColumnPlotter",
     "NullValuePlotter",
     "PlotColumnPlotter",
     "Plotter",
@@ -20,6 +21,7 @@ from arkas.plotter.base import BasePlotter
 from arkas.plotter.column_cooccurrence import ColumnCooccurrencePlotter
 from arkas.plotter.continuous_series import ContinuousSeriesPlotter
 from arkas.plotter.correlation import CorrelationPlotter
+from arkas.plotter.hexbin_column import HexbinColumnPlotter
 from arkas.plotter.mapping import PlotterDict
 from arkas.plotter.null_value import NullValuePlotter
 from arkas.plotter.plot_column import PlotColumnPlotter
