@@ -20,12 +20,10 @@ from jinja2 import Template
 
 from arkas.content.section import BaseSectionContentGenerator
 from arkas.content.utils import float_to_str
-from arkas.utils.stats import compute_statistics_continuous
+from arkas.evaluator2.numeric_stats import NumericStatisticsEvaluator
 from arkas.utils.style import get_tab_number_style
 
 if TYPE_CHECKING:
-    import polars as pl
-
     from arkas.state.dataframe import DataFrameState
 
 logger = logging.getLogger(__name__)
@@ -80,13 +78,14 @@ class NumericSummaryContentGenerator(BaseSectionContentGenerator):
     def generate_content(self) -> str:
         nrows, ncols = self._state.dataframe.shape
         logger.info(f"Generating the summary of {ncols:,} numeric columns...")
+        metrics = NumericStatisticsEvaluator(self._state).evaluate()
         return Template(create_template()).render(
             {
                 "nrows": f"{nrows:,}",
                 "ncols": f"{ncols:,}",
                 "columns": ", ".join(self._state.dataframe.columns),
-                "table": create_table(self._state.dataframe),
-                "table_quantiles": create_table_quantiles(self._state.dataframe),
+                "table": create_table(metrics),
+                "table_quantiles": create_table_quantiles(metrics),
             }
         )
 
@@ -135,13 +134,13 @@ def create_template() -> str:
 
 
 def create_table(
-    frame: pl.DataFrame,
+    col_metrics: dict[str, dict[str, float]],
 ) -> str:
     r"""Return a HTML representation of a table with some statisticts
     about each column.
 
     Args:
-        frame: The DataFrame to analyze.
+        col_metrics: The dictionary of metrics for each column.
 
     Returns:
         The HTML representation of the table.
@@ -150,26 +149,48 @@ def create_table(
 
     ```pycon
 
-    >>> import polars as pl
     >>> from arkas.content.numeric_summary import create_table
-    >>> dataframe = pl.DataFrame(
+    >>> row = create_table(
     ...     {
-    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
-    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
-    ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+    ...         "col1": {
+    ...             "count": 7,
+    ...             "nunique": 7,
+    ...             "num_nans": 0,
+    ...             "num_nulls": 0,
+    ...             "mean": 4.0,
+    ...             "std": 2.0,
+    ...             "skewness": 0.0,
+    ...             "kurtosis": -1.25,
+    ...             "min": 1.0,
+    ...             "q001": 1.006,
+    ...             "q01": 1.06,
+    ...             "q05": 1.3,
+    ...             "q10": 1.6,
+    ...             "q25": 2.5,
+    ...             "median": 4.0,
+    ...             "q75": 5.5,
+    ...             "q90": 6.4,
+    ...             "q95": 6.7,
+    ...             "q99": 6.94,
+    ...             "q999": 6.994,
+    ...             "max": 7.0,
+    ...             ">0": 7,
+    ...             "<0": 0,
+    ...             "=0": 0,
+    ...         }
     ...     }
     ... )
-    >>> row = create_table(dataframe)
 
     ```
     """
-    rows = "\n".join([create_table_row(series=series) for series in frame])
+    rows = "\n".join(
+        [create_table_row(column, metrics=metrics) for column, metrics in col_metrics.items()]
+    )
     return Template(
         """<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr>
             <th>column</th>
-            <th>dtype</th>
             <th>null</th>
             <th>nan</th>
             <th>unique</th>
@@ -194,11 +215,12 @@ def create_table(
     ).render({"rows": rows})
 
 
-def create_table_row(series: pl.Series) -> str:
+def create_table_row(column: str, metrics: dict[str, float]) -> str:
     r"""Create the HTML code of a new table row.
 
     Args:
-        series: The series to analyze.
+        column: The column name.
+        metrics: The dictionary of metrics.
 
     Returns:
         The HTML code of a row.
@@ -207,24 +229,49 @@ def create_table_row(series: pl.Series) -> str:
 
     ```pycon
 
-    >>> import polars as pl
     >>> from arkas.content.numeric_summary import create_table_row
-    >>> row = create_table_row(pl.Series("col1", [1, 2, 3, 4, 5, 6, 7]))
+    >>> row = create_table_row(
+    ...     column="col",
+    ...     metrics={
+    ...         "count": 101,
+    ...         "num_nulls": 0,
+    ...         "num_nans": 0,
+    ...         "nunique": 101,
+    ...         "mean": 50.0,
+    ...         "std": 29.0,
+    ...         "skewness": 0.0,
+    ...         "kurtosis": -1.2,
+    ...         "min": 0.0,
+    ...         "q001": 0.1,
+    ...         "q01": 1.0,
+    ...         "q05": 5.0,
+    ...         "q10": 10.0,
+    ...         "q25": 25.0,
+    ...         "median": 50.0,
+    ...         "q75": 75.0,
+    ...         "q90": 90.0,
+    ...         "q95": 95.0,
+    ...         "q99": 99.0,
+    ...         "q999": 99.9,
+    ...         "max": 100.0,
+    ...         ">0": 100,
+    ...         "<0": 0,
+    ...         "=0": 1,
+    ...     },
+    ... )
 
     ```
     """
-    stats = compute_statistics_continuous(series)
-    nan = stats["num_nans"]
-    null = stats["num_nulls"]
-    nunique = stats["nunique"]
-    total = stats["count"]
-    negative = stats["<0"]
-    zero = stats["=0"]
-    positive = stats[">0"]
+    nan = metrics["num_nans"]
+    null = metrics["num_nulls"]
+    nunique = metrics["nunique"]
+    total = metrics["count"]
+    negative = metrics["<0"]
+    zero = metrics["=0"]
+    positive = metrics[">0"]
     return Template(
         """<tr>
     <th>{{column}}</th>
-    <td>{{dtype}}</td>
     <td {{num_style}}>{{null}}</td>
     <td {{num_style}}>{{nan}}</td>
     <td {{num_style}}>{{nunique}}</td>
@@ -242,18 +289,17 @@ def create_table_row(series: pl.Series) -> str:
     ).render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
-            "column": series.name,
-            "dtype": series.dtype,
+            "column": column,
             "null": f"{null:,} ({100 * null / total if total else float('nan'):.2f}%)",
             "nan": f"{nan:,} ({100 * nan / total if total else float('nan'):.2f}%)",
             "nunique": f"{nunique:,} ({100 * nunique / total if total else float('nan'):.2f}%)",
-            "mean": float_to_str(stats["mean"]),
-            "std": float_to_str(stats["std"]),
-            "skewness": float_to_str(stats["skewness"]),
-            "kurtosis": float_to_str(stats["kurtosis"]),
-            "min": float_to_str(stats["min"]),
-            "median": float_to_str(stats["median"]),
-            "max": float_to_str(stats["max"]),
+            "mean": float_to_str(metrics["mean"]),
+            "std": float_to_str(metrics["std"]),
+            "skewness": float_to_str(metrics["skewness"]),
+            "kurtosis": float_to_str(metrics["kurtosis"]),
+            "min": float_to_str(metrics["min"]),
+            "median": float_to_str(metrics["median"]),
+            "max": float_to_str(metrics["max"]),
             "negative": f"{negative:,} ({100 * negative / total if total else float('nan'):.2f}%)",
             "zero": f"{zero:,} ({100 * zero / total if total else float('nan'):.2f}%)",
             "positive": f"{positive:,} ({100 * positive / total if total else float('nan'):.2f}%)",
@@ -262,13 +308,13 @@ def create_table_row(series: pl.Series) -> str:
 
 
 def create_table_quantiles(
-    frame: pl.DataFrame,
+    col_metrics: dict[str, dict[str, float]],
 ) -> str:
     r"""Return a HTML representation of a table with quantile statisticts
     for each column.
 
     Args:
-        frame: The DataFrame to analyze.
+        col_metrics: The dictionary of metrics for each column.
 
     Returns:
         The HTML representation of the table.
@@ -277,20 +323,46 @@ def create_table_quantiles(
 
     ```pycon
 
-    >>> import polars as pl
     >>> from arkas.content.numeric_summary import create_table
-    >>> dataframe = pl.DataFrame(
+    >>> row = create_table(
     ...     {
-    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
-    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
-    ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+    ...         "col1": {
+    ...             "count": 7,
+    ...             "nunique": 7,
+    ...             "num_nans": 0,
+    ...             "num_nulls": 0,
+    ...             "mean": 4.0,
+    ...             "std": 2.0,
+    ...             "skewness": 0.0,
+    ...             "kurtosis": -1.25,
+    ...             "min": 1.0,
+    ...             "q001": 1.006,
+    ...             "q01": 1.06,
+    ...             "q05": 1.3,
+    ...             "q10": 1.6,
+    ...             "q25": 2.5,
+    ...             "median": 4.0,
+    ...             "q75": 5.5,
+    ...             "q90": 6.4,
+    ...             "q95": 6.7,
+    ...             "q99": 6.94,
+    ...             "q999": 6.994,
+    ...             "max": 7.0,
+    ...             ">0": 7,
+    ...             "<0": 0,
+    ...             "=0": 0,
+    ...         }
     ...     }
     ... )
-    >>> row = create_table(dataframe)
 
     ```
     """
-    rows = "\n".join([create_table_quantiles_row(series=series) for series in frame])
+    rows = "\n".join(
+        [
+            create_table_quantiles_row(column=column, metrics=metrics)
+            for column, metrics in col_metrics.items()
+        ]
+    )
     return Template(
         """<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
@@ -320,11 +392,12 @@ def create_table_quantiles(
     ).render({"rows": rows})
 
 
-def create_table_quantiles_row(series: pl.Series) -> str:
+def create_table_quantiles_row(column: str, metrics: dict[str, float]) -> str:
     r"""Create the HTML code of a new table row.
 
     Args:
-        series: The series to analyze.
+        column: The column name.
+        metrics: The dictionary of metrics.
 
     Returns:
         The HTML code of a row.
@@ -333,13 +406,39 @@ def create_table_quantiles_row(series: pl.Series) -> str:
 
     ```pycon
 
-    >>> import polars as pl
     >>> from arkas.content.numeric_summary import create_table_row
-    >>> row = create_table_row(pl.Series("col1", [1, 2, 3, 4, 5, 6, 7]))
+    >>> row = create_table_row(
+    ...     column="col",
+    ...     metrics={
+    ...         "count": 101,
+    ...         "num_nulls": 0,
+    ...         "num_nans": 0,
+    ...         "nunique": 101,
+    ...         "mean": 50.0,
+    ...         "std": 29.0,
+    ...         "skewness": 0.0,
+    ...         "kurtosis": -1.2,
+    ...         "min": 0.0,
+    ...         "q001": 0.1,
+    ...         "q01": 1.0,
+    ...         "q05": 5.0,
+    ...         "q10": 10.0,
+    ...         "q25": 25.0,
+    ...         "median": 50.0,
+    ...         "q75": 75.0,
+    ...         "q90": 90.0,
+    ...         "q95": 95.0,
+    ...         "q99": 99.0,
+    ...         "q999": 99.9,
+    ...         "max": 100.0,
+    ...         ">0": 100,
+    ...         "<0": 0,
+    ...         "=0": 1,
+    ...     },
+    ... )
 
     ```
     """
-    stats = compute_statistics_continuous(series)
     return Template(
         """<tr>
     <th>{{column}}</th>
@@ -360,19 +459,19 @@ def create_table_quantiles_row(series: pl.Series) -> str:
     ).render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
-            "column": series.name,
-            "min": float_to_str(stats["min"]),
-            "q001": float_to_str(stats["q001"]),
-            "q01": float_to_str(stats["q01"]),
-            "q05": float_to_str(stats["q05"]),
-            "q10": float_to_str(stats["q10"]),
-            "q25": float_to_str(stats["q25"]),
-            "median": float_to_str(stats["median"]),
-            "q75": float_to_str(stats["q75"]),
-            "q90": float_to_str(stats["q90"]),
-            "q95": float_to_str(stats["q95"]),
-            "q99": float_to_str(stats["q99"]),
-            "q999": float_to_str(stats["q999"]),
-            "max": float_to_str(stats["max"]),
+            "column": column,
+            "min": float_to_str(metrics["min"]),
+            "q001": float_to_str(metrics["q001"]),
+            "q01": float_to_str(metrics["q01"]),
+            "q05": float_to_str(metrics["q05"]),
+            "q10": float_to_str(metrics["q10"]),
+            "q25": float_to_str(metrics["q25"]),
+            "median": float_to_str(metrics["median"]),
+            "q75": float_to_str(metrics["q75"]),
+            "q90": float_to_str(metrics["q90"]),
+            "q95": float_to_str(metrics["q95"]),
+            "q99": float_to_str(metrics["q99"]),
+            "q999": float_to_str(metrics["q999"]),
+            "max": float_to_str(metrics["max"]),
         }
     )
