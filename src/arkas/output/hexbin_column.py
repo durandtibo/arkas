@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.content.scatter_column import HexbinColumnContentGenerator
+from arkas.content.hexbin_column import HexbinColumnContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
 

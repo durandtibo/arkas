@@ -3,7 +3,7 @@ from __future__ import annotations
 import polars as pl
 import pytest
 
-from arkas.content import ContentGenerator, ScatterColumnContentGenerator
+from arkas.content import ContentGenerator, HexbinColumnContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import HexbinColumnOutput, Output
 from arkas.state import ScatterDataFrameState
@@ -63,7 +63,7 @@ def test_hexbin_column_output_get_content_generator_lazy_true(dataframe: pl.Data
     assert (
         HexbinColumnOutput(ScatterDataFrameState(dataframe, x="col1", y="col2"))
         .get_content_generator()
-        .equal(ScatterColumnContentGenerator(ScatterDataFrameState(dataframe, x="col1", y="col2")))
+        .equal(HexbinColumnContentGenerator(ScatterDataFrameState(dataframe, x="col1", y="col2")))
     )
 
 
