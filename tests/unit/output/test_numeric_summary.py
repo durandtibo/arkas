@@ -85,7 +85,7 @@ def test_numeric_summary_output_get_evaluator_lazy_false(dataframe: pl.DataFrame
                     "col1": {
                         "count": 7,
                         "nunique": 7,
-                        "num_non_nulls": 7,
+                        "num_nans": 0,
                         "num_nulls": 0,
                         "mean": 4.0,
                         "std": 2.0,
@@ -111,7 +111,7 @@ def test_numeric_summary_output_get_evaluator_lazy_false(dataframe: pl.DataFrame
                     "col2": {
                         "count": 7,
                         "nunique": 7,
-                        "num_non_nulls": 7,
+                        "num_nans": 0,
                         "num_nulls": 0,
                         "mean": 4.0,
                         "std": 2.0,
@@ -137,7 +137,7 @@ def test_numeric_summary_output_get_evaluator_lazy_false(dataframe: pl.DataFrame
                     "col3": {
                         "count": 7,
                         "nunique": 3,
-                        "num_non_nulls": 7,
+                        "num_nans": 0,
                         "num_nulls": 0,
                         "mean": 2.0,
                         "std": 0.7559289460184544,
