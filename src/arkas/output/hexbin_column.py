@@ -1,4 +1,5 @@
-r"""Implement an output to scatter plot some columns."""
+r"""Implement an output to make a 2D hexagonal binning plot of some
+columns."""
 
 from __future__ import annotations
 
@@ -17,7 +18,8 @@ if TYPE_CHECKING:
 
 
 class HexbinColumnOutput(BaseLazyOutput):
-    r"""Implement an output to scatter plot some columns.
+    r"""Implement an output to make a 2D hexagonal binning plot of some
+    columns.
 
     Args:
         state: The state containing the DataFrame to analyze.

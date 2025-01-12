@@ -13,6 +13,7 @@ __all__ = [
     "ContinuousSeriesOutput",
     "CorrelationOutput",
     "EmptyOutput",
+    "HexbinColumnOutput",
     "NullValueOutput",
     "NumericSummaryOutput",
     "Output",
@@ -22,7 +23,6 @@ __all__ = [
     "SummaryOutput",
     "TemporalNullValueOutput",
     "TemporalPlotColumnOutput",
-    "HexbinColumnOutput",
 ]
 
 from arkas.output.accuracy import AccuracyOutput
