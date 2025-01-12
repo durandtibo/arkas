@@ -38,7 +38,7 @@ def compute_statistics_continuous(data: np.ndarray | pl.Series) -> dict[str, flo
     >>> import numpy as np
     >>> from arkas.utils.stats import compute_statistics_continuous
     >>> compute_statistics_continuous(np.arange(101))
-    {'count': 101, 'nunique': 101, 'num_non_nulls': 101, 'num_nulls': 0,
+    {'count': 101, 'nunique': 101, 'num_nulls': 0, 'num_nans': 0,
      'mean': 50.0, 'std': 29.15...,
      'skewness': 0.0, 'kurtosis': -1.20..., 'min': 0.0, 'q001': 0.1, 'q01': 1.0,
      'q05': 5.0, 'q10': 10.0, 'q25': 25.0, 'median': 50.0, 'q75': 75.0, 'q90': 90.0,
@@ -68,7 +68,7 @@ def compute_statistics_continuous_array(array: np.ndarray) -> dict[str, float]:
     >>> import numpy as np
     >>> from arkas.utils.stats import compute_statistics_continuous_array
     >>> compute_statistics_continuous_array(np.arange(101))
-    {'count': 101, 'nunique': 101, 'num_non_nulls': 101, 'num_nulls': 0,
+    {'count': 101, 'nunique': 101, 'num_nulls': 0, 'num_nans': 0,
      'mean': 50.0, 'std': 29.15...,
      'skewness': 0.0, 'kurtosis': -1.20..., 'min': 0.0, 'q001': 0.1, 'q01': 1.0,
      'q05': 5.0, 'q10': 10.0, 'q25': 25.0, 'median': 50.0, 'q75': 75.0, 'q90': 90.0,
@@ -81,9 +81,9 @@ def compute_statistics_continuous_array(array: np.ndarray) -> dict[str, float]:
     stats = {
         "count": int(array.size),
         "nunique": int(np.unique(array).size),
-        "num_non_nulls": int(array_nonnan.size),
+        "num_nulls": 0,
     }
-    stats["num_nulls"] = stats["count"] - stats["num_non_nulls"]
+    stats["num_nans"] = stats["count"] - int(array_nonnan.size)
     if array_nonnan.size == 0:
         return stats | {
             "mean": float("nan"),
@@ -151,7 +151,7 @@ def compute_statistics_continuous_series(series: pl.Series) -> dict[str, float]:
     >>> import polars as pl
     >>> from arkas.utils.stats import compute_statistics_continuous_series
     >>> compute_statistics_continuous_series(pl.Series(list(range(101))))
-    {'count': 101, 'nunique': 101, 'num_non_nulls': 101, 'num_nulls': 0,
+    {'count': 101, 'nunique': 101, 'num_nulls': 0, 'num_nans': 0,
      'mean': 50.0, 'std': 29.15...,
      'skewness': 0.0, 'kurtosis': -1.20..., 'min': 0.0, 'q001': 0.1, 'q01': 1.0,
      'q05': 5.0, 'q10': 10.0, 'q25': 25.0, 'median': 50.0, 'q75': 75.0, 'q90': 90.0,
@@ -162,10 +162,10 @@ def compute_statistics_continuous_series(series: pl.Series) -> dict[str, float]:
     stats = {
         "count": int(series.shape[0]),
         "nunique": series.n_unique(),
+        "num_nans": int(series.cast(pl.Float64).is_nan().sum()),
         "num_nulls": int(series.null_count()),
     }
-    stats["num_non_nulls"] = stats["count"] - stats["num_nulls"]
-    return compute_statistics_continuous_array(series.drop_nulls().to_numpy()) | stats
+    return compute_statistics_continuous_array(series.drop_nulls().drop_nans().to_numpy()) | stats
 
 
 def quantile(array: np.ndarray, q: Sequence[float]) -> dict[float, float]:
