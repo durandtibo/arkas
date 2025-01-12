@@ -64,7 +64,7 @@ class SequentialExporter(BaseExporter):
     SequentialExporter(
       (0): MetricExporter(
           (path): .../metrics.pkl
-          (saver): PickleSaver(protocol=5)
+          (saver): PickleSaver()
           (exist_ok): False
           (show_metrics): False
         )
