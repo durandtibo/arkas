@@ -6,7 +6,7 @@ __all__ = ["BaseExporter", "is_exporter_config", "setup_exporter"]
 
 import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from objectory import AbstractFactory
 from objectory.utils import is_object_config
@@ -52,6 +52,34 @@ class BaseExporter(ABC, metaclass=AbstractFactory):
 
     ```
     """
+
+    @abstractmethod
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
+        r"""Indicate if two exporters are equal or not.
+
+        Args:
+            other: The other exporter to compare.
+            equal_nan: Whether to compare NaN's as equal. If ``True``,
+                NaN's in both objects will be considered equal.
+
+        Returns:
+            ``True`` if the two exporters are equal, otherwise ``False``.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.exporter import MetricExporter
+        >>> exporter1 = MetricExporter(path="/data/metrics.pkl")
+        >>> exporter2 = MetricExporter(path="/data/metrics.pkl")
+        >>> exporter3 = MetricExporter(path="/data/metrics.pkl", exist_ok=True)
+        >>> exporter1.equal(exporter2)
+        True
+        >>> exporter1.equal(exporter3)
+        False
+
+        ```
+        """
 
     @abstractmethod
     def export(self, output: BaseOutput) -> None:
@@ -160,5 +188,5 @@ def setup_exporter(
         logger.info("Initializing a exporter from its configuration... ")
         exporter = BaseExporter.factory(**exporter)
     if not isinstance(exporter, BaseExporter):
-        logger.warning(f"exporter is not a `BaseExporter` (received: {type(exporter)})")
+        logger.warning(f"exporter is not a 'BaseExporter' (received: {type(exporter)})")
     return exporter
