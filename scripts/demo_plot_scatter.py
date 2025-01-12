@@ -123,6 +123,34 @@ def main() -> None:
                         figure_config=figure_config,
                     ),
                 ),
+                "hexbin 100k": aa.TransformAnalyzer(
+                    transformer=FirstRowTransformer(n=100_000),
+                    analyzer=aa.HexbinColumnAnalyzer(
+                        x="normal",
+                        y="normal2",
+                        figure_config=MatplotlibFigureConfig(
+                            init={"dpi": 300, "figsize": (14, 10)},
+                            xmin="q0.001",
+                            xmax="q0.999",
+                            ymin="q0.001",
+                            ymax="q0.999",
+                        ),
+                    ),
+                ),
+                "hexbin 1M": aa.TransformAnalyzer(
+                    transformer=FirstRowTransformer(n=1_000_000),
+                    analyzer=aa.HexbinColumnAnalyzer(
+                        x="normal",
+                        y="normal2",
+                        figure_config=MatplotlibFigureConfig(
+                            init={"dpi": 300, "figsize": (14, 10)},
+                            xmin="q0.001",
+                            xmax="q0.999",
+                            ymin="q0.001",
+                            ymax="q0.999",
+                        ),
+                    ),
+                ),
             }
         ),
         exporter=SequentialExporter(
