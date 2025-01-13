@@ -76,7 +76,7 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
 
     def generate_content(self) -> str:
         xcol, ycol = self._state.dataframe.columns
-        logger.info(f"Generating the correlation analysis between {xcol} and {ycol}...")
+        logger.info(f"Generating the correlation analysis between {xcol!r} and {ycol!r}...")
         metrics = CorrelationEvaluator(self._state).evaluate()
         figures = CorrelationPlotter(self._state).plot()
         return Template(create_template()).render(
