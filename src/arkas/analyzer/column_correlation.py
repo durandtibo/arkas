@@ -103,8 +103,9 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
             )
             return EmptyOutput()
 
+        cols = self.find_columns(frame)
         logger.info(
-            f"Analyzing the correlation between {self._target_column} and {self._columns} | "
+            f"Analyzing the correlation between {self._target_column} and {cols} | "
             f"sort_metric={self._sort_metric!r} ..."
         )
         columns = list(self.find_common_columns(frame))
