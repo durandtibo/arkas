@@ -159,6 +159,22 @@ def test_column_correlation_analyzer_analyze_missing_policy_ignore(
     )
 
 
+def test_column_correlation_analyzer_analyze_nan_policy_omit(
+    dataframe: pl.DataFrame,
+) -> None:
+    assert (
+        ColumnCorrelationAnalyzer(target_column="col3", nan_policy="omit")
+        .analyze(dataframe)
+        .equal(
+            ColumnCorrelationOutput(
+                TargetDataFrameState(
+                    dataframe, target_column="col3", sort_metric="spearman_coeff", nan_policy="omit"
+                )
+            )
+        )
+    )
+
+
 def test_column_correlation_analyzer_analyze_missing_policy_ignore_target_column(
     dataframe: pl.DataFrame,
 ) -> None:
@@ -249,6 +265,12 @@ def test_column_correlation_analyzer_equal_false_different_missing_policy() -> N
     )
 
 
+def test_column_correlation_analyzer_equal_false_different_nan_policy() -> None:
+    assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
+        ColumnCorrelationAnalyzer(target_column="col3", nan_policy="omit")
+    )
+
+
 def test_column_correlation_analyzer_equal_false_different_sort_metric() -> None:
     assert not ColumnCorrelationAnalyzer(target_column="col3").equal(
         ColumnCorrelationAnalyzer(target_column="col3", sort_metric="pearson_coeff")
@@ -267,6 +289,8 @@ def test_column_correlation_analyzer_get_args() -> None:
             "columns": None,
             "exclude_columns": (),
             "missing_policy": "raise",
+            "nan_policy": "propagate",
             "sort_metric": "spearman_coeff",
         },
+        show_difference=True,
     )
