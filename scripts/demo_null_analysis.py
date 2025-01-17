@@ -14,12 +14,7 @@ from grizz.transformer import SequentialTransformer
 from grizz.utils.datetime import find_end_datetime
 
 from arkas import analyzer as aa
-from arkas.exporter import (
-    FigureExporter,
-    MetricExporter,
-    ReportExporter,
-    SequentialExporter,
-)
+from arkas.exporter import MetricExporter, ReportExporter, SequentialExporter
 from arkas.figure import MatplotlibFigureConfig
 from arkas.runner import AnalysisRunner
 from arkas.utils.array import rand_replace
@@ -62,7 +57,7 @@ def main() -> None:
     ingestor = Ingestor(get_dataframe())
 
     path = Path.cwd().joinpath("tmp")
-    figure_config = MatplotlibFigureConfig(init={"dpi": 500, "figsize": (14, 6)})
+    figure_config = MatplotlibFigureConfig(init={"dpi": 300, "figsize": (14, 6)})
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
@@ -72,7 +67,7 @@ def main() -> None:
                 "numeric summary": aa.NumericSummaryAnalyzer(),
                 "correlation (spearman)": aa.ColumnCorrelationAnalyzer(target_column="col1"),
                 "correlation (pearson)": aa.ColumnCorrelationAnalyzer(
-                    target_column="col1", sork_key="pearson_coeff"
+                    target_column="col1", sort_metric="pearson_coeff"
                 ),
                 "correlation col1 - col2": aa.CorrelationAnalyzer(
                     x="col1", y="col2", figure_config=figure_config
@@ -94,7 +89,6 @@ def main() -> None:
         ),
         exporter=SequentialExporter(
             [
-                FigureExporter(path=path.joinpath("figures.pkl"), exist_ok=True),
                 ReportExporter(path=path.joinpath("report.html"), exist_ok=True),
                 MetricExporter(path=path.joinpath("metrics.pkl"), exist_ok=True),
             ]

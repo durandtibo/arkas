@@ -10,9 +10,8 @@ from typing import TYPE_CHECKING, Any
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.content.numeric_summary import NumericSummaryContentGenerator
-from arkas.evaluator2.vanilla import Evaluator
+from arkas.evaluator2.numeric_stats import NumericStatisticsEvaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.vanilla import Plotter
 
 if TYPE_CHECKING:
     from arkas.state.dataframe import DataFrameState
@@ -50,9 +49,9 @@ class NumericSummaryOutput(BaseLazyOutput):
       (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
-    Evaluator(count=0)
-    >>> output.get_plotter()
-    Plotter(count=0)
+    NumericStatisticsEvaluator(
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+    )
 
     ```
     """
@@ -76,8 +75,5 @@ class NumericSummaryOutput(BaseLazyOutput):
     def _get_content_generator(self) -> NumericSummaryContentGenerator:
         return NumericSummaryContentGenerator(self._state)
 
-    def _get_evaluator(self) -> Evaluator:
-        return Evaluator()
-
-    def _get_plotter(self) -> Plotter:
-        return Plotter()
+    def _get_evaluator(self) -> NumericStatisticsEvaluator:
+        return NumericStatisticsEvaluator(self._state)

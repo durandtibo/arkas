@@ -63,7 +63,7 @@ class AnalysisRunner(BaseRunner):
       (analyzer): AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, missing_policy='raise', nan_policy='propagate')
       (exporter): MetricExporter(
           (path): .../metrics.pkl
-          (saver): PickleSaver(protocol=5)
+          (saver): PickleSaver()
           (exist_ok): False
           (show_metrics): False
         )

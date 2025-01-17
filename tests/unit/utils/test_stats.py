@@ -24,7 +24,7 @@ def test_compute_statistics_continuous(data: np.ndarray | pl.Series) -> None:
         {
             "count": 101,
             "num_nulls": 0,
-            "num_non_nulls": 101,
+            "num_nans": 0,
             "nunique": 101,
             "mean": 50.0,
             "std": 29.154759474226502,
@@ -58,7 +58,7 @@ def test_compute_statistics_continuous_empty(data: np.ndarray | pl.Series) -> No
         {
             "count": 0,
             "num_nulls": 0,
-            "num_non_nulls": 0,
+            "num_nans": 0,
             "nunique": 0,
             "mean": float("nan"),
             "std": float("nan"),
@@ -87,7 +87,50 @@ def test_compute_statistics_continuous_empty(data: np.ndarray | pl.Series) -> No
 
 @pytest.mark.parametrize(
     "data",
-    [np.array([np.nan, *list(range(101)), np.nan]), pl.Series([None, *list(range(101)), None])],
+    [
+        np.array([float("nan"), *list(range(101)), float("nan")]),
+        pl.Series([float("nan"), *list(range(101)), float("nan")]),
+    ],
+)
+def test_compute_statistics_continuous_with_nans(data: np.ndarray | pl.Series) -> None:
+    assert objects_are_allclose(
+        compute_statistics_continuous(data),
+        {
+            "count": 103,
+            "num_nulls": 0,
+            "num_nans": 2,
+            "nunique": 102,
+            "mean": 50.0,
+            "std": 29.154759474226502,
+            "skewness": 0.0,
+            "kurtosis": -1.2,
+            "min": 0.0,
+            "q001": 0.1,
+            "q01": 1.0,
+            "q05": 5.0,
+            "q10": 10.0,
+            "q25": 25.0,
+            "median": 50.0,
+            "q75": 75.0,
+            "q90": 90.0,
+            "q95": 95.0,
+            "q99": 99.0,
+            "q999": 99.9,
+            "max": 100.0,
+            ">0": 100,
+            "<0": 0,
+            "=0": 1,
+        },
+        atol=1e-2,
+    )
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        pl.Series([None, *list(range(101)), None]),
+        pl.Series([*list(range(101)), None, None]),
+    ],
 )
 def test_compute_statistics_continuous_with_null(data: np.ndarray | pl.Series) -> None:
     assert objects_are_allclose(
@@ -95,7 +138,7 @@ def test_compute_statistics_continuous_with_null(data: np.ndarray | pl.Series) -
         {
             "count": 103,
             "num_nulls": 2,
-            "num_non_nulls": 101,
+            "num_nans": 0,
             "nunique": 102,
             "mean": 50.0,
             "std": 29.154759474226502,
@@ -134,7 +177,7 @@ def test_compute_statistics_continuous_array(dtype: np.dtype) -> None:
         {
             "count": 101,
             "num_nulls": 0,
-            "num_non_nulls": 101,
+            "num_nans": 0,
             "nunique": 101,
             "mean": 50.0,
             "std": 29.154759474226502,
@@ -167,7 +210,7 @@ def test_compute_statistics_continuous_array_empty() -> None:
         {
             "count": 0,
             "num_nulls": 0,
-            "num_non_nulls": 0,
+            "num_nans": 0,
             "nunique": 0,
             "mean": float("nan"),
             "std": float("nan"),
@@ -200,7 +243,7 @@ def test_compute_statistics_continuous_array_one_value() -> None:
         {
             "count": 1,
             "num_nulls": 0,
-            "num_non_nulls": 1,
+            "num_nans": 0,
             "nunique": 1,
             "mean": 1.0,
             "std": 0.0,
@@ -227,13 +270,15 @@ def test_compute_statistics_continuous_array_one_value() -> None:
     )
 
 
-def test_compute_statistics_continuous_array_with_null() -> None:
+def test_compute_statistics_continuous_array_with_nans() -> None:
     assert objects_are_allclose(
-        compute_statistics_continuous_array(np.array([np.nan, *list(range(101)), np.nan])),
+        compute_statistics_continuous_array(
+            np.array([float("nan"), *list(range(101)), float("nan")])
+        ),
         {
             "count": 103,
-            "num_nulls": 2,
-            "num_non_nulls": 101,
+            "num_nulls": 0,
+            "num_nans": 2,
             "nunique": 102,
             "mean": 50.0,
             "std": 29.154759474226502,
@@ -270,7 +315,7 @@ def test_compute_statistics_continuous_array_single_numeric_value() -> None:
         {
             "count": 5,
             "num_nulls": 0,
-            "num_non_nulls": 5,
+            "num_nans": 0,
             "nunique": 1,
             "mean": 1.0,
             "std": 0.0,
@@ -299,11 +344,13 @@ def test_compute_statistics_continuous_array_single_numeric_value() -> None:
 
 def test_compute_statistics_continuous_array_only_nans() -> None:
     assert objects_are_allclose(
-        compute_statistics_continuous_array(np.asarray([np.nan, np.nan, np.nan, np.nan])),
+        compute_statistics_continuous_array(
+            np.asarray([float("nan"), float("nan"), float("nan"), float("nan")])
+        ),
         {
             "count": 4,
-            "num_nulls": 4,
-            "num_non_nulls": 0,
+            "num_nulls": 0,
+            "num_nans": 4,
             "nunique": 1,
             "mean": float("nan"),
             "std": float("nan"),
@@ -342,7 +389,7 @@ def test_compute_statistics_continuous_series(dtype: pl.DataType) -> None:
         {
             "count": 101,
             "num_nulls": 0,
-            "num_non_nulls": 101,
+            "num_nans": 0,
             "nunique": 101,
             "mean": 50.0,
             "std": 29.154759474226502,
@@ -375,7 +422,7 @@ def test_compute_statistics_continuous_series_empty() -> None:
         {
             "count": 0,
             "num_nulls": 0,
-            "num_non_nulls": 0,
+            "num_nans": 0,
             "nunique": 0,
             "mean": float("nan"),
             "std": float("nan"),
@@ -408,7 +455,42 @@ def test_compute_statistics_continuous_series_with_null() -> None:
         {
             "count": 103,
             "num_nulls": 2,
-            "num_non_nulls": 101,
+            "num_nans": 0,
+            "nunique": 102,
+            "mean": 50.0,
+            "std": 29.154759474226502,
+            "skewness": 0.0,
+            "kurtosis": -1.2,
+            "min": 0.0,
+            "q001": 0.1,
+            "q01": 1.0,
+            "q05": 5.0,
+            "q10": 10.0,
+            "q25": 25.0,
+            "median": 50.0,
+            "q75": 75.0,
+            "q90": 90.0,
+            "q95": 95.0,
+            "q99": 99.0,
+            "q999": 99.9,
+            "max": 100.0,
+            ">0": 100,
+            "<0": 0,
+            "=0": 1,
+        },
+        atol=1e-2,
+    )
+
+
+def test_compute_statistics_continuous_series_with_nan() -> None:
+    assert objects_are_allclose(
+        compute_statistics_continuous_series(
+            pl.Series([float("nan"), *list(range(101)), float("nan")])
+        ),
+        {
+            "count": 103,
+            "num_nulls": 0,
+            "num_nans": 2,
             "nunique": 102,
             "mean": 50.0,
             "std": 29.154759474226502,
@@ -445,7 +527,7 @@ def test_compute_statistics_continuous_series_single_numeric_value() -> None:
         {
             "count": 5,
             "num_nulls": 0,
-            "num_non_nulls": 5,
+            "num_nans": 0,
             "nunique": 1,
             "mean": 1.0,
             "std": 0.0,
@@ -474,11 +556,46 @@ def test_compute_statistics_continuous_series_single_numeric_value() -> None:
 
 def test_compute_statistics_continuous_series_only_nans() -> None:
     assert objects_are_allclose(
-        compute_statistics_continuous_series(pl.Series([np.nan, np.nan, np.nan, np.nan])),
+        compute_statistics_continuous_series(
+            pl.Series([float("nan"), float("nan"), float("nan"), float("nan")])
+        ),
         {
             "count": 4,
             "num_nulls": 0,
-            "num_non_nulls": 4,
+            "num_nans": 4,
+            "nunique": 1,
+            "mean": float("nan"),
+            "std": float("nan"),
+            "skewness": float("nan"),
+            "kurtosis": float("nan"),
+            "min": float("nan"),
+            "q001": float("nan"),
+            "q01": float("nan"),
+            "q05": float("nan"),
+            "q10": float("nan"),
+            "q25": float("nan"),
+            "median": float("nan"),
+            "q75": float("nan"),
+            "q90": float("nan"),
+            "q95": float("nan"),
+            "q99": float("nan"),
+            "q999": float("nan"),
+            "max": float("nan"),
+            ">0": 0,
+            "<0": 0,
+            "=0": 0,
+        },
+        equal_nan=True,
+    )
+
+
+def test_compute_statistics_continuous_series_only_nulls() -> None:
+    assert objects_are_allclose(
+        compute_statistics_continuous_series(pl.Series([None, None, None, None])),
+        {
+            "count": 4,
+            "num_nulls": 4,
+            "num_nans": 0,
             "nunique": 1,
             "mean": float("nan"),
             "std": float("nan"),
@@ -520,7 +637,7 @@ def test_quantile(dtype: np.dtype) -> None:
 
 def test_quantile_with_nans() -> None:
     assert objects_are_allclose(
-        quantile(np.array([np.nan, *list(range(101)), np.nan]), q=[0.1, 0.5, 0.9]),
+        quantile(np.array([float("nan"), *list(range(101)), float("nan")]), q=[0.1, 0.5, 0.9]),
         {0.1: float("nan"), 0.5: float("nan"), 0.9: float("nan")},
         equal_nan=True,
     )
@@ -528,7 +645,9 @@ def test_quantile_with_nans() -> None:
 
 def test_quantile_only_nans() -> None:
     assert objects_are_allclose(
-        quantile(np.array([np.nan, np.nan, np.nan, np.nan]), q=[0.1, 0.5, 0.9]),
+        quantile(
+            np.array([float("nan"), float("nan"), float("nan"), float("nan")]), q=[0.1, 0.5, 0.9]
+        ),
         {0.1: float("nan"), 0.5: float("nan"), 0.9: float("nan")},
         equal_nan=True,
     )

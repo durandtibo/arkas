@@ -12,7 +12,6 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.null_value import NullValueContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.null_value import NullValuePlotter
 
 if TYPE_CHECKING:
     from arkas.state.null_value import NullValueState
@@ -50,10 +49,6 @@ class NullValueOutput(BaseLazyOutput):
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
-    >>> output.get_plotter()
-    NullValuePlotter(
-      (state): NullValueState(num_columns=3, figure_config=MatplotlibFigureConfig())
-    )
 
     ```
     """
@@ -79,6 +74,3 @@ class NullValueOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
-
-    def _get_plotter(self) -> NullValuePlotter:
-        return NullValuePlotter(self._state)

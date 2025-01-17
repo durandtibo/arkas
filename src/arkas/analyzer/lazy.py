@@ -40,18 +40,20 @@ class BaseLazyAnalyzer(BaseAnalyzer):
     >>> from arkas.analyzer import SummaryAnalyzer
     >>> analyzer = SummaryAnalyzer()
     >>> analyzer
-    SummaryAnalyzer(top=5, sort=False)
+    SummaryAnalyzer(columns=None, exclude_columns=(), missing_policy='raise', top=5)
     >>> frame = pl.DataFrame(
     ...     {
-    ...         "col1": [0, 1, 0, 1],
-    ...         "col2": [1, 0, 1, 0],
-    ...         "col3": [1, 1, 1, 1],
+    ...         "col1": [0, 1, 1, 0, 0, 1, 0],
+    ...         "col2": [0, 1, 0, 1, 0, 1, 0],
+    ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
     ...     },
-    ...     schema={"col1": pl.Int64, "col2": pl.Int64, "col3": pl.Int64},
+    ...     schema={"col1": pl.Int64, "col2": pl.Int32, "col3": pl.Float64},
     ... )
     >>> output = analyzer.analyze(frame)
     >>> output
-    SummaryOutput(shape=(4, 3), top=5)
+    SummaryOutput(
+      (state): DataFrameState(dataframe=(7, 3), nan_policy='propagate', figure_config=MatplotlibFigureConfig(), top=5)
+    )
 
     ```
     """

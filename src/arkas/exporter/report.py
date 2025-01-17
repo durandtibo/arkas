@@ -5,8 +5,9 @@ from __future__ import annotations
 __all__ = ["ReportExporter"]
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+from coola import objects_are_equal
 from coola.utils import str_indent, str_mapping
 from coola.utils.path import sanitize_path
 from iden.io import BaseSaver, TextSaver, setup_saver
@@ -83,6 +84,15 @@ class ReportExporter(BaseExporter):
             )
         )
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
+        if not isinstance(other, self.__class__):
+            return False
+        return objects_are_equal(
+            (self._path, self._saver, self._exist_ok, self._max_toc_depth),
+            (other._path, other._saver, other._exist_ok, other._max_toc_depth),
+            equal_nan=equal_nan,
+        )
 
     def export(self, output: BaseOutput) -> None:
         logger.info("Exporting reports...")

@@ -194,7 +194,7 @@ def test_matplotlib_figure_creator_create_figure_config() -> None:
                 null_count=np.array([1, 2, 3]),
                 total_count=np.array([7, 7, 7]),
                 columns=["col1", "col2", "col3"],
-                figure_config=MatplotlibFigureConfig(yscale="symlog", init={}),
+                figure_config=MatplotlibFigureConfig(yscale="linear", init={}),
             )
         ),
         MatplotlibFigure,

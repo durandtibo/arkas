@@ -14,6 +14,7 @@ from arkas.figure.creator import FigureCreatorRegistry
 from arkas.figure.html import HtmlFigure
 from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
+from arkas.plot.utils.scatter import find_alpha_from_size, find_marker_size_from_size
 from arkas.plotter.base import BasePlotter
 from arkas.plotter.vanilla import Plotter
 from arkas.utils.range import find_range
@@ -94,7 +95,10 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         color = state.dataframe[state.color].to_numpy() if state.color else None
         x = state.dataframe[state.x].to_numpy()
         y = state.dataframe[state.y].to_numpy()
-        s = ax.scatter(x=x, y=y, c=color, label=state.color)
+        n = x.size
+        marker_alpha = state.get_arg("marker_alpha", default=find_alpha_from_size(n))
+        marker_scale = state.get_arg("marker_scale", default=find_marker_size_from_size(n))
+        s = ax.scatter(x=x, y=y, c=color, label=state.color, alpha=marker_alpha, s=marker_scale)
         if color is not None:
             fig.colorbar(s)
             ax.legend()

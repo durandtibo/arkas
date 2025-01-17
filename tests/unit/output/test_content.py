@@ -3,7 +3,6 @@ from __future__ import annotations
 from arkas.content import ContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import ContentOutput
-from arkas.plotter import Plotter
 
 ###################################
 #     Tests for ContentOutput     #
@@ -44,11 +43,3 @@ def test_content_output_get_evaluator_lazy_true() -> None:
 
 def test_content_output_get_evaluator_lazy_false() -> None:
     assert ContentOutput("meow").get_evaluator(lazy=False).equal(Evaluator())
-
-
-def test_content_output_get_plotter_lazy_true() -> None:
-    assert ContentOutput("meow").get_plotter().equal(Plotter())
-
-
-def test_content_output_get_plotter_lazy_false() -> None:
-    assert ContentOutput("meow").get_plotter(lazy=False).equal(Plotter())

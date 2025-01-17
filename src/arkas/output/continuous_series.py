@@ -11,7 +11,6 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from arkas.content.continuous_series import ContinuousSeriesContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
-from arkas.plotter.continuous_series import ContinuousSeriesPlotter
 
 if TYPE_CHECKING:
     from arkas.state.series import SeriesState
@@ -41,10 +40,6 @@ class ContinuousSeriesOutput(BaseLazyOutput):
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
-    >>> output.get_plotter()
-    ContinuousSeriesPlotter(
-      (state): SeriesState(name='col1', values=(7,), figure_config=MatplotlibFigureConfig())
-    )
 
     ```
     """
@@ -70,6 +65,3 @@ class ContinuousSeriesOutput(BaseLazyOutput):
 
     def _get_evaluator(self) -> Evaluator:
         return Evaluator()
-
-    def _get_plotter(self) -> ContinuousSeriesPlotter:
-        return ContinuousSeriesPlotter(self._state)

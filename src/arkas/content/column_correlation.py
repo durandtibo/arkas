@@ -82,10 +82,7 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
             f"and {list(self._state.dataframe.columns)}..."
         )
         metrics = ColumnCorrelationEvaluator(self._state).evaluate()
-        metrics = sort_metrics(
-            {key.split("_", maxsplit=1)[1]: val for key, val in metrics.items()},
-            key=self._state.get_arg("sort_metric", "spearman_coeff"),
-        )
+        metrics = sort_metrics(metrics, key=self._state.get_arg("sort_metric", "spearman_coeff"))
         columns = list(self._state.dataframe.columns)
         columns.remove(self._state.target_column)
         nrows, ncols = self._state.dataframe.shape
@@ -253,10 +250,11 @@ def sort_metrics(
     Returns:
         The sorted dictionary of metrics.
     """
+
     def get_metric(item: Any) -> float:
         val = item[1][key]
         if math.isnan(val):
-            val = float('-inf')
+            val = float("-inf")
         return val
 
     return dict(sorted(metrics.items(), key=get_metric, reverse=True))

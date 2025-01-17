@@ -52,7 +52,7 @@ class BaseRunner(ABC, metaclass=AbstractFactory):
       (analyzer): AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, missing_policy='raise', nan_policy='propagate')
       (exporter): MetricExporter(
           (path): .../metrics.pkl
-          (saver): PickleSaver(protocol=5)
+          (saver): PickleSaver()
           (exist_ok): False
           (show_metrics): False
         )
@@ -206,7 +206,7 @@ def setup_runner(
       (analyzer): AccuracyAnalyzer(y_true='target', y_pred='pred', drop_nulls=True, missing_policy='raise', nan_policy='propagate')
       (exporter): MetricExporter(
           (path): /path/to/data.csv
-          (saver): PickleSaver(protocol=5)
+          (saver): PickleSaver()
           (exist_ok): False
           (show_metrics): False
         )

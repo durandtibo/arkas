@@ -67,7 +67,7 @@ class ContinuousSeriesContentGenerator(BaseSectionContentGenerator):
         return self._state.equal(other._state, equal_nan=equal_nan)
 
     def generate_content(self) -> str:
-        logger.info(f"Generating the continuous distribution of {self._state.series.name}...")
+        logger.info(f"Generating the continuous distribution of {self._state.series.name!r}...")
         figures = ContinuousSeriesPlotter(state=self._state).plot()
         stats = compute_statistics_continuous(self._state.series)
         null_values_pct = (

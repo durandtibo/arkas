@@ -8,7 +8,6 @@ import pytest
 from arkas.content import ContentGenerator, TemporalNullValueContentGenerator
 from arkas.evaluator2 import Evaluator
 from arkas.output import Output, TemporalNullValueOutput
-from arkas.plotter import Plotter, TemporalNullValuePlotter
 from arkas.state import TemporalDataFrameState
 
 
@@ -138,27 +137,4 @@ def test_temporal_null_value_output_get_evaluator_lazy_false(dataframe: pl.DataF
         )
         .get_evaluator(lazy=False)
         .equal(Evaluator())
-    )
-
-
-def test_temporal_null_value_output_get_plotter_lazy_true(dataframe: pl.DataFrame) -> None:
-    assert (
-        TemporalNullValueOutput(
-            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
-        )
-        .get_plotter()
-        .equal(
-            TemporalNullValuePlotter(
-                TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
-            )
-        )
-    )
-
-
-def test_temporal_null_value_output_get_plotter_lazy_false(dataframe: pl.DataFrame) -> None:
-    assert isinstance(
-        TemporalNullValueOutput(
-            TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
-        ).get_plotter(lazy=False),
-        Plotter,
     )

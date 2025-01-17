@@ -6,12 +6,17 @@ __all__ = ["BaseExporter", "is_exporter_config", "setup_exporter"]
 
 import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+from coola.equality.comparators import BaseEqualityComparator
+from coola.equality.handlers import EqualNanHandler, SameObjectHandler, SameTypeHandler
+from coola.equality.testers import EqualityTester
 from objectory import AbstractFactory
 from objectory.utils import is_object_config
 
 if TYPE_CHECKING:
+    from coola.equality import EqualityConfig
+
     from arkas.output.base import BaseOutput
 
 logger = logging.getLogger(__name__)
@@ -45,13 +50,41 @@ class BaseExporter(ABC, metaclass=AbstractFactory):
     ...
     MetricExporter(
       (path): .../metrics.pkl
-      (saver): PickleSaver(protocol=5)
+      (saver): PickleSaver()
       (exist_ok): False
       (show_metrics): False
     )
 
     ```
     """
+
+    @abstractmethod
+    def equal(self, other: Any, equal_nan: bool = False) -> bool:
+        r"""Indicate if two exporters are equal or not.
+
+        Args:
+            other: The other exporter to compare.
+            equal_nan: Whether to compare NaN's as equal. If ``True``,
+                NaN's in both objects will be considered equal.
+
+        Returns:
+            ``True`` if the two exporters are equal, otherwise ``False``.
+
+        Example usage:
+
+        ```pycon
+
+        >>> from arkas.exporter import MetricExporter
+        >>> exporter1 = MetricExporter(path="/data/metrics.pkl")
+        >>> exporter2 = MetricExporter(path="/data/metrics.pkl")
+        >>> exporter3 = MetricExporter(path="/data/metrics.pkl", exist_ok=True)
+        >>> exporter1.equal(exporter2)
+        True
+        >>> exporter1.equal(exporter3)
+        False
+
+        ```
+        """
 
     @abstractmethod
     def export(self, output: BaseOutput) -> None:
@@ -149,7 +182,7 @@ def setup_exporter(
     >>> exporter
     MetricExporter(
       (path): /path/to/data.csv
-      (saver): PickleSaver(protocol=5)
+      (saver): PickleSaver()
       (exist_ok): False
       (show_metrics): False
     )
@@ -160,5 +193,27 @@ def setup_exporter(
         logger.info("Initializing a exporter from its configuration... ")
         exporter = BaseExporter.factory(**exporter)
     if not isinstance(exporter, BaseExporter):
-        logger.warning(f"exporter is not a `BaseExporter` (received: {type(exporter)})")
+        logger.warning(f"exporter is not a 'BaseExporter' (received: {type(exporter)})")
     return exporter
+
+
+class ExporterEqualityComparator(BaseEqualityComparator[BaseExporter]):
+    r"""Implement an equality comparator for ``BaseExporter``
+    objects."""
+
+    def __init__(self) -> None:
+        self._handler = SameObjectHandler()
+        self._handler.chain(SameTypeHandler()).chain(EqualNanHandler())
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__)
+
+    def clone(self) -> ExporterEqualityComparator:
+        return self.__class__()
+
+    def equal(self, actual: BaseExporter, expected: Any, config: EqualityConfig) -> bool:
+        return self._handler.handle(actual, expected, config=config)
+
+
+if not EqualityTester.has_comparator(BaseExporter):  # pragma: no cover
+    EqualityTester.add_comparator(BaseExporter, ExporterEqualityComparator())
