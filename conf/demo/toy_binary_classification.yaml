@@ -5,7 +5,7 @@ defaults:
   - _self_
 
 ingestor:
-  _target_: grizz.ingestor.ParquetIngestor
+  _target_: grizz.ingestor.ParquetFileIngestor
   path: ${oc.env:PWD}/data/demo/toy_binary_classification.parquet
 
 transformer:
