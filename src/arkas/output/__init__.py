@@ -21,6 +21,7 @@ __all__ = [
     "PlotColumnOutput",
     "ScatterColumnOutput",
     "SummaryOutput",
+    "TemporalContinuousColumnOutput",
     "TemporalNullValueOutput",
     "TemporalPlotColumnOutput",
 ]
@@ -32,6 +33,7 @@ from arkas.output.column_cooccurrence import ColumnCooccurrenceOutput
 from arkas.output.column_correlation import ColumnCorrelationOutput
 from arkas.output.content import ContentOutput
 from arkas.output.continuous_series import ContinuousSeriesOutput
+from arkas.output.continuous_temporal import TemporalContinuousColumnOutput
 from arkas.output.correlation import CorrelationOutput
 from arkas.output.empty import EmptyOutput
 from arkas.output.hexbin_column import HexbinColumnOutput
