@@ -34,7 +34,7 @@ class TemporalContinuousColumnContentGenerator(BaseSectionContentGenerator):
 
     >>> from datetime import datetime, timezone
     >>> import polars as pl
-    >>> from arkas.content import TemporalContinuouscolumnContentGenerator
+    >>> from arkas.content import TemporalContinuousColumnContentGenerator
     >>> from arkas.state import TemporalDataFrameState
     >>> frame = pl.DataFrame(
     ...     {
@@ -51,11 +51,11 @@ class TemporalContinuousColumnContentGenerator(BaseSectionContentGenerator):
     ...         "datetime": pl.Datetime(time_unit="us", time_zone="UTC"),
     ...     },
     ... )
-    >>> content = TemporalContinuouscolumnContentGenerator(
+    >>> content = TemporalContinuousColumnContentGenerator(
     ...     TemporalDataFrameState(frame, temporal_column="datetime")
     ... )
     >>> content
-    TemporalContinuouscolumnContentGenerator(
+    TemporalContinuousColumnContentGenerator(
       (state): TemporalDataFrameState(dataframe=(4, 2), temporal_column='datetime', period=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 

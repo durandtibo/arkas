@@ -38,7 +38,9 @@ def test_continuous_series_output_equal_true(series: pl.Series) -> None:
 
 
 def test_continuous_series_output_equal_false_different_state(series: pl.Series) -> None:
-    assert not ContinuousSeriesOutput(SeriesState(series)).equal(SeriesState(pl.Series()))
+    assert not ContinuousSeriesOutput(SeriesState(series)).equal(
+        ContinuousSeriesOutput(SeriesState(pl.Series()))
+    )
 
 
 def test_continuous_series_output_equal_false_different_type(series: pl.Series) -> None:
