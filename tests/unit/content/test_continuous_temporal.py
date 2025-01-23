@@ -7,14 +7,15 @@ import pytest
 
 from arkas.content import ContentGenerator, TemporalContinuousColumnContentGenerator
 from arkas.content.continuous_temporal import create_template
-from arkas.state import TemporalDataFrameState
+from arkas.state import TemporalColumnState
 
 
 @pytest.fixture
 def dataframe() -> pl.DataFrame:
     return pl.DataFrame(
         {
-            "col1": [0, 1, 2, 3, 4, 5, 6],
+            "col1": [0, 1, 1, 0, 0, 0, 1],
+            "col2": [0, 1, 2, 3, 4, 5, 6],
             "datetime": [
                 datetime(year=2020, month=1, day=1, tzinfo=timezone.utc),
                 datetime(year=2020, month=1, day=2, tzinfo=timezone.utc),
@@ -27,6 +28,7 @@ def dataframe() -> pl.DataFrame:
         },
         schema={
             "col1": pl.Int64,
+            "col2": pl.Int64,
             "datetime": pl.Datetime(time_unit="us", time_zone="UTC"),
         },
     )
@@ -37,23 +39,10 @@ def dataframe() -> pl.DataFrame:
 ##############################################################
 
 
-def test_temporal_continuous_column_content_generator_incorrect_state(
-    dataframe: pl.DataFrame,
-) -> None:
-    with pytest.raises(
-        ValueError, match="The DataFrame must have 2 columns but received a DataFrame of shape"
-    ):
-        TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(
-                dataframe.with_columns(pl.lit(1).alias("col2")), temporal_column="datetime"
-            )
-        )
-
-
 def test_temporal_continuous_column_content_generator_repr(dataframe: pl.DataFrame) -> None:
     assert repr(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         )
     ).startswith("TemporalContinuousColumnContentGenerator(")
 
@@ -61,7 +50,7 @@ def test_temporal_continuous_column_content_generator_repr(dataframe: pl.DataFra
 def test_temporal_continuous_column_content_generator_str(dataframe: pl.DataFrame) -> None:
     assert str(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         )
     ).startswith("TemporalContinuousColumnContentGenerator(")
 
@@ -69,7 +58,7 @@ def test_temporal_continuous_column_content_generator_str(dataframe: pl.DataFram
 def test_temporal_continuous_column_content_generator_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         ).compute(),
         ContentGenerator,
     )
@@ -77,10 +66,10 @@ def test_temporal_continuous_column_content_generator_compute(dataframe: pl.Data
 
 def test_temporal_continuous_column_content_generator_equal_true(dataframe: pl.DataFrame) -> None:
     assert TemporalContinuousColumnContentGenerator(
-        TemporalDataFrameState(dataframe, temporal_column="datetime")
+        TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
     ).equal(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         )
     )
 
@@ -89,10 +78,10 @@ def test_temporal_continuous_column_content_generator_equal_false_different_stat
     dataframe: pl.DataFrame,
 ) -> None:
     assert not TemporalContinuousColumnContentGenerator(
-        TemporalDataFrameState(dataframe, temporal_column="datetime")
+        TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
     ).equal(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="col1")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="col1")
         )
     )
 
@@ -101,7 +90,7 @@ def test_temporal_continuous_column_content_generator_equal_false_different_type
     dataframe: pl.DataFrame,
 ) -> None:
     assert not TemporalContinuousColumnContentGenerator(
-        TemporalDataFrameState(dataframe, temporal_column="datetime")
+        TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
     ).equal(42)
 
 
@@ -110,7 +99,7 @@ def test_temporal_continuous_column_content_generator_generate_content(
 ) -> None:
     assert isinstance(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         ).generate_content(),
         str,
     )
@@ -119,8 +108,10 @@ def test_temporal_continuous_column_content_generator_generate_content(
 def test_temporal_continuous_column_content_generator_generate_content_empty_rows() -> None:
     assert isinstance(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(
-                pl.DataFrame({"col": [], "datetime": []}), temporal_column="datetime"
+            TemporalColumnState(
+                pl.DataFrame({"col2": [], "datetime": []}),
+                target_column="col2",
+                temporal_column="datetime",
             )
         ).generate_content(),
         str,
@@ -132,7 +123,7 @@ def test_temporal_continuous_column_content_generator_generate_body(
 ) -> None:
     assert isinstance(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         ).generate_body(),
         str,
     )
@@ -143,7 +134,7 @@ def test_temporal_continuous_column_content_generator_generate_body_args(
 ) -> None:
     assert isinstance(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         ).generate_body(number="1.", tags=["meow"], depth=1),
         str,
     )
@@ -152,7 +143,7 @@ def test_temporal_continuous_column_content_generator_generate_body_args(
 def test_temporal_continuous_column_content_generator_generate_toc(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         ).generate_toc(),
         str,
     )
@@ -163,7 +154,7 @@ def test_temporal_continuous_column_content_generator_generate_toc_args(
 ) -> None:
     assert isinstance(
         TemporalContinuousColumnContentGenerator(
-            TemporalDataFrameState(dataframe, temporal_column="datetime")
+            TemporalColumnState(dataframe, target_column="col2", temporal_column="datetime")
         ).generate_toc(number="1.", tags=["meow"], depth=1),
         str,
     )
