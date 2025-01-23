@@ -13,7 +13,7 @@ from arkas.evaluator2.vanilla import Evaluator
 from arkas.output.lazy import BaseLazyOutput
 
 if TYPE_CHECKING:
-    from arkas.state.temporal_dataframe import TemporalDataFrameState
+    from arkas.state.temporal_column import TemporalColumnState
 
 
 class TemporalContinuousColumnOutput(BaseLazyOutput):
@@ -29,10 +29,11 @@ class TemporalContinuousColumnOutput(BaseLazyOutput):
     >>> from datetime import datetime, timezone
     >>> import polars as pl
     >>> from arkas.output import TemporalContinuousColumnOutput
-    >>> from arkas.state import TemporalDataFrameState
+    >>> from arkas.state import TemporalColumnState
     >>> frame = pl.DataFrame(
     ...     {
-    ...         "col1": [0, 1, 2, 3],
+    ...         "col1": [0, 1, 0, 1],
+    ...         "col2": [0, 1, 2, 3],
     ...         "datetime": [
     ...             datetime(year=2020, month=1, day=3, tzinfo=timezone.utc),
     ...             datetime(year=2020, month=2, day=3, tzinfo=timezone.utc),
@@ -42,19 +43,20 @@ class TemporalContinuousColumnOutput(BaseLazyOutput):
     ...     },
     ...     schema={
     ...         "col1": pl.Int64,
+    ...         "col2": pl.Int64,
     ...         "datetime": pl.Datetime(time_unit="us", time_zone="UTC"),
     ...     },
     ... )
     >>> output = TemporalContinuousColumnOutput(
-    ...     TemporalDataFrameState(frame, temporal_column="datetime")
+    ...     TemporalColumnState(frame, target_column="col2", temporal_column="datetime")
     ... )
     >>> output
     TemporalContinuousColumnOutput(
-      (state): TemporalDataFrameState(dataframe=(4, 2), temporal_column='datetime', period=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TemporalColumnState(dataframe=(4, 3), target_column='col2', temporal_column='datetime', period=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_content_generator()
     TemporalContinuousColumnContentGenerator(
-      (state): TemporalDataFrameState(dataframe=(4, 2), temporal_column='datetime', period=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TemporalColumnState(dataframe=(4, 3), target_column='col2', temporal_column='datetime', period=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
     >>> output.get_evaluator()
     Evaluator(count=0)
@@ -62,7 +64,7 @@ class TemporalContinuousColumnOutput(BaseLazyOutput):
     ```
     """
 
-    def __init__(self, state: TemporalDataFrameState) -> None:
+    def __init__(self, state: TemporalColumnState) -> None:
         self._state = state
 
     def __repr__(self) -> str:
