@@ -1,9 +1,9 @@
 r"""Contain the implementation of a HTML content generator that analyzes
-the temporal distribution of a Series with continuous values."""
+the temporal distribution of a column with continuous values."""
 
 from __future__ import annotations
 
-__all__ = ["TemporalContinuousSeriesContentGenerator", "create_template"]
+__all__ = ["TemporalContinuousColumnContentGenerator", "create_template"]
 
 import logging
 from typing import TYPE_CHECKING, Any
@@ -21,12 +21,12 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class TemporalContinuousSeriesContentGenerator(BaseSectionContentGenerator):
+class TemporalContinuousColumnContentGenerator(BaseSectionContentGenerator):
     r"""Implement a content generator that analyzes the temporal
-    distribution of a Series with continuous values.
+    distribution of a column with continuous values.
 
     Args:
-        state: The state containing the Series to analyze.
+        state: The state containing the column to analyze.
 
     Example usage:
 
@@ -34,7 +34,7 @@ class TemporalContinuousSeriesContentGenerator(BaseSectionContentGenerator):
 
     >>> from datetime import datetime, timezone
     >>> import polars as pl
-    >>> from arkas.content import TemporalContinuousSeriesContentGenerator
+    >>> from arkas.content import TemporalContinuouscolumnContentGenerator
     >>> from arkas.state import TemporalDataFrameState
     >>> frame = pl.DataFrame(
     ...     {
@@ -51,11 +51,11 @@ class TemporalContinuousSeriesContentGenerator(BaseSectionContentGenerator):
     ...         "datetime": pl.Datetime(time_unit="us", time_zone="UTC"),
     ...     },
     ... )
-    >>> content = TemporalContinuousSeriesContentGenerator(
+    >>> content = TemporalContinuouscolumnContentGenerator(
     ...     TemporalDataFrameState(frame, temporal_column="datetime")
     ... )
     >>> content
-    TemporalContinuousSeriesContentGenerator(
+    TemporalContinuouscolumnContentGenerator(
       (state): TemporalDataFrameState(dataframe=(4, 2), temporal_column='datetime', period=None, nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
