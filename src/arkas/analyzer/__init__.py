@@ -21,6 +21,7 @@ __all__ = [
     "PlotColumnAnalyzer",
     "ScatterColumnAnalyzer",
     "SummaryAnalyzer",
+    "TemporalContinuousColumnAnalyzer",
     "TemporalNullValueAnalyzer",
     "TemporalPlotColumnAnalyzer",
     "TransformAnalyzer",
@@ -36,6 +37,7 @@ from arkas.analyzer.column_correlation import ColumnCorrelationAnalyzer
 from arkas.analyzer.columns import BaseTruePredAnalyzer
 from arkas.analyzer.content import ContentAnalyzer
 from arkas.analyzer.continuous_column import ContinuousColumnAnalyzer
+from arkas.analyzer.continuous_temporal import TemporalContinuousColumnAnalyzer
 from arkas.analyzer.correlation import CorrelationAnalyzer
 from arkas.analyzer.hexbin_column import HexbinColumnAnalyzer
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer, BaseLazyAnalyzer
