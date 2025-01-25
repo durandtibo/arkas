@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
-from iden.io import save_pickle, save_text
+from iden.io import JsonSaver, save_pickle, save_text
 
 from arkas.exporter import ReportExporter
 from arkas.output import AccuracyOutput, BaseOutput
@@ -37,6 +37,40 @@ def test_report_exporter_repr(tmp_path: Path) -> None:
 
 def test_report_exporter_str(tmp_path: Path) -> None:
     assert str(ReportExporter(tmp_path.joinpath("report.html"))).startswith("ReportExporter(")
+
+
+def test_report_exporter_equal_true(tmp_path: Path) -> None:
+    assert ReportExporter(tmp_path.joinpath("report.html")).equal(
+        ReportExporter(tmp_path.joinpath("report.html"))
+    )
+
+
+def test_report_exporter_equal_false_different_path(tmp_path: Path) -> None:
+    assert not ReportExporter(tmp_path.joinpath("report.html")).equal(
+        ReportExporter(tmp_path.joinpath("my_report.html"))
+    )
+
+
+def test_report_exporter_equal_false_different_saver(tmp_path: Path) -> None:
+    assert not ReportExporter(tmp_path.joinpath("report.html")).equal(
+        ReportExporter(tmp_path.joinpath("report.html"), saver=JsonSaver())
+    )
+
+
+def test_report_exporter_equal_false_different_exist_ok(tmp_path: Path) -> None:
+    assert not ReportExporter(tmp_path.joinpath("report.html")).equal(
+        ReportExporter(tmp_path.joinpath("report.html"), exist_ok=True)
+    )
+
+
+def test_report_exporter_equal_false_different_max_toc_depth(tmp_path: Path) -> None:
+    assert not ReportExporter(tmp_path.joinpath("report.html")).equal(
+        ReportExporter(tmp_path.joinpath("report.html"), max_toc_depth=2)
+    )
+
+
+def test_report_exporter_equal_false_different_type(tmp_path: Path) -> None:
+    assert not ReportExporter(tmp_path.joinpath("report.html")).equal(42)
 
 
 def test_report_exporter_export(tmp_path: Path, output: BaseOutput) -> None:

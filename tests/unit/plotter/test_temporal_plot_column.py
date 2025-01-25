@@ -57,6 +57,12 @@ def test_temporal_plot_column_plotter_str(dataframe: pl.DataFrame) -> None:
     ).startswith("TemporalPlotColumnPlotter(")
 
 
+def test_temporal_plot_column_plotter_state(dataframe: pl.DataFrame) -> None:
+    assert TemporalPlotColumnPlotter(
+        TemporalDataFrameState(dataframe, temporal_column="datetime")
+    ).state.equal(TemporalDataFrameState(dataframe, temporal_column="datetime"))
+
+
 def test_temporal_plot_column_plotter_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalPlotColumnPlotter(
@@ -167,7 +173,7 @@ def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame)
             TemporalDataFrameState(
                 dataframe,
                 temporal_column="datetime",
-                figure_config=MatplotlibFigureConfig(yscale="symlog", init={}),
+                figure_config=MatplotlibFigureConfig(yscale="linear", init={}),
             )
         ),
         MatplotlibFigure,

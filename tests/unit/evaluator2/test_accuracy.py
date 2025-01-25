@@ -38,6 +38,24 @@ def test_accuracy_evaluator_str() -> None:
     ).startswith("AccuracyEvaluator(")
 
 
+def test_accuracy_evaluator_state() -> None:
+    assert AccuracyEvaluator(
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        ),
+    ).state.equal(
+        AccuracyState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        )
+    )
+
+
 def test_accuracy_evaluator_equal_true() -> None:
     assert AccuracyEvaluator(
         AccuracyState(

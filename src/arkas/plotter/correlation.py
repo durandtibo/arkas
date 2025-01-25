@@ -5,23 +5,22 @@ from __future__ import annotations
 __all__ = ["BaseFigureCreator", "CorrelationPlotter", "MatplotlibFigureCreator"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.figure.creator import FigureCreatorRegistry
 from arkas.figure.html import HtmlFigure
 from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
-from arkas.plotter.base import BasePlotter
-from arkas.plotter.vanilla import Plotter
+from arkas.plot.utils.scatter import find_alpha_from_size, find_marker_size_from_size
+from arkas.plotter.caching import BaseStateCachedPlotter
+from arkas.state.dataframe import DataFrameState
 from arkas.utils.dataframe import check_num_columns
 from arkas.utils.range import find_range
 
 if TYPE_CHECKING:
     from arkas.figure.base import BaseFigure
-    from arkas.state.dataframe import DataFrameState
 
 
 class BaseFigureCreator(ABC):
@@ -97,7 +96,11 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
         x = state.dataframe[xcol].to_numpy()
         y = state.dataframe[ycol].to_numpy()
-        ax.scatter(x=x, y=y)
+
+        n = x.size
+        marker_alpha = state.get_arg("marker_alpha", default=find_alpha_from_size(n))
+        marker_scale = state.get_arg("marker_scale", default=find_marker_size_from_size(n))
+        ax.scatter(x=x, y=y, s=marker_scale, alpha=marker_alpha)
 
         xmin, xmax = find_range(
             x,
@@ -123,7 +126,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         return MatplotlibFigure(fig)
 
 
-class CorrelationPlotter(BasePlotter):
+class CorrelationPlotter(BaseStateCachedPlotter[DataFrameState]):
     r"""Implement a DataFrame column plotter.
 
     Args:
@@ -159,24 +162,8 @@ class CorrelationPlotter(BasePlotter):
 
     def __init__(self, state: DataFrameState) -> None:
         check_num_columns(state.dataframe, num_columns=2)
-        self._state = state
+        super().__init__(state)
 
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def compute(self) -> Plotter:
-        return Plotter(self.plot())
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
-
-    def plot(self, prefix: str = "", suffix: str = "") -> dict:
+    def _plot(self) -> dict:
         figure = self.registry.find_creator(self._state.figure_config.backend()).create(self._state)
-        return {f"{prefix}correlation{suffix}": figure}
+        return {"correlation": figure}

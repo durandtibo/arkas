@@ -5,19 +5,12 @@ from __future__ import annotations
 __all__ = ["AccuracyEvaluator"]
 
 
-from typing import TYPE_CHECKING, Any
-
-from coola.utils import repr_indent, repr_mapping
-
-from arkas.evaluator2.base import BaseEvaluator
-from arkas.evaluator2.vanilla import Evaluator
+from arkas.evaluator2.caching import BaseStateCachedEvaluator
 from arkas.metric import accuracy
-
-if TYPE_CHECKING:
-    from arkas.state.accuracy import AccuracyState
+from arkas.state.accuracy import AccuracyState
 
 
-class AccuracyEvaluator(BaseEvaluator):
+class AccuracyEvaluator(BaseStateCachedEvaluator[AccuracyState]):
     r"""Implement the accuracy evaluator.
 
     Args:
@@ -49,26 +42,9 @@ class AccuracyEvaluator(BaseEvaluator):
     ```
     """
 
-    def __init__(self, state: AccuracyState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def compute(self) -> Evaluator:
-        return Evaluator(metrics=self.evaluate())
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
-
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+    def _evaluate(self) -> dict[str, float]:
         return accuracy(
             y_true=self._state.y_true,
             y_pred=self._state.y_pred,
-            prefix=prefix,
-            suffix=suffix,
             nan_policy=self._state.nan_policy,
         )

@@ -70,7 +70,7 @@ class EvaluationRunner(BaseRunner):
       (ingestor): Ingestor(shape=(5, 2))
       (transformer): SequentialTransformer()
       (evaluator): AccuracyEvaluator(y_true='target', y_pred='pred', drop_nulls=True, nan_policy='propagate')
-      (saver): PickleSaver(protocol=5)
+      (saver): PickleSaver()
       (path): .../metrics.pkl
       (show_metrics): True
     )

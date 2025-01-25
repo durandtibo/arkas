@@ -95,7 +95,7 @@ def create_template() -> str:
 
     ```pycon
 
-    >>> from arkas.content.plot_column import create_template
+    >>> from arkas.content.scatter_column import create_template
     >>> template = create_template()
 
     ```

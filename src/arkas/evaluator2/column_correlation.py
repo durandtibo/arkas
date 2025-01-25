@@ -4,19 +4,20 @@ from __future__ import annotations
 
 __all__ = ["ColumnCorrelationEvaluator"]
 
-from typing import TYPE_CHECKING, Any
 
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
+from grizz.utils.imports import is_tqdm_available
 
-from arkas.evaluator2.base import BaseEvaluator
-from arkas.evaluator2.vanilla import Evaluator
+from arkas.evaluator2.caching import BaseStateCachedEvaluator
 from arkas.metric import pearsonr, spearmanr
+from arkas.state.target_dataframe import TargetDataFrameState
 
-if TYPE_CHECKING:
-    from arkas.state.target_dataframe import TargetDataFrameState
+if is_tqdm_available():
+    from tqdm import tqdm
+else:  # pragma: no cover
+    from grizz.utils.noop import tqdm
 
 
-class ColumnCorrelationEvaluator(BaseEvaluator):
+class ColumnCorrelationEvaluator(BaseStateCachedEvaluator[TargetDataFrameState]):
     r"""Implement the column correlation evaluator.
 
     Args:
@@ -50,34 +51,15 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
     ```
     """
 
-    def __init__(self, state: TargetDataFrameState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def compute(self) -> Evaluator:
-        return Evaluator(metrics=self.evaluate())
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
-
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, dict[str, float]]:
+    def _evaluate(self) -> dict[str, dict[str, float]]:
         target_column = self._state.target_column
         columns = list(self._state.dataframe.columns)
         columns.remove(target_column)
 
         out = {}
-        for col in columns:
+        for col in tqdm(columns, desc="computing correlation"):
             frame = self._state.dataframe.select([col, target_column]).drop_nulls().drop_nans()
             x = frame[target_column].to_numpy()
             y = frame[col].to_numpy()
-            out[f"{prefix}{col}{suffix}"] = pearsonr(x, y) | spearmanr(x, y)
+            out[col] = pearsonr(x, y) | spearmanr(x, y)
         return out

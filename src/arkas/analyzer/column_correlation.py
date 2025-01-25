@@ -12,6 +12,7 @@ from grizz.utils.format import str_shape_diff
 from polars import selectors as cs
 
 from arkas.analyzer.lazy import BaseInNLazyAnalyzer
+from arkas.metric.utils import check_nan_policy
 from arkas.output import EmptyOutput
 from arkas.output.column_correlation import ColumnCorrelationOutput
 from arkas.state.target_dataframe import TargetDataFrameState
@@ -42,6 +43,9 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
             is missing and the missing columns are ignored.
             If ``'ignore'``, the missing columns are ignored and
             no warning message appears.
+        nan_policy: The policy on how to handle NaN values in the input
+            arrays. The following options are available: ``'omit'``,
+            ``'propagate'``, and ``'raise'``.
         sort_metric: The key used to sort the correlation table.
 
     Example usage:
@@ -52,7 +56,7 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
     >>> from arkas.analyzer import ColumnCorrelationAnalyzer
     >>> analyzer = ColumnCorrelationAnalyzer(target_column="col3")
     >>> analyzer
-    ColumnCorrelationAnalyzer(target_column='col3', sort_metric='spearman_coeff', columns=None, exclude_columns=(), missing_policy='raise')
+    ColumnCorrelationAnalyzer(target_column='col3', sort_metric='spearman_coeff', columns=None, exclude_columns=(), missing_policy='raise', nan_policy='propagate')
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
@@ -75,12 +79,15 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
         columns: Sequence[str] | None = None,
         exclude_columns: Sequence[str] = (),
         missing_policy: str = "raise",
+        nan_policy: str = "propagate",
         sort_metric: str = "spearman_coeff",
     ) -> None:
         super().__init__(
             columns=columns, exclude_columns=exclude_columns, missing_policy=missing_policy
         )
         self._target_column = target_column
+        check_nan_policy(nan_policy)
+        self._nan_policy = nan_policy
         self._sort_metric = sort_metric
 
     def find_columns(self, frame: pl.DataFrame) -> tuple[str, ...]:
@@ -90,10 +97,14 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
         return tuple(columns)
 
     def get_args(self) -> dict:
-        return {
-            "target_column": self._target_column,
-            "sort_metric": self._sort_metric,
-        } | super().get_args()
+        return (
+            {
+                "target_column": self._target_column,
+                "sort_metric": self._sort_metric,
+            }
+            | super().get_args()
+            | {"nan_policy": self._nan_policy}
+        )
 
     def _analyze(self, frame: pl.DataFrame) -> ColumnCorrelationOutput | EmptyOutput:
         if self._target_column not in frame:
@@ -103,8 +114,9 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
             )
             return EmptyOutput()
 
+        cols = self.find_columns(frame)
         logger.info(
-            f"Analyzing the correlation between {self._target_column} and {self._columns} | "
+            f"Analyzing the correlation between {self._target_column} and {cols} | "
             f"sort_metric={self._sort_metric!r} ..."
         )
         columns = list(self.find_common_columns(frame))
@@ -112,6 +124,9 @@ class ColumnCorrelationAnalyzer(BaseInNLazyAnalyzer):
         logger.info(str_shape_diff(orig=frame.shape, final=out.shape))
         return ColumnCorrelationOutput(
             state=TargetDataFrameState(
-                dataframe=out, target_column=self._target_column, sort_metric=self._sort_metric
+                dataframe=out,
+                target_column=self._target_column,
+                sort_metric=self._sort_metric,
+                nan_policy=self._nan_policy,
             )
         )

@@ -4,19 +4,13 @@ from __future__ import annotations
 
 __all__ = ["PrecisionEvaluator"]
 
-from typing import TYPE_CHECKING, Any
 
-from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
-
-from arkas.evaluator2.base import BaseEvaluator
-from arkas.evaluator2.vanilla import Evaluator
+from arkas.evaluator2.caching import BaseStateCachedEvaluator
 from arkas.metric import precision
-
-if TYPE_CHECKING:
-    from arkas.state.precision_recall import PrecisionRecallState
+from arkas.state.precision_recall import PrecisionRecallState
 
 
-class PrecisionEvaluator(BaseEvaluator):
+class PrecisionEvaluator(BaseStateCachedEvaluator[PrecisionRecallState]):
     r"""Implement the precision evaluator.
 
     This evaluator can be used in 3 different settings:
@@ -118,31 +112,10 @@ class PrecisionEvaluator(BaseEvaluator):
     ```
     """
 
-    def __init__(self, state: PrecisionRecallState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def compute(self) -> Evaluator:
-        return Evaluator(metrics=self.evaluate())
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
-
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+    def _evaluate(self) -> dict[str, float]:
         return precision(
             y_true=self._state.y_true,
             y_pred=self._state.y_pred,
-            prefix=prefix,
-            suffix=suffix,
             label_type=self._state.label_type,
             nan_policy=self._state.nan_policy,
         )

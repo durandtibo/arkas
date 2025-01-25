@@ -10,16 +10,18 @@ from typing import TYPE_CHECKING, Any
 from coola import objects_are_equal
 from coola.utils import repr_indent, repr_mapping
 
-from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.caching import BaseCachedEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 
 if TYPE_CHECKING:
     from collections.abc import Hashable, Mapping
 
+    from arkas.evaluator2.base import BaseEvaluator
+
 logger = logging.getLogger(__name__)
 
 
-class EvaluatorDict(BaseEvaluator):
+class EvaluatorDict(BaseCachedEvaluator):
     r"""Implement an evaluator that sequentially evaluates a mapping of
     evaluators.
 
@@ -62,6 +64,7 @@ class EvaluatorDict(BaseEvaluator):
     """
 
     def __init__(self, evaluators: Mapping[Hashable, BaseEvaluator]) -> None:
+        super().__init__()
         self._evaluators = evaluators
 
     def __repr__(self) -> str:
@@ -76,8 +79,5 @@ class EvaluatorDict(BaseEvaluator):
             return False
         return objects_are_equal(self._evaluators, other._evaluators, equal_nan=equal_nan)
 
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict:
-        return {
-            key: evaluator.evaluate(prefix=prefix, suffix=suffix)
-            for key, evaluator in self._evaluators.items()
-        }
+    def _evaluate(self) -> dict:
+        return {key: evaluator.evaluate() for key, evaluator in self._evaluators.items()}

@@ -11,6 +11,7 @@ from arkas.content.column_correlation import (
     create_template,
     sort_metrics,
 )
+from arkas.evaluator2 import ColumnCorrelationEvaluator
 from arkas.state import TargetDataFrameState
 
 
@@ -33,20 +34,24 @@ def dataframe() -> pl.DataFrame:
 
 def test_column_correlation_content_generator_repr(dataframe: pl.DataFrame) -> None:
     assert repr(
-        ColumnCorrelationContentGenerator(TargetDataFrameState(dataframe, target_column="col3"))
+        ColumnCorrelationContentGenerator(
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
+        )
     ).startswith("ColumnCorrelationContentGenerator(")
 
 
 def test_column_correlation_content_generator_str(dataframe: pl.DataFrame) -> None:
     assert str(
-        ColumnCorrelationContentGenerator(TargetDataFrameState(dataframe, target_column="col3"))
+        ColumnCorrelationContentGenerator(
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
+        )
     ).startswith("ColumnCorrelationContentGenerator(")
 
 
 def test_column_correlation_content_generator_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         ColumnCorrelationContentGenerator(
-            TargetDataFrameState(dataframe, target_column="col3")
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
         ).compute(),
         ContentGenerator,
     )
@@ -54,19 +59,23 @@ def test_column_correlation_content_generator_compute(dataframe: pl.DataFrame) -
 
 def test_column_correlation_content_generator_equal_true(dataframe: pl.DataFrame) -> None:
     assert ColumnCorrelationContentGenerator(
-        TargetDataFrameState(dataframe, target_column="col3")
+        ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
     ).equal(
-        ColumnCorrelationContentGenerator(TargetDataFrameState(dataframe, target_column="col3"))
+        ColumnCorrelationContentGenerator(
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
+        )
     )
 
 
-def test_column_correlation_content_generator_equal_false_different_state(
+def test_column_correlation_content_generator_equal_false_different_evaluator(
     dataframe: pl.DataFrame,
 ) -> None:
     assert not ColumnCorrelationContentGenerator(
-        TargetDataFrameState(dataframe, target_column="col3")
+        ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
     ).equal(
-        ColumnCorrelationContentGenerator(TargetDataFrameState(dataframe, target_column="col1"))
+        ColumnCorrelationContentGenerator(
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col1"))
+        )
     )
 
 
@@ -74,14 +83,14 @@ def test_column_correlation_content_generator_equal_false_different_type(
     dataframe: pl.DataFrame,
 ) -> None:
     assert not ColumnCorrelationContentGenerator(
-        TargetDataFrameState(dataframe, target_column="col3")
+        ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
     ).equal(42)
 
 
 def test_column_correlation_content_generator_generate_content(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         ColumnCorrelationContentGenerator(
-            TargetDataFrameState(dataframe, target_column="col3")
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
         ).generate_content(),
         str,
     )
@@ -90,12 +99,14 @@ def test_column_correlation_content_generator_generate_content(dataframe: pl.Dat
 def test_column_correlation_content_generator_generate_content_empty_rows() -> None:
     assert isinstance(
         ColumnCorrelationContentGenerator(
-            TargetDataFrameState(
-                pl.DataFrame(
-                    {"col1": [], "col2": [], "col3": []},
-                    schema={"col1": pl.Float64, "col2": pl.Float64, "col3": pl.Float64},
-                ),
-                target_column="col3",
+            ColumnCorrelationEvaluator(
+                TargetDataFrameState(
+                    pl.DataFrame(
+                        {"col1": [], "col2": [], "col3": []},
+                        schema={"col1": pl.Float64, "col2": pl.Float64, "col3": pl.Float64},
+                    ),
+                    target_column="col3",
+                )
             )
         ).generate_content(),
         str,
@@ -105,7 +116,7 @@ def test_column_correlation_content_generator_generate_content_empty_rows() -> N
 def test_column_correlation_content_generator_generate_body(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         ColumnCorrelationContentGenerator(
-            TargetDataFrameState(dataframe, target_column="col3")
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
         ).generate_body(),
         str,
     )
@@ -114,7 +125,7 @@ def test_column_correlation_content_generator_generate_body(dataframe: pl.DataFr
 def test_column_correlation_content_generator_generate_body_args(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         ColumnCorrelationContentGenerator(
-            TargetDataFrameState(dataframe, target_column="col3")
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
         ).generate_body(number="1.", tags=["meow"], depth=1),
         str,
     )
@@ -123,7 +134,7 @@ def test_column_correlation_content_generator_generate_body_args(dataframe: pl.D
 def test_column_correlation_content_generator_generate_toc(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         ColumnCorrelationContentGenerator(
-            TargetDataFrameState(dataframe, target_column="col3")
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
         ).generate_toc(),
         str,
     )
@@ -132,9 +143,19 @@ def test_column_correlation_content_generator_generate_toc(dataframe: pl.DataFra
 def test_column_correlation_content_generator_generate_toc_args(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         ColumnCorrelationContentGenerator(
-            TargetDataFrameState(dataframe, target_column="col3")
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
         ).generate_toc(number="1.", tags=["meow"], depth=1),
         str,
+    )
+
+
+def test_column_correlation_content_generator_from_state(dataframe: pl.DataFrame) -> None:
+    assert ColumnCorrelationContentGenerator.from_state(
+        TargetDataFrameState(dataframe, target_column="col3")
+    ).equal(
+        ColumnCorrelationContentGenerator(
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
+        )
     )
 
 

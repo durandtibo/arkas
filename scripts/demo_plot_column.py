@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 def get_dataframe() -> pl.DataFrame:
     r"""Return a DataFrame."""
-    n_samples = 200
+    n_samples = 10000
     rng = np.random.default_rng(42)
     frame = pl.DataFrame(
         {
@@ -51,7 +51,9 @@ def main() -> None:
     ingestor = Ingestor(get_dataframe())
 
     path = Path.cwd().joinpath("tmp")
-    figure_config = MatplotlibFigureConfig(init={"dpi": 500, "figsize": (14, 8)}, yscale="symlog")
+    figure_config = MatplotlibFigureConfig(
+        init={"dpi": 300, "figsize": (14, 6)}, yscale="symlog", nbins=101
+    )
     runner = AnalysisRunner(
         ingestor=ingestor,
         transformer=SequentialTransformer(transformers=[]),
@@ -74,6 +76,40 @@ def main() -> None:
                 ),
                 "scatter columns": aa.ScatterColumnAnalyzer(
                     x="normal", y="cauchy", color="uniform", figure_config=figure_config
+                ),
+                "continuous (uniform)": aa.MappingAnalyzer(
+                    {
+                        "distribution": aa.ContinuousColumnAnalyzer(
+                            column="uniform",
+                            figure_config=figure_config,
+                        ),
+                        "temporal distribution": aa.TemporalContinuousColumnAnalyzer(
+                            target_column="uniform",
+                            temporal_column="datetime",
+                            period="6h",
+                            figure_config=figure_config,
+                        ),
+                    }
+                ),
+                "continuous (normal)": aa.MappingAnalyzer(
+                    {
+                        "distribution": aa.ContinuousColumnAnalyzer(
+                            column="normal",
+                            figure_config=MatplotlibFigureConfig(
+                                init={"dpi": 300, "figsize": (14, 6)},
+                                yscale="symlog",
+                                nbins=101,
+                                xmin="q0.001",
+                                xmax="q0.999",
+                            ),
+                        ),
+                        "temporal distribution": aa.TemporalContinuousColumnAnalyzer(
+                            target_column="normal",
+                            temporal_column="datetime",
+                            period="6h",
+                            figure_config=figure_config,
+                        ),
+                    }
                 ),
             }
         ),

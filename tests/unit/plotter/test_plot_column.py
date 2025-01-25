@@ -34,6 +34,10 @@ def test_plot_column_plotter_str(dataframe: pl.DataFrame) -> None:
     assert str(PlotColumnPlotter(DataFrameState(dataframe))).startswith("PlotColumnPlotter(")
 
 
+def test_plot_column_plotter_state(dataframe: pl.DataFrame) -> None:
+    assert PlotColumnPlotter(DataFrameState(dataframe)).state.equal(DataFrameState(dataframe))
+
+
 def test_plot_column_plotter_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(PlotColumnPlotter(DataFrameState(dataframe)).compute(), Plotter)
 
@@ -159,7 +163,7 @@ def test_matplotlib_figure_creator_create_figure_config(dataframe: pl.DataFrame)
         MatplotlibFigureCreator().create(
             DataFrameState(
                 dataframe,
-                figure_config=MatplotlibFigureConfig(yscale="symlog", init={}),
+                figure_config=MatplotlibFigureConfig(yscale="linear", init={}),
             )
         ),
         MatplotlibFigure,

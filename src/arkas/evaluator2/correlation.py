@@ -4,20 +4,14 @@ from __future__ import annotations
 
 __all__ = ["CorrelationEvaluator"]
 
-from typing import TYPE_CHECKING, Any
 
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
-
-from arkas.evaluator2.base import BaseEvaluator
-from arkas.evaluator2.vanilla import Evaluator
+from arkas.evaluator2.caching import BaseStateCachedEvaluator
 from arkas.metric import pearsonr, spearmanr
+from arkas.state.target_dataframe import DataFrameState
 from arkas.utils.dataframe import check_num_columns
 
-if TYPE_CHECKING:
-    from arkas.state.target_dataframe import DataFrameState
 
-
-class CorrelationEvaluator(BaseEvaluator):
+class CorrelationEvaluator(BaseStateCachedEvaluator[DataFrameState]):
     r"""Implement the pairwise column correlation evaluator.
 
     Args:
@@ -51,28 +45,12 @@ class CorrelationEvaluator(BaseEvaluator):
 
     def __init__(self, state: DataFrameState) -> None:
         check_num_columns(state.dataframe, num_columns=2)
-        self._state = state
+        super().__init__(state=state)
 
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def compute(self) -> Evaluator:
-        return Evaluator(metrics=self.evaluate())
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
-
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+    def _evaluate(self) -> dict[str, float]:
         frame = self._state.dataframe
         x = frame[frame.columns[0]].to_numpy()
         y = frame[frame.columns[1]].to_numpy()
-        return pearsonr(
-            x=x, y=y, prefix=prefix, suffix=suffix, nan_policy=self._state.nan_policy
-        ) | spearmanr(x=x, y=y, prefix=prefix, suffix=suffix, nan_policy=self._state.nan_policy)
+        return pearsonr(x=x, y=y, nan_policy=self._state.nan_policy) | spearmanr(
+            x=x, y=y, nan_policy=self._state.nan_policy
+        )
