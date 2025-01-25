@@ -15,12 +15,12 @@ class BaseCacheEvaluator(BaseEvaluator):
     metrics after the first evaluation."""
 
     def __init__(self) -> None:
-        self._cached_data = None
+        self._cached_metrics = None
 
     def evaluate(self, prefix: str = "", suffix: str = "") -> dict:
-        if self._cached_data is None:
-            self._cached_data = self._evaluate()
-        return {f"{prefix}{col}{suffix}": val for col, val in self._cached_data.items()}
+        if self._cached_metrics is None:
+            self._cached_metrics = self._evaluate()
+        return {f"{prefix}{col}{suffix}": val for col, val in self._cached_metrics.items()}
 
     @abstractmethod
     def _evaluate(self) -> dict:
