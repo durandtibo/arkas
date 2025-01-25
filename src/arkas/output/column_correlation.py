@@ -10,13 +10,13 @@ from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.content.column_correlation import ColumnCorrelationContentGenerator
 from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
-from arkas.output.lazy import BaseLazyOutput
+from arkas.output.vanilla import Output
 
 if TYPE_CHECKING:
     from arkas.state.target_dataframe import TargetDataFrameState
 
 
-class ColumnCorrelationOutput(BaseLazyOutput):
+class ColumnCorrelationOutput(Output):
     r"""Implement an output to summarize the numeric columns of a
     DataFrame.
 
@@ -55,6 +55,8 @@ class ColumnCorrelationOutput(BaseLazyOutput):
     """
 
     def __init__(self, state: TargetDataFrameState) -> None:
+        evaluator = ColumnCorrelationEvaluator(state)
+        super().__init__(content=ColumnCorrelationContentGenerator(evaluator), evaluator=evaluator)
         self._state = state
 
     def __repr__(self) -> str:
@@ -69,9 +71,3 @@ class ColumnCorrelationOutput(BaseLazyOutput):
         if not isinstance(other, self.__class__):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
-
-    def _get_content_generator(self) -> ColumnCorrelationContentGenerator:
-        return ColumnCorrelationContentGenerator.from_state(self._state)
-
-    def _get_evaluator(self) -> ColumnCorrelationEvaluator:
-        return ColumnCorrelationEvaluator(self._state)
