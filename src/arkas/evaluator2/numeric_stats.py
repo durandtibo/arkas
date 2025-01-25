@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.caching import BaseCacheEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.utils.stats import compute_statistics_continuous
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from arkas.state.dataframe import DataFrameState
 
 
-class NumericStatisticsEvaluator(BaseEvaluator):
+class NumericStatisticsEvaluator(BaseCacheEvaluator):
     r"""Implement an evaluator to compute statistics of numerical
     columns.
 
@@ -50,6 +50,7 @@ class NumericStatisticsEvaluator(BaseEvaluator):
     """
 
     def __init__(self, state: DataFrameState) -> None:
+        super().__init__()
         self._state = state
 
     def __repr__(self) -> str:
@@ -68,8 +69,7 @@ class NumericStatisticsEvaluator(BaseEvaluator):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, dict[str, float]]:
+    def _evaluate(self) -> dict[str, dict[str, float]]:
         return {
-            f"{prefix}{series.name}{suffix}": compute_statistics_continuous(series)
-            for series in self._state.dataframe
+            series.name: compute_statistics_continuous(series) for series in self._state.dataframe
         }

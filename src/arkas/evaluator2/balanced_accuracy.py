@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping
 
-from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.caching import BaseCacheEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import balanced_accuracy
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from arkas.state.accuracy import AccuracyState
 
 
-class BalancedAccuracyEvaluator(BaseEvaluator):
+class BalancedAccuracyEvaluator(BaseCacheEvaluator):
     r"""Implement the balanced accuracy evaluator.
 
     Args:
@@ -53,6 +53,7 @@ class BalancedAccuracyEvaluator(BaseEvaluator):
     """
 
     def __init__(self, state: AccuracyState) -> None:
+        super().__init__()
         self._state = state
 
     def __repr__(self) -> str:
@@ -67,11 +68,9 @@ class BalancedAccuracyEvaluator(BaseEvaluator):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+    def _evaluate(self) -> dict[str, float]:
         return balanced_accuracy(
             y_true=self._state.y_true,
             y_pred=self._state.y_pred,
-            prefix=prefix,
-            suffix=suffix,
             nan_policy=self._state.nan_policy,
         )
