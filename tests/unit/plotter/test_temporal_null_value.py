@@ -59,6 +59,12 @@ def test_temporal_null_value_plotter_str(dataframe: pl.DataFrame) -> None:
     ).startswith("TemporalNullValuePlotter(")
 
 
+def test_temporal_null_value_plotter_state(dataframe: pl.DataFrame) -> None:
+    assert TemporalNullValuePlotter(
+        TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d")
+    ).state.equal(TemporalDataFrameState(dataframe, temporal_column="datetime", period="1d"))
+
+
 def test_temporal_null_value_plotter_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         TemporalNullValuePlotter(

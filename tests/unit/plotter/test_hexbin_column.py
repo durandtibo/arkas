@@ -38,6 +38,12 @@ def test_hexbin_column_plotter_str(dataframe: pl.DataFrame) -> None:
     ).startswith("HexbinColumnPlotter(")
 
 
+def test_hexbin_column_plotter_state(dataframe: pl.DataFrame) -> None:
+    assert HexbinColumnPlotter(ScatterDataFrameState(dataframe, x="col1", y="col2")).state.equal(
+        ScatterDataFrameState(dataframe, x="col1", y="col2")
+    )
+
+
 def test_hexbin_column_plotter_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         HexbinColumnPlotter(ScatterDataFrameState(dataframe, x="col1", y="col2")).compute(),

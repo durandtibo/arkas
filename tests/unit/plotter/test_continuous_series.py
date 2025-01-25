@@ -28,6 +28,10 @@ def test_continuous_series_plotter_str(series: pl.Series) -> None:
     assert str(ContinuousSeriesPlotter(SeriesState(series))).startswith("ContinuousSeriesPlotter(")
 
 
+def test_continuous_series_plotter_state(series: pl.Series) -> None:
+    assert ContinuousSeriesPlotter(SeriesState(series)).state.equal(SeriesState(series))
+
+
 def test_continuous_series_plotter_compute(series: pl.Series) -> None:
     assert isinstance(ContinuousSeriesPlotter(SeriesState(series)).compute(), Plotter)
 

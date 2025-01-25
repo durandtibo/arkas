@@ -6,22 +6,20 @@ from __future__ import annotations
 __all__ = ["BaseFigureCreator", "MatplotlibFigureCreator", "NullValuePlotter"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.figure.creator import FigureCreatorRegistry
 from arkas.figure.html import HtmlFigure
 from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plot.utils import readable_xticklabels
-from arkas.plotter.base import BasePlotter
-from arkas.plotter.vanilla import Plotter
+from arkas.plotter.caching import BaseStateCachedPlotter
+from arkas.state.null_value import NullValueState
 
 if TYPE_CHECKING:
     from arkas.figure.base import BaseFigure
-    from arkas.state.null_value import NullValueState
 
 
 class BaseFigureCreator(ABC):
@@ -103,7 +101,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         return MatplotlibFigure(fig)
 
 
-class NullValuePlotter(BasePlotter):
+class NullValuePlotter(BaseStateCachedPlotter[NullValueState]):
     r"""Implement a plotter that plots the number of null values for each
     column.
 
@@ -137,25 +135,6 @@ class NullValuePlotter(BasePlotter):
         {MatplotlibFigureConfig.backend(): MatplotlibFigureCreator()}
     )
 
-    def __init__(self, state: NullValueState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def compute(self) -> Plotter:
-        return Plotter(self.plot())
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
-
-    def plot(self, prefix: str = "", suffix: str = "") -> dict:
+    def _plot(self) -> dict:
         figure = self.registry.find_creator(self._state.figure_config.backend()).create(self._state)
-        return {f"{prefix}null_values{suffix}": figure}
+        return {"null_values": figure}

@@ -37,6 +37,22 @@ def test_null_value_plotter_str() -> None:
     ).startswith("NullValuePlotter(")
 
 
+def test_null_value_plotter_state() -> None:
+    assert NullValuePlotter(
+        NullValueState(
+            null_count=np.array([1, 2, 3]),
+            total_count=np.array([7, 7, 7]),
+            columns=["col1", "col2", "col3"],
+        )
+    ).state.equal(
+        NullValueState(
+            null_count=np.array([1, 2, 3]),
+            total_count=np.array([7, 7, 7]),
+            columns=["col1", "col2", "col3"],
+        )
+    )
+
+
 def test_null_value_plotter_compute() -> None:
     assert isinstance(
         NullValuePlotter(
