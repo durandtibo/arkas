@@ -38,9 +38,9 @@ def test_column_correlation_evaluator_str(dataframe: pl.DataFrame) -> None:
 
 
 def test_column_correlation_evaluator_state(dataframe: pl.DataFrame) -> None:
-    assert ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3")).equal(
+    assert ColumnCorrelationEvaluator(
         TargetDataFrameState(dataframe, target_column="col3")
-    )
+    ).state.equal(TargetDataFrameState(dataframe, target_column="col3"))
 
 
 def test_column_correlation_evaluator_equal_true(dataframe: pl.DataFrame) -> None:

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.evaluator2.caching import BaseCacheEvaluator
+from arkas.evaluator2.caching import BaseCachedEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import pearsonr, spearmanr
 from arkas.utils.dataframe import check_num_columns
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from arkas.state.target_dataframe import DataFrameState
 
 
-class CorrelationEvaluator(BaseCacheEvaluator):
+class CorrelationEvaluator(BaseCachedEvaluator):
     r"""Implement the pairwise column correlation evaluator.
 
     Args:

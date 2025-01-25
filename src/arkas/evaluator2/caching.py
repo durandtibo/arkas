@@ -3,7 +3,7 @@ metrics after the first evaluation."""
 
 from __future__ import annotations
 
-__all__ = ["BaseCacheEvaluator", "BaseStateCachedEvaluator"]
+__all__ = ["BaseCachedEvaluator", "BaseStateCachedEvaluator"]
 
 from abc import abstractmethod
 from typing import Any, Generic, TypeVar
@@ -17,7 +17,7 @@ from arkas.state.base import BaseState
 T = TypeVar("T", bound=BaseState)
 
 
-class BaseCacheEvaluator(BaseEvaluator):
+class BaseCachedEvaluator(BaseEvaluator):
     r"""Define the base class to implement an evaluator that caches the
     metrics after the first evaluation."""
 
@@ -41,7 +41,7 @@ class BaseCacheEvaluator(BaseEvaluator):
         """
 
 
-class BaseStateCachedEvaluator(BaseCacheEvaluator, Generic[T]):
+class BaseStateCachedEvaluator(BaseCachedEvaluator, Generic[T]):
     r"""Define the base class to implement an evaluator that caches the
     metrics after the first evaluation, and computes the metrics from a
     state object.

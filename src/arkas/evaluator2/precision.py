@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.evaluator2.caching import BaseCacheEvaluator
+from arkas.evaluator2.caching import BaseCachedEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import precision
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from arkas.state.precision_recall import PrecisionRecallState
 
 
-class PrecisionEvaluator(BaseCacheEvaluator):
+class PrecisionEvaluator(BaseCachedEvaluator):
     r"""Implement the precision evaluator.
 
     This evaluator can be used in 3 different settings:
