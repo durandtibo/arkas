@@ -37,6 +37,12 @@ def test_numeric_statistics_evaluator_str(dataframe: pl.DataFrame) -> None:
     )
 
 
+def test_numeric_statistics_evaluator_state(dataframe: pl.DataFrame) -> None:
+    assert NumericStatisticsEvaluator(DataFrameState(dataframe)).state.equal(
+        DataFrameState(dataframe)
+    )
+
+
 def test_numeric_statistics_evaluator_equal_true(dataframe: pl.DataFrame) -> None:
     assert NumericStatisticsEvaluator(DataFrameState(dataframe)).equal(
         NumericStatisticsEvaluator(DataFrameState(dataframe))

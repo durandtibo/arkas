@@ -33,6 +33,20 @@ def test_column_cooccurrence_evaluator_str() -> None:
     ).startswith("ColumnCooccurrenceEvaluator(")
 
 
+def test_column_cooccurrence_evaluator_state() -> None:
+    assert ColumnCooccurrenceEvaluator(
+        ColumnCooccurrenceState(
+            matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
+            columns=["col1", "col2", "col3"],
+        )
+    ).state.equal(
+        ColumnCooccurrenceState(
+            matrix=np.array([[3, 2, 1], [2, 3, 1], [1, 1, 3]], dtype=int),
+            columns=["col1", "col2", "col3"],
+        )
+    )
+
+
 def test_column_cooccurrence_evaluator_equal_true() -> None:
     assert ColumnCooccurrenceEvaluator(
         ColumnCooccurrenceState(
