@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils.format import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.caching import BaseCacheEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import precision
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from arkas.state.precision_recall import PrecisionRecallState
 
 
-class PrecisionEvaluator(BaseEvaluator):
+class PrecisionEvaluator(BaseCacheEvaluator):
     r"""Implement the precision evaluator.
 
     This evaluator can be used in 3 different settings:
@@ -119,6 +119,7 @@ class PrecisionEvaluator(BaseEvaluator):
     """
 
     def __init__(self, state: PrecisionRecallState) -> None:
+        super().__init__()
         self._state = state
 
     def __repr__(self) -> str:
@@ -137,12 +138,10 @@ class PrecisionEvaluator(BaseEvaluator):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+    def _evaluate(self) -> dict[str, float]:
         return precision(
             y_true=self._state.y_true,
             y_pred=self._state.y_pred,
-            prefix=prefix,
-            suffix=suffix,
             label_type=self._state.label_type,
             nan_policy=self._state.nan_policy,
         )

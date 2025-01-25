@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.caching import BaseCacheEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import pearsonr, spearmanr
 from arkas.utils.dataframe import check_num_columns
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from arkas.state.target_dataframe import DataFrameState
 
 
-class CorrelationEvaluator(BaseEvaluator):
+class CorrelationEvaluator(BaseCacheEvaluator):
     r"""Implement the pairwise column correlation evaluator.
 
     Args:
@@ -50,6 +50,7 @@ class CorrelationEvaluator(BaseEvaluator):
     """
 
     def __init__(self, state: DataFrameState) -> None:
+        super().__init__()
         check_num_columns(state.dataframe, num_columns=2)
         self._state = state
 
@@ -69,10 +70,10 @@ class CorrelationEvaluator(BaseEvaluator):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, float]:
+    def _evaluate(self) -> dict[str, float]:
         frame = self._state.dataframe
         x = frame[frame.columns[0]].to_numpy()
         y = frame[frame.columns[1]].to_numpy()
-        return pearsonr(
-            x=x, y=y, prefix=prefix, suffix=suffix, nan_policy=self._state.nan_policy
-        ) | spearmanr(x=x, y=y, prefix=prefix, suffix=suffix, nan_policy=self._state.nan_policy)
+        return pearsonr(x=x, y=y, nan_policy=self._state.nan_policy) | spearmanr(
+            x=x, y=y, nan_policy=self._state.nan_policy
+        )

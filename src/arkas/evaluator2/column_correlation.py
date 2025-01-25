@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from grizz.utils.imports import is_tqdm_available
 
-from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.caching import BaseCacheEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import pearsonr, spearmanr
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from arkas.state.target_dataframe import TargetDataFrameState
 
 
-class ColumnCorrelationEvaluator(BaseEvaluator):
+class ColumnCorrelationEvaluator(BaseCacheEvaluator):
     r"""Implement the column correlation evaluator.
 
     Args:
@@ -57,6 +57,7 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
     """
 
     def __init__(self, state: TargetDataFrameState) -> None:
+        super().__init__()
         self._state = state
 
     def __repr__(self) -> str:
@@ -75,7 +76,7 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
             return False
         return self._state.equal(other._state, equal_nan=equal_nan)
 
-    def evaluate(self, prefix: str = "", suffix: str = "") -> dict[str, dict[str, float]]:
+    def _evaluate(self) -> dict[str, dict[str, float]]:
         target_column = self._state.target_column
         columns = list(self._state.dataframe.columns)
         columns.remove(target_column)
@@ -85,5 +86,5 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
             frame = self._state.dataframe.select([col, target_column]).drop_nulls().drop_nans()
             x = frame[target_column].to_numpy()
             y = frame[col].to_numpy()
-            out[f"{prefix}{col}{suffix}"] = pearsonr(x, y) | spearmanr(x, y)
+            out[col] = pearsonr(x, y) | spearmanr(x, y)
         return out
