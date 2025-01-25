@@ -3,7 +3,9 @@ r"""Contain data plotters."""
 from __future__ import annotations
 
 __all__ = [
+    "BaseCachedPlotter",
     "BasePlotter",
+    "BaseStateCachedPlotter",
     "ColumnCooccurrencePlotter",
     "ContinuousSeriesPlotter",
     "CorrelationPlotter",
@@ -18,6 +20,7 @@ __all__ = [
 ]
 
 from arkas.plotter.base import BasePlotter
+from arkas.plotter.caching import BaseCachedPlotter, BaseStateCachedPlotter
 from arkas.plotter.column_cooccurrence import ColumnCooccurrencePlotter
 from arkas.plotter.continuous_series import ContinuousSeriesPlotter
 from arkas.plotter.correlation import CorrelationPlotter
