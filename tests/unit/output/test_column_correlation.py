@@ -68,7 +68,9 @@ def test_column_correlation_output_get_content_generator_lazy_true(dataframe: pl
         ColumnCorrelationOutput(TargetDataFrameState(dataframe, target_column="col3"))
         .get_content_generator()
         .equal(
-            ColumnCorrelationContentGenerator(TargetDataFrameState(dataframe, target_column="col3"))
+            ColumnCorrelationContentGenerator(
+                ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
+            )
         )
     )
 
