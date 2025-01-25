@@ -28,8 +28,8 @@ def test_base_cache_evaluator_evaluate() -> None:
     evaluator = MyCacheEvaluator()
     out = evaluator.evaluate()
     assert objects_are_equal(out, {"metric1": 0.42, "metric2": 1.2})
-    assert objects_are_equal(evaluator._cached_data, {"metric1": 0.42, "metric2": 1.2})
-    assert evaluator._cached_data is not out
+    assert objects_are_equal(evaluator._cached_metrics, {"metric1": 0.42, "metric2": 1.2})
+    assert evaluator._cached_metrics is not out
 
 
 def test_base_cache_evaluator_evaluate_multi() -> None:
@@ -44,4 +44,4 @@ def test_base_cache_evaluator_evaluate_prefix_suffix() -> None:
     evaluator = MyCacheEvaluator()
     out = evaluator.evaluate(prefix="prefix_", suffix="_suffix")
     assert objects_are_equal(out, {"prefix_metric1_suffix": 0.42, "prefix_metric2_suffix": 1.2})
-    assert objects_are_equal(evaluator._cached_data, {"metric1": 0.42, "metric2": 1.2})
+    assert objects_are_equal(evaluator._cached_metrics, {"metric1": 0.42, "metric2": 1.2})
