@@ -33,7 +33,7 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
     between 1 target column and other columns.
 
     Args:
-        state: The state containing the DataFrame to analyze.
+        evaluator: The evaluator object to compute the correlations.
 
     Example usage:
 
@@ -41,6 +41,7 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
 
     >>> import polars as pl
     >>> from arkas.content import ColumnCorrelationContentGenerator
+    >>> from arkas.evaluator2 import ColumnCorrelationEvaluator
     >>> from arkas.state import TargetDataFrameState
     >>> frame = pl.DataFrame(
     ...     {
@@ -50,7 +51,7 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
     ...     },
     ... )
     >>> content = ColumnCorrelationContentGenerator(
-    ...     TargetDataFrameState(frame, target_column="col3")
+    ...     ColumnCorrelationEvaluator(TargetDataFrameState(frame, target_column="col3"))
     ... )
     >>> content
     ColumnCorrelationContentGenerator(
@@ -60,41 +61,46 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
     ```
     """
 
-    def __init__(self, state: TargetDataFrameState) -> None:
-        self._state = state
+    def __init__(self, evaluator: ColumnCorrelationEvaluator) -> None:
+        self._evaluator = evaluator
 
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
+        args = repr_indent(repr_mapping({"state": self._evaluator.state}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
+        args = str_indent(str_mapping({"state": self._evaluator.state}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        return self._evaluator.equal(other._evaluator, equal_nan=equal_nan)
 
     def generate_content(self) -> str:
+        state = self._evaluator.state
         logger.info(
-            f"Generating the correlation analysis between {self._state.target_column} "
-            f"and {list(self._state.dataframe.columns)}..."
+            f"Generating the correlation analysis between {state.target_column} "
+            f"and {list(state.dataframe.columns)}..."
         )
-        metrics = ColumnCorrelationEvaluator(self._state).evaluate()
-        metrics = sort_metrics(metrics, key=self._state.get_arg("sort_metric", "spearman_coeff"))
-        columns = list(self._state.dataframe.columns)
-        columns.remove(self._state.target_column)
-        nrows, ncols = self._state.dataframe.shape
+        metrics = self._evaluator.evaluate()
+        metrics = sort_metrics(metrics, key=state.get_arg("sort_metric", "spearman_coeff"))
+        columns = list(state.dataframe.columns)
+        columns.remove(state.target_column)
+        nrows, ncols = state.dataframe.shape
         return Template(create_template()).render(
             {
                 "nrows": f"{nrows:,}",
                 "ncols": f"{ncols:,}",
-                "columns": ", ".join(self._state.dataframe.columns),
+                "columns": ", ".join(state.dataframe.columns),
                 "table": create_table(metrics),
-                "target_column": f"{self._state.target_column}",
+                "target_column": f"{state.target_column}",
             }
         )
+
+    @classmethod
+    def from_state(cls, state: TargetDataFrameState) -> ColumnCorrelationContentGenerator:
+        return cls(ColumnCorrelationEvaluator(state))
 
 
 def create_template() -> str:

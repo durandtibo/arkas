@@ -71,7 +71,7 @@ class ColumnCorrelationOutput(BaseLazyOutput):
         return self._state.equal(other._state, equal_nan=equal_nan)
 
     def _get_content_generator(self) -> ColumnCorrelationContentGenerator:
-        return ColumnCorrelationContentGenerator(self._state)
+        return ColumnCorrelationContentGenerator.from_state(self._state)
 
     def _get_evaluator(self) -> ColumnCorrelationEvaluator:
         return ColumnCorrelationEvaluator(self._state)
