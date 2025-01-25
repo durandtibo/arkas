@@ -34,6 +34,10 @@ def test_plot_column_plotter_str(dataframe: pl.DataFrame) -> None:
     assert str(PlotColumnPlotter(DataFrameState(dataframe))).startswith("PlotColumnPlotter(")
 
 
+def test_plot_column_plotter_state(dataframe: pl.DataFrame) -> None:
+    assert PlotColumnPlotter(DataFrameState(dataframe)).state.equal(DataFrameState(dataframe))
+
+
 def test_plot_column_plotter_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(PlotColumnPlotter(DataFrameState(dataframe)).compute(), Plotter)
 

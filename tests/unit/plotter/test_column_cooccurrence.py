@@ -29,6 +29,12 @@ def test_column_cooccurrence_plotter_str() -> None:
     ).startswith("ColumnCooccurrencePlotter(")
 
 
+def test_column_cooccurrence_plotter_state() -> None:
+    assert ColumnCooccurrencePlotter(
+        ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"])
+    ).state.equal(ColumnCooccurrenceState(matrix=np.ones((3, 3)), columns=["a", "b", "c"]))
+
+
 def test_column_cooccurrence_plotter_compute() -> None:
     assert isinstance(
         ColumnCooccurrencePlotter(

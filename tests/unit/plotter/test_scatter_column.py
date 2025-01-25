@@ -38,6 +38,12 @@ def test_scatter_column_plotter_str(dataframe: pl.DataFrame) -> None:
     ).startswith("ScatterColumnPlotter(")
 
 
+def test_scatter_column_plotter_state(dataframe: pl.DataFrame) -> None:
+    assert ScatterColumnPlotter(ScatterDataFrameState(dataframe, x="col1", y="col2")).state.equal(
+        ScatterDataFrameState(dataframe, x="col1", y="col2")
+    )
+
+
 def test_scatter_column_plotter_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         ScatterColumnPlotter(ScatterDataFrameState(dataframe, x="col1", y="col2")).compute(),

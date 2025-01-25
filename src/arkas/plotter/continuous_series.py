@@ -6,10 +6,9 @@ from __future__ import annotations
 __all__ = ["BaseFigureCreator", "ContinuousSeriesPlotter", "MatplotlibFigureCreator"]
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.figure.creator import FigureCreatorRegistry
 from arkas.figure.html import HtmlFigure
@@ -17,14 +16,13 @@ from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plot.continuous import hist_continuous
 from arkas.plot.utils.hist import adjust_nbins
-from arkas.plotter.base import BasePlotter
-from arkas.plotter.vanilla import Plotter
+from arkas.plotter.caching import BaseStateCachedPlotter
+from arkas.state.series import SeriesState
 from arkas.utils.array import filter_range, nonnan, to_array
 from arkas.utils.range import find_range
 
 if TYPE_CHECKING:
     from arkas.figure.base import BaseFigure
-    from arkas.state.series import SeriesState
 
 
 class BaseFigureCreator(ABC):
@@ -102,7 +100,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         return MatplotlibFigure(fig)
 
 
-class ContinuousSeriesPlotter(BasePlotter):
+class ContinuousSeriesPlotter(BaseStateCachedPlotter[SeriesState]):
     r"""Implement a plotter that analyzes a column with continuous
     values.
 
@@ -129,25 +127,6 @@ class ContinuousSeriesPlotter(BasePlotter):
         {MatplotlibFigureConfig.backend(): MatplotlibFigureCreator()}
     )
 
-    def __init__(self, state: SeriesState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def compute(self) -> Plotter:
-        return Plotter(self.plot())
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
-
-    def plot(self, prefix: str = "", suffix: str = "") -> dict:
+    def _plot(self) -> dict:
         figure = self.registry.find_creator(self._state.figure_config.backend()).create(self._state)
-        return {f"{prefix}continuous_histogram{suffix}": figure}
+        return {"continuous_histogram": figure}

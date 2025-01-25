@@ -41,6 +41,10 @@ def test_correlation_plotter_str(dataframe: pl.DataFrame) -> None:
     assert str(CorrelationPlotter(DataFrameState(dataframe))).startswith("CorrelationPlotter(")
 
 
+def test_correlation_plotter_state(dataframe: pl.DataFrame) -> None:
+    assert CorrelationPlotter(DataFrameState(dataframe)).state.equal(DataFrameState(dataframe))
+
+
 def test_correlation_plotter_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
         CorrelationPlotter(DataFrameState(dataframe)).compute(),
