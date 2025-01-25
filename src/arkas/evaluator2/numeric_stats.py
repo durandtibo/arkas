@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
-from arkas.evaluator2.caching import BaseCacheEvaluator
+from arkas.evaluator2.caching import BaseCachedEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.utils.stats import compute_statistics_continuous
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from arkas.state.dataframe import DataFrameState
 
 
-class NumericStatisticsEvaluator(BaseCacheEvaluator):
+class NumericStatisticsEvaluator(BaseCachedEvaluator):
     r"""Implement an evaluator to compute statistics of numerical
     columns.
 
