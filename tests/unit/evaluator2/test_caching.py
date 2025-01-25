@@ -4,13 +4,10 @@ from typing import Any
 
 from coola import objects_are_equal
 
-from arkas.evaluator2 import BaseCacheEvaluator, BaseEvaluator
+from arkas.evaluator2 import BaseCacheEvaluator
 
 
 class MyCacheEvaluator(BaseCacheEvaluator):
-
-    def compute(self) -> BaseEvaluator:
-        return self
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:  # noqa: ARG002
         return isinstance(other, self.__class__)
