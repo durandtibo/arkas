@@ -149,6 +149,16 @@ def test_column_correlation_content_generator_generate_toc_args(dataframe: pl.Da
     )
 
 
+def test_column_correlation_content_generator_from_state(dataframe: pl.DataFrame) -> None:
+    assert ColumnCorrelationContentGenerator.from_state(
+        TargetDataFrameState(dataframe, target_column="col3")
+    ).equal(
+        ColumnCorrelationContentGenerator(
+            ColumnCorrelationEvaluator(TargetDataFrameState(dataframe, target_column="col3"))
+        )
+    )
+
+
 #####################################
 #     Tests for create_template     #
 #####################################
