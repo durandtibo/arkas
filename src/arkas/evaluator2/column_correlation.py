@@ -7,10 +7,16 @@ __all__ = ["ColumnCorrelationEvaluator"]
 from typing import TYPE_CHECKING, Any
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
+from grizz.utils.imports import is_tqdm_available
 
 from arkas.evaluator2.base import BaseEvaluator
 from arkas.evaluator2.vanilla import Evaluator
 from arkas.metric import pearsonr, spearmanr
+
+if is_tqdm_available():
+    from tqdm import tqdm
+else:  # pragma: no cover
+    from grizz.utils.noop import tqdm
 
 if TYPE_CHECKING:
     from arkas.state.target_dataframe import TargetDataFrameState
@@ -75,7 +81,7 @@ class ColumnCorrelationEvaluator(BaseEvaluator):
         columns.remove(target_column)
 
         out = {}
-        for col in columns:
+        for col in tqdm(columns, desc="computing correlation"):
             frame = self._state.dataframe.select([col, target_column]).drop_nulls().drop_nans()
             x = frame[target_column].to_numpy()
             y = frame[col].to_numpy()
