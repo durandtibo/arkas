@@ -39,6 +39,10 @@ def test_correlation_evaluator_str(dataframe: pl.DataFrame) -> None:
     assert str(CorrelationEvaluator(DataFrameState(dataframe))).startswith("CorrelationEvaluator(")
 
 
+def test_correlation_evaluator_state(dataframe: pl.DataFrame) -> None:
+    assert CorrelationEvaluator(DataFrameState(dataframe)).state.equal(DataFrameState(dataframe))
+
+
 def test_correlation_evaluator_equal_true(dataframe: pl.DataFrame) -> None:
     assert CorrelationEvaluator(DataFrameState(dataframe)).equal(
         CorrelationEvaluator(DataFrameState(dataframe))

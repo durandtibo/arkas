@@ -38,6 +38,24 @@ def test_precision_evaluator_str() -> None:
     ).startswith("PrecisionEvaluator(")
 
 
+def test_precision_evaluator_state() -> None:
+    assert PrecisionEvaluator(
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        ),
+    ).state.equal(
+        PrecisionRecallState(
+            y_true=np.array([1, 0, 0, 1, 1]),
+            y_pred=np.array([1, 0, 0, 1, 1]),
+            y_true_name="target",
+            y_pred_name="pred",
+        )
+    )
+
+
 def test_precision_evaluator_equal_true() -> None:
     assert PrecisionEvaluator(
         PrecisionRecallState(
