@@ -6,7 +6,7 @@ __all__ = ["Output"]
 
 from typing import TYPE_CHECKING, Any
 
-from coola.utils import repr_indent, repr_mapping
+from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.output.lazy import BaseLazyOutput
 
@@ -43,23 +43,16 @@ class Output(BaseLazyOutput):
     ```
     """
 
-    def __init__(
-        self,
-        content: BaseContentGenerator,
-        evaluator: BaseEvaluator,
-    ) -> None:
+    def __init__(self, content: BaseContentGenerator, evaluator: BaseEvaluator) -> None:
         self._content = content
         self._evaluator = evaluator
 
     def __repr__(self) -> str:
-        args = repr_indent(
-            repr_mapping(
-                {
-                    "content": self._content,
-                    "evaluator": self._evaluator,
-                }
-            )
-        )
+        args = repr_indent(repr_mapping({"content": self._content, "evaluator": self._evaluator}))
+        return f"{self.__class__.__qualname__}(\n  {args}\n)"
+
+    def __str__(self) -> str:
+        args = str_indent(str_mapping({"content": self._content, "evaluator": self._evaluator}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
