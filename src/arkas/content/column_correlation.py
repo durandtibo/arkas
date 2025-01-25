@@ -100,6 +100,39 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
 
     @classmethod
     def from_state(cls, state: TargetDataFrameState) -> ColumnCorrelationContentGenerator:
+        r"""Instantiate a ``ColumnCorrelationContentGenerator`` object
+        from a state.
+
+        Args:
+            state: The state with the data to analyze.
+
+        Returns:
+            The instantiated object.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import polars as pl
+        >>> from arkas.content import ColumnCorrelationContentGenerator
+        >>> from arkas.state import TargetDataFrameState
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+        ...         "col2": [7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0],
+        ...         "col3": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+        ...     },
+        ... )
+        >>> content = ColumnCorrelationContentGenerator.from_state(
+        ...     TargetDataFrameState(frame, target_column="col3")
+        ... )
+        >>> content
+        ColumnCorrelationContentGenerator(
+          (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+        )
+
+        ```
+        """
         return cls(ColumnCorrelationEvaluator(state))
 
 
