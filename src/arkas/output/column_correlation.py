@@ -4,17 +4,14 @@ from __future__ import annotations
 
 __all__ = ["ColumnCorrelationOutput"]
 
-from typing import TYPE_CHECKING
 
 from arkas.content.column_correlation import ColumnCorrelationContentGenerator
 from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
 from arkas.output.state import BaseStateOutput
-
-if TYPE_CHECKING:
-    from arkas.state.target_dataframe import TargetDataFrameState
+from arkas.state.target_dataframe import TargetDataFrameState
 
 
-class ColumnCorrelationOutput(BaseStateOutput):
+class ColumnCorrelationOutput(BaseStateOutput[TargetDataFrameState]):
     r"""Implement an output to summarize the numeric columns of a
     DataFrame.
 
@@ -54,7 +51,7 @@ class ColumnCorrelationOutput(BaseStateOutput):
 
     def __init__(self, state: TargetDataFrameState) -> None:
         super().__init__(state)
-        self._evaluator = ColumnCorrelationEvaluator(state)
+        self._evaluator = ColumnCorrelationEvaluator(self._state)
         self._content = ColumnCorrelationContentGenerator(self._evaluator)
 
     def _get_content_generator(self) -> ColumnCorrelationContentGenerator:

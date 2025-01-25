@@ -4,24 +4,24 @@ from __future__ import annotations
 
 __all__ = ["BaseStateOutput"]
 
-from typing import TYPE_CHECKING, Any
+from typing import Any, Generic, TypeVar
 
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.output.lazy import BaseLazyOutput
+from arkas.state.base import BaseState
 
-if TYPE_CHECKING:
-    from arkas.state.target_dataframe import TargetDataFrameState
+T = TypeVar("T", bound=BaseState)
 
 
-class BaseStateOutput(BaseLazyOutput):
+class BaseStateOutput(BaseLazyOutput, Generic[T]):
     r"""Define a base class to implement an output using a state object.
 
     Args:
         state: The state containing the data to analyze.
     """
 
-    def __init__(self, state: TargetDataFrameState) -> None:
+    def __init__(self, state: T) -> None:
         self._state = state
 
     def __repr__(self) -> str:
