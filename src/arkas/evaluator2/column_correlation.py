@@ -4,25 +4,20 @@ from __future__ import annotations
 
 __all__ = ["ColumnCorrelationEvaluator"]
 
-from typing import TYPE_CHECKING, Any
 
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from grizz.utils.imports import is_tqdm_available
 
-from arkas.evaluator2.caching import BaseCacheEvaluator
-from arkas.evaluator2.vanilla import Evaluator
+from arkas.evaluator2.caching import BaseStateCachedEvaluator
 from arkas.metric import pearsonr, spearmanr
+from arkas.state.target_dataframe import TargetDataFrameState
 
 if is_tqdm_available():
     from tqdm import tqdm
 else:  # pragma: no cover
     from grizz.utils.noop import tqdm
 
-if TYPE_CHECKING:
-    from arkas.state.target_dataframe import TargetDataFrameState
 
-
-class ColumnCorrelationEvaluator(BaseCacheEvaluator):
+class ColumnCorrelationEvaluator(BaseStateCachedEvaluator[TargetDataFrameState]):
     r"""Implement the column correlation evaluator.
 
     Args:
@@ -55,26 +50,6 @@ class ColumnCorrelationEvaluator(BaseCacheEvaluator):
 
     ```
     """
-
-    def __init__(self, state: TargetDataFrameState) -> None:
-        super().__init__()
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def compute(self) -> Evaluator:
-        return Evaluator(metrics=self.evaluate())
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
 
     def _evaluate(self) -> dict[str, dict[str, float]]:
         target_column = self._state.target_column
