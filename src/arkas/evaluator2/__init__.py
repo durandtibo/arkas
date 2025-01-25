@@ -5,6 +5,7 @@ from __future__ import annotations
 __all__ = [
     "AccuracyEvaluator",
     "BalancedAccuracyEvaluator",
+    "BaseCacheEvaluator",
     "BaseEvaluator",
     "ColumnCooccurrenceEvaluator",
     "ColumnCorrelationEvaluator",
@@ -18,6 +19,7 @@ __all__ = [
 from arkas.evaluator2.accuracy import AccuracyEvaluator
 from arkas.evaluator2.balanced_accuracy import BalancedAccuracyEvaluator
 from arkas.evaluator2.base import BaseEvaluator
+from arkas.evaluator2.caching import BaseCacheEvaluator
 from arkas.evaluator2.column_cooccurrence import ColumnCooccurrenceEvaluator
 from arkas.evaluator2.column_correlation import ColumnCorrelationEvaluator
 from arkas.evaluator2.correlation import CorrelationEvaluator
