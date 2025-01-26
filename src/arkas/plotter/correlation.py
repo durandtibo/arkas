@@ -15,8 +15,7 @@ from arkas.figure.matplotlib import MatplotlibFigure, MatplotlibFigureConfig
 from arkas.figure.utils import MISSING_FIGURE_MESSAGE
 from arkas.plot.utils.scatter import find_alpha_from_size, find_marker_size_from_size
 from arkas.plotter.caching import BaseStateCachedPlotter
-from arkas.state.dataframe import DataFrameState
-from arkas.utils.dataframe import check_num_columns
+from arkas.state.columns import TwoColumnDataFrameState
 from arkas.utils.range import find_range
 
 if TYPE_CHECKING:
@@ -28,7 +27,7 @@ class BaseFigureCreator(ABC):
     each column."""
 
     @abstractmethod
-    def create(self, state: DataFrameState) -> BaseFigure:
+    def create(self, state: TwoColumnDataFrameState) -> BaseFigure:
         r"""Create a figure with the content of each column.
 
         Args:
@@ -45,16 +44,16 @@ class BaseFigureCreator(ABC):
 
         >>> import polars as pl
         >>> from arkas.figure import MatplotlibFigureConfig
-        >>> from arkas.state import DataFrameState
+        >>> from arkas.state import TwoColumnDataFrameState
         >>> from arkas.plotter.correlation import MatplotlibFigureCreator
         >>> creator = MatplotlibFigureCreator()
         >>> frame = pl.DataFrame(
         ...     {
         ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
-        ...         "col3": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+        ...         "col2": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
         ...     },
         ... )
-        >>> fig = creator.create(DataFrameState(frame))
+        >>> fig = creator.create(TwoColumnDataFrameState(frame, column1="col1", column2="col2"))
 
         ```
         """
@@ -69,16 +68,16 @@ class MatplotlibFigureCreator(BaseFigureCreator):
 
     >>> import polars as pl
     >>> from arkas.figure import MatplotlibFigureConfig
-    >>> from arkas.state import DataFrameState
+    >>> from arkas.state import TwoColumnDataFrameState
     >>> from arkas.plotter.correlation import MatplotlibFigureCreator
     >>> creator = MatplotlibFigureCreator()
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
-    ...         "col3": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+    ...         "col2": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
     ...     },
     ... )
-    >>> fig = creator.create(DataFrameState(frame))
+    >>> fig = creator.create(TwoColumnDataFrameState(frame, column1="col1", column2="col2"))
 
     ```
     """
@@ -86,12 +85,11 @@ class MatplotlibFigureCreator(BaseFigureCreator):
     def __repr__(self) -> str:
         return f"{self.__class__.__qualname__}()"
 
-    def create(self, state: DataFrameState) -> BaseFigure:
+    def create(self, state: TwoColumnDataFrameState) -> BaseFigure:
         if state.dataframe.shape[0] == 0:
             return HtmlFigure(MISSING_FIGURE_MESSAGE)
 
-        check_num_columns(state.dataframe, num_columns=2)
-        xcol, ycol = state.dataframe.columns
+        xcol, ycol = state.column1, state.column2
 
         fig, ax = plt.subplots(**state.figure_config.get_arg("init", {}))
         x = state.dataframe[xcol].to_numpy()
@@ -126,7 +124,7 @@ class MatplotlibFigureCreator(BaseFigureCreator):
         return MatplotlibFigure(fig)
 
 
-class CorrelationPlotter(BaseStateCachedPlotter[DataFrameState]):
+class CorrelationPlotter(BaseStateCachedPlotter[TwoColumnDataFrameState]):
     r"""Implement a DataFrame column plotter.
 
     Args:
@@ -140,17 +138,19 @@ class CorrelationPlotter(BaseStateCachedPlotter[DataFrameState]):
 
     >>> import polars as pl
     >>> from arkas.plotter import CorrelationPlotter
-    >>> from arkas.state import DataFrameState
+    >>> from arkas.state import TwoColumnDataFrameState
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
-    ...         "col3": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
+    ...         "col2": [2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0],
     ...     },
     ... )
-    >>> plotter = CorrelationPlotter(DataFrameState(frame))
+    >>> plotter = CorrelationPlotter(
+    ...     TwoColumnDataFrameState(frame, column1="col1", column2="col2")
+    ... )
     >>> plotter
     CorrelationPlotter(
-      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```
@@ -160,8 +160,7 @@ class CorrelationPlotter(BaseStateCachedPlotter[DataFrameState]):
         {MatplotlibFigureConfig.backend(): MatplotlibFigureCreator()}
     )
 
-    def __init__(self, state: DataFrameState) -> None:
-        check_num_columns(state.dataframe, num_columns=2)
+    def __init__(self, state: TwoColumnDataFrameState) -> None:
         super().__init__(state)
 
     def _plot(self) -> dict:
