@@ -5,7 +5,7 @@ import pytest
 from coola import objects_are_allclose
 
 from arkas.evaluator2 import CorrelationEvaluator, Evaluator
-from arkas.state import DataFrameState
+from arkas.state import TwoColumnDataFrameState
 
 
 @pytest.fixture
@@ -24,43 +24,54 @@ def dataframe() -> pl.DataFrame:
 ##########################################
 
 
-def test_correlation_evaluator_init_incorrect_state(dataframe: pl.DataFrame) -> None:
-    with pytest.raises(
-        ValueError, match="The DataFrame must have 2 columns but received a DataFrame"
-    ):
-        CorrelationEvaluator(DataFrameState(dataframe.with_columns(pl.lit(1).alias("col3"))))
-
-
 def test_correlation_evaluator_repr(dataframe: pl.DataFrame) -> None:
-    assert repr(CorrelationEvaluator(DataFrameState(dataframe))).startswith("CorrelationEvaluator(")
+    assert repr(
+        CorrelationEvaluator(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
+    ).startswith("CorrelationEvaluator(")
 
 
 def test_correlation_evaluator_str(dataframe: pl.DataFrame) -> None:
-    assert str(CorrelationEvaluator(DataFrameState(dataframe))).startswith("CorrelationEvaluator(")
+    assert str(
+        CorrelationEvaluator(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
+    ).startswith("CorrelationEvaluator(")
 
 
 def test_correlation_evaluator_state(dataframe: pl.DataFrame) -> None:
-    assert CorrelationEvaluator(DataFrameState(dataframe)).state.equal(DataFrameState(dataframe))
+    assert CorrelationEvaluator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).state.equal(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
 
 
 def test_correlation_evaluator_equal_true(dataframe: pl.DataFrame) -> None:
-    assert CorrelationEvaluator(DataFrameState(dataframe)).equal(
-        CorrelationEvaluator(DataFrameState(dataframe))
+    assert CorrelationEvaluator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(
+        CorrelationEvaluator(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
     )
 
 
 def test_correlation_evaluator_equal_false_different_state(dataframe: pl.DataFrame) -> None:
-    assert not CorrelationEvaluator(DataFrameState(dataframe)).equal(
-        CorrelationEvaluator(DataFrameState(pl.DataFrame({"col1": [], "col2": []})))
+    assert not CorrelationEvaluator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(
+        CorrelationEvaluator(
+            TwoColumnDataFrameState(
+                pl.DataFrame({"col1": [], "col2": []}), column1="col1", column2="col2"
+            )
+        )
     )
 
 
 def test_correlation_evaluator_equal_false_different_type(dataframe: pl.DataFrame) -> None:
-    assert not CorrelationEvaluator(DataFrameState(dataframe)).equal(42)
+    assert not CorrelationEvaluator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(42)
 
 
 def test_correlation_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
-    evaluator = CorrelationEvaluator(DataFrameState(dataframe))
+    evaluator = CorrelationEvaluator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    )
     assert objects_are_allclose(
         evaluator.evaluate(),
         {
@@ -75,10 +86,12 @@ def test_correlation_evaluator_evaluate(dataframe: pl.DataFrame) -> None:
 
 def test_correlation_evaluator_evaluate_one_row() -> None:
     evaluator = CorrelationEvaluator(
-        DataFrameState(
+        TwoColumnDataFrameState(
             pl.DataFrame(
                 {"col1": [1.0], "col2": [7.0]}, schema={"col1": pl.Float64, "col2": pl.Float64}
-            )
+            ),
+            column1="col1",
+            column2="col2",
         )
     )
     assert objects_are_allclose(
@@ -96,7 +109,7 @@ def test_correlation_evaluator_evaluate_one_row() -> None:
 
 def test_correlation_evaluator_evaluate_nan_policy_omit() -> None:
     evaluator = CorrelationEvaluator(
-        DataFrameState(
+        TwoColumnDataFrameState(
             pl.DataFrame(
                 {
                     "col1": [
@@ -132,6 +145,8 @@ def test_correlation_evaluator_evaluate_nan_policy_omit() -> None:
                 },
                 schema={"col1": pl.Float64, "col2": pl.Float64},
             ),
+            column1="col1",
+            column2="col2",
             nan_policy="omit",
         )
     )
@@ -149,7 +164,7 @@ def test_correlation_evaluator_evaluate_nan_policy_omit() -> None:
 
 def test_correlation_evaluator_evaluate_nan_policy_propagate() -> None:
     evaluator = CorrelationEvaluator(
-        DataFrameState(
+        TwoColumnDataFrameState(
             pl.DataFrame(
                 {
                     "col1": [
@@ -185,6 +200,8 @@ def test_correlation_evaluator_evaluate_nan_policy_propagate() -> None:
                 },
                 schema={"col1": pl.Float64, "col2": pl.Float64},
             ),
+            column1="col1",
+            column2="col2",
         )
     )
     assert objects_are_allclose(
@@ -202,7 +219,7 @@ def test_correlation_evaluator_evaluate_nan_policy_propagate() -> None:
 
 def test_correlation_evaluator_evaluate_nan_policy_raise() -> None:
     evaluator = CorrelationEvaluator(
-        DataFrameState(
+        TwoColumnDataFrameState(
             pl.DataFrame(
                 {
                     "col1": [
@@ -239,6 +256,8 @@ def test_correlation_evaluator_evaluate_nan_policy_raise() -> None:
                 schema={"col1": pl.Float64, "col2": pl.Float64},
             ),
             nan_policy="raise",
+            column1="col1",
+            column2="col2",
         )
     )
     with pytest.raises(ValueError, match="'x' contains at least one NaN value"):
@@ -246,7 +265,11 @@ def test_correlation_evaluator_evaluate_nan_policy_raise() -> None:
 
 
 def test_correlation_evaluator_evaluate_empty() -> None:
-    evaluator = CorrelationEvaluator(DataFrameState(pl.DataFrame({"col1": [], "col2": []})))
+    evaluator = CorrelationEvaluator(
+        TwoColumnDataFrameState(
+            pl.DataFrame({"col1": [], "col2": []}), column1="col1", column2="col2"
+        )
+    )
     assert objects_are_allclose(
         evaluator.evaluate(),
         {
@@ -261,7 +284,9 @@ def test_correlation_evaluator_evaluate_empty() -> None:
 
 
 def test_correlation_evaluator_evaluate_prefix_suffix(dataframe: pl.DataFrame) -> None:
-    evaluator = CorrelationEvaluator(DataFrameState(dataframe))
+    evaluator = CorrelationEvaluator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    )
     assert objects_are_allclose(
         evaluator.evaluate(prefix="prefix_", suffix="_suffix"),
         {
@@ -276,7 +301,7 @@ def test_correlation_evaluator_evaluate_prefix_suffix(dataframe: pl.DataFrame) -
 
 def test_correlation_evaluator_compute(dataframe: pl.DataFrame) -> None:
     assert (
-        CorrelationEvaluator(DataFrameState(dataframe))
+        CorrelationEvaluator(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
         .compute()
         .equal(
             Evaluator(
