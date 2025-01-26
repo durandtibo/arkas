@@ -40,7 +40,7 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
 
     >>> import polars as pl
     >>> from arkas.content import CorrelationContentGenerator
-    >>> from arkas.state import DataFrameState
+    >>> from arkas.state import TwoColumnDataFrameState
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
@@ -52,7 +52,7 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
     ... )
     >>> content
     CorrelationContentGenerator(
-      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```
