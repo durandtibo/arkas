@@ -6,7 +6,7 @@ import pytest
 from arkas.content import ContentGenerator, CorrelationContentGenerator
 from arkas.evaluator2 import CorrelationEvaluator, Evaluator
 from arkas.output import CorrelationOutput, Output
-from arkas.state import DataFrameState
+from arkas.state import TwoColumnDataFrameState
 
 
 @pytest.fixture
@@ -25,49 +25,58 @@ def dataframe() -> pl.DataFrame:
 #######################################
 
 
-def test_correlation_output_init_incorrect_state(dataframe: pl.DataFrame) -> None:
-    with pytest.raises(
-        ValueError, match="The DataFrame must have 2 columns but received a DataFrame"
-    ):
-        CorrelationOutput(DataFrameState(dataframe.with_columns(pl.lit(1).alias("col3"))))
-
-
 def test_correlation_output_repr(dataframe: pl.DataFrame) -> None:
-    assert repr(CorrelationOutput(DataFrameState(dataframe))).startswith("CorrelationOutput(")
+    assert repr(
+        CorrelationOutput(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
+    ).startswith("CorrelationOutput(")
 
 
 def test_correlation_output_str(dataframe: pl.DataFrame) -> None:
-    assert str(CorrelationOutput(DataFrameState(dataframe))).startswith("CorrelationOutput(")
+    assert str(
+        CorrelationOutput(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
+    ).startswith("CorrelationOutput(")
 
 
 def test_correlation_output_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        CorrelationOutput(DataFrameState(dataframe)).compute(),
+        CorrelationOutput(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        ).compute(),
         Output,
     )
 
 
 def test_correlation_output_equal_true(dataframe: pl.DataFrame) -> None:
-    assert CorrelationOutput(DataFrameState(dataframe)).equal(
-        CorrelationOutput(DataFrameState(dataframe))
-    )
+    assert CorrelationOutput(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(CorrelationOutput(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")))
 
 
 def test_correlation_output_equal_false_different_state(dataframe: pl.DataFrame) -> None:
-    assert not CorrelationOutput(DataFrameState(dataframe)).equal(
-        DataFrameState(pl.DataFrame({"col1": [], "col2": []}))
+    assert not CorrelationOutput(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(
+        TwoColumnDataFrameState(
+            pl.DataFrame({"col1": [], "col2": []}), column1="col1", column2="col2"
+        )
     )
 
 
 def test_correlation_output_equal_false_different_type(dataframe: pl.DataFrame) -> None:
-    assert not CorrelationOutput(DataFrameState(dataframe)).equal(42)
+    assert not CorrelationOutput(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(42)
 
 
 def test_correlation_output_get_content_generator_lazy_true(dataframe: pl.DataFrame) -> None:
     assert (
-        CorrelationOutput(DataFrameState(dataframe))
+        CorrelationOutput(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
         .get_content_generator()
-        .equal(CorrelationContentGenerator(DataFrameState(dataframe)))
+        .equal(
+            CorrelationContentGenerator(
+                TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+            )
+        )
     )
 
 
@@ -75,22 +84,26 @@ def test_correlation_output_get_content_generator_lazy_false(
     dataframe: pl.DataFrame,
 ) -> None:
     assert isinstance(
-        CorrelationOutput(DataFrameState(dataframe)).get_content_generator(lazy=False),
+        CorrelationOutput(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        ).get_content_generator(lazy=False),
         ContentGenerator,
     )
 
 
 def test_correlation_output_get_evaluator_lazy_true(dataframe: pl.DataFrame) -> None:
     assert (
-        CorrelationOutput(DataFrameState(dataframe))
+        CorrelationOutput(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
         .get_evaluator()
-        .equal(CorrelationEvaluator(DataFrameState(dataframe)))
+        .equal(
+            CorrelationEvaluator(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
+        )
     )
 
 
 def test_correlation_output_get_evaluator_lazy_false(dataframe: pl.DataFrame) -> None:
     assert (
-        CorrelationOutput(DataFrameState(dataframe))
+        CorrelationOutput(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
         .get_evaluator(lazy=False)
         .equal(
             Evaluator(
