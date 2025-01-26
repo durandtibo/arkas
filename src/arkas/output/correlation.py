@@ -8,6 +8,7 @@ __all__ = ["CorrelationOutput"]
 from arkas.content.correlation import CorrelationContentGenerator
 from arkas.evaluator2.correlation import CorrelationEvaluator
 from arkas.output.state import BaseStateOutput
+from arkas.plotter.correlation import CorrelationPlotter
 from arkas.state.columns import TwoColumnDataFrameState
 
 
@@ -40,7 +41,12 @@ class CorrelationOutput(BaseStateOutput[TwoColumnDataFrameState]):
     )
     >>> output.get_content_generator()
     CorrelationContentGenerator(
-      (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (evaluator): CorrelationEvaluator(
+          (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+        )
+      (plotter): CorrelationPlotter(
+          (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+        )
     )
     >>> output.get_evaluator()
     CorrelationEvaluator(
@@ -52,8 +58,10 @@ class CorrelationOutput(BaseStateOutput[TwoColumnDataFrameState]):
 
     def __init__(self, state: TwoColumnDataFrameState) -> None:
         super().__init__(state)
-        self._content = CorrelationContentGenerator(self._state)
         self._evaluator = CorrelationEvaluator(self._state)
+        self._content = CorrelationContentGenerator(
+            evaluator=self._evaluator, plotter=CorrelationPlotter(state)
+        )
 
     def _get_content_generator(self) -> CorrelationContentGenerator:
         return self._content

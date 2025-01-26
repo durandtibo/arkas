@@ -73,7 +73,7 @@ def test_correlation_output_get_content_generator_lazy_true(dataframe: pl.DataFr
         CorrelationOutput(TwoColumnDataFrameState(dataframe, column1="col1", column2="col2"))
         .get_content_generator()
         .equal(
-            CorrelationContentGenerator(
+            CorrelationContentGenerator.from_state(
                 TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
             )
         )
