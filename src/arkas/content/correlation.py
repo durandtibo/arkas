@@ -18,10 +18,9 @@ from arkas.content.section import BaseSectionContentGenerator
 from arkas.evaluator2.correlation import CorrelationEvaluator
 from arkas.figure.utils import figure2html
 from arkas.plotter.correlation import CorrelationPlotter
-from arkas.utils.dataframe import check_num_columns
 
 if TYPE_CHECKING:
-    from arkas.state.target_dataframe import DataFrameState
+    from arkas.state.columns import TwoColumnDataFrameState
 
 logger = logging.getLogger(__name__)
 
@@ -41,24 +40,25 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
 
     >>> import polars as pl
     >>> from arkas.content import CorrelationContentGenerator
-    >>> from arkas.state import DataFrameState
+    >>> from arkas.state import TwoColumnDataFrameState
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
     ...         "col2": [7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0],
     ...     },
     ... )
-    >>> content = CorrelationContentGenerator(DataFrameState(frame))
+    >>> content = CorrelationContentGenerator(
+    ...     TwoColumnDataFrameState(frame, column1="col1", column2="col2")
+    ... )
     >>> content
     CorrelationContentGenerator(
-      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```
     """
 
-    def __init__(self, state: DataFrameState) -> None:
-        check_num_columns(state.dataframe, num_columns=2)
+    def __init__(self, state: TwoColumnDataFrameState) -> None:
         self._state = state
 
     def __repr__(self) -> str:
