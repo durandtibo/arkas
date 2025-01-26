@@ -4,20 +4,15 @@ from __future__ import annotations
 
 __all__ = ["CorrelationOutput"]
 
-from typing import TYPE_CHECKING, Any
-
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.content.correlation import CorrelationContentGenerator
 from arkas.evaluator2.correlation import CorrelationEvaluator
-from arkas.output.lazy import BaseLazyOutput
+from arkas.output.state import BaseStateOutput
+from arkas.state.dataframe import DataFrameState
 from arkas.utils.dataframe import check_num_columns
 
-if TYPE_CHECKING:
-    from arkas.state.dataframe import DataFrameState
 
-
-class CorrelationOutput(BaseLazyOutput):
+class CorrelationOutput(BaseStateOutput[DataFrameState]):
     r"""Implement an output to summarize the numeric columns of a
     DataFrame.
 
@@ -56,23 +51,12 @@ class CorrelationOutput(BaseLazyOutput):
 
     def __init__(self, state: DataFrameState) -> None:
         check_num_columns(state.dataframe, num_columns=2)
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        super().__init__(state)
+        self._content = CorrelationContentGenerator(self._state)
+        self._evaluator = CorrelationEvaluator(self._state)
 
     def _get_content_generator(self) -> CorrelationContentGenerator:
-        return CorrelationContentGenerator(self._state)
+        return self._content
 
     def _get_evaluator(self) -> CorrelationEvaluator:
-        return CorrelationEvaluator(self._state)
+        return self._evaluator

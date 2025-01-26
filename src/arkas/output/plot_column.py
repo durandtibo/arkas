@@ -4,19 +4,14 @@ from __future__ import annotations
 
 __all__ = ["PlotColumnOutput"]
 
-from typing import TYPE_CHECKING, Any
-
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.content.plot_column import PlotColumnContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
-from arkas.output.lazy import BaseLazyOutput
-
-if TYPE_CHECKING:
-    from arkas.state.dataframe import DataFrameState
+from arkas.output.state import BaseStateOutput
+from arkas.state.dataframe import DataFrameState
 
 
-class PlotColumnOutput(BaseLazyOutput):
+class PlotColumnOutput(BaseStateOutput[DataFrameState]):
     r"""Implement an output to plot each column of a DataFrame.
 
     Args:
@@ -53,23 +48,12 @@ class PlotColumnOutput(BaseLazyOutput):
     """
 
     def __init__(self, state: DataFrameState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        super().__init__(state)
+        self._content = PlotColumnContentGenerator(self._state)
+        self._evaluator = Evaluator()
 
     def _get_content_generator(self) -> PlotColumnContentGenerator:
-        return PlotColumnContentGenerator(self._state)
+        return self._content
 
     def _get_evaluator(self) -> Evaluator:
-        return Evaluator()
+        return self._evaluator
