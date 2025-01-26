@@ -212,7 +212,7 @@ def test_output_dict_get_content_generator_lazy_true() -> None:
             ContentGeneratorDict(
                 {
                     "one": ContentGenerator("meow"),
-                    "two": AccuracyContentGenerator(
+                    "two": AccuracyContentGenerator.from_state(
                         AccuracyState(
                             y_true=np.array([1, 0, 0, 1, 1]),
                             y_pred=np.array([1, 0, 0, 1, 1]),
