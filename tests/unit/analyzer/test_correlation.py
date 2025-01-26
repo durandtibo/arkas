@@ -9,7 +9,7 @@ from grizz.exceptions import ColumnNotFoundError, ColumnNotFoundWarning
 from arkas.analyzer import CorrelationAnalyzer
 from arkas.figure import MatplotlibFigureConfig
 from arkas.output import CorrelationOutput, EmptyOutput, Output
-from arkas.state import DataFrameState
+from arkas.state import TwoColumnDataFrameState
 
 
 @pytest.fixture
@@ -43,7 +43,7 @@ def test_correlation_analyzer_analyze(dataframe: pl.DataFrame) -> None:
         .analyze(dataframe)
         .equal(
             CorrelationOutput(
-                DataFrameState(
+                TwoColumnDataFrameState(
                     pl.DataFrame(
                         {
                             "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
@@ -51,6 +51,8 @@ def test_correlation_analyzer_analyze(dataframe: pl.DataFrame) -> None:
                         },
                         schema={"col1": pl.Float64, "col2": pl.Float64},
                     ),
+                    column1="col1",
+                    column2="col2",
                 )
             )
         )
@@ -74,11 +76,15 @@ def test_correlation_analyzer_analyze_drop_nulls() -> None:
                     "col2": [3, 2, 0, 1, 0, None, 1, None],
                     "col3": [1, None, 3, 4, 5, None, 7, None],
                 }
-            )
+            ),
         )
         .equal(
             CorrelationOutput(
-                DataFrameState(pl.DataFrame({"col1": [1, 2, 3, 2, 1], "col2": [3, 2, 0, 1, 0]}))
+                TwoColumnDataFrameState(
+                    pl.DataFrame({"col1": [1, 2, 3, 2, 1], "col2": [3, 2, 0, 1, 0]}),
+                    column1="col1",
+                    column2="col2",
+                )
             )
         )
     )
@@ -97,13 +103,15 @@ def test_correlation_analyzer_analyze_drop_nulls_false() -> None:
         )
         .equal(
             CorrelationOutput(
-                DataFrameState(
+                TwoColumnDataFrameState(
                     pl.DataFrame(
                         {
                             "col1": [1, 2, 3, 2, 1, 2, None, None],
                             "col2": [3, 2, 0, 1, 0, None, 1, None],
                         }
-                    )
+                    ),
+                    column1="col1",
+                    column2="col2",
                 )
             ),
         )
@@ -117,7 +125,7 @@ def test_correlation_analyzer_analyze_nan_policy(dataframe: pl.DataFrame, nan_po
         .analyze(dataframe)
         .equal(
             CorrelationOutput(
-                DataFrameState(
+                TwoColumnDataFrameState(
                     pl.DataFrame(
                         {
                             "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
@@ -125,6 +133,8 @@ def test_correlation_analyzer_analyze_nan_policy(dataframe: pl.DataFrame, nan_po
                         },
                         schema={"col1": pl.Float64, "col2": pl.Float64},
                     ),
+                    column1="col1",
+                    column2="col2",
                     nan_policy=nan_policy,
                 ),
             )
