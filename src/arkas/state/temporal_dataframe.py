@@ -4,16 +4,10 @@ from __future__ import annotations
 
 __all__ = ["TemporalDataFrameState"]
 
-import sys
 from typing import TYPE_CHECKING, Any
 
 from arkas.state.dataframe import DataFrameState
 from arkas.utils.dataframe import check_column_exist
-
-if sys.version_info >= (3, 11):
-    pass
-else:  # pragma: no cover
-    pass
 
 if TYPE_CHECKING:
     import polars as pl
