@@ -106,7 +106,7 @@ class AccuracyContentGenerator(BaseSectionContentGenerator):
         >>> from arkas.content import AccuracyContentGenerator
         >>> from arkas.state import AccuracyState
         >>> content = AccuracyContentGenerator.from_state(
-        ...     state=AccuracyState(
+        ...     AccuracyState(
         ...         y_true=np.array([1, 0, 0, 1, 1]),
         ...         y_pred=np.array([1, 0, 0, 1, 1]),
         ...         y_true_name="target",

@@ -39,7 +39,9 @@ class BalancedAccuracyOutput(BaseStateOutput[AccuracyState]):
     )
     >>> output.get_content_generator()
     BalancedAccuracyContentGenerator(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+      (evaluator): BalancedAccuracyEvaluator(
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+        )
     )
     >>> output.get_evaluator()
     BalancedAccuracyEvaluator(
@@ -51,8 +53,8 @@ class BalancedAccuracyOutput(BaseStateOutput[AccuracyState]):
 
     def __init__(self, state: AccuracyState) -> None:
         super().__init__(state)
-        self._content = BalancedAccuracyContentGenerator(self._state)
         self._evaluator = BalancedAccuracyEvaluator(self._state)
+        self._content = BalancedAccuracyContentGenerator(self._evaluator)
 
     def _get_content_generator(self) -> BalancedAccuracyContentGenerator:
         return self._content
