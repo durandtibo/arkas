@@ -31,8 +31,6 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
 
     Args:
         state: The state containing the DataFrame to analyze.
-            The DataFrame must have only 2 columns, which are the two
-            columns to analyze.
 
     Example usage:
 
