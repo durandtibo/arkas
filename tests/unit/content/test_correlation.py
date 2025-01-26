@@ -5,7 +5,7 @@ import pytest
 
 from arkas.content import ContentGenerator, CorrelationContentGenerator
 from arkas.content.correlation import create_template
-from arkas.state import DataFrameState
+from arkas.state import TwoColumnDataFrameState
 
 
 @pytest.fixture
@@ -25,40 +25,54 @@ def dataframe() -> pl.DataFrame:
 
 
 def test_correlation_content_generator_repr(dataframe: pl.DataFrame) -> None:
-    assert repr(CorrelationContentGenerator(DataFrameState(dataframe))).startswith(
-        "CorrelationContentGenerator("
-    )
+    assert repr(
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        )
+    ).startswith("CorrelationContentGenerator(")
 
 
 def test_correlation_content_generator_str(dataframe: pl.DataFrame) -> None:
-    assert str(CorrelationContentGenerator(DataFrameState(dataframe))).startswith(
-        "CorrelationContentGenerator("
-    )
+    assert str(
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        )
+    ).startswith("CorrelationContentGenerator(")
 
 
 def test_correlation_content_generator_compute(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        CorrelationContentGenerator(DataFrameState(dataframe)).compute(),
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        ).compute(),
         ContentGenerator,
     )
 
 
 def test_correlation_content_generator_equal_true(dataframe: pl.DataFrame) -> None:
-    assert CorrelationContentGenerator(DataFrameState(dataframe)).equal(
-        CorrelationContentGenerator(DataFrameState(dataframe))
+    assert CorrelationContentGenerator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        )
     )
 
 
 def test_correlation_content_generator_equal_false_different_state(
     dataframe: pl.DataFrame,
 ) -> None:
-    assert not CorrelationContentGenerator(DataFrameState(dataframe)).equal(
+    assert not CorrelationContentGenerator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(
         CorrelationContentGenerator(
-            DataFrameState(
+            TwoColumnDataFrameState(
                 pl.DataFrame(
                     {"col1": [], "col2": []},
                     schema={"col1": pl.Float64, "col2": pl.Float64},
                 ),
+                column1="col1",
+                column2="col2",
             )
         )
     )
@@ -67,12 +81,16 @@ def test_correlation_content_generator_equal_false_different_state(
 def test_correlation_content_generator_equal_false_different_type(
     dataframe: pl.DataFrame,
 ) -> None:
-    assert not CorrelationContentGenerator(DataFrameState(dataframe)).equal(42)
+    assert not CorrelationContentGenerator(
+        TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+    ).equal(42)
 
 
 def test_correlation_content_generator_generate_content(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        CorrelationContentGenerator(DataFrameState(dataframe)).generate_content(),
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        ).generate_content(),
         str,
     )
 
@@ -80,11 +98,13 @@ def test_correlation_content_generator_generate_content(dataframe: pl.DataFrame)
 def test_correlation_content_generator_generate_content_empty_rows() -> None:
     assert isinstance(
         CorrelationContentGenerator(
-            DataFrameState(
+            TwoColumnDataFrameState(
                 pl.DataFrame(
                     {"col1": [], "col2": []},
                     schema={"col1": pl.Float64, "col2": pl.Float64},
                 ),
+                column1="col1",
+                column2="col2",
             )
         ).generate_content(),
         str,
@@ -93,32 +113,36 @@ def test_correlation_content_generator_generate_content_empty_rows() -> None:
 
 def test_correlation_content_generator_generate_body(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        CorrelationContentGenerator(DataFrameState(dataframe)).generate_body(),
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        ).generate_body(),
         str,
     )
 
 
 def test_correlation_content_generator_generate_body_args(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        CorrelationContentGenerator(DataFrameState(dataframe)).generate_body(
-            number="1.", tags=["meow"], depth=1
-        ),
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        ).generate_body(number="1.", tags=["meow"], depth=1),
         str,
     )
 
 
 def test_correlation_content_generator_generate_toc(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        CorrelationContentGenerator(DataFrameState(dataframe)).generate_toc(),
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        ).generate_toc(),
         str,
     )
 
 
 def test_correlation_content_generator_generate_toc_args(dataframe: pl.DataFrame) -> None:
     assert isinstance(
-        CorrelationContentGenerator(DataFrameState(dataframe)).generate_toc(
-            number="1.", tags=["meow"], depth=1
-        ),
+        CorrelationContentGenerator(
+            TwoColumnDataFrameState(dataframe, column1="col1", column2="col2")
+        ).generate_toc(number="1.", tags=["meow"], depth=1),
         str,
     )
 
