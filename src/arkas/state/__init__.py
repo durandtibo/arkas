@@ -15,12 +15,14 @@ __all__ = [
     "TargetDataFrameState",
     "TemporalColumnState",
     "TemporalDataFrameState",
+    "TwoColumnDataFrameState",
 ]
 
 from arkas.state.accuracy import AccuracyState
 from arkas.state.arg import BaseArgState
 from arkas.state.base import BaseState
 from arkas.state.column_cooccurrence import ColumnCooccurrenceState
+from arkas.state.columns import TwoColumnDataFrameState
 from arkas.state.dataframe import DataFrameState
 from arkas.state.null_value import NullValueState
 from arkas.state.precision_recall import PrecisionRecallState
