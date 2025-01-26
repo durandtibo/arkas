@@ -39,7 +39,9 @@ class ColumnCorrelationOutput(BaseStateOutput[TargetDataFrameState]):
     )
     >>> output.get_content_generator()
     ColumnCorrelationContentGenerator(
-      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (evaluator): ColumnCorrelationEvaluator(
+          (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+        )
     )
     >>> output.get_evaluator()
     ColumnCorrelationEvaluator(
