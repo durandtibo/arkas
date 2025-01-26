@@ -5,19 +5,14 @@ from __future__ import annotations
 
 __all__ = ["HexbinColumnOutput"]
 
-from typing import TYPE_CHECKING, Any
-
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.content.hexbin_column import HexbinColumnContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
-from arkas.output.lazy import BaseLazyOutput
-
-if TYPE_CHECKING:
-    from arkas.state.scatter_dataframe import ScatterDataFrameState
+from arkas.output.state import BaseStateOutput
+from arkas.state.scatter_dataframe import ScatterDataFrameState
 
 
-class HexbinColumnOutput(BaseLazyOutput):
+class HexbinColumnOutput(BaseStateOutput[ScatterDataFrameState]):
     r"""Implement an output to make a 2D hexagonal binning plot of some
     columns.
 
@@ -55,23 +50,12 @@ class HexbinColumnOutput(BaseLazyOutput):
     """
 
     def __init__(self, state: ScatterDataFrameState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        super().__init__(state)
+        self._content = HexbinColumnContentGenerator(self._state)
+        self._evaluator = Evaluator()
 
     def _get_content_generator(self) -> HexbinColumnContentGenerator:
-        return HexbinColumnContentGenerator(self._state)
+        return self._content
 
     def _get_evaluator(self) -> Evaluator:
-        return Evaluator()
+        return self._evaluator

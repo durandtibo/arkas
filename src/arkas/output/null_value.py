@@ -5,19 +5,14 @@ from __future__ import annotations
 
 __all__ = ["NullValueOutput"]
 
-from typing import TYPE_CHECKING, Any
-
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.content.null_value import NullValueContentGenerator
 from arkas.evaluator2.vanilla import Evaluator
-from arkas.output.lazy import BaseLazyOutput
-
-if TYPE_CHECKING:
-    from arkas.state.null_value import NullValueState
+from arkas.output.state import BaseStateOutput
+from arkas.state.null_value import NullValueState
 
 
-class NullValueOutput(BaseLazyOutput):
+class NullValueOutput(BaseStateOutput[NullValueState]):
     r"""Implement an output to analyze the number of null values per
     column.
 
@@ -54,23 +49,12 @@ class NullValueOutput(BaseLazyOutput):
     """
 
     def __init__(self, state: NullValueState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        super().__init__(state)
+        self._content = NullValueContentGenerator(self._state)
+        self._evaluator = Evaluator()
 
     def _get_content_generator(self) -> NullValueContentGenerator:
-        return NullValueContentGenerator(self._state)
+        return self._content
 
     def _get_evaluator(self) -> Evaluator:
-        return Evaluator()
+        return self._evaluator
