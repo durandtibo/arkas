@@ -136,7 +136,7 @@ def test_accuracy_output_get_content_generator_lazy_true(nan_policy: str) -> Non
         nan_policy=nan_policy,
     )
     generator = AccuracyOutput(state).get_content_generator()
-    assert generator.equal(AccuracyContentGenerator(state))
+    assert generator.equal(AccuracyContentGenerator.from_state(state))
 
 
 @pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])

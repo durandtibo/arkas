@@ -52,8 +52,8 @@ def test_content_generator_dict_compute() -> None:
         ContentGeneratorDict(
             {
                 "one": ContentGenerator("meow"),
-                "two": AccuracyContentGenerator(
-                    state=AccuracyState(
+                "two": AccuracyContentGenerator.from_state(
+                    AccuracyState(
                         y_true=np.array([1, 0, 0, 1, 1]),
                         y_pred=np.array([1, 0, 0, 1, 1]),
                         y_true_name="target",

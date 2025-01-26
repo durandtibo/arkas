@@ -26,18 +26,23 @@ class BaseContentGenerator(ABC):
 
     >>> import numpy as np
     >>> from arkas.content import AccuracyContentGenerator
+    >>> from arkas.evaluator2 import AccuracyEvaluator
     >>> from arkas.state import AccuracyState
-    >>> generator = AccuracyContentGenerator(
-    ...     state=AccuracyState(
-    ...         y_true=np.array([1, 0, 0, 1, 1]),
-    ...         y_pred=np.array([1, 0, 0, 1, 1]),
-    ...         y_true_name="target",
-    ...         y_pred_name="pred",
+    >>> content = AccuracyContentGenerator(
+    ...     AccuracyEvaluator(
+    ...         AccuracyState(
+    ...             y_true=np.array([1, 0, 0, 1, 1]),
+    ...             y_pred=np.array([1, 0, 0, 1, 1]),
+    ...             y_true_name="target",
+    ...             y_pred_name="pred",
+    ...         )
     ...     )
     ... )
-    >>> generator
+    >>> content
     AccuracyContentGenerator(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+      (evaluator): AccuracyEvaluator(
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+        )
     )
 
     ```
@@ -56,21 +61,26 @@ class BaseContentGenerator(ABC):
 
         >>> import numpy as np
         >>> from arkas.content import AccuracyContentGenerator
+        >>> from arkas.evaluator2 import AccuracyEvaluator
         >>> from arkas.state import AccuracyState
-        >>> generator = AccuracyContentGenerator(
-        ...     state=AccuracyState(
-        ...         y_true=np.array([1, 0, 0, 1, 1]),
-        ...         y_pred=np.array([1, 0, 0, 1, 1]),
-        ...         y_true_name="target",
-        ...         y_pred_name="pred",
+        >>> content = AccuracyContentGenerator(
+        ...     AccuracyEvaluator(
+        ...         AccuracyState(
+        ...             y_true=np.array([1, 0, 0, 1, 1]),
+        ...             y_pred=np.array([1, 0, 0, 1, 1]),
+        ...             y_true_name="target",
+        ...             y_pred_name="pred",
+        ...         )
         ...     )
         ... )
-        >>> generator
+        >>> content
         AccuracyContentGenerator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+          (evaluator): AccuracyEvaluator(
+              (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+            )
         )
-        >>> generator2 = generator.compute()
-        >>> generator2
+        >>> content2 = content.compute()
+        >>> content2
         ContentGenerator()
 
         ```
@@ -95,34 +105,41 @@ class BaseContentGenerator(ABC):
 
         >>> import numpy as np
         >>> from arkas.content import AccuracyContentGenerator
+        >>> from arkas.evaluator2 import AccuracyEvaluator
         >>> from arkas.state import AccuracyState
-        >>> generator1 = AccuracyContentGenerator(
-        ...     AccuracyState(
-        ...         y_true=np.array([1, 0, 0, 1, 1]),
-        ...         y_pred=np.array([1, 0, 0, 1, 1]),
-        ...         y_true_name="target",
-        ...         y_pred_name="pred",
+        >>> content1 = AccuracyContentGenerator(
+        ...     AccuracyEvaluator(
+        ...         AccuracyState(
+        ...             y_true=np.array([1, 0, 0, 1, 1]),
+        ...             y_pred=np.array([1, 0, 0, 1, 1]),
+        ...             y_true_name="target",
+        ...             y_pred_name="pred",
+        ...         )
         ...     )
         ... )
-        >>> generator2 = AccuracyContentGenerator(
-        ...     AccuracyState(
-        ...         y_true=np.array([1, 0, 0, 1, 1]),
-        ...         y_pred=np.array([1, 0, 0, 1, 1]),
-        ...         y_true_name="target",
-        ...         y_pred_name="pred",
+        >>> content2 = AccuracyContentGenerator(
+        ...     AccuracyEvaluator(
+        ...         AccuracyState(
+        ...             y_true=np.array([1, 0, 0, 1, 1]),
+        ...             y_pred=np.array([1, 0, 0, 1, 1]),
+        ...             y_true_name="target",
+        ...             y_pred_name="pred",
+        ...         )
         ...     )
         ... )
-        >>> generator3 = AccuracyContentGenerator(
-        ...     AccuracyState(
-        ...         y_true=np.array([1, 0, 0, 0, 0]),
-        ...         y_pred=np.array([1, 0, 0, 1, 1]),
-        ...         y_true_name="target",
-        ...         y_pred_name="pred",
+        >>> content3 = AccuracyContentGenerator(
+        ...     AccuracyEvaluator(
+        ...         AccuracyState(
+        ...             y_true=np.array([1, 0, 0, 0, 0]),
+        ...             y_pred=np.array([1, 0, 0, 1, 1]),
+        ...             y_true_name="target",
+        ...             y_pred_name="pred",
+        ...         )
         ...     )
         ... )
-        >>> generator1.equal(generator2)
+        >>> content1.equal(content2)
         True
-        >>> generator1.equal(generator3)
+        >>> content1.equal(content3)
         False
 
         ```
@@ -146,16 +163,19 @@ class BaseContentGenerator(ABC):
 
         >>> import numpy as np
         >>> from arkas.content import AccuracyContentGenerator
+        >>> from arkas.evaluator2 import AccuracyEvaluator
         >>> from arkas.state import AccuracyState
-        >>> generator = AccuracyContentGenerator(
-        ...     state=AccuracyState(
-        ...         y_true=np.array([1, 0, 0, 1, 1]),
-        ...         y_pred=np.array([1, 0, 0, 1, 1]),
-        ...         y_true_name="target",
-        ...         y_pred_name="pred",
+        >>> content = AccuracyContentGenerator(
+        ...     AccuracyEvaluator(
+        ...         AccuracyState(
+        ...             y_true=np.array([1, 0, 0, 1, 1]),
+        ...             y_pred=np.array([1, 0, 0, 1, 1]),
+        ...             y_true_name="target",
+        ...             y_pred_name="pred",
+        ...         )
         ...     )
         ... )
-        >>> generator.generate_body()
+        >>> content.generate_body()
 
         ```
         """
@@ -183,16 +203,19 @@ class BaseContentGenerator(ABC):
 
         >>> import numpy as np
         >>> from arkas.content import AccuracyContentGenerator
+        >>> from arkas.evaluator2 import AccuracyEvaluator
         >>> from arkas.state import AccuracyState
-        >>> generator = AccuracyContentGenerator(
-        ...     state=AccuracyState(
-        ...         y_true=np.array([1, 0, 0, 1, 1]),
-        ...         y_pred=np.array([1, 0, 0, 1, 1]),
-        ...         y_true_name="target",
-        ...         y_pred_name="pred",
+        >>> content = AccuracyContentGenerator(
+        ...     AccuracyEvaluator(
+        ...         AccuracyState(
+        ...             y_true=np.array([1, 0, 0, 1, 1]),
+        ...             y_pred=np.array([1, 0, 0, 1, 1]),
+        ...             y_true_name="target",
+        ...             y_pred_name="pred",
+        ...         )
         ...     )
         ... )
-        >>> generator.generate_toc()
+        >>> content.generate_toc()
 
         ```
         """

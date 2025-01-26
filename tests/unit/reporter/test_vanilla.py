@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
 @pytest.fixture
 def generator() -> BaseContentGenerator:
-    return AccuracyContentGenerator(
-        state=AccuracyState(
+    return AccuracyContentGenerator.from_state(
+        AccuracyState(
             y_true=np.array([1, 0, 0, 1, 1]),
             y_pred=np.array([1, 0, 1, 0, 1]),
             y_true_name="target",
