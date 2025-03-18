@@ -1,4 +1,3 @@
-# noqa: A005
 r"""Contain utility functions to generate sections."""
 
 from __future__ import annotations
