@@ -1254,14 +1254,14 @@ packaging = "*"
 
 [[package]]
 name = "iden"
-version = "0.1.1a0"
+version = "0.2.0"
 description = "simple library to manage a dataset of shards to train machine learning models"
 optional = false
 python-versions = "<3.14,>=3.9"
 groups = ["main"]
 files = [
-    {file = "iden-0.1.1a0-py3-none-any.whl", hash = "sha256:025f49ced7e171781e9b47cece56cfbc6c4f36922811955cb7c2a58225cd8677"},
-    {file = "iden-0.1.1a0.tar.gz", hash = "sha256:65bb2d665db41bb87f05f3d891820773d44e0f938a04fed718eeb341b7041110"},
+    {file = "iden-0.2.0-py3-none-any.whl", hash = "sha256:cd154a58d4f624bcabf94be598fd797e295f101ec0b7fbdb8cf785c5b76a491f"},
+    {file = "iden-0.2.0.tar.gz", hash = "sha256:caa304ad89e7e26caf34d7f83bf005b47a5a9ea76f8a4c7afc30ac77e43d7197"},
 ]
 
 [package.dependencies]
