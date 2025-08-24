@@ -104,7 +104,7 @@ class BasePlotter(ABC):
         """
 
 
-class PlotterEqualityComparator(BaseEqualityComparator[BasePlotter]):
+class PlotterEqualityComparator(BaseEqualityComparator[BasePlotter]):  # noqa: PLW1641
     r"""Implement an equality comparator for ``BasePlotter`` objects."""
 
     def __init__(self) -> None:
