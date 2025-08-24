@@ -201,7 +201,9 @@ class AveragePrecisionResult(BaseResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, plt.Figure]:
         return {}
 
@@ -352,7 +354,9 @@ class BinaryAveragePrecisionResult(BaseAveragePrecisionResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, plt.Figure]:
         return {}
 
@@ -428,7 +432,9 @@ class MulticlassAveragePrecisionResult(BaseAveragePrecisionResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, plt.Figure]:
         return {}
 
@@ -489,6 +495,8 @@ class MultilabelAveragePrecisionResult(BaseAveragePrecisionResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, plt.Figure]:
         return {}

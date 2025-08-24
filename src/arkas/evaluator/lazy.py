@@ -61,8 +61,7 @@ class BaseLazyEvaluator(BaseEvaluator, Generic[T]):
         """
         if missing_cols := find_missing_keys(keys=set(data.columns), queries=self._get_columns()):
             logger.warning(
-                "Skipping the evaluation because some columns are missing: "
-                f"{sorted(missing_cols)}"
+                f"Skipping the evaluation because some columns are missing: {sorted(missing_cols)}"
             )
             return EmptyResult()
 
