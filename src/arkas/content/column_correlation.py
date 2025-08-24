@@ -272,11 +272,11 @@ def create_table_row(column: str, metrics: dict) -> str:
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "column": column,
-            "count": f'{metrics.get("count", 0):,}',
-            "pearson_coeff": f'{metrics.get("pearson_coeff", float("nan")):.4f}',
-            "pearson_pvalue": f'{metrics.get("pearson_pvalue", float("nan")):.4f}',
-            "spearman_coeff": f'{metrics.get("spearman_coeff", float("nan")):.4f}',
-            "spearman_pvalue": f'{metrics.get("spearman_pvalue", float("nan")):.4f}',
+            "count": f"{metrics.get('count', 0):,}",
+            "pearson_coeff": f"{metrics.get('pearson_coeff', float('nan')):.4f}",
+            "pearson_pvalue": f"{metrics.get('pearson_pvalue', float('nan')):.4f}",
+            "spearman_coeff": f"{metrics.get('spearman_coeff', float('nan')):.4f}",
+            "spearman_pvalue": f"{metrics.get('spearman_pvalue', float('nan')):.4f}",
         }
     )
 

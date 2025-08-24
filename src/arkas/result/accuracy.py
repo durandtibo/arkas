@@ -102,6 +102,8 @@ class AccuracyResult(BaseResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, float]:
         return {}

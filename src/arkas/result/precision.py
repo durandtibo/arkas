@@ -179,7 +179,9 @@ class PrecisionResult(BaseResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, float]:
         return {}
 
@@ -383,7 +385,9 @@ class MulticlassPrecisionResult(BasePrecisionResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, float]:
         return {}
 
@@ -443,6 +447,8 @@ class MultilabelPrecisionResult(BasePrecisionResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, float]:
         return {}

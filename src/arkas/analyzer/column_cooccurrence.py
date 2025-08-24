@@ -93,8 +93,7 @@ class ColumnCooccurrenceAnalyzer(BaseInNLazyAnalyzer):
 
     def _analyze(self, frame: pl.DataFrame) -> ColumnCooccurrenceOutput:
         logger.info(
-            "Analyzing the pairwise column co-occurrence of "
-            f"{len(self.find_columns(frame)):,}..."
+            f"Analyzing the pairwise column co-occurrence of {len(self.find_columns(frame)):,}..."
         )
         columns = self.find_common_columns(frame)
         out = frame.select(columns)

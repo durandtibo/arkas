@@ -10,22 +10,15 @@
     <a href="https://github.com/durandtibo/arkas/actions">
         <img alt="Nightly Package Tests" src="https://github.com/durandtibo/arkas/workflows/Nightly%20Package%20Tests/badge.svg">
     </a>
+    <a href="https://codecov.io/gh/durandtibo/arkas">
+        <img alt="Codecov" src="https://codecov.io/gh/durandtibo/arkas/branch/main/graph/badge.svg">
+    </a>
     <br/>
     <a href="https://durandtibo.github.io/arkas/">
         <img alt="Documentation" src="https://github.com/durandtibo/arkas/workflows/Documentation%20(stable)/badge.svg">
     </a>
     <a href="https://durandtibo.github.io/arkas/">
         <img alt="Documentation" src="https://github.com/durandtibo/arkas/workflows/Documentation%20(unstable)/badge.svg">
-    </a>
-    <br/>
-    <a href="https://codecov.io/gh/durandtibo/arkas">
-        <img alt="Codecov" src="https://codecov.io/gh/durandtibo/arkas/branch/main/graph/badge.svg">
-    </a>
-    <a href="https://codeclimate.com/github/durandtibo/arkas/maintainability">
-        <img src="https://api.codeclimate.com/v1/badges/bc15147bbdd318137184/maintainability" />
-    </a>
-    <a href="https://codeclimate.com/github/durandtibo/arkas/test_coverage">
-        <img src="https://api.codeclimate.com/v1/badges/bc15147bbdd318137184/test_coverage" />
     </a>
     <br/>
     <a href="https://github.com/psf/black">

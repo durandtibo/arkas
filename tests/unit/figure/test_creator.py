@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 
 class MyFigureCreator:
-
     def create(self, config: BaseFigureConfig) -> BaseFigure:  # noqa: ARG002
         return HtmlFigure("meow")
 

@@ -11,7 +11,6 @@ from arkas.state import AccuracyState, BaseState
 
 
 class MyCachedEvaluator(BaseCachedEvaluator):
-
     def equal(self, other: Any, equal_nan: bool = False) -> bool:  # noqa: ARG002
         return isinstance(other, self.__class__)
 
@@ -20,7 +19,6 @@ class MyCachedEvaluator(BaseCachedEvaluator):
 
 
 class MyStateCachedEvaluator(BaseStateCachedEvaluator):
-
     def _evaluate(self) -> dict:
         return {"metric1": 0.42, "metric2": 1.2}
 
