@@ -1,8 +1,8 @@
-r"""Implement DataFrame state with a target column."""
+r"""Implement DataFrame states with a target columns."""
 
 from __future__ import annotations
 
-__all__ = ["TargetDataFrameState"]
+__all__ = ["TwoColumnDataFrameState"]
 
 from typing import TYPE_CHECKING, Any
 
@@ -15,12 +15,13 @@ if TYPE_CHECKING:
     from arkas.figure.base import BaseFigureConfig
 
 
-class TargetDataFrameState(DataFrameState):
+class TwoColumnDataFrameState(DataFrameState):
     r"""Implement a DataFrame state with a target column.
 
     Args:
         dataframe: The DataFrame.
-        target_column: The target column in the DataFrame.
+        column1: The first target column in the DataFrame.
+        column2: The second target column in the DataFrame.
         nan_policy: The policy on how to handle NaN values in the input
             arrays. The following options are available: ``'omit'``,
             ``'propagate'``, and ``'raise'``.
@@ -33,7 +34,7 @@ class TargetDataFrameState(DataFrameState):
 
     >>> from datetime import datetime, timezone
     >>> import polars as pl
-    >>> from arkas.state import TargetDataFrameState
+    >>> from arkas.state import TwoColumnDataFrameState
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [0, 1, 1, 0, 0, 1, 0],
@@ -42,9 +43,9 @@ class TargetDataFrameState(DataFrameState):
     ...     },
     ...     schema={"col1": pl.Int64, "col2": pl.Int32, "col3": pl.Float64},
     ... )
-    >>> state = TargetDataFrameState(frame, target_column="col3")
+    >>> state = TwoColumnDataFrameState(frame, column1="col3", column2="col1")
     >>> state
-    TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+    TwoColumnDataFrameState(dataframe=(7, 3), column1='col3', column2='col1', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
 
     ```
     """
@@ -52,25 +53,35 @@ class TargetDataFrameState(DataFrameState):
     def __init__(
         self,
         dataframe: pl.DataFrame,
-        target_column: str,
+        column1: str,
+        column2: str,
         nan_policy: str = "propagate",
         figure_config: BaseFigureConfig | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(
-            dataframe=dataframe, nan_policy=nan_policy, figure_config=figure_config, **kwargs
+            dataframe=dataframe,
+            nan_policy=nan_policy,
+            figure_config=figure_config,
+            **kwargs,
         )
-
-        check_column_exist(dataframe, target_column)
-        self._target_column = target_column
+        check_column_exist(dataframe, column1)
+        self._column1 = column1
+        check_column_exist(dataframe, column2)
+        self._column2 = column2
 
     @property
-    def target_column(self) -> str:
-        return self._target_column
+    def column1(self) -> str:
+        return self._column1
+
+    @property
+    def column2(self) -> str:
+        return self._column2
 
     def get_args(self) -> dict:
         args = super().get_args()
         return {
             "dataframe": args.pop("dataframe"),
-            "target_column": self._target_column,
+            "column1": self._column1,
+            "column2": self._column2,
         } | args

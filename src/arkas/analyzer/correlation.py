@@ -17,7 +17,7 @@ from arkas.analyzer.lazy import BaseLazyAnalyzer
 from arkas.metric.utils import check_nan_policy
 from arkas.output import EmptyOutput
 from arkas.output.correlation import CorrelationOutput
-from arkas.state.dataframe import DataFrameState
+from arkas.state.columns import TwoColumnDataFrameState
 
 if TYPE_CHECKING:
     import polars as pl
@@ -69,7 +69,7 @@ class CorrelationAnalyzer(BaseLazyAnalyzer):
     >>> output = analyzer.analyze(frame)
     >>> output
     CorrelationOutput(
-      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
     )
 
     ```
@@ -129,8 +129,12 @@ class CorrelationAnalyzer(BaseLazyAnalyzer):
         dataframe = self._prepare_data(frame)
         logger.info(str_shape_diff(orig=frame.shape, final=dataframe.shape))
         return CorrelationOutput(
-            DataFrameState(
-                dataframe=dataframe, nan_policy=self._nan_policy, figure_config=self._figure_config
+            TwoColumnDataFrameState(
+                dataframe=dataframe,
+                column1=self._x,
+                column2=self._y,
+                nan_policy=self._nan_policy,
+                figure_config=self._figure_config,
             )
         )
 

@@ -55,7 +55,9 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
     ... )
     >>> content
     ColumnCorrelationContentGenerator(
-      (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (evaluator): ColumnCorrelationEvaluator(
+          (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+        )
     )
 
     ```
@@ -65,11 +67,11 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
         self._evaluator = evaluator
 
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._evaluator.state}))
+        args = repr_indent(repr_mapping({"evaluator": self._evaluator}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._evaluator.state}))
+        args = str_indent(str_mapping({"evaluator": self._evaluator}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
@@ -128,7 +130,9 @@ class ColumnCorrelationContentGenerator(BaseSectionContentGenerator):
         ... )
         >>> content
         ColumnCorrelationContentGenerator(
-          (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+          (evaluator): ColumnCorrelationEvaluator(
+              (state): TargetDataFrameState(dataframe=(7, 3), target_column='col3', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+            )
         )
 
         ```

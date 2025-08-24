@@ -40,14 +40,17 @@ class Reporter(BaseReporter):
     >>> from pathlib import Path
     >>> import numpy as np
     >>> from arkas.content import AccuracyContentGenerator
+    >>> from arkas.evaluator2 import AccuracyEvaluator
     >>> from arkas.state import AccuracyState
     >>> from arkas.reporter import Reporter
     >>> generator = AccuracyContentGenerator(
-    ...     state=AccuracyState(
-    ...         y_true=np.array([1, 0, 0, 1, 1]),
-    ...         y_pred=np.array([1, 0, 0, 1, 1]),
-    ...         y_true_name="target",
-    ...         y_pred_name="pred",
+    ...     AccuracyEvaluator(
+    ...         AccuracyState(
+    ...             y_true=np.array([1, 0, 0, 1, 1]),
+    ...             y_pred=np.array([1, 0, 0, 1, 1]),
+    ...             y_true_name="target",
+    ...             y_pred_name="pred",
+    ...         )
     ...     )
     ... )
     >>> with tempfile.TemporaryDirectory() as tmpdir:

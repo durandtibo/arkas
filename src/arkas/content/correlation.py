@@ -11,6 +11,7 @@ __all__ = [
 import logging
 from typing import TYPE_CHECKING, Any
 
+from coola import objects_are_equal
 from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 from jinja2 import Template
 
@@ -18,10 +19,9 @@ from arkas.content.section import BaseSectionContentGenerator
 from arkas.evaluator2.correlation import CorrelationEvaluator
 from arkas.figure.utils import figure2html
 from arkas.plotter.correlation import CorrelationPlotter
-from arkas.utils.dataframe import check_num_columns
 
 if TYPE_CHECKING:
-    from arkas.state.target_dataframe import DataFrameState
+    from arkas.state.columns import TwoColumnDataFrameState
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +31,8 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
     between two columns.
 
     Args:
-        state: The state containing the DataFrame to analyze.
-            The DataFrame must have only 2 columns, which are the two
-            columns to analyze.
+        evaluator: The evaluator that computes correlation.
+        plotter: The data correlation plotter.
 
     Example usage:
 
@@ -41,49 +40,58 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
 
     >>> import polars as pl
     >>> from arkas.content import CorrelationContentGenerator
-    >>> from arkas.state import DataFrameState
+    >>> from arkas.state import TwoColumnDataFrameState
     >>> frame = pl.DataFrame(
     ...     {
     ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
     ...         "col2": [7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0],
     ...     },
     ... )
-    >>> content = CorrelationContentGenerator(DataFrameState(frame))
+    >>> state = TwoColumnDataFrameState(frame, column1="col1", column2="col2")
+    >>> content = CorrelationContentGenerator(
+    ...     evaluator=CorrelationEvaluator(state),
+    ...     plotter=CorrelationPlotter(state),
+    ... )
     >>> content
     CorrelationContentGenerator(
-      (state): DataFrameState(dataframe=(7, 2), nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+      (evaluator): CorrelationEvaluator(
+          (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+        )
+      (plotter): CorrelationPlotter(
+          (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+        )
     )
 
     ```
     """
 
-    def __init__(self, state: DataFrameState) -> None:
-        check_num_columns(state.dataframe, num_columns=2)
-        self._state = state
+    def __init__(self, evaluator: CorrelationEvaluator, plotter: CorrelationPlotter) -> None:
+        self._evaluator = evaluator
+        self._plotter = plotter
 
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
+        args = repr_indent(repr_mapping(self.get_args()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
+        args = str_indent(str_mapping(self.get_args()))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        return objects_are_equal(self.get_args(), other.get_args(), equal_nan=equal_nan)
 
     def generate_content(self) -> str:
-        xcol, ycol = self._state.dataframe.columns
+        xcol, ycol = self._evaluator.state.column1, self._evaluator.state.column2
         logger.info(f"Generating the correlation analysis between {xcol!r} and {ycol!r}...")
-        metrics = CorrelationEvaluator(self._state).evaluate()
-        figures = CorrelationPlotter(self._state).plot()
+        metrics = self._evaluator.evaluate()
+        figures = self._plotter.plot()
         return Template(create_template()).render(
             {
                 "xcol": str(xcol),
                 "ycol": str(ycol),
-                "columns": ", ".join(self._state.dataframe.columns),
+                "columns": ", ".join(self._evaluator.state.dataframe.columns),
                 "count": f"{metrics['count']:,}",
                 "pearson_coeff": f"{metrics['pearson_coeff']:.4f}",
                 "pearson_pvalue": f"{metrics['pearson_pvalue']:.4f}",
@@ -92,6 +100,50 @@ class CorrelationContentGenerator(BaseSectionContentGenerator):
                 "figure": figure2html(figures["correlation"], close_fig=True),
             }
         )
+
+    def get_args(self) -> dict:
+        return {"evaluator": self._evaluator, "plotter": self._plotter}
+
+    @classmethod
+    def from_state(cls, state: TwoColumnDataFrameState) -> CorrelationContentGenerator:
+        r"""Instantiate a ``CorrelationContentGenerator`` object from a
+        state.
+
+        Args:
+            state: The state with the data to analyze.
+
+        Returns:
+            The instantiated object.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import polars as pl
+        >>> from arkas.content import CorrelationContentGenerator
+        >>> from arkas.state import TwoColumnDataFrameState
+        >>> frame = pl.DataFrame(
+        ...     {
+        ...         "col1": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0],
+        ...         "col2": [7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0],
+        ...     },
+        ... )
+        >>> content = CorrelationContentGenerator.from_state(
+        ...     TwoColumnDataFrameState(frame, column1="col1", column2="col2")
+        ... )
+        >>> content
+        CorrelationContentGenerator(
+          (evaluator): CorrelationEvaluator(
+              (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+            )
+          (plotter): CorrelationPlotter(
+              (state): TwoColumnDataFrameState(dataframe=(7, 2), column1='col1', column2='col2', nan_policy='propagate', figure_config=MatplotlibFigureConfig())
+            )
+        )
+
+        ```
+        """
+        return cls(evaluator=CorrelationEvaluator(state), plotter=CorrelationPlotter(state))
 
 
 def create_template() -> str:

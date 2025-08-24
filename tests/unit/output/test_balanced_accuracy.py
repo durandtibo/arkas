@@ -114,7 +114,7 @@ def test_balanced_accuracy_output_get_content_generator_lazy_true(nan_policy: st
         nan_policy=nan_policy,
     )
     generator = BalancedAccuracyOutput(state).get_content_generator()
-    assert generator.equal(BalancedAccuracyContentGenerator(state))
+    assert generator.equal(BalancedAccuracyContentGenerator.from_state(state))
 
 
 @pytest.mark.parametrize("nan_policy", ["omit", "propagate", "raise"])

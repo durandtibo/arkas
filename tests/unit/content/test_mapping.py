@@ -52,8 +52,8 @@ def test_content_generator_dict_compute() -> None:
         ContentGeneratorDict(
             {
                 "one": ContentGenerator("meow"),
-                "two": AccuracyContentGenerator(
-                    state=AccuracyState(
+                "two": AccuracyContentGenerator.from_state(
+                    AccuracyState(
                         y_true=np.array([1, 0, 0, 1, 1]),
                         y_pred=np.array([1, 0, 0, 1, 1]),
                         y_true_name="target",
@@ -188,7 +188,7 @@ def test_content_generator_dict_generate_toc(generators: dict[str, BaseContentGe
 
 
 def test_content_generator_dict_generate_toc_args(
-    generators: dict[str, BaseContentGenerator]
+    generators: dict[str, BaseContentGenerator],
 ) -> None:
     assert isinstance(
         ContentGeneratorDict(generators).generate_toc(number="1.", tags=["meow"]),
@@ -197,7 +197,7 @@ def test_content_generator_dict_generate_toc_args(
 
 
 def test_content_generator_dict_generate_toc_too_deep(
-    generators: dict[str, BaseContentGenerator]
+    generators: dict[str, BaseContentGenerator],
 ) -> None:
     assert isinstance(
         ContentGeneratorDict(generators).generate_toc(max_depth=2, depth=2),

@@ -26,8 +26,7 @@ class AccuracyContentGenerator(BaseSectionContentGenerator):
     performances.
 
     Args:
-        state: The state containing the ground truth and predicted
-            labels.
+        evaluator: The evaluator object to compute the accuracy.
 
     Example usage:
 
@@ -35,42 +34,47 @@ class AccuracyContentGenerator(BaseSectionContentGenerator):
 
     >>> import numpy as np
     >>> from arkas.content import AccuracyContentGenerator
+    >>> from arkas.evaluator2 import AccuracyEvaluator
     >>> from arkas.state import AccuracyState
-    >>> generator = AccuracyContentGenerator(
-    ...     state=AccuracyState(
-    ...         y_true=np.array([1, 0, 0, 1, 1]),
-    ...         y_pred=np.array([1, 0, 0, 1, 1]),
-    ...         y_true_name="target",
-    ...         y_pred_name="pred",
+    >>> content = AccuracyContentGenerator(
+    ...     AccuracyEvaluator(
+    ...         AccuracyState(
+    ...             y_true=np.array([1, 0, 0, 1, 1]),
+    ...             y_pred=np.array([1, 0, 0, 1, 1]),
+    ...             y_true_name="target",
+    ...             y_pred_name="pred",
+    ...         )
     ...     )
     ... )
-    >>> generator
+    >>> content
     AccuracyContentGenerator(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+      (evaluator): AccuracyEvaluator(
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+        )
     )
 
     ```
     """
 
-    def __init__(self, state: AccuracyState) -> None:
-        self._state = state
+    def __init__(self, evaluator: AccuracyEvaluator) -> None:
+        self._evaluator = evaluator
 
     def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
+        args = repr_indent(repr_mapping({"evaluator": self._evaluator}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
+        args = str_indent(str_mapping({"evaluator": self._evaluator}))
         return f"{self.__class__.__qualname__}(\n  {args}\n)"
 
     def equal(self, other: Any, equal_nan: bool = False) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        return self._evaluator.equal(other._evaluator, equal_nan=equal_nan)
 
     def generate_content(self) -> str:
         logger.info("Generating the accuracy content...")
-        metrics = AccuracyEvaluator(self._state).evaluate()
+        metrics = self._evaluator.evaluate()
         return Template(create_template()).render(
             {
                 "accuracy": f"{metrics.get('accuracy', float('nan')):.4f}",
@@ -78,10 +82,47 @@ class AccuracyContentGenerator(BaseSectionContentGenerator):
                 "count_correct": f"{metrics.get('count_correct', 0):,}",
                 "count_incorrect": f"{metrics.get('count_incorrect', 0):,}",
                 "error": f"{metrics.get('error', float('nan')):.4f}",
-                "y_true_name": self._state.y_true_name,
-                "y_pred_name": self._state.y_pred_name,
+                "y_true_name": self._evaluator.state.y_true_name,
+                "y_pred_name": self._evaluator.state.y_pred_name,
             }
         )
+
+    @classmethod
+    def from_state(cls, state: AccuracyState) -> AccuracyContentGenerator:
+        r"""Instantiate a ``AccuracyContentGenerator`` object from a
+        state.
+
+        Args:
+            state: The state with the data to analyze.
+
+        Returns:
+            The instantiated object.
+
+        Example usage:
+
+        ```pycon
+
+        >>> import numpy as np
+        >>> from arkas.content import AccuracyContentGenerator
+        >>> from arkas.state import AccuracyState
+        >>> content = AccuracyContentGenerator.from_state(
+        ...     AccuracyState(
+        ...         y_true=np.array([1, 0, 0, 1, 1]),
+        ...         y_pred=np.array([1, 0, 0, 1, 1]),
+        ...         y_true_name="target",
+        ...         y_pred_name="pred",
+        ...     )
+        ... )
+        >>> content
+        AccuracyContentGenerator(
+          (evaluator): AccuracyEvaluator(
+              (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+            )
+        )
+
+        ```
+        """
+        return cls(AccuracyEvaluator(state))
 
 
 def create_template() -> str:

@@ -5,19 +5,14 @@ from __future__ import annotations
 
 __all__ = ["NumericSummaryOutput"]
 
-from typing import TYPE_CHECKING, Any
-
-from coola.utils import repr_indent, repr_mapping, str_indent, str_mapping
 
 from arkas.content.numeric_summary import NumericSummaryContentGenerator
 from arkas.evaluator2.numeric_stats import NumericStatisticsEvaluator
-from arkas.output.lazy import BaseLazyOutput
-
-if TYPE_CHECKING:
-    from arkas.state.dataframe import DataFrameState
+from arkas.output.state import BaseStateOutput
+from arkas.state.dataframe import DataFrameState
 
 
-class NumericSummaryOutput(BaseLazyOutput):
+class NumericSummaryOutput(BaseStateOutput[DataFrameState]):
     r"""Implement an output to summarize the numeric columns of a
     DataFrame.
 
@@ -57,23 +52,12 @@ class NumericSummaryOutput(BaseLazyOutput):
     """
 
     def __init__(self, state: DataFrameState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def __str__(self) -> str:
-        args = str_indent(str_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        super().__init__(state)
+        self._content = NumericSummaryContentGenerator(self._state)
+        self._evaluator = NumericStatisticsEvaluator(self._state)
 
     def _get_content_generator(self) -> NumericSummaryContentGenerator:
-        return NumericSummaryContentGenerator(self._state)
+        return self._content
 
     def _get_evaluator(self) -> NumericStatisticsEvaluator:
-        return NumericStatisticsEvaluator(self._state)
+        return self._evaluator

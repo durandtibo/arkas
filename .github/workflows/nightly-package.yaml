@@ -4,6 +4,9 @@ on:
     - cron: '20 10 * * *' # run at 10:20 AM UTC
   workflow_dispatch:  # to trigger manually
 
+permissions:
+  contents: read
+
 jobs:
   cyclic-imports:
     uses: ./.github/workflows/cyclic-imports.yaml
@@ -15,12 +18,22 @@ jobs:
       max-parallel: 8
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, macos-latest, macos-15, macos-14, macos-13 ]
+        os: [
+          ubuntu-latest,
+          ubuntu-24.04,
+          ubuntu-22.04,
+          ubuntu-24.04-arm,
+          ubuntu-22.04-arm,
+          macos-latest,
+          macos-15,
+          macos-14,
+          macos-13,
+        ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -43,12 +56,22 @@ jobs:
       max-parallel: 8
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, macos-latest, macos-15, macos-14, macos-13 ]
+        os: [
+          ubuntu-latest,
+          ubuntu-24.04,
+          ubuntu-22.04,
+          ubuntu-24.04-arm,
+          ubuntu-22.04-arm,
+          macos-latest,
+          macos-15,
+          macos-14,
+          macos-13,
+        ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -71,12 +94,22 @@ jobs:
       max-parallel: 8
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, macos-latest, macos-15, macos-14, macos-13 ]
+        os: [
+          ubuntu-latest,
+          ubuntu-24.04,
+          ubuntu-22.04,
+          ubuntu-24.04-arm,
+          ubuntu-22.04-arm,
+          macos-latest,
+          macos-15,
+          macos-14,
+          macos-13,
+        ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -99,12 +132,22 @@ jobs:
       max-parallel: 8
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, ubuntu-24.04, ubuntu-22.04, ubuntu-20.04, macos-latest, macos-15, macos-14, macos-13 ]
+        os: [
+          ubuntu-latest,
+          ubuntu-24.04,
+          ubuntu-22.04,
+          ubuntu-24.04-arm,
+          ubuntu-22.04-arm,
+          macos-latest,
+          macos-15,
+          macos-14,
+          macos-13,
+        ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -134,11 +177,11 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        coola-version: [ 0.8.5 ]
+        coola-version: [ 0.9.0, 0.8.7, 0.8.2 ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -150,7 +193,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'coola'
           package-version: ${{ matrix.coola-version }}
@@ -174,7 +217,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -186,7 +229,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'grizz'
           package-version: ${{ matrix.grizz-version }}
@@ -206,11 +249,11 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        iden-version: [ 0.1.0 ]
+        iden-version: [ 0.2.0 ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -222,7 +265,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'iden'
           package-version: ${{ matrix.iden-version }}
@@ -242,11 +285,11 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        jinja2-version: [ 3.1.5, 3.0.3 ]
+        jinja2-version: [ 3.1.6, 3.0.3 ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -258,7 +301,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'jinja2'
           package-version: ${{ matrix.jinja2-version }}
@@ -278,11 +321,17 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        matplotlib-version: [ 3.10.0, 3.9.2, 3.8.4, 3.7.4, 3.6.3 ]
+        matplotlib-version: [
+          3.10.7,
+          3.9.2,
+          3.8.4,
+          3.7.4,
+          3.6.3,
+        ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -294,7 +343,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'matplotlib'
           package-version: ${{ matrix.matplotlib-version }}
@@ -315,18 +364,18 @@ jobs:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
         numpy-version: [
-          2.2.1,
+          2.3.2,
+          2.2.5,
           2.1.3,
           2.0.2,
           1.26.4,
           1.25.2,
           1.24.3,
-          1.23.5,
         ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -338,7 +387,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'numpy'
           package-version: ${{ matrix.numpy-version }}
@@ -362,7 +411,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -374,7 +423,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'objectory'
           package-version: ${{ matrix.objectory-version }}
@@ -394,32 +443,11 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        polars-version: [
-          1.20.0,
-          1.19.0,
-          1.18.0,
-          1.17.1,
-          1.16.0,
-          1.15.0,
-          1.14.0,
-          1.12.0,
-          1.11.0,
-          1.10.0,
-          1.9.0,
-          1.8.2,
-          1.7.1,
-          1.6.0,
-          1.5.0,
-          1.4.1,
-          1.3.0,
-          1.2.1,
-          1.1.0,
-          1.0.0,
-        ]
+        polars-version: [ 1.32.3, 1.0.0 ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -431,7 +459,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'polars'
           package-version: ${{ matrix.polars-version }}
@@ -451,11 +479,18 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        scikit-learn-version: [ 1.6.1, 1.5.2, 1.4.2, 1.3.2, 1.3.0 ]
+        scikit-learn-version: [
+          1.7.1,
+          1.6.1,
+          1.5.2,
+          1.4.2,
+          1.3.2,
+          1.3.0,
+        ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -467,7 +502,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'scikit-learn'
           package-version: ${{ matrix.scikit-learn-version }}
@@ -495,7 +530,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -507,7 +542,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'colorlog'
           package-version: ${{ matrix.colorlog-version }}
@@ -527,11 +562,11 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        hya-version: [ 0.2.4, 0.2.0 ]
+        hya-version: [ 0.3.0, 0.2.4, 0.2.0 ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -543,7 +578,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'hya'
           package-version: ${{ matrix.hya-version }}
@@ -567,7 +602,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -579,7 +614,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'hydra-core'
           package-version: ${{ matrix.hydra-core-version }}
@@ -599,11 +634,18 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        markdown-version: [ 3.7.0, 3.6.0, 3.5.1, 3.4.3, 3.4.0 ]
+        markdown-version: [
+          3.8.2,
+          3.7.0,
+          3.6.0,
+          3.5.1,
+          3.4.3,
+          3.4.0,
+        ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -615,7 +657,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'markdown'
           package-version: ${{ matrix.markdown-version }}
@@ -639,7 +681,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -651,7 +693,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'omegaconf'
           package-version: ${{ matrix.omegaconf-version }}
@@ -671,11 +713,19 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        scipy-version: [ 1.15.0, 1.14.1, 1.13.1, 1.12.0, 1.11.4, 1.10.1 ]
+        scipy-version: [
+          1.16.1,
+          1.15.0,
+          1.14.1,
+          1.13.1,
+          1.12.0,
+          1.11.4,
+          1.10.1,
+        ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -687,7 +737,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'scipy'
           package-version: ${{ matrix.scipy-version }}
@@ -707,11 +757,16 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         python-version: [ '3.13', '3.12', '3.11', '3.10', '3.9' ]
-        tqdm-version: [ 4.67.1, 4.66.6, 4.65.2, 4.65.0 ]
+        tqdm-version: [
+          4.67.1,
+          4.66.6,
+          4.65.2,
+          4.65.0,
+        ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -723,7 +778,7 @@ jobs:
           pip install arkas
 
       - name: Install valid package version
-        uses: durandtibo/pip-install-package-action@v0.3.1
+        uses: durandtibo/pip-install-package-action@v0.3.3
         with:
           package-name: 'tqdm'
           package-version: ${{ matrix.tqdm-version }}

@@ -4,19 +4,14 @@ from __future__ import annotations
 
 __all__ = ["AccuracyOutput"]
 
-from typing import TYPE_CHECKING, Any
-
-from coola.utils import repr_indent, repr_mapping
 
 from arkas.content.accuracy import AccuracyContentGenerator
 from arkas.evaluator2.accuracy import AccuracyEvaluator
-from arkas.output.lazy import BaseLazyOutput
-
-if TYPE_CHECKING:
-    from arkas.state.accuracy import AccuracyState
+from arkas.output.state import BaseStateOutput
+from arkas.state.accuracy import AccuracyState
 
 
-class AccuracyOutput(BaseLazyOutput):
+class AccuracyOutput(BaseStateOutput[AccuracyState]):
     r"""Implement the accuracy output.
 
     Args:
@@ -44,7 +39,9 @@ class AccuracyOutput(BaseLazyOutput):
     )
     >>> output.get_content_generator()
     AccuracyContentGenerator(
-      (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+      (evaluator): AccuracyEvaluator(
+          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+        )
     )
     >>> output.get_evaluator()
     AccuracyEvaluator(
@@ -55,19 +52,12 @@ class AccuracyOutput(BaseLazyOutput):
     """
 
     def __init__(self, state: AccuracyState) -> None:
-        self._state = state
-
-    def __repr__(self) -> str:
-        args = repr_indent(repr_mapping({"state": self._state}))
-        return f"{self.__class__.__qualname__}(\n  {args}\n)"
-
-    def equal(self, other: Any, equal_nan: bool = False) -> bool:
-        if not isinstance(other, self.__class__):
-            return False
-        return self._state.equal(other._state, equal_nan=equal_nan)
+        super().__init__(state)
+        self._evaluator = AccuracyEvaluator(self._state)
+        self._content = AccuracyContentGenerator(self._evaluator)
 
     def _get_content_generator(self) -> AccuracyContentGenerator:
-        return AccuracyContentGenerator(state=self._state)
+        return self._content
 
     def _get_evaluator(self) -> AccuracyEvaluator:
-        return AccuracyEvaluator(state=self._state)
+        return self._evaluator

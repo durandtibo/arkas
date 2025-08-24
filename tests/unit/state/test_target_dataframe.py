@@ -20,9 +20,9 @@ def dataframe() -> pl.DataFrame:
     )
 
 
-############################################
+##########################################
 #     Tests for TargetDataFrameState     #
-############################################
+##########################################
 
 
 def test_target_dataframe_state_init_target_column_incorrect(dataframe: pl.DataFrame) -> None:

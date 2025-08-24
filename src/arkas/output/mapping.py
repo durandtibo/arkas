@@ -35,6 +35,7 @@ class OutputDict(BaseLazyOutput):
     >>> from arkas.output import OutputDict, Output, AccuracyOutput
     >>> from arkas.content import ContentGenerator
     >>> from arkas.evaluator2 import Evaluator
+    >>> from arkas.evaluator2 import AccuracyEvaluator
     >>> from arkas.state import AccuracyState
     >>> output = OutputDict(
     ...     {
@@ -55,7 +56,9 @@ class OutputDict(BaseLazyOutput):
     ContentGeneratorDict(
       (one): ContentGenerator()
       (two): AccuracyContentGenerator(
-          (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+          (evaluator): AccuracyEvaluator(
+              (state): AccuracyState(y_true=(5,), y_pred=(5,), y_true_name='target', y_pred_name='pred', nan_policy='propagate')
+            )
         )
     )
     >>> output.get_evaluator()
