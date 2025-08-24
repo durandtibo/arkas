@@ -154,7 +154,7 @@ class BaseEvaluator(ABC):
         """
 
 
-class EvaluatorEqualityComparator(BaseEqualityComparator[BaseEvaluator]):
+class EvaluatorEqualityComparator(BaseEqualityComparator[BaseEvaluator]):  # noqa: PLW1641
     r"""Implement an equality comparator for ``BaseEvaluator``
     objects."""
 

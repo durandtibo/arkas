@@ -21,7 +21,7 @@ class BaseLazyOutput(BaseOutput):
     computation logic."""
 
     def compute(self) -> Output:
-        from arkas.output.vanilla import Output
+        from arkas.output.vanilla import Output  # noqa: PLC0415
 
         return Output(
             content=self.get_content_generator().compute(),

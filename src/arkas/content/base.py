@@ -221,7 +221,9 @@ class BaseContentGenerator(ABC):
         """
 
 
-class ContentGeneratorEqualityComparator(BaseEqualityComparator[BaseContentGenerator]):
+class ContentGeneratorEqualityComparator(  # noqa: PLW1641
+    BaseEqualityComparator[BaseContentGenerator]
+):
     r"""Implement an equality comparator for ``BaseContentGenerator``
     objects."""
 

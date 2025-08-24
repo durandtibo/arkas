@@ -204,7 +204,7 @@ class BaseOutput(ABC):
         """
 
 
-class OutputEqualityComparator(BaseEqualityComparator[BaseOutput]):
+class OutputEqualityComparator(BaseEqualityComparator[BaseOutput]):  # noqa: PLW1641
     r"""Implement an equality comparator for ``BaseOutput`` objects."""
 
     def __init__(self) -> None:

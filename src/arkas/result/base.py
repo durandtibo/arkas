@@ -124,7 +124,7 @@ class BaseResult(ABC):
         """
 
 
-class ResultEqualityComparator(BaseEqualityComparator[BaseResult]):
+class ResultEqualityComparator(BaseEqualityComparator[BaseResult]):  # noqa: PLW1641
     r"""Implement an equality comparator for ``BaseResult`` objects."""
 
     def __init__(self) -> None:

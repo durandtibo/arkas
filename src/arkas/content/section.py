@@ -42,7 +42,7 @@ class BaseSectionContentGenerator(BaseContentGenerator):
     def compute(self) -> ContentGenerator:
         # local import to avoid cyclic dependency because ContentGenerator
         # uses this class as base class
-        from arkas.content.vanilla import ContentGenerator
+        from arkas.content.vanilla import ContentGenerator  # noqa: PLC0415
 
         return ContentGenerator(self.generate_content())
 

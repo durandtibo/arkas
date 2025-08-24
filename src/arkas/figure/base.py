@@ -233,7 +233,7 @@ class BaseFigureConfig(ABC):
         """
 
 
-class FigureEqualityComparator(BaseEqualityComparator[BaseFigure]):
+class FigureEqualityComparator(BaseEqualityComparator[BaseFigure]):  # noqa: PLW1641
     r"""Implement an equality comparator for ``BaseFigure`` and
     ``BaseFigureConfig`` objects."""
 

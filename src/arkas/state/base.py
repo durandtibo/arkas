@@ -117,7 +117,7 @@ class BaseState(ABC):
         """
 
 
-class StateEqualityComparator(BaseEqualityComparator[BaseState]):
+class StateEqualityComparator(BaseEqualityComparator[BaseState]):  # noqa: PLW1641
     r"""Implement an equality comparator for ``BaseState`` objects."""
 
     def __init__(self) -> None:
