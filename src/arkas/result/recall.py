@@ -179,7 +179,9 @@ class RecallResult(BaseResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, float]:
         return {}
 
@@ -383,7 +385,9 @@ class MulticlassRecallResult(BaseRecallResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, float]:
         return {}
 
@@ -443,6 +447,8 @@ class MultilabelRecallResult(BaseRecallResult):
         )
 
     def generate_figures(
-        self, prefix: str = "", suffix: str = ""  # noqa: ARG002
+        self,
+        prefix: str = "",  # noqa: ARG002
+        suffix: str = "",  # noqa: ARG002
     ) -> dict[str, float]:
         return {}

@@ -26,7 +26,6 @@ def dataframe() -> pl.DataFrame:
 
 
 class MyInNLazyAnalyzer(BaseInNLazyAnalyzer):
-
     def _analyze(self, frame: pl.DataFrame) -> EmptyOutput:  # noqa: ARG002
         return EmptyOutput()
 
