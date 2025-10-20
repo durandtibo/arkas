@@ -1009,14 +1009,14 @@ devel = ["colorama", "json-spec", "jsonschema", "pylint", "pytest", "pytest-benc
 
 [[package]]
 name = "feu"
-version = "0.3.5"
+version = "0.4.0"
 description = "A light library to help to manage packages"
 optional = false
 python-versions = "<3.14,>=3.9"
 groups = ["dev"]
 files = [
-    {file = "feu-0.3.5-py3-none-any.whl", hash = "sha256:b112dd5336eb6bf7d130dc8fce4a70572ee98e557fe4fa1d8fc3dd283e8e5823"},
-    {file = "feu-0.3.5.tar.gz", hash = "sha256:103073a8fcb16124901736e4223e4c3d55a020e78a7551623725b70ecb61ad2d"},
+    {file = "feu-0.4.0-py3-none-any.whl", hash = "sha256:d85e850b95474a5a1fc59110d6e5bd2c0294fa265183d50bef72a6dbd9d9e532"},
+    {file = "feu-0.4.0.tar.gz", hash = "sha256:4a9bd84e614161d2978fd191922c62eb539a4afe7c5ab1920faeef32283dcd02"},
 ]
 
 [package.dependencies]
@@ -1025,11 +1025,13 @@ click = [
     {version = ">=8.1,<9.0", optional = true, markers = "python_version != \"3.9\" and (extra == \"all\" or extra == \"cli\")"},
 ]
 packaging = ">=21.0,<26.0"
+typing_extensions = {version = ">=4.10,<5.0", markers = "python_version >= \"3.9\" and python_version < \"3.11\""}
 
 [package.extras]
-all = ["click (>=8.1,<8.2) ; python_version == \"3.9\"", "click (>=8.1,<9.0)"]
+all = ["click (>=8.1,<8.2) ; python_version == \"3.9\"", "click (>=8.1,<9.0)", "requests (>=2.30.0,<3.0)"]
 cli = ["click (>=8.1,<8.2) ; python_version == \"3.9\"", "click (>=8.1,<9.0)"]
 git = ["gitpython (>=3.1.41,<4.0)"]
+requests = ["requests (>=2.30.0,<3.0)"]
 
 [[package]]
 name = "filelock"
@@ -2381,20 +2383,19 @@ pyyaml = ">=5.1"
 
 [[package]]
 name = "mkdocs-material"
-version = "9.6.20"
+version = "9.6.21"
 description = "Documentation that simply works"
 optional = false
 python-versions = ">=3.8"
 groups = ["docs"]
 files = [
-    {file = "mkdocs_material-9.6.20-py3-none-any.whl", hash = "sha256:b8d8c8b0444c7c06dd984b55ba456ce731f0035c5a1533cc86793618eb1e6c82"},
-    {file = "mkdocs_material-9.6.20.tar.gz", hash = "sha256:e1f84d21ec5fb730673c4259b2e0d39f8d32a3fef613e3a8e7094b012d43e790"},
+    {file = "mkdocs_material-9.6.21-py3-none-any.whl", hash = "sha256:aa6a5ab6fb4f6d381588ac51da8782a4d3757cb3d1b174f81a2ec126e1f22c92"},
+    {file = "mkdocs_material-9.6.21.tar.gz", hash = "sha256:b01aa6d2731322438056f360f0e623d3faae981f8f2d8c68b1b973f4f2657870"},
 ]
 
 [package.dependencies]
 babel = ">=2.10,<3.0"
 backrefs = ">=5.7.post1,<6.0"
-click = "<8.2.2"
 colorama = ">=0.4,<1.0"
 jinja2 = ">=3.1,<4.0"
 markdown = ">=3.2,<4.0"
