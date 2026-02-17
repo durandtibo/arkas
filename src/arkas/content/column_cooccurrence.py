@@ -141,8 +141,7 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
     if matrix.shape[0] == 0:
         return "<span>&#9888;</span> No table is generated because the column is empty"
 
-    return Template(
-        """<details>
+    return Template("""<details>
     <summary>[show top-{{top}} pairwise column co-occurrence]</summary><br>
     The following table shows the top-{{top}} pairwise column co-occurrences.
     The co-occurrence matrix is symmetric and only the co-occurrences in the lower triangular matrix are shown.
@@ -156,8 +155,7 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
 
     {{table}}
 </details>
-"""
-    ).render({"top": top, "table": create_table(matrix=matrix, columns=columns, top=top)})
+""").render({"top": top, "table": create_table(matrix=matrix, columns=columns, top=top)})
 
 
 def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> str:
@@ -197,8 +195,7 @@ def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> s
             )
         )
     table_rows = "\n".join(table_rows)
-    return Template(
-        """<table class="table table-hover table-responsive w-auto" >
+    return Template("""<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr><th>rank</th><th>column 1</th><th>column 2</th><th>count</th><th>percentage</th></tr>
     </thead>
@@ -207,8 +204,7 @@ def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> s
         <tr class="table-group-divider"></tr>
     </tbody>
 </table>
-"""
-    ).render({"rows": str_indent(table_rows, num_spaces=8)})
+""").render({"rows": str_indent(table_rows, num_spaces=8)})
 
 
 def create_table_row(rank: int, col1: str, col2: str, count: int, total: int) -> str:

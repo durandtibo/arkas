@@ -178,8 +178,7 @@ def create_table(stats: dict) -> str:
 
     ```
     """
-    return Template(
-        """<table class="table table-hover table-responsive w-auto" >
+    return Template("""<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr><th>stat</th><th>value</th></tr>
     </thead>
@@ -208,8 +207,7 @@ def create_table(stats: dict) -> str:
         <tr class="table-group-divider"></tr>
     </tbody>
 </table>
-"""
-    ).render(
+""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "count": f"{stats['count']:,}",

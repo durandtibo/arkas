@@ -188,8 +188,7 @@ def create_table(frame: pl.DataFrame, temporal_column: str, period: str) -> str:
     rows = []
     for label, null, total in zip(labels, nulls, totals):
         rows.append(create_table_row(label=label, num_nulls=null, total=total))
-    return Template(
-        """<table class="table table-hover table-responsive w-auto" >
+    return Template("""<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr>
             <th>period</th>
@@ -205,8 +204,7 @@ def create_table(frame: pl.DataFrame, temporal_column: str, period: str) -> str:
         <tr class="table-group-divider"></tr>
     </tbody>
 </table>
-"""
-    ).render({"rows": "\n".join(rows), "period": period})
+""").render({"rows": "\n".join(rows), "period": period})
 
 
 def create_table_row(label: str, num_nulls: int, total: int) -> str:
@@ -230,16 +228,14 @@ def create_table_row(label: str, num_nulls: int, total: int) -> str:
     ```
     """
     num_non_nulls = total - num_nulls
-    return Template(
-        """<tr>
+    return Template("""<tr>
     <th>{{label}}</th>
     <td {{num_style}}>{{num_nulls}}</td>
     <td {{num_style}}>{{num_non_nulls}}</td>
     <td {{num_style}}>{{total}}</td>
     <td {{num_style}}>{{num_nulls_pct}}</td>
     <td {{num_style}}>{{num_non_nulls_pct}}</td>
-</tr>"""
-    ).render(
+</tr>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "label": label,

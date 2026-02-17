@@ -186,8 +186,7 @@ def create_table(
     rows = "\n".join(
         [create_table_row(column, metrics=metrics) for column, metrics in col_metrics.items()]
     )
-    return Template(
-        """<table class="table table-hover table-responsive w-auto" >
+    return Template("""<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr>
             <th>column</th>
@@ -211,8 +210,7 @@ def create_table(
         <tr class="table-group-divider"></tr>
     </tbody>
 </table>
-"""
-    ).render({"rows": rows})
+""").render({"rows": rows})
 
 
 def create_table_row(column: str, metrics: dict[str, float]) -> str:
@@ -269,8 +267,7 @@ def create_table_row(column: str, metrics: dict[str, float]) -> str:
     negative = metrics["<0"]
     zero = metrics["=0"]
     positive = metrics[">0"]
-    return Template(
-        """<tr>
+    return Template("""<tr>
     <th>{{column}}</th>
     <td {{num_style}}>{{null}}</td>
     <td {{num_style}}>{{nan}}</td>
@@ -285,8 +282,7 @@ def create_table_row(column: str, metrics: dict[str, float]) -> str:
     <td {{num_style}}>{{min}}</td>
     <td {{num_style}}>{{median}}</td>
     <td {{num_style}}>{{max}}</td>
-</tr>"""
-    ).render(
+</tr>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "column": column,
@@ -363,8 +359,7 @@ def create_table_quantiles(
             for column, metrics in col_metrics.items()
         ]
     )
-    return Template(
-        """<table class="table table-hover table-responsive w-auto" >
+    return Template("""<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr>
             <th>column</th>
@@ -388,8 +383,7 @@ def create_table_quantiles(
         <tr class="table-group-divider"></tr>
     </tbody>
 </table>
-"""
-    ).render({"rows": rows})
+""").render({"rows": rows})
 
 
 def create_table_quantiles_row(column: str, metrics: dict[str, float]) -> str:
@@ -439,8 +433,7 @@ def create_table_quantiles_row(column: str, metrics: dict[str, float]) -> str:
 
     ```
     """
-    return Template(
-        """<tr>
+    return Template("""<tr>
     <th>{{column}}</th>
     <td {{num_style}}>{{min}}</td>
     <td {{num_style}}>{{q001}}</td>
@@ -455,8 +448,7 @@ def create_table_quantiles_row(column: str, metrics: dict[str, float]) -> str:
     <td {{num_style}}>{{q99}}</td>
     <td {{num_style}}>{{q999}}</td>
     <td {{num_style}}>{{max}}</td>
-</tr>"""
-    ).render(
+</tr>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "column": column,
