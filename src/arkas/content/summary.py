@@ -221,8 +221,7 @@ def create_table(
             )
         )
     rows = "\n".join(rows)
-    return Template(
-        """<table class="table table-hover table-responsive w-auto" >
+    return Template("""<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr>
             <th>column</th>
@@ -237,8 +236,7 @@ def create_table(
         <tr class="table-group-divider"></tr>
     </tbody>
 </table>
-"""
-    ).render({"rows": rows})
+""").render({"rows": rows})
 
 
 def create_table_row(
@@ -284,15 +282,13 @@ def create_table_row(
     most_frequent_values = ", ".join(
         [f"{to_str(val)} ({100 * c / total:.2f}%)" for val, c in most_frequent_values]
     )
-    return Template(
-        """<tr>
+    return Template("""<tr>
     <th>{{column}}</th>
     <td>{{dtype}}</td>
     <td {{num_style}}>{{null}}</td>
     <td {{num_style}}>{{nunique}}</td>
     <td>{{most_frequent_values}}</td>
-</tr>"""
-    ).render(
+</tr>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "column": column,

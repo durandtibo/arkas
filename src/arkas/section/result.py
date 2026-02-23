@@ -139,8 +139,7 @@ def create_table_metrics(metrics: dict) -> str:
     """
     metrics = to_flat_dict(metrics)
     rows = [create_table_metrics_row(name=name, value=value) for name, value in metrics.items()]
-    return Template(
-        """<table class="table table-hover table-responsive w-auto" >
+    return Template("""<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr>
             <th>name</th>
@@ -152,8 +151,7 @@ def create_table_metrics(metrics: dict) -> str:
         <tr class="table-group-divider"></tr>
     </tbody>
 </table>
-"""
-    ).render({"rows": "\n".join(rows)})
+""").render({"rows": "\n".join(rows)})
 
 
 def create_table_metrics_row(name: str, value: Any) -> str:

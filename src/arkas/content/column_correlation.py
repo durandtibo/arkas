@@ -213,8 +213,7 @@ def create_table(metrics: dict[str, dict]) -> str:
     rows = "\n".join(
         [create_table_row(column=col, metrics=values) for col, values in metrics.items()]
     )
-    return Template(
-        """<table class="table table-hover table-responsive w-auto" >
+    return Template("""<table class="table table-hover table-responsive w-auto" >
     <thead class="thead table-group-divider">
         <tr>
             <th>column</th>
@@ -228,8 +227,7 @@ def create_table(metrics: dict[str, dict]) -> str:
         <tr class="table-group-divider"></tr>
     </tbody>
 </table>
-"""
-    ).render({"rows": rows})
+""").render({"rows": rows})
 
 
 def create_table_row(column: str, metrics: dict) -> str:
@@ -261,14 +259,12 @@ def create_table_row(column: str, metrics: dict) -> str:
 
     ```
     """
-    return Template(
-        """<tr>
+    return Template("""<tr>
     <th>{{column}}</th>
     <td {{num_style}}>{{count}}</td>
     <td {{num_style}}>{{pearson_coeff}} ({{pearson_pvalue}})</td>
     <td {{num_style}}>{{spearman_coeff}} ({{spearman_pvalue}})</td>
-</tr>"""
-    ).render(
+</tr>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "column": column,
