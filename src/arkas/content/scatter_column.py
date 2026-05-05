@@ -100,12 +100,10 @@ def create_template() -> str:
 
     ```
     """
-    return """This section plots a scatter plot for the following columns.
-<ul>
-  <li> x: {{x}} </li>
-  <li> y: {{y}} </li>
-  <li> color: {{color}} </li>
-  <li> number of samples: {{n_samples}} </li>
-</ul>
-{{figure}}
-"""
+    return """This section plots a scatter plot for the following
+           columns.
+
+           <ul>   <li> x: {{x}} </li>   <li> y: {{y}} </li>   <li>
+           color: {{color}} </li>   <li> number of samples:
+           {{n_samples}} </li> </ul> {{figure}}
+           """

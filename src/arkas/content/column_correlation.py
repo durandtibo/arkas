@@ -155,22 +155,21 @@ def create_template() -> str:
 
     ```
     """
-    return """<p style="margin-top: 1rem;">
-This section analyzes the correlation between <em>{{target_column}}</em> and other columns.
-The correlation coefficient is a statistical measure of the strength of a
-relationship between two variables. Its values can range from -1 to 1.
-<ul>
-  <li> A correlation coefficient of -1 describes a perfect negative, or inverse,
-correlation, with values in one series rising as those in the other decline,
-and vice versa. </li>
-  <li> A coefficient of 1 shows a perfect positive correlation, or a direct relationship. </li>
-  <li> A correlation coefficient of 0 means there is no direct relationship. </li>
-</ul>
-The DataFrame has {{nrows}} rows and {{ncols}} columns.
-</p>
+    return """<p style="margin-top: 1rem;"> This section analyzes the
+           correlation between <em>{{target_column}}</em> and other
+           columns. The correlation coefficient is a statistical measure
+           of the strength of a relationship between two variables. Its
+           values can range from -1 to 1. <ul> <li> A correlation
+           coefficient of -1 describes a perfect negative, or inverse,
+           correlation, with values in one series rising as those in the
+           other decline, and vice versa. </li> <li> A coefficient of 1
+           shows a perfect positive correlation, or a direct
+           relationship. </li> <li> A correlation coefficient of 0 means
+           there is no direct relationship. </li> </ul> The DataFrame
+           has {{nrows}} rows and {{ncols}} columns. </p>
 
-{{table}}
-"""
+           {{table}}
+           """
 
 
 def create_table(metrics: dict[str, dict]) -> str:
@@ -213,21 +212,14 @@ def create_table(metrics: dict[str, dict]) -> str:
     rows = "\n".join(
         [create_table_row(column=col, metrics=values) for col, values in metrics.items()]
     )
-    return Template("""<table class="table table-hover table-responsive w-auto" >
-    <thead class="thead table-group-divider">
-        <tr>
-            <th>column</th>
-            <th>num samples</th>
-            <th>pearson coefficient (p-value)</th>
-            <th>spearman coefficient (p-value)</th>
-        </tr>
-    </thead>
-    <tbody class="tbody table-group-divider">
-        {{rows}}
-        <tr class="table-group-divider"></tr>
-    </tbody>
-</table>
-""").render({"rows": rows})
+    return Template("""<table class="table table-hover table-responsive
+                    w-auto" > <thead class="thead table-group-divider">
+                    <tr> <th>column</th> <th>num samples</th>
+                    <th>pearson coefficient (p-value)</th> <th>spearman
+                    coefficient (p-value)</th> </tr> </thead> <tbody
+                    class="tbody table-group-divider"> {{rows}} <tr
+                    class="table-group-divider"></tr> </tbody>
+                    </table>""").render({"rows": rows})
 
 
 def create_table_row(column: str, metrics: dict) -> str:
@@ -259,12 +251,12 @@ def create_table_row(column: str, metrics: dict) -> str:
 
     ```
     """
-    return Template("""<tr>
-    <th>{{column}}</th>
-    <td {{num_style}}>{{count}}</td>
-    <td {{num_style}}>{{pearson_coeff}} ({{pearson_pvalue}})</td>
-    <td {{num_style}}>{{spearman_coeff}} ({{spearman_pvalue}})</td>
-</tr>""").render(
+    return Template("""<tr> <th>{{column}}</th> <td
+                    {{num_style}}>{{count}}</td> <td
+                    {{num_style}}>{{pearson_coeff}}
+                    ({{pearson_pvalue}})</td> <td
+                    {{num_style}}>{{spearman_coeff}}
+                    ({{spearman_pvalue}})</td> </tr>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "column": column,

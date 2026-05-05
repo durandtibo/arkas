@@ -105,15 +105,13 @@ def create_template() -> str:
 
     ```
     """
-    return """This section shows an analysis of the pairwise column co-occurrence.
-{{figure}}
-<details>
-    <summary>[show {{ncols}} columns]</summary>
-    {{columns}}
-</details>
-<p style="margin-top: 1rem;">
-{{table}}
-"""
+    return """This section shows an analysis of the pairwise column co-
+           occurrence.
+
+           {{figure}} <details>     <summary>[show {{ncols}}
+           columns]</summary>     {{columns}} </details> <p
+           style="margin-top: 1rem;"> {{table}}
+           """
 
 
 def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> str:
@@ -140,22 +138,25 @@ def create_table_section(matrix: np.ndarray, columns: Sequence[str], top: int = 
     """
     if matrix.shape[0] == 0:
         return "<span>&#9888;</span> No table is generated because the column is empty"
+    return Template("""<details> <summary>[show top-{{top}} pairwise
+                    column co-occurrence]</summary><br> The following
+                    table shows the top-{{top}} pairwise column co-
+                    occurrences. The co-occurrence matrix is symmetric
+                    and only the co-occurrences in the lower triangular
+                    matrix are shown. <ul> <li> <b>rank</b>: is the rank
+                    of the co-occurrence </li> <li> <b>column 1</b>:
+                    represents the first column of the co-occurrence
+                    matrix </li> <li> <b>column 2</b>: represents the
+                    second column of the co-occurrence matrix </li> <li>
+                    <b>count</b>: is the number of co-occurrences </li>
+                    <li> <b>percentage</b>: is the percentage of co-
+                    occurrences w.r.t. the total number of co-
+                    occurrences </li> </ul>
 
-    return Template("""<details>
-    <summary>[show top-{{top}} pairwise column co-occurrence]</summary><br>
-    The following table shows the top-{{top}} pairwise column co-occurrences.
-    The co-occurrence matrix is symmetric and only the co-occurrences in the lower triangular matrix are shown.
-    <ul>
-      <li> <b>rank</b>: is the rank of the co-occurrence </li>
-      <li> <b>column 1</b>: represents the first column of the co-occurrence matrix </li>
-      <li> <b>column 2</b>: represents the second column of the co-occurrence matrix </li>
-      <li> <b>count</b>: is the number of co-occurrences </li>
-      <li> <b>percentage</b>: is the percentage of co-occurrences w.r.t. the total number of co-occurrences </li>
-    </ul>
-
-    {{table}}
-</details>
-""").render({"top": top, "table": create_table(matrix=matrix, columns=columns, top=top)})
+                    {{table}} </details>
+                    """).render(
+        {"top": top, "table": create_table(matrix=matrix, columns=columns, top=top)}
+    )
 
 
 def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> str:
@@ -195,16 +196,13 @@ def create_table(matrix: np.ndarray, columns: Sequence[str], top: int = 50) -> s
             )
         )
     table_rows = "\n".join(table_rows)
-    return Template("""<table class="table table-hover table-responsive w-auto" >
-    <thead class="thead table-group-divider">
-        <tr><th>rank</th><th>column 1</th><th>column 2</th><th>count</th><th>percentage</th></tr>
-    </thead>
-    <tbody class="tbody table-group-divider">
-        {{rows}}
-        <tr class="table-group-divider"></tr>
-    </tbody>
-</table>
-""").render({"rows": str_indent(table_rows, num_spaces=8)})
+    return Template("""<table class="table table-hover table-responsive
+                    w-auto" > <thead class="thead table-group-divider">
+                    <tr><th>rank</th><th>column 1</th><th>column
+                    2</th><th>count</th><th>percentage</th></tr>
+                    </thead> <tbody class="tbody table-group-divider">
+                    {{rows}} <tr class="table-group-divider"></tr>
+                    </tbody> </table>""").render({"rows": str_indent(table_rows, num_spaces=8)})
 
 
 def create_table_row(rank: int, col1: str, col2: str, count: int, total: int) -> str:
