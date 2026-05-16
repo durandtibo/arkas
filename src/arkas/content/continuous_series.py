@@ -111,26 +111,23 @@ def create_template() -> str:
 
     ```
     """
-    return """<p>This section analyzes the distribution of continuous values for column <em>{{column}}</em>.</p>
-<ul>
-  <li> <b>total values:</b> {{total_values}} </li>
-  <li> <b>number of unique values:</b> {{unique_values}} </li>
-  <li> <b>number of null values:</b> {{null_values}} / {{total_values}} ({{null_values_pct}}%) </li>
-  <li> <b>range of values:</b> [{{min_value}}, {{max_value}}] </li>
-  <li> <b>data type:</b> <em>{{dtype}}</em> </li>
-</ul>
+    return """<p>This section analyzes the distribution of continuous
+           values for column <em>{{column}}</em>.</p> <ul> <li> <b>total
+           values:</b> {{total_values}} </li> <li> <b>number of unique
+           values:</b> {{unique_values}} </li> <li> <b>number of null
+           values:</b> {{null_values}} / {{total_values}}
+           ({{null_values_pct}}%) </li> <li> <b>range of values:</b>
+           [{{min_value}}, {{max_value}}] </li> <li> <b>data type:</b>
+           <em>{{dtype}}</em> </li> </ul>
 
-<p>The histogram shows the distribution of values in the range [{{xmin}}, {{xmax}}].</p>
-{{figure}}
+           <p>The histogram shows the distribution of values in the
+           range [{{xmin}}, {{xmax}}].</p> {{figure}}
 
-<details>
-    <summary>[show statistics]</summary>
-    <p style="margin-top: 1rem;">
-    The following table shows some statistics about the distribution for column <em>{{column}}<em>.
-    </p>
-    {{table}}
-</details>
-"""
+           <details>     <summary>[show statistics]</summary>     <p
+           style="margin-top: 1rem;">     The following table shows some
+           statistics about the distribution for column
+           <em>{{column}}<em>.     </p>     {{table}} </details>
+           """
 
 
 def create_table(stats: dict) -> str:
@@ -178,36 +175,46 @@ def create_table(stats: dict) -> str:
 
     ```
     """
-    return Template("""<table class="table table-hover table-responsive w-auto" >
-    <thead class="thead table-group-divider">
-        <tr><th>stat</th><th>value</th></tr>
-    </thead>
-    <tbody class="tbody table-group-divider">
-        <tr><th>count</th><td {{num_style}}>{{count}}</td></tr>
-        <tr><th>mean</th><td {{num_style}}>{{mean}}</td></tr>
-        <tr><th>std</th><td {{num_style}}>{{std}}</td></tr>
-        <tr><th>skewness</th><td {{num_style}}>{{skewness}}</td></tr>
-        <tr><th>kurtosis</th><td {{num_style}}>{{kurtosis}}</td></tr>
-        <tr><th>min</th><td {{num_style}}>{{min}}</td></tr>
-        <tr><th>quantile 0.1%</th><td {{num_style}}>{{q01}}</td></tr>
-        <tr><th>quantile 1%</th><td {{num_style}}>{{q01}}</td></tr>
-        <tr><th>quantile 5%</th><td {{num_style}}>{{q05}}</td></tr>
-        <tr><th>quantile 10%</th><td {{num_style}}>{{q10}}</td></tr>
-        <tr><th>quantile 25%</th><td {{num_style}}>{{q25}}</td></tr>
-        <tr><th>median</th><td {{num_style}}>{{median}}</td></tr>
-        <tr><th>quantile 75%</th><td {{num_style}}>{{q75}}</td></tr>
-        <tr><th>quantile 90%</th><td {{num_style}}>{{q90}}</td></tr>
-        <tr><th>quantile 95%</th><td {{num_style}}>{{q95}}</td></tr>
-        <tr><th>quantile 99%</th><td {{num_style}}>{{q99}}</td></tr>
-        <tr><th>quantile 99.9%</th><td {{num_style}}>{{q99}}</td></tr>
-        <tr><th>max</th><td {{num_style}}>{{max}}</td></tr>
-        <tr><th>number of zeros</th><td {{num_style}}>{{num_zeros}}</td></tr>
-        <tr><th>number of positive values</th><td {{num_style}}>{{num_pos}}</td></tr>
-        <tr><th>number of negative values</th><td {{num_style}}>{{num_neg}}</td></tr>
-        <tr class="table-group-divider"></tr>
-    </tbody>
-</table>
-""").render(
+    return Template("""<table class="table table-hover table-responsive
+                    w-auto" > <thead class="thead table-group-divider">
+                    <tr><th>stat</th><th>value</th></tr> </thead> <tbody
+                    class="tbody table-group-divider">
+                    <tr><th>count</th><td
+                    {{num_style}}>{{count}}</td></tr>
+                    <tr><th>mean</th><td
+                    {{num_style}}>{{mean}}</td></tr> <tr><th>std</th><td
+                    {{num_style}}>{{std}}</td></tr>
+                    <tr><th>skewness</th><td
+                    {{num_style}}>{{skewness}}</td></tr>
+                    <tr><th>kurtosis</th><td
+                    {{num_style}}>{{kurtosis}}</td></tr>
+                    <tr><th>min</th><td {{num_style}}>{{min}}</td></tr>
+                    <tr><th>quantile 0.1%</th><td
+                    {{num_style}}>{{q01}}</td></tr> <tr><th>quantile
+                    1%</th><td {{num_style}}>{{q01}}</td></tr>
+                    <tr><th>quantile 5%</th><td
+                    {{num_style}}>{{q05}}</td></tr> <tr><th>quantile
+                    10%</th><td {{num_style}}>{{q10}}</td></tr>
+                    <tr><th>quantile 25%</th><td
+                    {{num_style}}>{{q25}}</td></tr>
+                    <tr><th>median</th><td
+                    {{num_style}}>{{median}}</td></tr> <tr><th>quantile
+                    75%</th><td {{num_style}}>{{q75}}</td></tr>
+                    <tr><th>quantile 90%</th><td
+                    {{num_style}}>{{q90}}</td></tr> <tr><th>quantile
+                    95%</th><td {{num_style}}>{{q95}}</td></tr>
+                    <tr><th>quantile 99%</th><td
+                    {{num_style}}>{{q99}}</td></tr> <tr><th>quantile
+                    99.9%</th><td {{num_style}}>{{q99}}</td></tr>
+                    <tr><th>max</th><td {{num_style}}>{{max}}</td></tr>
+                    <tr><th>number of zeros</th><td
+                    {{num_style}}>{{num_zeros}}</td></tr> <tr><th>number
+                    of positive values</th><td
+                    {{num_style}}>{{num_pos}}</td></tr> <tr><th>number
+                    of negative values</th><td
+                    {{num_style}}>{{num_neg}}</td></tr> <tr
+                    class="table-group-divider"></tr> </tbody>
+                    </table>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "count": f"{stats['count']:,}",

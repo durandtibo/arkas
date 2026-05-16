@@ -98,10 +98,8 @@ def create_template() -> str:
     ```
     """
     return """This section plots the content of some columns.
-The x-axis is the row index and the y-axis shows the value.
-<ul>
-  <li> {{ncols}} columns: {{columns}} </li>
-  <li> number of rows: {{nrows}}</li>
-</ul>
-{{figure}}
-"""
+
+           The x-axis is the row index and the y-axis shows the value.
+           <ul>   <li> {{ncols}} columns: {{columns}} </li>   <li>
+           number of rows: {{nrows}}</li> </ul> {{figure}}
+           """

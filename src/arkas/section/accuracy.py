@@ -105,16 +105,16 @@ def create_section_template() -> str:
 
     ```
     """
-    return """<h{{depth}} id="{{id}}">{{section}} {{title}} </h{{depth}}>
+    return """<h{{depth}} id="{{id}}">{{section}} {{title}}
+           </h{{depth}}>
 
-{{go_to_top}}
+           {{go_to_top}}
 
-<p style="margin-top: 1rem;">
+           <p style="margin-top: 1rem;">
 
-<ul>
-  <li>accuracy: {{accuracy}} ({{count_correct}}/{{count}})</li>
-  <li>error: {{error}} ({{count_incorrect}}/{{count}})</li>
-</ul>
+           <ul>   <li>accuracy: {{accuracy}}
+           ({{count_correct}}/{{count}})</li>   <li>error: {{error}}
+           ({{count_incorrect}}/{{count}})</li> </ul>
 
-<p style="margin-top: 1rem;">
-"""
+           <p style="margin-top: 1rem;">
+           """

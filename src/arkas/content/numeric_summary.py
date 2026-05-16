@@ -107,30 +107,30 @@ def create_template() -> str:
     """
     return """This section shows a short summary of each column.
 
-<ul>
-  <li> <b>column</b>: is the column name</li>
-  <li> <b>dtype</b>: is the column data type </li>
-  <li> <b>null</b>: is the number (and percentage) of null values in the column </li>
-  <li> <b>nan</b>: is the number (and percentage) of not a number (NaN) values in the column </li>
-  <li> <b>unique</b>: is the number (and percentage) of unique values in the column </li>
-  <li> <b>negative</b>: is the number (and percentage) of strictly negative values (<span>&#60;</span>0) in the column </li>
-  <li> <b>zero</b>: is the number (and percentage) of zero values (=0) in the column </li>
-  <li> <b>positive</b>: is the number (and percentage) of strictly positive values (<span>&#62;</span>0) in the column </li>
-</ul>
+           <ul>   <li> <b>column</b>: is the column name</li>   <li>
+           <b>dtype</b>: is the column data type </li>   <li>
+           <b>null</b>: is the number (and percentage) of null values in
+           the column </li>   <li> <b>nan</b>: is the number (and
+           percentage) of not a number (NaN) values in the column </li>
+           <li> <b>unique</b>: is the number (and percentage) of unique
+           values in the column </li>   <li> <b>negative</b>: is the
+           number (and percentage) of strictly negative values
+           (<span>&#60;</span>0) in the column </li>   <li> <b>zero</b>:
+           is the number (and percentage) of zero values (=0) in the
+           column </li>   <li> <b>positive</b>: is the number (and
+           percentage) of strictly positive values (<span>&#62;</span>0)
+           in the column </li> </ul>
 
-<p style="margin-top: 1rem;">
-<b>General statistics about the DataFrame</b>
-{{table}}
+           <p style="margin-top: 1rem;"> <b>General statistics about the
+           DataFrame</b> {{table}}
 
-<details>
-    <summary>[show additional statistics]</summary>
+           <details>     <summary>[show additional statistics]</summary>
 
-    <p style="margin-top: 1rem;">
-    The following table shows some quantiles for each column. </p>
+           <p style="margin-top: 1rem;"> The following table shows some
+           quantiles for each column. </p>
 
-    {{table_quantiles}}
-</details>
-"""
+               {{table_quantiles}} </details>
+           """
 
 
 def create_table(

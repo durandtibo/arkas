@@ -107,23 +107,20 @@ def create_template() -> str:
 
     ```
     """
-    return """<p>This section analyzes the distribution of continuous values for column <em>{{column}}</em>.</p>
-<ul>
-  <li> <b>total values:</b> {{total_values}} </li>
-  <li> <b>number of unique values:</b> {{unique_values}} </li>
-  <li> <b>number of null values:</b> {{null_values}} / {{total_values}} ({{null_values_pct}}%) </li>
-  <li> <b>range of values:</b> [{{min_value}}, {{max_value}}] </li>
-  <li> <b>data type:</b> <em>{{dtype}}</em> </li>
-</ul>
+    return """<p>This section analyzes the distribution of continuous
+           values for column <em>{{column}}</em>.</p> <ul> <li> <b>total
+           values:</b> {{total_values}} </li> <li> <b>number of unique
+           values:</b> {{unique_values}} </li> <li> <b>number of null
+           values:</b> {{null_values}} / {{total_values}}
+           ({{null_values_pct}}%) </li> <li> <b>range of values:</b>
+           [{{min_value}}, {{max_value}}] </li> <li> <b>data type:</b>
+           <em>{{dtype}}</em> </li> </ul>
 
-<p>The histogram shows the distribution of values in the range [{{xmin}}, {{xmax}}].</p>
-{{figure}}
+           <p>The histogram shows the distribution of values in the
+           range [{{xmin}}, {{xmax}}].</p> {{figure}}
 
-<details>
-    <summary>[show statistics]</summary>
-    <p style="margin-top: 1rem;">
-    The following table shows some statistics about the distribution for column <em>{{column}}<em>.
-    </p>
-    {{table}}
-</details>
-"""
+           <details>     <summary>[show statistics]</summary>     <p
+           style="margin-top: 1rem;">     The following table shows some
+           statistics about the distribution for column
+           <em>{{column}}<em>.     </p>     {{table}} </details>
+           """

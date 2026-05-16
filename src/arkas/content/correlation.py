@@ -161,21 +161,19 @@ def create_template() -> str:
 
     ```
     """
-    return """<p style="margin-top: 1rem;">
-This section analyzes the correlation between <em>{{xcol}}</em> and <em>{{ycol}}</em>.
-The correlation coefficient is a statistical measure of the strength of a
-relationship between two variables. Its values can range from -1 to 1.
+    return """<p style="margin-top: 1rem;"> This section analyzes the
+           correlation between <em>{{xcol}}</em> and <em>{{ycol}}</em>.
+           The correlation coefficient is a statistical measure of the
+           strength of a relationship between two variables. Its values
+           can range from -1 to 1.
 
-<ul>
-  <li> <b>pearson coefficient</b>: {{pearson_coeff}} </li>
-  <li> <b>pearson p-value</b>: {{pearson_pvalue}} </li>
-  <li> <b>spearman coefficient</b>: {{spearman_coeff}} </li>
-  <li> <b>spearman p-value</b>: {{spearman_pvalue}} </li>
-  <li> <b>num samples</b>: {{count}} </li>
-</ul>
+           <ul>   <li> <b>pearson coefficient</b>: {{pearson_coeff}}
+           </li>   <li> <b>pearson p-value</b>: {{pearson_pvalue}} </li>
+           <li> <b>spearman coefficient</b>: {{spearman_coeff}} </li>
+           <li> <b>spearman p-value</b>: {{spearman_pvalue}} </li>
+           <li> <b>num samples</b>: {{count}} </li> </ul>
 
-<p style="margin-top: 1rem;">
-The following figure shows the scatter plot between <em>{{xcol}}</em> and <em>{{ycol}}</em>.
-</p>
-{{figure}}
-"""
+           <p style="margin-top: 1rem;"> The following figure shows the
+           scatter plot between <em>{{xcol}}</em> and <em>{{ycol}}</em>.
+           </p> {{figure}}
+           """

@@ -140,23 +140,20 @@ def create_template() -> str:
     """
     return """This section shows a short summary of each column.
 
-<ul>
-  <li> <b>column</b>: is the column name</li>
-  <li> <b>dtype</b>: is the column data type </li>
-  <li> <b>null</b>: is the number (and percentage) of null values in the column </li>
-  <li> <b>unique</b>: is the number (and percentage) of unique values in the column </li>
-</ul>
+           <ul>   <li> <b>column</b>: is the column name</li>   <li>
+           <b>dtype</b>: is the column data type </li>   <li>
+           <b>null</b>: is the number (and percentage) of null values in
+           the column </li>   <li> <b>unique</b>: is the number (and
+           percentage) of unique values in the column </li> </ul>
 
-<p style="margin-top: 1rem;">
-<b>General statistics about the DataFrame</b>
+           <p style="margin-top: 1rem;"> <b>General statistics about the
+           DataFrame</b>
 
-<ul>
-  <li> number of columns: {{ncols}} </li>
-  <li> number of rows: {{nrows}}</li>
-</ul>
+           <ul>   <li> number of columns: {{ncols}} </li>   <li> number
+           of rows: {{nrows}}</li> </ul>
 
-{{table}}
-"""
+           {{table}}
+           """
 
 
 def create_table(
@@ -221,22 +218,13 @@ def create_table(
             )
         )
     rows = "\n".join(rows)
-    return Template("""<table class="table table-hover table-responsive w-auto" >
-    <thead class="thead table-group-divider">
-        <tr>
-            <th>column</th>
-            <th>dtype</th>
-            <th>null</th>
-            <th>unique</th>
-            <th>most frequent values</th>
-        </tr>
-    </thead>
-    <tbody class="tbody table-group-divider">
-        {{rows}}
-        <tr class="table-group-divider"></tr>
-    </tbody>
-</table>
-""").render({"rows": rows})
+    return Template("""<table class="table table-hover table-responsive
+                    w-auto" > <thead class="thead table-group-divider">
+                    <tr> <th>column</th> <th>dtype</th> <th>null</th>
+                    <th>unique</th> <th>most frequent values</th> </tr>
+                    </thead> <tbody class="tbody table-group-divider">
+                    {{rows}} <tr class="table-group-divider"></tr>
+                    </tbody> </table>""").render({"rows": rows})
 
 
 def create_table_row(
@@ -282,13 +270,10 @@ def create_table_row(
     most_frequent_values = ", ".join(
         [f"{to_str(val)} ({100 * c / total:.2f}%)" for val, c in most_frequent_values]
     )
-    return Template("""<tr>
-    <th>{{column}}</th>
-    <td>{{dtype}}</td>
-    <td {{num_style}}>{{null}}</td>
-    <td {{num_style}}>{{nunique}}</td>
-    <td>{{most_frequent_values}}</td>
-</tr>""").render(
+    return Template("""<tr> <th>{{column}}</th> <td>{{dtype}}</td> <td
+                    {{num_style}}>{{null}}</td> <td
+                    {{num_style}}>{{nunique}}</td>
+                    <td>{{most_frequent_values}}</td> </tr>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "column": column,

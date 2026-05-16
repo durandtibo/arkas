@@ -105,18 +105,19 @@ def create_section_template() -> str:
 
     ```
     """
-    return """<h{{depth}} id="{{id}}">{{section}} {{title}} </h{{depth}}>
+    return """<h{{depth}} id="{{id}}">{{section}} {{title}}
+           </h{{depth}}>
 
-{{go_to_top}}
+           {{go_to_top}}
 
-<p style="margin-top: 1rem;">
+           <p style="margin-top: 1rem;">
 
-{{metrics}}
+           {{metrics}}
 
-{{figures}}
+           {{figures}}
 
-<p style="margin-top: 1rem;">
-"""
+           <p style="margin-top: 1rem;">
+           """
 
 
 def create_table_metrics(metrics: dict) -> str:
@@ -139,19 +140,12 @@ def create_table_metrics(metrics: dict) -> str:
     """
     metrics = to_flat_dict(metrics)
     rows = [create_table_metrics_row(name=name, value=value) for name, value in metrics.items()]
-    return Template("""<table class="table table-hover table-responsive w-auto" >
-    <thead class="thead table-group-divider">
-        <tr>
-            <th>name</th>
-            <th>value</th>
-        </tr>
-    </thead>
-    <tbody class="tbody table-group-divider">
-        {{rows}}
-        <tr class="table-group-divider"></tr>
-    </tbody>
-</table>
-""").render({"rows": "\n".join(rows)})
+    return Template("""<table class="table table-hover table-responsive
+                    w-auto" > <thead class="thead table-group-divider">
+                    <tr> <th>name</th> <th>value</th> </tr> </thead>
+                    <tbody class="tbody table-group-divider"> {{rows}}
+                    <tr class="table-group-divider"></tr> </tbody>
+                    </table>""").render({"rows": "\n".join(rows)})
 
 
 def create_table_metrics_row(name: str, value: Any) -> str:

@@ -100,43 +100,43 @@ def create_template() -> str:
 
     ```
     """
-    return """This section analyzes the number and proportion of null values for the {{ncols}}
-columns: <em>{{columns}}</em>.
+    return """This section analyzes the number and proportion of null
+           values for the {{ncols}} columns: <em>{{columns}}</em>.
 
-<p>The columns are sorted by ascending order of number of null values in the following bar plot.</p>
+           <p>The columns are sorted by ascending order of number of null values in the following bar plot.</p>
 
-{{figure}}
+           {{figure}}
 
-<details>
-    <summary>[show statistics per column]</summary>
+           <details>
+               <summary>[show statistics per column]</summary>
 
-    <p style="margin-top: 1rem;">
-    The following tables show the number and proportion of null values for the {{num_columns}}
-    columns.
-    The background color of the row indicates the proportion of missing values:
-    dark blues indicates more missing values than light blues. </p>
+               <p style="margin-top: 1rem;">
+               The following tables show the number and proportion of null values for the {{num_columns}}
+               columns.
+               The background color of the row indicates the proportion of missing values:
+               dark blues indicates more missing values than light blues. </p>
 
-    <ul>
-      <li> <b>column</b>: is the column name </li>
-      <li> <b>null pct</b>: is the percentage of null values in the column </li>
-      <li> <b>null count</b>: is the number of null values in the column </li>
-      <li> <b>total count</b>: is the total number of values in the column </li>
-    </ul>
+               <ul>
+                 <li> <b>column</b>: is the column name </li>
+                 <li> <b>null pct</b>: is the percentage of null values in the column </li>
+                 <li> <b>null count</b>: is the number of null values in the column </li>
+                 <li> <b>total count</b>: is the total number of values in the column </li>
+               </ul>
 
-    <div class="container-fluid">
-        <div class="row align-items-start">
-            <div class="col align-self-center">
-                <p><b>Columns sorted by alphabetical order</b></p>
-                {{table_alpha}}
-            </div>
-            <div class="col">
-                <p><b>Columns sorted by ascending order of missing values</b></p>
-                {{table_sort}}
-            </div>
-        </div>
-    </div>
-</details>
-"""
+               <div class="container-fluid">
+                   <div class="row align-items-start">
+                       <div class="col align-self-center">
+                           <p><b>Columns sorted by alphabetical order</b></p>
+                           {{table_alpha}}
+                       </div>
+                       <div class="col">
+                           <p><b>Columns sorted by ascending order of missing values</b></p>
+                           {{table_sort}}
+                       </div>
+                   </div>
+               </div>
+           </details>
+           """
 
 
 def create_table(frame: pl.DataFrame) -> str:
@@ -171,21 +171,13 @@ def create_table(frame: pl.DataFrame) -> str:
             frame["total"],
         )
     ]
-    return Template("""<table class="table table-hover table-responsive w-auto" >
-    <thead class="thead table-group-divider">
-        <tr>
-            <th>column</th>
-            <th>null pct</th>
-            <th>null count</th>
-            <th>total count</th>
-        </tr>
-    </thead>
-    <tbody class="tbody table-group-divider">
-        {{rows}}
-        <tr class="table-group-divider"></tr>
-    </tbody>
-</table>
-""").render({"rows": "\n".join(rows)})
+    return Template("""<table class="table table-hover table-responsive
+                    w-auto" > <thead class="thead table-group-divider">
+                    <tr> <th>column</th> <th>null pct</th> <th>null
+                    count</th> <th>total count</th> </tr> </thead>
+                    <tbody class="tbody table-group-divider"> {{rows}}
+                    <tr class="table-group-divider"></tr> </tbody>
+                    </table>""").render({"rows": "\n".join(rows)})
 
 
 def create_table_row(column: str, null_count: int, total_count: int) -> str:

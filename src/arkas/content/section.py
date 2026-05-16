@@ -87,9 +87,6 @@ def create_template() -> str:
 
     ```
     """
-    return """<h{{depth}} id="{{id}}">{{section}} {{title}} </h{{depth}}>
-{{go_to_top}}
-<p style="margin-top: 1rem;">
-{{content}}
-<p style="margin-top: 1rem;">
-"""
+    return """<h{{depth}} id="{{id}}">{{section}} {{title}}
+           </h{{depth}}> {{go_to_top}} <p style="margin-top: 1rem;">
+           {{content}} <p style="margin-top: 1rem;">"""

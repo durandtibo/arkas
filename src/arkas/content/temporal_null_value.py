@@ -125,15 +125,15 @@ def create_template() -> str:
 
     ```
     """
-    return """<p>This section analyzes the temporal distribution of null values in all columns.
-The column <em>{{temporal_column}}</em> is used as the temporal column.</p>
-{{figure}}
-<details>
-    <summary>[show statistics per temporal period]</summary>
-    <p style="margin-top: 1rem;">The following table shows some statistics for each period.</p>
-    {{table}}
-</details>
-"""
+    return """<p>This section analyzes the temporal distribution of null
+           values in all columns.
+
+           The column <em>{{temporal_column}}</em> is used as the
+           temporal column.</p> {{figure}} <details>     <summary>[show
+           statistics per temporal period]</summary>     <p
+           style="margin-top: 1rem;">The following table shows some
+           statistics for each period.</p>     {{table}} </details>
+           """
 
 
 def create_table(frame: pl.DataFrame, temporal_column: str, period: str) -> str:
@@ -188,23 +188,15 @@ def create_table(frame: pl.DataFrame, temporal_column: str, period: str) -> str:
     rows = []
     for label, null, total in zip(labels, nulls, totals):
         rows.append(create_table_row(label=label, num_nulls=null, total=total))
-    return Template("""<table class="table table-hover table-responsive w-auto" >
-    <thead class="thead table-group-divider">
-        <tr>
-            <th>period</th>
-            <th>number of null values</th>
-            <th>number of non-null values</th>
-            <th>total number of values</th>
-            <th>percentage of null values</th>
-            <th>percentage of non-null values</th>
-        </tr>
-    </thead>
-    <tbody class="tbody table-group-divider">
-        {{rows}}
-        <tr class="table-group-divider"></tr>
-    </tbody>
-</table>
-""").render({"rows": "\n".join(rows), "period": period})
+    return Template("""<table class="table table-hover table-responsive
+                    w-auto" > <thead class="thead table-group-divider">
+                    <tr> <th>period</th> <th>number of null values</th>
+                    <th>number of non-null values</th> <th>total number
+                    of values</th> <th>percentage of null values</th>
+                    <th>percentage of non-null values</th> </tr>
+                    </thead> <tbody class="tbody table-group-divider">
+                    {{rows}} <tr class="table-group-divider"></tr>
+                    </tbody> </table>""").render({"rows": "\n".join(rows), "period": period})
 
 
 def create_table_row(label: str, num_nulls: int, total: int) -> str:
@@ -228,14 +220,12 @@ def create_table_row(label: str, num_nulls: int, total: int) -> str:
     ```
     """
     num_non_nulls = total - num_nulls
-    return Template("""<tr>
-    <th>{{label}}</th>
-    <td {{num_style}}>{{num_nulls}}</td>
-    <td {{num_style}}>{{num_non_nulls}}</td>
-    <td {{num_style}}>{{total}}</td>
-    <td {{num_style}}>{{num_nulls_pct}}</td>
-    <td {{num_style}}>{{num_non_nulls_pct}}</td>
-</tr>""").render(
+    return Template("""<tr> <th>{{label}}</th> <td
+                    {{num_style}}>{{num_nulls}}</td> <td
+                    {{num_style}}>{{num_non_nulls}}</td> <td
+                    {{num_style}}>{{total}}</td> <td
+                    {{num_style}}>{{num_nulls_pct}}</td> <td
+                    {{num_style}}>{{num_non_nulls_pct}}</td> </tr>""").render(
         {
             "num_style": f'style="{get_tab_number_style()}"',
             "label": label,
