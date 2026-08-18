@@ -137,7 +137,9 @@ def create_template() -> str:
     ```
     """
     return """<ul> <li><b>balanced accuracy</b>:
+
            {{balanced_accuracy}}</li> <li><b>number of samples</b>:
            {{count}}</li> <li><b>target label column</b>:
            {{y_true_name}}</li> <li><b>predicted label column</b>:
-           {{y_pred_name}}</li> </ul>"""
+           {{y_pred_name}}</li> </ul>
+           """
