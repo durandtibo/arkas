@@ -73,8 +73,10 @@ class ContentGeneratorDict(BaseContentGenerator):
         if tags:
             report.extend(
                 [
-                    f'<h{valid_h_tag(depth + 1)} id="{tags2id(tags)}">{number} '
-                    f"{tags2title(tags)} </h{valid_h_tag(depth + 1)}>",
+                    (
+                        f'<h{valid_h_tag(depth + 1)} id="{tags2id(tags)}">{number} '
+                        f"{tags2title(tags)} </h{valid_h_tag(depth + 1)}>"
+                    ),
                     GO_TO_TOP,
                     '<p style="margin-top: 1rem;">',
                 ]

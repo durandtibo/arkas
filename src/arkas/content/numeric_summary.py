@@ -129,7 +129,7 @@ def create_template() -> str:
            <p style="margin-top: 1rem;"> The following table shows some
            quantiles for each column. </p>
 
-               {{table_quantiles}} </details>
+           {{table_quantiles}} </details>
            """
 
 
